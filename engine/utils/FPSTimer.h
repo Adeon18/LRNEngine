@@ -10,8 +10,13 @@ class FPSTimer {
 	using clock = std::chrono::high_resolution_clock;
 public:
 	//! Default constructor
-	FPSTimer(float FPS) : m_base{ clock::now() }, m_dt{ 0ns }, m_lag{ 0ns }, m_lastUpdated{ clock::now() }, m_FPS{ FPS }, m_ActualFPS{},
-		m_fixed_dt{ static_cast<uint64_t>(1.0f / FPS * std::nano::den) } {
+	FPSTimer(float FPS) :
+		m_base{ clock::now() },
+		m_dt{ 0ns }, m_lag{ 0ns },
+		m_lastUpdated{ clock::now() },
+		m_FPS{ FPS }, m_ActualFPS{},
+		m_fixed_dt{ static_cast<uint64_t>(1.0f / FPS * std::nano::den) }
+	{
 
 	}
 

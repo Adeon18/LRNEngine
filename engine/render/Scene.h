@@ -24,7 +24,7 @@ public:
 
     Scene(float width, float height);
 
-    void render(WindowRenderData winData);
+    void render(const WindowRenderData& winData);
 
     [[nodiscard]] sphere& getSphere() { return m_sphere; }
 
@@ -53,8 +53,6 @@ private:
     // Temporary camera data
     glm::vec3 m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::vec3 m_cameraLookAt = glm::vec3(0.0f, 0.0f, 1.0f);
-
-    float m_screenWidth, m_screenHeight;
 
     sphere m_sphere;
     plane m_plane;

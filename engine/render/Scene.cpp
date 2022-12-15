@@ -37,9 +37,14 @@ void Scene::m_getRaycastOriginPaceData(float screenWidth, float screenHeight)
 }
 
 
-void Scene::render(WindowRenderData winData) 
+void Scene::render(const WindowRenderData& winData) 
 
 {
+    // Don't render the minimized window
+    if (winData.screenWidth == 0 || winData.screenHeight == 0) {
+        return;
+    }
+
     m_getRaycastOriginPaceData(winData.screenWidth, winData.screenHeight);
 
     // TODO: Temporary for test

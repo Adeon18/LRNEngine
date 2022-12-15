@@ -44,7 +44,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	// Create window
 	std::unique_ptr<Window<960, 540>> window = std::make_unique<Window<960, 540>>();
-	std::unique_ptr<FPSTimer> timer = std::make_unique<FPSTimer>(60);
+	std::unique_ptr<FPSTimer> timer = std::make_unique<FPSTimer>(300);
 	std::unique_ptr<Scene> scene = std::make_unique<Scene>(window->getWidth(), window->getHeight());
 	std::unique_ptr<Application> application = std::make_unique<Application>();
 
