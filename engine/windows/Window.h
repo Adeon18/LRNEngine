@@ -206,7 +206,7 @@ private:
 	void m_fillBitmapInfo() {
 		m_bitmapInfo.bmiHeader.biSize = sizeof(m_bitmapInfo.bmiHeader);	// Why?....
 		m_bitmapInfo.bmiHeader.biWidth = m_windowRenderData.bufferWidth;
-		m_bitmapInfo.bmiHeader.biHeight = -m_windowRenderData.bufferHeight;	// Top down render
+		m_bitmapInfo.bmiHeader.biHeight = m_windowRenderData.bufferHeight;	// Top down render
 		m_bitmapInfo.bmiHeader.biPlanes = 1;							// Legacy
 		m_bitmapInfo.bmiHeader.biBitCount = sizeof(COLORREF) * 8;		// We allocate for COLORREF
 		m_bitmapInfo.bmiHeader.biCompression = BI_RGB;					// If you need compression, we don't because RGB

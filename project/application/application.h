@@ -64,8 +64,8 @@ private:
 	std::unordered_map<int, glm::vec3> m_directions{
 		{WM_KEY_A, glm::vec3{-1, 0, 0}},
 		{WM_KEY_D, glm::vec3{1, 0, 0}},
-		{WM_KEY_W, glm::vec3{0, -1, 0}},
-		{WM_KEY_S, glm::vec3{0, 1, 0}},
+		{WM_KEY_W, glm::vec3{0, 1, 0}},
+		{WM_KEY_S, glm::vec3{0, -1, 0}},
 	};
 
 	void m_moveSphere(sphere &s)

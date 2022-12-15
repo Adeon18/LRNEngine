@@ -9,7 +9,9 @@
 
 class sphere: public hitable{
 public:
-	sphere(const glm::vec3& center, float r) : m_center{ center }, m_radius{r} {}
+	sphere(const glm::vec3& center, float r, COLORREF color) : m_center{ center }, m_radius{ r } {
+		m_color = color;
+	}
 
 	//! Hit function which determines if a ray hit a sphere
 	[[nodiscard]] HitEntry hit(const ray& r) const override {
@@ -26,15 +28,18 @@ public:
 		if (discriminant >= 0)
 		{
 			collisionRes.isHit = true;
-			collisionRes.hitPoint = r.cast((-b - glm::sqrt(discriminant)) / 2.0f * a);
+			collisionRes.rayT = (-b - glm::sqrt(discriminant)) / 2.0f * a;
+			collisionRes.hitPoint = r.cast(collisionRes.rayT);
 			collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - m_center);
 		} else
 		{
 			collisionRes.isHit = false;
+			collisionRes.rayT = 20000.0f;
 		}
 
 		return collisionRes;
 	}
+public:
 	glm::vec3 m_center;
 	float m_radius;
 };

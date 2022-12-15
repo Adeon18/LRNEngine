@@ -48,6 +48,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::unique_ptr<Scene> scene = std::make_unique<Scene>(window->getWidth(), window->getHeight());
 	std::unique_ptr<Application> application = std::make_unique<Application>();
 
+	scene->addSphere(glm::vec3{ 400, 300, 20 }, 75, RGB(255, 0, 0));
+	scene->addSphere(glm::vec3{ 100, 100, 20 }, 50, RGB(0, 255, 0));
+
+	scene->addPlane(glm::normalize(glm::vec3(0.0f, 0.5f, 0.5f)), scene->getSphere().m_center + scene->getSphere().m_radius, RGB(255, 255, 255));
+
 	bool running = true;
 
 	// Event messages
