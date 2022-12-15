@@ -33,7 +33,7 @@ public:
     const COLORREF PLANE_SHADE_COLOR = RGB(20, 20, 20);
     const COLORREF SKY_COLOR = RGB(255, 200, 239);
 
-    Scene(float width, float height);
+    Scene();
 
     void render(const WindowRenderData& winData);
 

@@ -44,14 +44,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	
 	// Create window
 	std::unique_ptr<Window<960, 540>> window = std::make_unique<Window<960, 540>>();
-	std::unique_ptr<FPSTimer> timer = std::make_unique<FPSTimer>(300);
-	std::unique_ptr<Scene> scene = std::make_unique<Scene>(window->getWidth(), window->getHeight());
+	std::unique_ptr<FPSTimer> timer = std::make_unique<FPSTimer>(60);
 	std::unique_ptr<Application> application = std::make_unique<Application>();
-
-	scene->addSphere(glm::vec3{ 400, 300, 20 }, 75, RGB(255, 0, 0));
-	scene->addSphere(glm::vec3{ 100, 100, 20 }, 50, RGB(0, 255, 0));
-
-	scene->addPlane(glm::normalize(glm::vec3(0.0f, 0.5f, 0.5f)), scene->getSphere().m_center + scene->getSphere().m_radius, RGB(255, 255, 255));
 
 	bool running = true;
 
@@ -73,9 +67,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		if (timer->frameElapsed()) {
 			window->allocateBitmapBuffer();
 
-			application->run(scene->getSphere());
-
-			scene->render(window->getWindowData());
+			application->run(window->getWindowData());
 
 			window->flush();
 			//scene->render(window);

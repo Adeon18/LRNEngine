@@ -1,7 +1,7 @@
 #include "Scene.h"
 
 
-Scene::Scene(float width, float height):
+Scene::Scene():
     m_lightPosition{ 0, 0, -300 }
 {
     // TODO: hardcoded and works strange, should be changed when I add camera
@@ -78,8 +78,6 @@ void Scene::m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pix
         hit_color = SKY_COLOR;
     }
 
-    
-
     *pixel = hit_color;
 }
 
@@ -96,9 +94,7 @@ void Scene::m_castRay(int x, int y, COLORREF* pixel, const RayCastData& rayCastD
  
     // Find the object closest to the ray
     HitEntry closestEntry = m_objects[0]->hit(r);
-    /*std::cout << closestEntry.isHit << std::endl;
-    std::cout << closestEntry.rayT << std::endl;
-    std::cout << glm::to_string(closestEntry.hitPoint) << std::endl;*/
+
     int closestObjIdx = 0;
     for (size_t i = 1; i < m_objects.size(); ++i) {
         auto collisionLog = m_objects[i]->hit(r);
@@ -134,54 +130,9 @@ void Scene::render(const WindowRenderData& winData)
     {
         for (int x = 0; x < winData.bufferWidth; ++x)
         {
-            //std::cout << "X: " << x << " Y: " << y << std::endl;
             m_castRay(x, y, pixel, rayCastData);
             pixel++;
-         //   auto collisionLog = m_sphere.hit(r);
-        	//if (collisionLog.isHit)
-         //   {
-         //       auto collisionLogInside = m_plane.hit(r);
-         //       collisionLog = m_sphere.hit(r);
-
-         //       float lightPower = glm::clamp(glm::dot(collisionLog.hitNormal, glm::normalize(m_lightPosition - m_sphere.m_center)), 0.0f, 1.0f);
-
-         //       //if (255 * glm::dot(normal, glm::normalize(collisionHit)) < 0) std::cout << "Die" << std::endl;
-         //       COLORREF hit_color = RGBtoBE(RGB(GetRValue(SPHERE_COLOR) * lightPower, GetGValue(SPHERE_COLOR) * lightPower, GetBValue(SPHERE_COLOR) * lightPower));
-         //       *pixel = hit_color;
-         //       pixel++;
-         //       // Debug
-         //       //raysHit++;
-         //       continue;
-         //   }
-
-         //   //! Plane collision and shadow
-         //   collisionLog = m_plane.hit(r);
-         //   if (collisionLog.isHit)
-         //   {
-         //       // Cast shadow
-         //       ray toLight{ collisionLog.hitPoint, m_lightPosition - collisionLog.hitPoint };
-         //       COLORREF hit_color = RGBtoBE(PLANE_COLOR);
-         //       if (m_sphere.hit(toLight).isHit)
-         //       {
-         //           hit_color = RGBtoBE(PLANE_SHADE_COLOR);
-         //       }
-
-         //       *pixel = hit_color;
-         //       pixel++;
-         //       // Debug
-         //       //raysMissed++;
-         //       continue;
-         //   }
-
-         //   // Sky
-         //   COLORREF hit_color = RGBtoBE(SKY_COLOR);
-         //   *pixel = hit_color;
-         //   pixel++;
-         //   // Debug
-         //   //raysMissed++;
         }
     }
-    
-    // std::cout << "Hit: " << raysHit << " Missed: " << raysMissed << std::endl;
 }
 
