@@ -34,18 +34,7 @@ public:
 public:
 	Window()
 	{
-		m_windowClassData.hInstance = GetModuleHandle(nullptr);
-		// Null out the struct - need to make sure there are zeros
-		ZeroMemory(&m_windowClassData.windowClass, sizeof(WNDCLASSEXW));
-
-		// Fill in the struct with the needed information
-		m_windowClassData.windowClass.cbSize = sizeof(WNDCLASSEXW);					// struct size
-		m_windowClassData.windowClass.style = CS_HREDRAW | CS_VREDRAW;				// 
-		m_windowClassData.windowClass.lpfnWndProc = Window::handleMessages;			// handler function
-		m_windowClassData.windowClass.hInstance = m_windowClassData.hInstance;						// application copy
-		m_windowClassData.windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);	// load the cursor
-		m_windowClassData.windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW;			// define the brush that will color window
-		m_windowClassData.windowClass.lpszClassName = WINDOW_NAME;					// Name of the class, L because 16 bit Unicode
+		m_initWindowClass();
 
 		// Register window class
 		RegisterClassExW(&m_windowClassData.windowClass);
@@ -53,22 +42,7 @@ public:
 		// Gets the size of the actual window and stores it in the rect
 		AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
-		// Create the window and use result as handle
-		m_windowClassData.handleWnd = CreateWindowExW(
-			NULL,
-			WINDOW_NAME,						// name of the window class
-			WINDOW_TITLE,						// title of the window
-			WS_OVERLAPPEDWINDOW,				// window style
-			300,								// x-position of the window
-			300,								// y-position of the window
-			m_windowRect.right - m_windowRect.left,	// width of the window
-			m_windowRect.bottom - m_windowRect.top, // height of the window
-			nullptr,							// we have no parent window, NULL
-			nullptr,							// we aren't using menus, NULL
-			m_windowClassData.hInstance,						// application handle
-			nullptr);					// used with multiple windows, NULL
-
-		m_windowClassData.handleDC = GetDC(m_windowClassData.handleWnd);
+		m_createWindow();
 
 		ShowWindow(m_windowClassData.handleWnd, SW_SHOW);
 	}
@@ -166,6 +140,41 @@ private:
 
 	// Bitmap information struct
 	BITMAPINFO m_bitmapInfo;
+
+	//! Initialize window class and basic window data
+	void m_initWindowClass() {
+		m_windowClassData.hInstance = GetModuleHandle(nullptr);
+		// Null out the struct - need to make sure there are zeros
+		ZeroMemory(&m_windowClassData.windowClass, sizeof(WNDCLASSEXW));
+
+		// Fill in the struct with the needed information
+		m_windowClassData.windowClass.cbSize = sizeof(WNDCLASSEXW);					// struct size
+		m_windowClassData.windowClass.style = CS_HREDRAW | CS_VREDRAW;				// 
+		m_windowClassData.windowClass.lpfnWndProc = Window::handleMessages;			// handler function
+		m_windowClassData.windowClass.hInstance = m_windowClassData.hInstance;						// application copy
+		m_windowClassData.windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);	// load the cursor
+		m_windowClassData.windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW;			// define the brush that will color window
+		m_windowClassData.windowClass.lpszClassName = WINDOW_NAME;					// Name of the class, L because 16 bit Unicode
+	}
+
+	//! Create the window and initialize additional window class data
+	void m_createWindow() {
+		m_windowClassData.handleWnd = CreateWindowExW(
+			NULL,
+			WINDOW_NAME,						// name of the window class
+			WINDOW_TITLE,						// title of the window
+			WS_OVERLAPPEDWINDOW,				// window style
+			300,								// x-position of the window
+			300,								// y-position of the window
+			m_windowRect.right - m_windowRect.left,	// width of the window
+			m_windowRect.bottom - m_windowRect.top, // height of the window
+			nullptr,							// we have no parent window, NULL
+			nullptr,							// we aren't using menus, NULL
+			m_windowClassData.hInstance,						// application handle
+			nullptr);					// used with multiple windows, NULL
+
+		m_windowClassData.handleDC = GetDC(m_windowClassData.handleWnd);
+	}
 
 	//! Destroy window and quit
 	static void m_destroyWindow()
