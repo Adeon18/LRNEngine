@@ -24,7 +24,7 @@ public:
 
     Scene(float width, float height);
 
-    void render(WindowData winData);
+    void render(WindowRenderData winData);
 
     [[nodiscard]] sphere& getSphere() { return m_sphere; }
 

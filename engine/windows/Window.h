@@ -5,7 +5,13 @@
 #include <windows.h>
 #include <windowsx.h>
 
-struct WindowData
+
+struct WindowClassData {
+
+};
+
+
+struct WindowRenderData
 {
 	void* screenBuffer = nullptr;
 	int screenWidth{};
@@ -21,8 +27,7 @@ public:
 	const wchar_t* WINDOW_TITLE = L"Engine";
 public:
 	Window() :
-		m_HInstance{ GetModuleHandle(nullptr) },
-		m_windowRect{ 0, 0, m_windowData.screenWidth, m_windowData.screenHeight, }
+		m_HInstance{ GetModuleHandle(nullptr) }
 	{
 
 		// Null out the struct - need to make sure there are zeros
@@ -75,8 +80,7 @@ public:
 		switch (message) {
 		case WM_DESTROY:
 		{
-			// Close entirely the application
-			PostQuitMessage(0);
+			m_destroyWindow();
 		} break;
 		case WM_SIZE:
 		{
@@ -140,7 +144,7 @@ public:
 	// TODO: Copy of struct - does not word after resize!
 	[[nodiscard]] RECT getWindowRect() const { return m_windowRect; }
 	//! Get all the availible window data
-	[[nodiscard]] WindowData getWindowData() const { return m_windowData; };
+	[[nodiscard]] WindowRenderData getWindowData() const { return m_windowData; };
 
 	[[nodiscard]] void* getBitmapBuffer() const { return m_windowData.screenBuffer; }
 
@@ -152,14 +156,17 @@ public:
 
 
 private:
-	// Compile time values
-	inline static WindowData m_windowData{
+	// Basic window data that get's passed for renreding
+	inline static WindowRenderData m_windowData{
 		nullptr,
 		W, H,
 		W / 2, H / 2
 	};
 
+	inline static RECT m_windowRect{ 0, 0, W, H };
+
 	inline static bool m_toBeResized = true;
+
 
 	// Window handler
 	HWND m_handleWnd;
@@ -167,14 +174,19 @@ private:
 	HDC m_handleDC;
 	HINSTANCE m_HInstance;
 	// The rect that represents the size of the actual window(not the part where you can draw)
-	RECT m_windowRect;
 	// Struct with info for the window class
 	WNDCLASSEXW m_WindowClass;
 
 	// Bitmap information struct
 	BITMAPINFO m_bitmapInfo;
 
-	// Update the size of the window at resize
+	//! Destroy window and quit
+	static void m_destroyWindow()
+	{
+		PostQuitMessage(0);
+	}
+
+	//! Update the size of the window at resize
 	static void m_updateWindowSize(HWND hWnd)
 	{
 		RECT newClientRect;
@@ -186,6 +198,10 @@ private:
 		m_windowData.bufferWidth = m_windowData.screenWidth / 2;
 		m_windowData.bufferHeight = m_windowData.screenHeight / 2;
 
+		m_windowRect = newClientRect;
+		AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
+
 		m_toBeResized = true;
 	}
+
 };

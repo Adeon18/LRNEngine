@@ -37,7 +37,7 @@ void Scene::m_getRaycastOriginPaceData(float screenWidth, float screenHeight)
 }
 
 
-void Scene::render(WindowData winData) 
+void Scene::render(WindowRenderData winData) 
 
 {
     m_getRaycastOriginPaceData(winData.screenWidth, winData.screenHeight);

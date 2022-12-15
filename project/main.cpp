@@ -50,7 +50,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	bool running = true;
 
-
 	// Event messages
 	MSG msg = {0};
 	while (running) {
