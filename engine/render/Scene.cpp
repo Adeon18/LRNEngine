@@ -2,7 +2,7 @@
 
 
 Scene::Scene(float width, float height):
-    m_lightPosition{ 400, 400, -300 }
+    m_lightPosition{ 0, 0, -300 }
 {
     // TODO: hardcoded and works strange, should be changed when I add camera
     m_viewMatrix = glm::lookAt(
@@ -36,22 +36,49 @@ void Scene::m_getRaycastOriginPaceData(float screenWidth, float screenHeight)
 
 
 void Scene::m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pixel) {
-    float lightPower = glm::clamp(
-        glm::dot(
-            hitEntry.hitNormal,
-            glm::normalize(m_lightPosition - hitEntry.hitPoint)
-        ),
-        0.2f, 1.0f
-    );
 
-    COLORREF hit_color = RGBtoBE(RGB(
-        GetRValue(m_objects[objIdx]->m_color) * lightPower,
-        GetGValue(m_objects[objIdx]->m_color) * lightPower,
-        GetBValue(m_objects[objIdx]->m_color) * lightPower)
-    );
-    if (!hitEntry.isHit) {
+    COLORREF hit_color;
+
+    if (hitEntry.isHit) {
+        // Check if shadowed
+        bool isInShadow = false;
+        ray toLight{ hitEntry.hitPoint + 0.001f * (m_lightPosition - hitEntry.hitPoint), m_lightPosition - hitEntry.hitPoint};
+
+        for (auto const& objPtr : m_objects) {
+            auto collisionLog = objPtr->hit(toLight);
+            if (collisionLog.isHit && collisionLog.rayT > 0) {
+                isInShadow = true;
+                break;
+            }
+        }
+        // Compute light if not
+        if (!isInShadow) {
+            float lightPower = glm::clamp(
+                glm::dot(
+                    hitEntry.hitNormal,
+                    glm::normalize(m_lightPosition - hitEntry.hitPoint)
+                ),
+                0.2f, 1.0f
+            );
+            hit_color = RGBtoBE(RGB(
+                GetRValue(m_objects[objIdx]->m_color) * lightPower,
+                GetGValue(m_objects[objIdx]->m_color) * lightPower,
+                GetBValue(m_objects[objIdx]->m_color) * lightPower)
+            );
+        }
+        //! If shadow => shade
+        else {
+            hit_color = RGBtoBE(RGB(
+                GetRValue(m_objects[objIdx]->m_color) * 0.1f,
+                GetGValue(m_objects[objIdx]->m_color) * 0.1f,
+                GetBValue(m_objects[objIdx]->m_color) * 0.1f)
+            );
+        }
+    } else {
         hit_color = SKY_COLOR;
     }
+
+    
 
     *pixel = hit_color;
 }

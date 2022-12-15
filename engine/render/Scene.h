@@ -51,7 +51,7 @@ private:
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
     void m_castRay(int x, int y, COLORREF* pixel, const RayCastData& rayCastData);
-
+    //! Calculate lighting and materials and shadows
     void m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pixel);
 
 private:
