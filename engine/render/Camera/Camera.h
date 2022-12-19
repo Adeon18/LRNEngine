@@ -14,7 +14,10 @@ class Camera {
 public:
     Camera(float fov, int screenWidth, int screenHeight, glm::vec3 position);
 
-    void moveCamera(glm::vec3 offset) { m_position += offset; }
+    void moveCamera(glm::vec3 offset) {
+        m_position += offset;
+        updateMatrices();
+    }
 
     void updateMatrices();
 

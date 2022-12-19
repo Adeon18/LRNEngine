@@ -27,15 +27,26 @@ public:
 
 		if (discriminant >= 0)
 		{
-			collisionRes.isHit = true;
-			collisionRes.rayT = (-b - glm::sqrt(discriminant)) / 2.0f * a;
-			collisionRes.hitPoint = r.cast(collisionRes.rayT);
-			collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - m_center);
-		} else
-		{
-			collisionRes.isHit = false;
-			collisionRes.rayT = 20000.0f;
+			// Code duplication but is more optimized than iteration because result computing is quite expensive because sqrt
+			float res = (-b - glm::sqrt(discriminant)) / (2.0f * a);
+			if (res > 0) {
+				collisionRes.isHit = true;
+				collisionRes.rayT = res;
+				collisionRes.hitPoint = r.cast(collisionRes.rayT);
+				collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - m_center);
+				return collisionRes;
+			}
+			res = (-b + glm::sqrt(discriminant)) / (2.0f * a);
+			if (res > 0) {
+				collisionRes.isHit = true;
+				collisionRes.rayT = res;
+				collisionRes.hitPoint = r.cast(collisionRes.rayT);
+				collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - m_center);
+				return collisionRes;
+			}
 		}
+		collisionRes.isHit = false;
+		collisionRes.rayT = 20000.0f;
 
 		return collisionRes;
 	}

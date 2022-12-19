@@ -35,15 +35,17 @@ public:
 
 private:
 	std::unordered_map<int, bool> m_pressedInputs;
-	std::unordered_map<int, glm::vec3> m_directions{
+	std::unordered_map<int, glm::vec3> m_cameraDirections{
 		{Keys::KEY_A, glm::vec3{-1, 0, 0}},
 		{Keys::KEY_D, glm::vec3{1, 0, 0}},
-		{Keys::KEY_W, glm::vec3{0, 1, 0}},
-		{Keys::KEY_S, glm::vec3{0, -1, 0}},
+		{Keys::KEY_CTRL, glm::vec3{0, -1, 0}},
+		{Keys::KEY_SPACE, glm::vec3{0, 1, 0}},
+		{Keys::KEY_W, glm::vec3{0, 0, 1}},
+		{Keys::KEY_S, glm::vec3{0, 0, -1}},
 	};
 
 	std::unique_ptr<Scene> m_scene;
 	std::unique_ptr<Camera> m_camera;
 	//! Move the red sphere
-	void m_moveSphere(sphere& s);
+	void m_moveCamera();
 };

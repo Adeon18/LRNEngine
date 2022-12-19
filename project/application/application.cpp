@@ -12,19 +12,19 @@ Application::Application(int width, int height) :
 }
 
 
-void Application::m_moveSphere(sphere &s)
+void Application::m_moveCamera()
 {
 	glm::vec3 direction{ 0 };
 	for (const auto& [key, pressed] : m_pressedInputs)
 	{
 		if (pressed)
 		{
-			direction += m_directions[key];
+			direction += m_cameraDirections[key];
 		}
 	}
 	glm::normalize(direction);
 
-	s.m_center += direction * 0.1f;
+	m_camera->moveCamera(direction * 0.1f);
 }
 
 
@@ -49,5 +49,5 @@ void Application::run(const WindowRenderData& winData) {
 
 	m_scene->render(winData, m_camera);
 
-	m_moveSphere(m_scene->getSphere());
+	m_moveCamera();
 }
