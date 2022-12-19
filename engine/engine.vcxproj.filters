@@ -24,9 +24,6 @@
     <ClInclude Include="source\math\ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\geometry\hitable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,9 +33,21 @@
     <ClInclude Include="source\math\geometry\sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Scene\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\RenderData\RenderData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="render\Scene.cpp">
+    <ClCompile Include="render\Camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

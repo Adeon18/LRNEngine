@@ -15,7 +15,7 @@
 #include "windows/Window.h"
 #include "source/math/ray.h"
 #include "source/math/geometry/sphere.h"
-#include "render/Scene.h"
+#include "render/Scene/Scene.h"
 
 #include "application/application.h"
 
@@ -45,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Create window
 	std::unique_ptr<Window<960, 540>> window = std::make_unique<Window<960, 540>>();
 	std::unique_ptr<FPSTimer> timer = std::make_unique<FPSTimer>(60);
-	std::unique_ptr<Application> application = std::make_unique<Application>();
+	std::unique_ptr<Application> application = std::make_unique<Application>(window->getWidth(), window->getHeight());
 
 	bool running = true;
 
@@ -61,7 +61,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			application->captureInput(&msg);
 			// Send the message to WindowProc
 			DispatchMessageW(&msg);
-
 		}
 
 		if (timer->frameElapsed()) {
@@ -70,10 +69,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 			application->run(window->getWindowData());
 
 			window->flush();
-			//scene->render(window);
-			//std::cout << "ddd" << std::endl;
-			// Here is the render code run at 60 FPS
-			// printToVisualStudioOutput("Die");
 		}
 		std::this_thread::yield();
 	}

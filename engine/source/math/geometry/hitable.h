@@ -22,4 +22,5 @@ public:
 	[[nodiscard]] virtual HitEntry hit(const ray& r) const = 0;
 
 	COLORREF m_color = RGB(0, 0, 0);
+	std::string m_name = "h";
 };

@@ -12,6 +12,7 @@ class plane: public hitable{
 public:
 	plane(const glm::vec3& normal, const glm::vec3& point, COLORREF color) : m_normal{ normal }, m_point{ point } {
 		m_color = color;
+		m_name = "p";
 	}
 
 	//! Hit function which determines if a ray hit a plane
@@ -22,7 +23,7 @@ public:
 		// TODO: Replace constant
 		if (res > MIN_ANGLE_DOT)
 		{
-			auto dist = glm::dot(m_point - r.getOrigin(), m_normal);
+			auto dist = glm::dot(m_point - r.getOrigin(), m_normal) / res;
 			if (dist < MAX_DIST)
 			{
 				collisionRes.isHit = true;
