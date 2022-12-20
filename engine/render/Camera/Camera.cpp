@@ -10,7 +10,6 @@ Camera::Camera(float fov, int screenWidth, int screenHeight, glm::vec3 position)
     setProjectionMatrix(fov, screenWidth, screenHeight);
     //std::cout << glm::to_string(m_projection) << std::endl;
     updateMatrices();
-    addWorldRotation(glm::vec3{ 0.0f, 0.0f, 145.0f });
 }
 
 
@@ -56,6 +55,7 @@ void Camera::addRelativeRotation(const glm::vec3& angles) {
     m_rotationQuat *= glm::angleAxis(glm::radians(angles.y), glm::vec3{ getCamUp() });
 
     glm::normalize(m_rotationQuat);
+    std::cout << glm::to_string(m_rotationQuat) << std::endl;
 
     updateMatrices();
 }
@@ -84,9 +84,9 @@ void Camera::updateMatrices() {
     //std::cout << "--------------" << std::endl;
 
     m_viewInv[3] = glm::vec4(m_position, 1.0f);
-    for (int i = 0; i < 4; ++i) {
-        std::cout << glm::to_string(m_viewInv[i]) << std::endl;
-    }
+    //for (int i = 0; i < 4; ++i) {
+    //    std::cout << glm::to_string(m_viewInv[i]) << std::endl;
+    //}
     std::cout << "--------------" << std::endl;
     m_projectionInv = glm::inverse(m_projection);
 

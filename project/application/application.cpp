@@ -15,18 +15,30 @@ Application::Application(int width, int height) :
 void Application::m_moveCamera()
 {
 	glm::vec3 direction{ 0 };
+	glm::vec3 rotation{ 0 };
 	bool isMoving = false;
-	for (const auto& [key, pressed] : m_pressedInputs)
+	for (const auto &key: m_camMoveInputs)
 	{
-		if (pressed)
+		if (m_pressedInputs[key])
 		{
 			direction += m_cameraDirections[key];
 			isMoving = true;
 		}
 	}
 	glm::normalize(direction);
+
+	for (const auto& key : m_camRotateInputs) {
+		if (m_pressedInputs[key])
+		{
+			rotation += m_cameraRotations[key] * 0.1f;
+			isMoving = true;
+		}
+	}
+
+
 	if (isMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
+		m_camera->addRelativeRotation(rotation);
 	}
 }
 
