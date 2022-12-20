@@ -15,16 +15,19 @@ Application::Application(int width, int height) :
 void Application::m_moveCamera()
 {
 	glm::vec3 direction{ 0 };
+	bool isMoving = false;
 	for (const auto& [key, pressed] : m_pressedInputs)
 	{
 		if (pressed)
 		{
 			direction += m_cameraDirections[key];
+			isMoving = true;
 		}
 	}
 	glm::normalize(direction);
-
-	m_camera->moveCamera(direction * 0.1f);
+	if (isMoving) {
+		m_camera->addRelativeOffset(direction * 0.1f);
+	}
 }
 
 
