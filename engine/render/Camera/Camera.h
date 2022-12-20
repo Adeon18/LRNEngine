@@ -44,10 +44,10 @@ public:
     //! Getters for the near plane vectors
     [[nodiscard]] glm::vec3& getBRVec() { return m_BRNearClipInWorld; }
     [[nodiscard]] glm::vec3& getTLVec() { return m_TLNearClipInWorld; }
-    [[nodiscard]] glm::vec4& getCamRight() { return m_view[0]; }
-    [[nodiscard]] glm::vec4& getCamUp() { return m_view[1]; }
-    [[nodiscard]] glm::vec4& getCamForward() { return m_view[2]; }
-    glm::vec4& getCamPosition() { return m_view[3]; }
+    [[nodiscard]] glm::vec4& getCamRight() { return m_viewInv[0]; }
+    [[nodiscard]] glm::vec4& getCamUp() { return m_viewInv[1]; }
+    [[nodiscard]] glm::vec4& getCamForward() { return m_viewInv[2]; }
+    glm::vec4& getCamPosition() { return m_viewInv[3]; }
 
 
     void invertInvViewPos() {
@@ -87,6 +87,9 @@ private:
     glm::vec3 m_BLNearClipInWorld;
     glm::vec3 m_TLNearClipInWorld;
     glm::vec3 m_BRNearClipInWorld;
+
+    glm::vec3 m_TLDirection;
+    glm::vec3 m_BRDirection;
 
     RayCastData m_rayCastData;
 };

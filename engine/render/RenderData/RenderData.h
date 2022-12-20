@@ -2,9 +2,9 @@
 
 //! A struct that storeal all data needed for ray cast
 struct RayCastData {
-    double pixelWidth;
-    double pixelHeight;
+    float pixelWidth;
+    float pixelHeight;
 
-    double strideX;
-    double strideY;
+    float strideX;
+    float strideY;
 };
