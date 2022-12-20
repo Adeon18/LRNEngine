@@ -53,12 +53,12 @@ private:
 
 	std::vector<int> m_camRotateInputs{ Keys::KEY_E, Keys::KEY_Q, Keys::KEY_H, Keys::KEY_J, Keys::KEY_L, Keys::KEY_K };
 	std::unordered_map<int, glm::vec3> m_cameraRotations{
-		{Keys::KEY_E, glm::vec3(0.0f, 0.0f, 10.0f)},
-		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, -10.0f)},
-		{Keys::KEY_H, glm::vec3(0.0f, 10.0f, 0.0f)},
-		{Keys::KEY_L, glm::vec3(0.0f, -10.0f, 0.0f)},
-		{Keys::KEY_J, glm::vec3(10.0f, 0.0f, 0.0f)},
-		{Keys::KEY_K, glm::vec3(-10.0f, 0.0f, 0.0f)},
+		{Keys::KEY_E, glm::vec3(0.0f, 0.0f, -10.0f)},
+		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, 10.0f)},
+		{Keys::KEY_H, glm::vec3(0.0f, -10.0f, 0.0f)},
+		{Keys::KEY_L, glm::vec3(0.0f, 10.0f, 0.0f)},
+		{Keys::KEY_J, glm::vec3(-10.0f, 0.0f, 0.0f)},
+		{Keys::KEY_K, glm::vec3(10.0f, 0.0f, 0.0f)},
 	};
 
 	std::unique_ptr<Scene> m_scene;

@@ -38,7 +38,7 @@ void Application::m_moveCamera()
 
 	if (isMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
-		m_camera->addRelativeRotation(rotation);
+		m_camera->addWorldRotation(rotation);
 	}
 }
 
