@@ -38,8 +38,13 @@ public:
 	void run(const WindowRenderData& winData);
 
 private:
-	std::unordered_map<int, bool> m_pressedInputs;
+	int m_screenWidth;
+	int m_screenHeight;
 
+	glm::vec2 m_mousePos;
+	glm::vec2 m_mouseOffset;
+
+	std::unordered_map<int, bool> m_pressedInputs;
 
 	std::vector<int> m_camMoveInputs{ Keys::KEY_A, Keys::KEY_D, Keys::KEY_W, Keys::KEY_S, Keys::KEY_CTRL, Keys::KEY_SPACE };
 	std::unordered_map<int, glm::vec3> m_cameraDirections{
@@ -51,18 +56,16 @@ private:
 		{Keys::KEY_S, glm::vec3{0, 0, 1}},
 	};
 
-	std::vector<int> m_camRotateInputs{ Keys::KEY_E, Keys::KEY_Q, Keys::KEY_H, Keys::KEY_J, Keys::KEY_L, Keys::KEY_K };
+	std::vector<int> m_camRotateInputs{ Keys::KEY_E, Keys::KEY_Q };
 	std::unordered_map<int, glm::vec3> m_cameraRotations{
 		{Keys::KEY_E, glm::vec3(0.0f, 0.0f, -10.0f)},
 		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, 10.0f)},
-		{Keys::KEY_H, glm::vec3(0.0f, 10.0f, 0.0f)},
-		{Keys::KEY_L, glm::vec3(0.0f, -10.0f, 0.0f)},
-		{Keys::KEY_J, glm::vec3(10.0f, 0.0f, 0.0f)},
-		{Keys::KEY_K, glm::vec3(-10.0f, 0.0f, 0.0f)},
 	};
 
 	std::unique_ptr<Scene> m_scene;
 	std::unique_ptr<Camera> m_camera;
 	//! Move the red sphere
 	void m_moveCamera();
+
+	glm::vec3 getRotation();
 };

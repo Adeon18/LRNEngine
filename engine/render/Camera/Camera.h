@@ -57,6 +57,7 @@ private:
     glm::vec3 m_up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     //! Projection data
+    // view matrix is unfilled for now
 	glm::mat4 m_view = glm::mat4(1.0f);
 	glm::mat4 m_projection = glm::mat4(1.0f);
 
