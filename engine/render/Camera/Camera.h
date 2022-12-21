@@ -12,17 +12,18 @@
 class Camera {
 
 public:
-    Camera(float fov, int screenWidth, int screenHeight, glm::vec3 position);
+    Camera(float fov, int screenWidth, int screenHeight, const glm::vec3& position);
 
     //! Add ofset to camera without taking rotations into account
     void addWorldOffset(const glm::vec3& offset);
-
+    //! Add offset but with rotations in mind
     void addRelativeOffset(const glm::vec3& offset);
-
+    //! Add basic quaternion rotation
     void addWorldRotation(const glm::vec3& angles);
+    //! Relative quaternions rotation, don't quite understand why would I need this
     void addRelativeRotation(const glm::vec3& angles);
 
-    //! Update all the iternal matrices and near plane data
+    //! Update all the iternal matrices and near plane data - includes updating basis, should be called after movement
     void updateMatrices();
     //! Turn the rotation quaternion to view matrix
     void updateBasis();
@@ -31,6 +32,7 @@ public:
     //! Set the projection matrix
     void setProjectionMatrix(float fov, int width, int height) {
         m_projection = glm::perspective(glm::radians(fov), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
+        m_projectionInv = glm::inverse(m_projection);
     }
     //! Set the raycastdata based on which the rays are being casted
     void setRayCastData(const RayCastData& castData) {
@@ -47,12 +49,7 @@ public:
     [[nodiscard]] glm::vec4& getCamRight() { return m_viewInv[0]; }
     [[nodiscard]] glm::vec4& getCamUp() { return m_viewInv[1]; }
     [[nodiscard]] glm::vec4& getCamForward() { return m_viewInv[2]; }
-    glm::vec4& getCamPosition() { return m_viewInv[3]; }
 
-
-    void invertInvViewPos() {
-
-    }
 private:
     //! Position Data
 	glm::vec3 m_position;
@@ -78,10 +75,10 @@ private:
     glm::vec4 m_viewingFrustumNearPlaneInWorldSpace[4];
     glm::vec4 m_viewingFrustumNearPlane[4] =
     {
-        {-1.0f, -1.0f, -1.0f, 1.0f},
-        {-1.0f,  1.0f, -1.0f, 1.0f},
-        { 1.0f,  1.0f, -1.0f, 1.0f},
-        { 1.0f, -1.0f, -1.0f, 1.0f},
+        {-1.0f, -1.0f, 0.0f, 1.0f},
+        {-1.0f,  1.0f, 0.0f, 1.0f},
+        { 1.0f,  1.0f, 0.0f, 1.0f},
+        { 1.0f, -1.0f, 0.0f, 1.0f},
     };
 
     glm::vec3 m_BLNearClipInWorld;

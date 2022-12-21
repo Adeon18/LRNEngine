@@ -2,7 +2,7 @@
 
 
 Scene::Scene():
-    m_lightPosition{ 0, 0, -10 }
+    m_lightPosition{ 0, 0, 10 }
 {
 }
 
@@ -54,7 +54,7 @@ void Scene::m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pix
 }
 
 
-void Scene::m_castRay(ray r, COLORREF* pixel) {
+void Scene::m_castRay(const ray& r, COLORREF* pixel) {
  
     // Find the object closest to the ray
     HitEntry closestEntry = m_objects[0]->hit(r);
@@ -88,10 +88,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
         winData.screenHeight / winData.bufferHeight
     };
 
-    //std::cout << "Pixel W/H: " << rayCastData.pixelWidth << " " << rayCastData.pixelWidth << std::endl;
-    //std::cout << "Stride W/H: " << rayCastData.strideX << " " << rayCastData.strideY << std::endl;
-
-    camPtr->setRayCastData(rayCastData);
+    camPtr->setRayCastData(std::move(rayCastData));
 
     auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);
     for (int y = 0; y < winData.bufferHeight; ++y)

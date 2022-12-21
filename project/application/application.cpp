@@ -3,10 +3,10 @@
 
 Application::Application(int width, int height) :
 	m_scene{ new Scene{} },
-	m_camera{ new Camera{45.0f, width, height, glm::vec3{0.0f, 0.0f, -2.0f}} }
+	m_camera{ new Camera{45.0f, width, height, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
-	m_scene->addSphere(glm::vec3{ 0, 0, 20 }, 5, RGB(255, 0, 0));
-	m_scene->addSphere(glm::vec3{ 10, 10, 40 }, 5, RGB(0, 255, 0));
+	m_scene->addSphere(glm::vec3{ 0, 0, -20 }, 5, RGB(255, 0, 0));
+	m_scene->addSphere(glm::vec3{ 10, 10, -40 }, 5, RGB(0, 255, 0));
 
 	m_scene->addPlane(glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f), RGB(255, 255, 255));
 }
@@ -39,6 +39,7 @@ void Application::m_moveCamera()
 	if (isMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
 		m_camera->addWorldRotation(rotation);
+		m_camera->updateMatrices();
 	}
 }
 

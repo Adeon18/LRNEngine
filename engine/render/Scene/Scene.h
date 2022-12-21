@@ -32,18 +32,18 @@ public:
 
     [[nodiscard]] sphere& getSphere() { return dynamic_cast<sphere&>(*m_objects[0]); }
 
-    void addSphere(glm::vec3 center, float radius, COLORREF color) {
+    void addSphere(const glm::vec3& center, float radius, COLORREF color) {
         m_objects.emplace_back(new sphere{ center, radius, color });
     }
 
-    void addPlane(glm::vec3 normal, glm::vec3 point, COLORREF color) {
+    void addPlane(const glm::vec3& normal, glm::vec3 point, COLORREF color) {
         m_objects.emplace_back(new plane{ normal, point, color });
     }
 
 private:
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
-    void m_castRay(ray r, COLORREF* pixel);
+    void m_castRay(const ray& r, COLORREF* pixel);
     //! Calculate lighting and materials and shadows
     void m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pixel);
 
