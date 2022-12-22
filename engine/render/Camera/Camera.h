@@ -29,9 +29,15 @@ public:
     void updateBasis();
     //! Cast a single ray and return it
     ray castRay(int x, int y);
+
+    void setNewScreenSize(int width, int height) {
+        setProjectionMatrix(m_fov, width, height);
+    }
+
     //! Set the projection matrix
     void setProjectionMatrix(float fov, int width, int height) {
-        m_projection = glm::perspective(glm::radians(fov), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
+        m_fov = fov;
+        m_projection = glm::perspective(glm::radians(m_fov), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
         m_projectionInv = glm::inverse(m_projection);
     }
     //! Set the raycastdata based on which the rays are being casted
@@ -53,8 +59,7 @@ public:
 private:
     //! Position Data
 	glm::vec3 m_position;
-    glm::vec3 m_direction = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 m_up = glm::vec3(0.0f, 1.0f, 0.0f);
+    float m_fov;
 
     //! Projection data
     // view matrix is unfilled for now

@@ -1,23 +1,88 @@
+#include <thread>
+
 #include "application.h"
 
 
-Application::Application(int width, int height) :
-	m_screenWidth{ width },
-	m_screenHeight{ height },
+Application::Application() :
+	m_isRunning{ true },
+	m_screenWidth{ WIN_WIDTH_DEF },
+	m_screenHeight{ WIN_HEIGHT_DEF },
 	m_scene{ new Scene{} },
-	m_camera{ new Camera{45.0f, width, height, glm::vec3{0.0f, 0.0f, 2.0f}} }
+	m_timer{ new FPSTimer{60} },
+	m_window{ new Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() },
+	m_camera{ new Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
+	m_createObjects();
+}
+
+
+int Application::run() {
+
+	MSG msg = { 0 };
+	while (m_isRunning) {
+		m_processWIN32Queue(&msg);
+
+		if (m_timer->frameElapsed()) {
+			if (m_window->allocateBitmapBuffer()) {
+				setWindowSize(m_window->getWidth(), m_window->getHeight());
+			}
+
+			m_handleRender();
+			m_handlePhysics();
+
+			m_window->flush();
+		}
+		std::this_thread::yield();
+	}
+
+	return msg.wParam;
+}
+
+
+void Application::m_processWIN32Queue(MSG* mptr) {
+	while (const auto peekRes = PeekMessageW(mptr, nullptr, 0, 0, PM_REMOVE)) {
+		if (mptr->message == WM_QUIT) {
+			m_isRunning = false;
+		}
+		// Translate keystroke message into correct format
+		TranslateMessage(mptr);
+		// Capture input into application
+		this->m_captureInput(mptr);
+		// Send the message to WindowProc
+		DispatchMessageW(mptr);
+	}
+}
+
+
+void Application::m_handleRender() {
+	m_scene->render(m_window->getWindowData(), m_camera);
+}
+
+
+void Application::m_handlePhysics() {
+	m_moveCamera();
+}
+
+
+void Application::m_createObjects() {
 	m_scene->addSphere(glm::vec3{ 0, 0, -20 }, 5, RGB(255, 0, 0));
 	m_scene->addSphere(glm::vec3{ 10, 10, -40 }, 5, RGB(0, 255, 0));
-
 	m_scene->addPlane(glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f), RGB(255, 255, 255));
 }
 
 
-void Application::captureInput(MSG* mptr)
+void Application::setWindowSize(int width, int height) {
+	m_screenWidth = width;
+	m_screenHeight = height;
+
+	m_camera->setNewScreenSize(width, height);
+}
+
+
+void Application::m_captureInput(MSG* mptr)
 {
 
-	if (mptr->message == WM_LBUTTONDOWN) {
+	if (mptr->message == WM_LBUTTONDOWN && !m_pressedInputs[VK_LBUTTON]) {
 		m_pressedInputs[mptr->wParam] = true;
 		m_mousePos.x = GET_X_LPARAM(mptr->lParam);
 		m_mousePos.y = GET_Y_LPARAM(mptr->lParam);
@@ -33,7 +98,6 @@ void Application::captureInput(MSG* mptr)
 			m_mousePos = newMosPos;
 		}
 	}
-
 
 	if (mptr->message == WM_MOUSELEAVE) {
 		m_mouseOffset = glm::vec2(0.0f);
@@ -69,7 +133,7 @@ void Application::m_moveCamera()
 	}
 	glm::normalize(direction);
 
-	glm::vec3 rotation = getRotation();
+	glm::vec3 rotation = m_getRotation();
 	//if (isMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
 		m_camera->addWorldRotation(rotation);
@@ -78,7 +142,7 @@ void Application::m_moveCamera()
 }
 
 
-glm::vec3 Application::getRotation() {
+glm::vec3 Application::m_getRotation() {
 	glm::vec3 rotation{};
 
 	for (const auto& key : m_camRotateInputs) {
@@ -93,14 +157,6 @@ glm::vec3 Application::getRotation() {
 		rotation.x += m_mouseOffset.y / (m_screenHeight / 2.0f) * -15.0f;
 		m_mouseOffset = glm::vec2{ 0.0f };
 	}
-	std::cout << glm::to_string(rotation) << std::endl;
+	//::cout << glm::to_string(rotation) << std::endl;
 	return rotation;
-}
-
-
-void Application::run(const WindowRenderData& winData) {
-
-	m_scene->render(winData, m_camera);
-
-	m_moveCamera();
 }

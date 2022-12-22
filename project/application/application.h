@@ -8,11 +8,13 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include "utils/FPSTimer.h"
 #include "render/Camera/Camera.h"
-
 #include "source/math/geometry/sphere.h"
-
 #include "render/Scene/Scene.h"
+
+constexpr int WIN_WIDTH_DEF = 960;
+constexpr int WIN_HEIGHT_DEF = 540;
 
 class Application
 {
@@ -31,15 +33,33 @@ class Application
 		inline static int KEY_SPACE = VK_SPACE;
 	};
 public:
-	Application(int width, int height);
-	//! Capture the input in sctuctures
-	void captureInput(MSG* mptr);
+	Application();
 	//! Run and render the application
-	void run(const WindowRenderData& winData);
+	int run();
 
+	void setWindowSize(int width, int height);
+private:
+	//! Process the win32 API message queue
+	void m_processWIN32Queue(MSG *mptr);
+	//! A function responsible for scene render
+	void m_handleRender();
+	// A function responsible for handling "physics" like camera movement
+	void m_handlePhysics();
+
+	//! Capture the input into a map
+	void m_captureInput(MSG* mptr);
+	//! Put objects on the scene
+	void m_createObjects();
+
+	//! Handle the camera movement
+	void m_moveCamera();
+	//! Get the camera rotation from processed inputs(deg.x, deg.y, deg.z)
+	glm::vec3 m_getRotation();
 private:
 	int m_screenWidth;
 	int m_screenHeight;
+
+	bool m_isRunning;
 
 	glm::vec2 m_mousePos;
 	glm::vec2 m_mouseOffset;
@@ -64,8 +84,6 @@ private:
 
 	std::unique_ptr<Scene> m_scene;
 	std::unique_ptr<Camera> m_camera;
-	//! Move the red sphere
-	void m_moveCamera();
-
-	glm::vec3 getRotation();
+	std::unique_ptr<FPSTimer> m_timer;
+	std::unique_ptr<Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
 };

@@ -69,8 +69,8 @@ public:
 	}
 
 
-	//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer
-	void allocateBitmapBuffer()
+	//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer, return true if allocation happened
+	bool allocateBitmapBuffer()
 	{
 		// Free old memory if screen was resized
 		if (m_windowRenderData.screenBuffer && m_toBeResized)
@@ -87,7 +87,9 @@ public:
 
 			m_windowRenderData.screenBuffer = VirtualAlloc(nullptr, bitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 			m_toBeResized = false;
+			return true;
 		}
+		return false;
 	}
 
 
