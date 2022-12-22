@@ -44,6 +44,8 @@ public:
 		return false;
 	}
 
+	float getFPSCurrent() { return m_ActualFPS; }
+
 private:
 	std::chrono::time_point<clock> m_base;
 	std::chrono::nanoseconds m_dt;

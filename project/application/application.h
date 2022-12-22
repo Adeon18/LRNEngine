@@ -16,6 +16,8 @@
 constexpr int WIN_WIDTH_DEF = 960;
 constexpr int WIN_HEIGHT_DEF = 540;
 
+constexpr float ROLL_SPEED_DEG = 1.0f;
+
 class Application
 {
 	static struct Keys {
@@ -48,13 +50,19 @@ private:
 
 	//! Capture the input into a map
 	void m_captureInput(MSG* mptr);
+	void m_onMouseLMBPressed(MSG* mptr);
+	void m_onMouseLMBReleased(MSG* mptr);
+	void m_onMouseMove(MSG* mptr);
+
 	//! Put objects on the scene
 	void m_createObjects();
 
 	//! Handle the camera movement
 	void m_moveCamera();
 	//! Get the camera rotation from processed inputs(deg.x, deg.y, deg.z)
-	glm::vec3 m_getRotation();
+	glm::vec3 m_getCamRotation();
+	//! Get the normalized camera movement vector
+	glm::vec3 m_getCamMovement();
 private:
 	int m_screenWidth;
 	int m_screenHeight;
@@ -63,6 +71,9 @@ private:
 
 	glm::vec2 m_mousePos;
 	glm::vec2 m_mouseOffset;
+
+	bool m_isCamMoving = false;
+	bool m_isCamRotating = false;
 
 	std::unordered_map<int, bool> m_pressedInputs;
 
@@ -78,8 +89,8 @@ private:
 
 	std::vector<int> m_camRotateInputs{ Keys::KEY_E, Keys::KEY_Q };
 	std::unordered_map<int, glm::vec3> m_cameraRotations{
-		{Keys::KEY_E, glm::vec3(0.0f, 0.0f, -10.0f)},
-		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, 10.0f)},
+		{Keys::KEY_E, glm::vec3(0.0f, 0.0f, -ROLL_SPEED_DEG)},
+		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, ROLL_SPEED_DEG)},
 	};
 
 	std::unique_ptr<Scene> m_scene;

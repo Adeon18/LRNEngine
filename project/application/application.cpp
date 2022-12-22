@@ -8,7 +8,7 @@ Application::Application() :
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
 	m_scene{ new Scene{} },
-	m_timer{ new FPSTimer{60} },
+	m_timer{ new FPSTimer{300} },
 	m_window{ new Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() },
 	m_camera{ new Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
@@ -82,26 +82,15 @@ void Application::setWindowSize(int width, int height) {
 void Application::m_captureInput(MSG* mptr)
 {
 
-	if (mptr->message == WM_LBUTTONDOWN && !m_pressedInputs[VK_LBUTTON]) {
-		m_pressedInputs[mptr->wParam] = true;
-		m_mousePos.x = GET_X_LPARAM(mptr->lParam);
-		m_mousePos.y = GET_Y_LPARAM(mptr->lParam);
+	if (mptr->message == WM_LBUTTONDOWN) {
+		m_onMouseLMBPressed(mptr);
 	}
 	else if (mptr->message == WM_LBUTTONUP) {
-		m_pressedInputs[VK_LBUTTON] = false;
+		m_onMouseLMBReleased(mptr);
 	}
 
 	if (mptr->message == WM_MOUSEMOVE) {
-		if (m_pressedInputs[VK_LBUTTON]) {
-			glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
-			m_mouseOffset = newMosPos - m_mousePos;
-			m_mousePos = newMosPos;
-		}
-	}
-
-	if (mptr->message == WM_MOUSELEAVE) {
-		m_mouseOffset = glm::vec2(0.0f);
-		m_pressedInputs[VK_LBUTTON] = false;
+		m_onMouseMove(mptr);
 	}
 
 	// Capture press and release of keys
@@ -118,45 +107,86 @@ void Application::m_captureInput(MSG* mptr)
 }
 
 
+void Application::m_onMouseLMBPressed(MSG* mptr) {
+	m_pressedInputs[mptr->wParam] = true;
+	m_mousePos.x = GET_X_LPARAM(mptr->lParam);
+	m_mousePos.y = GET_Y_LPARAM(mptr->lParam);
+}
+
+
+void Application::m_onMouseLMBReleased(MSG* mptr) {
+	m_pressedInputs[VK_LBUTTON] = false;
+}
+
+
+void Application::m_onMouseMove(MSG* mptr) {
+	if (m_pressedInputs[VK_LBUTTON]) {
+		glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
+		m_mouseOffset = newMosPos - m_mousePos;
+		m_mousePos = newMosPos;
+	}
+}
+
+
 
 void Application::m_moveCamera()
 {
-	glm::vec3 direction{ 0 };
-	bool isMoving = false;
-	for (const auto &key: m_camMoveInputs)
+	glm::vec3 rotation = m_getCamRotation();
+	glm::vec3 direction = m_getCamMovement();
+
+
+	if (m_isCamMoving) {
+		m_camera->addRelativeOffset(direction * 0.1f);
+	}
+
+	if (m_isCamRotating) {
+		m_camera->addWorldRotation(rotation);
+	}
+
+	if (m_isCamMoving || m_isCamRotating) {
+		m_camera->updateMatrices();
+	}
+}
+
+
+glm::vec3 Application::m_getCamMovement() {
+	glm::vec3 direction{ 0.0f };
+	m_isCamMoving = false;
+	for (const auto& key : m_camMoveInputs)
 	{
 		if (m_pressedInputs[key])
 		{
 			direction += m_cameraDirections[key];
-			isMoving = true;
+			m_isCamMoving = true;
 		}
 	}
 	glm::normalize(direction);
 
-	glm::vec3 rotation = m_getRotation();
-	//if (isMoving) {
-		m_camera->addRelativeOffset(direction * 0.1f);
-		m_camera->addWorldRotation(rotation);
-		m_camera->updateMatrices();
-	//}
+	return direction;
 }
 
 
-glm::vec3 Application::m_getRotation() {
+glm::vec3 Application::m_getCamRotation() {
 	glm::vec3 rotation{};
-
+	m_isCamRotating = false;
+	// Roll
 	for (const auto& key : m_camRotateInputs) {
 		if (m_pressedInputs[key])
 		{
-			rotation += m_cameraRotations[key] * 0.1f;
+			rotation += m_cameraRotations[key];
+			if (!m_isCamRotating) { m_isCamRotating = true; }
 		}
 	}
 
+	// pitch and yaw
 	if (m_pressedInputs[VK_LBUTTON] && glm::length(m_mouseOffset) > 0) {
-		rotation.y += m_mouseOffset.x / (m_screenWidth / 2.0f) * -15.0f;
-		rotation.x += m_mouseOffset.y / (m_screenHeight / 2.0f) * -15.0f;
+		if (!m_isCamRotating) { m_isCamRotating = true; }
+		float lastFPSCount = m_timer->getFPSCurrent();
+		// hardcoded for now
+		rotation.y += m_mouseOffset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
+		rotation.x += m_mouseOffset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
 		m_mouseOffset = glm::vec2{ 0.0f };
 	}
-	//::cout << glm::to_string(rotation) << std::endl;
+
 	return rotation;
 }
