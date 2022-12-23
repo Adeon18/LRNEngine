@@ -29,6 +29,7 @@ public:
     const COLORREF PLANE_COLOR = RGB(50, 50, 50);
     const COLORREF PLANE_SHADE_COLOR = RGB(20, 20, 20);
     const COLORREF SKY_COLOR = RGB(100, 100, 100);
+    const COLORREF LIGHT_COLOR = RGB(200, 200, 200);
 
     Scene();
 
@@ -52,8 +53,8 @@ public:
         m_renderObjects.emplace_back(new RenderObject{ pl, m });
     }
 
-    void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation) {
-        m_pointLights.emplace_back(new light::PointLight(pos, prop, attenuation));
+    void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{1.0f}) {
+        m_pointLights.emplace_back(new light::PointLight(pos, prop, attenuation, color));
     }
 
     void setDirectionalLight(const glm::vec3& dir, const light::LightProperties& prop) {
@@ -72,6 +73,10 @@ private:
     void m_getObjectColor(int objIdx, const HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
     //! Get the combined lighing color on an object
     glm::vec3 m_getObjectLighting(int objIdx, const HitEntry& hitEntry, const glm::vec3& camPos);
+
+    bool m_isFragmentInDirectionShadow(const HitEntry& hitEntry, const glm::vec3& lightDir);
+
+    bool m_isFragmentInPointShadow(const HitEntry& hitEntry, const glm::vec3& pointPos);
 private:
     std::unique_ptr<light::DirectionalLight> m_direcLight;
     std::unique_ptr<light::SpotLight> m_spotLight;

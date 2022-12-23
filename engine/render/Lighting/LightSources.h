@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cmath>
+#include "source/math/geometry/sphere.h"
+
 #include <glm/glm.hpp>
 
 
@@ -42,6 +44,8 @@ struct PointLight {
 		constant = attenuation.x;
 		linear = attenuation.y;
 		quadratic = attenuation.z;
+
+		shape = new sphere{ pos, 0.3f };
 	}
 
 	PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) :
@@ -49,13 +53,19 @@ struct PointLight {
 	{
 		properties.diffuse = color * prop.diffuse;
 		properties.ambient = properties.diffuse * prop.ambient;
-		properties.specular = prop.specular;
+		properties.specular = color * prop.specular;
 
 		constant = attenuation.x;
 		linear = attenuation.y;
 		quadratic = attenuation.z;
+
+		shape = new sphere{ pos, 1.0f };
 	}
 
+	~PointLight() {
+		delete shape;
+	}
+	hitable* shape = nullptr;
 	glm::vec3 position;
 
 	LightProperties properties;
@@ -119,8 +129,35 @@ inline glm::vec3 calculateDirLight(DirectionalLight* lightPtr, Material* matPtr,
 	glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular;
 
 	glm::vec3 res = ambient + diffuse + specular;
-	// Fix float error accumulation
-	res = glm::clamp(res, 0.0f, 1.0f);
+
+	return res;
+}
+
+inline glm::vec3 calculatePointLight(PointLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
+	glm::vec3 lightDir = glm::normalize(lightPtr->position - fragPos);
+
+	// Diffuse shading
+	float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+
+	// specular shading bling vs phong
+	float spec = 0.0f;
+	if (1) {
+		glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
+		spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+	}
+	else {
+		glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
+		spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+	}
+
+	float dist = glm::length(lightPtr->position - fragPos);
+	float attenuation = 1.0f / (lightPtr->constant + lightPtr->linear * dist + lightPtr->quadratic * dist * dist);
+
+	glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient * attenuation;
+	glm::vec3 diffuse = lightPtr->properties.diffuse * diff * matPtr->diffuse * attenuation;
+	glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular * attenuation;
+
+	glm::vec3 res = ambient + diffuse + specular;
 
 	return res;
 }
