@@ -23,12 +23,13 @@ static COLORREF RGBtoBE(const COLORREF &rgb)
     return RGB(GetBValue(rgb), GetGValue(rgb), GetRValue(rgb));
 }
 
+
 class Scene {
 public:
     const COLORREF SPHERE_COLOR = RGB(255, 0, 0);
     const COLORREF PLANE_COLOR = RGB(50, 50, 50);
     const COLORREF PLANE_SHADE_COLOR = RGB(20, 20, 20);
-    const COLORREF SKY_COLOR = RGB(100, 100, 100);
+    const COLORREF SKY_COLOR = RGB(10, 10, 10);
     const COLORREF LIGHT_COLOR = RGB(200, 200, 200);
 
     Scene();
@@ -61,8 +62,8 @@ public:
         m_direcLight = std::make_unique<light::DirectionalLight>(dir, prop);
     }
 
-    void setSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop) {
-        m_spotLight = std::make_unique<light::SpotLight>(dir, pos, range, prop);
+    void setSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color = glm::vec3{ 1.0f }) {
+        m_spotLight = std::make_unique<light::SpotLight>(dir, pos, range, prop, color);
     }
 
 private:

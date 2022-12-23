@@ -120,17 +120,29 @@ void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
     auto collisionLog = m_spotLight->shape->hit(r);
     if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
         if (!isClosestHitALight) { isClosestHitALight = true; }
+        closestObjIdx = -1;
     }
     // Point lights after
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
         collisionLog = m_pointLights[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             if (!isClosestHitALight) { isClosestHitALight = true; }
+            closestObjIdx = i;
         }
     }
 
     if (isClosestHitALight) {
-        *pixel = LIGHT_COLOR;
+        glm::vec3 lightColor{ 255.0f };
+        if (closestObjIdx < 0) {
+            lightColor *= m_spotLight->properties.specular;
+        }
+        else {
+            lightColor *= m_pointLights[closestObjIdx]->properties.specular;
+        }
+        *pixel = RGBtoBE(RGB(
+            lightColor.x,
+            lightColor.y,
+            lightColor.z));
         return;
     }
 

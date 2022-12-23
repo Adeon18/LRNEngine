@@ -131,7 +131,7 @@ private:
 	inline static WindowRenderData m_windowRenderData {
 		nullptr,
 		W, H,
-		W / 3, H / 3
+		W / 2, H / 2
 	};
 
 	inline static RECT m_windowRect{ 0, 0, W, H };
@@ -195,8 +195,8 @@ private:
 		m_windowRenderData.screenWidth = newClientRect.right - newClientRect.left;
 		m_windowRenderData.screenHeight = newClientRect.bottom - newClientRect.top;
 
-		m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / 3;
-		m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / 3;
+		m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / 2;
+		m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / 2;
 
 		m_windowRect = newClientRect;
 		AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);

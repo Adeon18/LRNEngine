@@ -59,7 +59,7 @@ struct PointLight {
 		linear = attenuation.y;
 		quadratic = attenuation.z;
 
-		shape = new sphere{ pos, 1.0f };
+		shape = new sphere{ pos, 0.3f };
 	}
 
 	~PointLight() {
@@ -86,7 +86,7 @@ struct SpotLight {
 		cutOffInner = range.x;
 		cutOffOuter = range.y;
 
-		shape = new sphere{ pos, 1.0f };
+		shape = new sphere{ pos, 0.3f };
 	}
 
 	SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
@@ -95,12 +95,12 @@ struct SpotLight {
 	{
 		properties.diffuse = color * prop.diffuse;
 		properties.ambient = properties.diffuse * prop.ambient;
-		properties.specular = prop.specular;
+		properties.specular = color * prop.specular;
 
 		cutOffInner = range.x;
 		cutOffOuter = range.y;
 
-		shape = new sphere{ pos, 1.0f };
+		shape = new sphere{ pos, 0.3f };
 	}
 
 	~SpotLight() {
@@ -179,30 +179,32 @@ inline glm::vec3 calculateSpotLight(SpotLight* lightPtr, Material* matPtr, const
 	float theta = glm::dot(lightDir, glm::normalize(-lightPtr->direction));
 
 	glm::vec3 res{};
-	if (theta > lightPtr->cutOffInner) {
-		float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
 
-		// specular shading bling vs phong
-		float spec = 0.0f;
-		if (1) {
-			glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
-			spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
-		}
-		else {
-			glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
-			spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
-		}
+	float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
 
-		glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
-		glm::vec3 diffuse = lightPtr->properties.diffuse * diff * matPtr->diffuse;
-		glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular;
-
-		res = ambient + diffuse + specular;
+	// specular shading bling vs phong
+	float spec = 0.0f;
+	if (1) {
+		glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
+		spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
 	}
 	else {
-		glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
-		res = ambient;
+		glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
+		spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
 	}
+
+	glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
+	glm::vec3 diffuse = lightPtr->properties.diffuse * diff * matPtr->diffuse;
+	glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular;
+
+	// Soft edges
+	float epsilon = (lightPtr->cutOffInner - lightPtr->cutOffOuter);
+	float intensity = glm::clamp((theta - lightPtr->cutOffOuter) / epsilon, 0.0f, 1.0f);
+
+	diffuse *= intensity;
+	specular *= intensity;
+
+	res = ambient + diffuse + specular;
 
 	return res;
 }
