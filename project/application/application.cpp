@@ -69,6 +69,8 @@ void Application::m_createObjects() {
 	
 	m_scene->addPointLight(glm::vec3{ 3.0f, -3.0f, -25.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.09f, 0.032f });
 	//m_scene->addPointLight(glm::vec3{ -6.0f, 6.0f, -15.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.07f, 0.017f });
+
+	m_scene->setSpotLight(glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 6.f, 1.0f, -21.0f }, glm::vec2{ 0.7f, 0.9f }, light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.5f}, glm::vec3{0.3f} });
 	
 	m_scene->addSphereObject(
 		new sphere{ glm::vec3{ 0, 0, -20 }, 5},

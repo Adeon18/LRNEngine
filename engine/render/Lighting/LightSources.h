@@ -66,6 +66,7 @@ struct PointLight {
 		delete shape;
 	}
 	hitable* shape = nullptr;
+
 	glm::vec3 position;
 
 	LightProperties properties;
@@ -84,6 +85,8 @@ struct SpotLight {
 	{
 		cutOffInner = range.x;
 		cutOffOuter = range.y;
+
+		shape = new sphere{ pos, 1.0f };
 	}
 
 	SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
@@ -96,7 +99,15 @@ struct SpotLight {
 
 		cutOffInner = range.x;
 		cutOffOuter = range.y;
+
+		shape = new sphere{ pos, 1.0f };
 	}
+
+	~SpotLight() {
+		delete shape;
+	}
+
+	hitable* shape = nullptr;
 
 	glm::vec3 position;
 	glm::vec3 direction;
@@ -158,6 +169,40 @@ inline glm::vec3 calculatePointLight(PointLight* lightPtr, Material* matPtr, con
 	glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular * attenuation;
 
 	glm::vec3 res = ambient + diffuse + specular;
+
+	return res;
+}
+
+inline glm::vec3 calculateSpotLight(SpotLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
+
+	glm::vec3 lightDir = glm::normalize(lightPtr->position - fragPos);
+	float theta = glm::dot(lightDir, glm::normalize(-lightPtr->direction));
+
+	glm::vec3 res{};
+	if (theta > lightPtr->cutOffInner) {
+		float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+
+		// specular shading bling vs phong
+		float spec = 0.0f;
+		if (1) {
+			glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
+			spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+		}
+		else {
+			glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
+			spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+		}
+
+		glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
+		glm::vec3 diffuse = lightPtr->properties.diffuse * diff * matPtr->diffuse;
+		glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular;
+
+		res = ambient + diffuse + specular;
+	}
+	else {
+		glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
+		res = ambient;
+	}
 
 	return res;
 }

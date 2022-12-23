@@ -55,6 +55,16 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const HitEntry& hitEntry, const
         }
         isInShadow = false;
     }
+    isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLight->position);
+    if (!isInShadow) {
+        totalLight += light::calculateSpotLight(
+            m_spotLight.get(),
+            &(m_renderObjects[objIdx]->material),
+            hitEntry.hitNormal,
+            glm::normalize(camPos - hitEntry.hitPoint),
+            hitEntry.hitPoint
+        );
+    }
 
     totalLight = glm::clamp(totalLight, 0.0f, 1.0f);
 
@@ -96,6 +106,7 @@ void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
 
     bool isClosestHitALight = false;
     int closestObjIdx = 0;
+    //! Check object collision
     for (size_t i = 1; i < m_renderObjects.size(); ++i) {
         //std::cout << glm::to_string(r.getOrigin()) << " " << glm::to_string(r.getDirection()) << std::endl;
         auto collisionLog = m_renderObjects[i]->shape->hit(r);
@@ -104,9 +115,15 @@ void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
             closestObjIdx = i;
         }
     }
-
+    //! Check light collision(just so we can draw positions)
+    // Begin with spotlight
+    auto collisionLog = m_spotLight->shape->hit(r);
+    if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
+        if (!isClosestHitALight) { isClosestHitALight = true; }
+    }
+    // Point lights after
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
-        auto collisionLog = m_pointLights[i]->shape->hit(r);
+        collisionLog = m_pointLights[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             if (!isClosestHitALight) { isClosestHitALight = true; }
         }
@@ -116,7 +133,7 @@ void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         *pixel = LIGHT_COLOR;
         return;
     }
-    // Here should be light object rendeer and an if statement(we don't shade light objects)
+
     m_getObjectColor(closestObjIdx, closestEntry, pixel, camPos);
 }
 
