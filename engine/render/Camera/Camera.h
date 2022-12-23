@@ -55,6 +55,7 @@ public:
     [[nodiscard]] glm::vec4& getCamRight() { return m_viewInv[0]; }
     [[nodiscard]] glm::vec4& getCamUp() { return m_viewInv[1]; }
     [[nodiscard]] glm::vec4& getCamForward() { return m_viewInv[2]; }
+    [[nodiscard]] glm::vec3& getCamPosition() { return m_position; }
 
 private:
     //! Position Data

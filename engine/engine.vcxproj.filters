@@ -42,6 +42,15 @@
     <ClInclude Include="render\RenderData\RenderData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Materials\Material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Lighting\LightSources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\RenderObject\RenderObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp">

@@ -1,0 +1,128 @@
+#pragma once
+
+#include <cmath>
+#include <glm/glm.hpp>
+
+
+namespace light {
+
+//! Basic Light data that is needed for each light type
+struct LightProperties {
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+};
+
+//! Directional Light that only depends on it's direction
+struct DirectionalLight {
+	DirectionalLight(const glm::vec3& dir, const LightProperties& prop):
+		direction{ dir },
+		properties{ prop }
+	{}
+
+	DirectionalLight(const glm::vec3& dir, const LightProperties& prop, const glm::vec3& color) :
+		direction{ dir }
+	{
+		properties.diffuse = color * prop.diffuse;
+		properties.ambient = properties.diffuse * prop.ambient;
+		properties.specular = prop.specular;
+	}
+
+	glm::vec3 direction;
+
+	LightProperties properties;
+};
+
+//! Basic pointlight that spits light in all directions
+struct PointLight {
+	PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation) :
+		position{ pos },
+		properties{ prop }
+	{
+		constant = attenuation.x;
+		linear = attenuation.y;
+		quadratic = attenuation.z;
+	}
+
+	PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) :
+		position{ pos }
+	{
+		properties.diffuse = color * prop.diffuse;
+		properties.ambient = properties.diffuse * prop.ambient;
+		properties.specular = prop.specular;
+
+		constant = attenuation.x;
+		linear = attenuation.y;
+		quadratic = attenuation.z;
+	}
+
+	glm::vec3 position;
+
+	LightProperties properties;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+//! Light type that works like a flashlight and has a cutoff angle
+struct SpotLight {
+	SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop) :
+		direction{ dir },
+		position{ pos },
+		properties{ prop }
+	{
+		cutOffInner = range.x;
+		cutOffOuter = range.y;
+	}
+
+	SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
+		direction{ dir },
+		position{ pos }
+	{
+		properties.diffuse = color * prop.diffuse;
+		properties.ambient = properties.diffuse * prop.ambient;
+		properties.specular = prop.specular;
+
+		cutOffInner = range.x;
+		cutOffOuter = range.y;
+	}
+
+	glm::vec3 position;
+	glm::vec3 direction;
+
+	float cutOffInner;
+	float cutOffOuter;
+
+	LightProperties properties;
+};
+
+inline glm::vec3 calculateDirLight(DirectionalLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir) {
+	glm::vec3 lightDir = glm::normalize(-lightPtr->direction);
+	// Diffuse shading
+	float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+
+	// specular shading bling vs phong
+	float spec = 0.0f;
+	if (1) {
+		glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
+		spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+	}
+	else {
+		glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
+		spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+	}
+	
+	// combine results
+	glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
+	glm::vec3 diffuse = lightPtr->properties.diffuse * diff * matPtr->diffuse;
+	glm::vec3 specular = lightPtr->properties.specular * spec * matPtr->specular;
+
+	glm::vec3 res = ambient + diffuse + specular;
+	// Fix float error accumulation
+	res = glm::clamp(res, 0.0f, 1.0f);
+
+	return res;
+}
+
+}

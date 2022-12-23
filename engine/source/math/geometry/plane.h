@@ -10,10 +10,7 @@ class plane: public hitable{
 	const int MAX_DIST = 1000;
 	const float MIN_ANGLE_DOT = 1e-6;
 public:
-	plane(const glm::vec3& normal, const glm::vec3& point, COLORREF color) : m_normal{ normal }, m_point{ point } {
-		m_color = color;
-		m_name = "p";
-	}
+	plane(const glm::vec3& normal, const glm::vec3& point) : m_normal{ normal }, m_point{ point } {}
 
 	//! Hit function which determines if a ray hit a plane
 	[[nodiscard]] HitEntry hit(const ray& r) const override {
@@ -29,7 +26,7 @@ public:
 				collisionRes.isHit = true;
 				collisionRes.rayT = dist;
 				collisionRes.hitPoint = r.cast(dist);
-				collisionRes.hitNormal = m_normal;
+				collisionRes.hitNormal = -m_normal;
 			}
 			else {
 				collisionRes.isHit = false;

@@ -34,9 +34,9 @@ void Camera::addWorldRotation(const glm::vec3& angles) {
     m_matricesUpdated = false;
     
     // This fix of roll accumulation is incredibly stupid but will do for now
-    if (angles.z == 0.0 && glm::abs(m_rotationQuat.z) < 0.05f) {
+    /*if (angles.z == 0.0 && glm::abs(m_rotationQuat.z) < 0.05f) {
         m_rotationQuat.z = m_rotationQuat.z / 2.0f;
-    }
+    }*/
     // roll, pitch, yaw
     m_rotationQuat *= glm::angleAxis(glm::radians(angles.z), glm::vec3(0.0f, 0.0f, 1.0f));
     m_rotationQuat *= glm::angleAxis(glm::radians(angles.x), glm::vec3(1.0f, 0.0f, 0.0f));

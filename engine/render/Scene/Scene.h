@@ -8,6 +8,10 @@
 
 #include "render/RenderData/RenderData.h"
 
+#include "render/RenderObject/RenderObject.h"
+#include "render/Materials/Material.h"
+#include "render/Lighting/LightSources.h"
+
 #include "source/math/ray.h"
 #include "source/math/geometry/sphere.h"
 #include "source/math/geometry/plane.h"
@@ -24,7 +28,7 @@ public:
     const COLORREF SPHERE_COLOR = RGB(255, 0, 0);
     const COLORREF PLANE_COLOR = RGB(50, 50, 50);
     const COLORREF PLANE_SHADE_COLOR = RGB(20, 20, 20);
-    const COLORREF SKY_COLOR = RGB(255, 200, 239);
+    const COLORREF SKY_COLOR = RGB(100, 100, 100);
 
     Scene();
 
@@ -32,23 +36,50 @@ public:
 
     [[nodiscard]] sphere& getSphere() { return dynamic_cast<sphere&>(*m_objects[0]); }
 
-    void addSphere(const glm::vec3& center, float radius, COLORREF color) {
-        m_objects.emplace_back(new sphere{ center, radius, color });
+    void addSphere(const glm::vec3& center, float radius) {
+        m_objects.emplace_back(new sphere{ center, radius });
     }
 
-    void addPlane(const glm::vec3& normal, glm::vec3 point, COLORREF color) {
-        m_objects.emplace_back(new plane{ normal, point, color });
+    void addPlane(const glm::vec3& normal, glm::vec3 point) {
+        m_objects.emplace_back(new plane{ normal, point });
+    }
+
+    void addSphereObject(sphere* s, const Material& m) {
+        m_renderObjects.emplace_back(new RenderObject{ s, m });
+    }
+
+    void addPlaneObject(plane* pl, const Material& m) {
+        m_renderObjects.emplace_back(new RenderObject{ pl, m });
+    }
+
+    void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation) {
+        m_pointLights.emplace_back(new light::PointLight(pos, prop, attenuation));
+    }
+
+    void setDirectionalLight(const glm::vec3& dir, const light::LightProperties& prop) {
+        m_direcLight = std::make_unique<light::DirectionalLight>(dir, prop);
+    }
+
+    void setSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop) {
+        m_spotLight = std::make_unique<light::SpotLight>(dir, pos, range, prop);
     }
 
 private:
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
-    void m_castRay(const ray& r, COLORREF* pixel);
+    void m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos);
     //! Calculate lighting and materials and shadows
-    void m_calculateLight(int objIdx, const HitEntry& hitEntry, COLORREF* pixel);
-
+    void m_getObjectColor(int objIdx, const HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
+    //! Get the combined lighing color on an object
+    glm::vec3 m_getObjectLighting(int objIdx, const HitEntry& hitEntry, const glm::vec3& camPos);
 private:
+    std::unique_ptr<light::DirectionalLight> m_direcLight;
+    std::unique_ptr<light::SpotLight> m_spotLight;
+    // obsolete
     std::vector<std::unique_ptr<hitable>> m_objects;
+
+    std::vector<std::unique_ptr<RenderObject>> m_renderObjects;
+    std::vector<std::unique_ptr<light::PointLight>> m_pointLights;
 
     glm::vec3 m_lightPosition;
 };

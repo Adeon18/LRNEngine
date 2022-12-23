@@ -65,9 +65,14 @@ void Application::m_handlePhysics() {
 
 
 void Application::m_createObjects() {
-	m_scene->addSphere(glm::vec3{ 0, 0, -20 }, 5, RGB(255, 0, 0));
-	m_scene->addSphere(glm::vec3{ 10, 10, -40 }, 5, RGB(0, 255, 0));
-	m_scene->addPlane(glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f), RGB(255, 255, 255));
+	m_scene->setDirectionalLight(glm::vec3{ 0.2f, -0.5f, -0.3f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.5f}, glm::vec3{0.2f}, });
+	m_scene->addSphereObject(
+		new sphere{ glm::vec3{ 0, 0, -20 }, 5},
+		Material{ glm::vec3{0.0215f, 0.1745f, 0.0215f}, glm::vec3{0.07568f, 0.61424f, 0.07568f}, glm::vec3{0.633f, 0.727811f, 0.633f}, 0.6f * 128 });
+	//m_scene->addSphereObject(glm::vec3{ 10, 10, -40 }, 5, RGB(0, 255, 0));
+	m_scene->addPlaneObject(
+		new plane{ glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
+		Material{ glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{0.55f, 0.55f, 0.55f}, glm::vec3{0.7f, 0.7f, 0.7f}, 0.25f * 128 });
 }
 
 

@@ -20,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render\Camera\Camera.h" />
+    <ClInclude Include="render\Lighting\LightSources.h" />
+    <ClInclude Include="render\Materials\Material.h" />
     <ClInclude Include="render\RenderData\RenderData.h" />
+    <ClInclude Include="render\RenderObject\RenderObject.h" />
     <ClInclude Include="render\Scene\Scene.h" />
     <ClInclude Include="source\math\geometry\hitable.h" />
     <ClInclude Include="source\math\geometry\plane.h" />
