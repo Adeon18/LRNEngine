@@ -6,7 +6,9 @@
 #include "Camera.h"
 
 
-Camera::Camera(float fov, int screenWidth, int screenHeight, const glm::vec3& position): m_position{position} {
+namespace engn {
+
+Camera::Camera(float fov, int screenWidth, int screenHeight, const glm::vec3& position) : m_position{ position } {
     std::cout << "Camera Initialized" << std::endl;
     setProjectionMatrix(fov, screenWidth, screenHeight);
     updateMatrices();
@@ -24,7 +26,7 @@ void Camera::addRelativeOffset(const glm::vec3& offset) {
     m_matricesUpdated = false;
     // TODO: May be slow
     m_position += offset[0] * glm::vec3(getCamRight()) +
-        offset[1] * glm::vec3(getCamUp()) + 
+        offset[1] * glm::vec3(getCamUp()) +
         offset[2] * glm::vec3(getCamForward());
 }
 
@@ -32,7 +34,7 @@ void Camera::addRelativeOffset(const glm::vec3& offset) {
 void Camera::addWorldRotation(const glm::vec3& angles) {
     m_basisUpdated = false;
     m_matricesUpdated = false;
-    
+
     // This fix of roll accumulation is incredibly stupid but will do for now
     /*if (angles.z == 0.0 && glm::abs(m_rotationQuat.z) < 0.05f) {
         m_rotationQuat.z = m_rotationQuat.z / 2.0f;
@@ -94,7 +96,7 @@ void Camera::updateMatrices() {
     m_BRDirection = glm::normalize(m_BRNearClipInWorld);
 }
 
-ray Camera::castRay(int x, int y) {
+math::ray Camera::castRay(int x, int y) {
 
     glm::vec3 rayTo = m_BLNearClipInWorld +
         (m_rayCastData.pixelWidth / 2.0f) * m_BRDirection + (m_rayCastData.pixelWidth * x * m_rayCastData.strideX) * m_BRDirection +
@@ -102,5 +104,7 @@ ray Camera::castRay(int x, int y) {
 
     glm::vec3 rayDirection = glm::normalize(rayTo - m_position);
 
-    return ray{ m_position, rayDirection };
+    return math::ray{ m_position, rayDirection };
 }
+
+} // engn

@@ -2,6 +2,10 @@
 
 #include <glm/glm.hpp>
 
+namespace engn {
+
+namespace math {
+
 class ray {
 public:
 	ray() {}
@@ -15,3 +19,7 @@ private:
 	glm::vec3 m_A;
 	glm::vec3 m_B;
 };
+
+} // math
+
+} // engn

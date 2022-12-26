@@ -5,6 +5,7 @@
 
 using namespace std::chrono_literals;
 
+namespace engn {
 
 class FPSTimer {
 	using clock = std::chrono::high_resolution_clock;
@@ -56,3 +57,5 @@ private:
 	float m_ActualFPS;
 	std::chrono::time_point<clock> m_lastUpdated;
 };
+
+} // engn

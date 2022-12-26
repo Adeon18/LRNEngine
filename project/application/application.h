@@ -93,8 +93,8 @@ private:
 		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, ROLL_SPEED_DEG)},
 	};
 
-	std::unique_ptr<Scene> m_scene;
-	std::unique_ptr<Camera> m_camera;
-	std::unique_ptr<FPSTimer> m_timer;
-	std::unique_ptr<Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
+	std::unique_ptr<engn::Scene> m_scene;
+	std::unique_ptr<engn::Camera> m_camera;
+	std::unique_ptr<engn::FPSTimer> m_timer;
+	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
 };

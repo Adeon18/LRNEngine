@@ -9,6 +9,9 @@
 #include "source/math/ray.h"
 #include "windows/Window.h"
 
+
+namespace engn {
+
 class Camera {
 
 public:
@@ -28,7 +31,7 @@ public:
     //! Turn the rotation quaternion to view matrix
     void updateBasis();
     //! Cast a single ray and return it
-    ray castRay(int x, int y);
+    math::ray castRay(int x, int y);
 
     void setNewScreenSize(int width, int height) {
         setProjectionMatrix(m_fov, width, height);
@@ -59,21 +62,21 @@ public:
 
 private:
     //! Position Data
-	glm::vec3 m_position;
+    glm::vec3 m_position;
     float m_fov;
 
     //! Projection data
     // view matrix is unfilled for now
-	glm::mat4 m_view = glm::mat4(1.0f);
-	glm::mat4 m_projection = glm::mat4(1.0f);
+    glm::mat4 m_view = glm::mat4(1.0f);
+    glm::mat4 m_projection = glm::mat4(1.0f);
 
-	glm::mat4 m_viewInv = glm::mat4(1.0f);
-	glm::mat4 m_projectionInv = glm::mat4(1.0f);
+    glm::mat4 m_viewInv = glm::mat4(1.0f);
+    glm::mat4 m_projectionInv = glm::mat4(1.0f);
 
     glm::mat4 m_viewProjInv = glm::mat4(1.0f);
 
     //! Rotation data
-    glm::quat m_rotationQuat = glm::quat{1.0f, 0.0f, 0.0f, 0.0f};
+    glm::quat m_rotationQuat = glm::quat{ 1.0f, 0.0f, 0.0f, 0.0f };
 
     bool m_basisUpdated = false;
     bool m_matricesUpdated = false;
@@ -97,3 +100,5 @@ private:
 
     RayCastData m_rayCastData;
 };
+
+} // engn

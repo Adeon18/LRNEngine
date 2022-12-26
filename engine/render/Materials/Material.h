@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 
 
+namespace engn {
+
 struct Material {
 	Material(const glm::vec3& amb, const glm::vec3& diff, const glm::vec3& spec, float shine) :
 		ambient{ amb },
@@ -18,3 +20,5 @@ struct Material {
 	glm::vec3 specular;
 	float shininess;
 };
+
+} // engn

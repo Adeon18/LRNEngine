@@ -1,13 +1,15 @@
 #include "Scene.h"
 
 
-Scene::Scene():
+namespace engn {
+
+Scene::Scene() :
     m_lightPosition{ 0, 0, 10 }
 {
 }
 
 
-void Scene::m_getObjectColor(int objIdx, const HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos) {
+void Scene::m_getObjectColor(int objIdx, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos) {
 
     COLORREF hit_color;
 
@@ -16,11 +18,12 @@ void Scene::m_getObjectColor(int objIdx, const HitEntry& hitEntry, COLORREF* pix
         objColor *= 255;
 
         hit_color = RGBtoBE(RGB(
-                    objColor.x,
-                    objColor.y,
-                    objColor.z));
+            objColor.x,
+            objColor.y,
+            objColor.z));
 
-    } else {
+    }
+    else {
         hit_color = SKY_COLOR;
     }
 
@@ -28,8 +31,8 @@ void Scene::m_getObjectColor(int objIdx, const HitEntry& hitEntry, COLORREF* pix
 }
 
 
-glm::vec3 Scene::m_getObjectLighting(int objIdx, const HitEntry& hitEntry, const glm::vec3& camPos) {
-    glm::vec3 totalLight{0.0f};
+glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry, const glm::vec3& camPos) {
+    glm::vec3 totalLight{ 0.0f };
 
     bool isInShadow = m_isFragmentInDirectionShadow(hitEntry, glm::normalize(-m_direcLight->direction));
 
@@ -72,8 +75,8 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const HitEntry& hitEntry, const
 }
 
 
-bool Scene::m_isFragmentInDirectionShadow(const HitEntry& hitEntry, const glm::vec3& lightDir) {
-    ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir};
+bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir) {
+    math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
     for (size_t i = 0; i < m_renderObjects.size(); ++i) {
         auto collisionLog = m_renderObjects[i]->shape->hit(toLight);
@@ -85,9 +88,9 @@ bool Scene::m_isFragmentInDirectionShadow(const HitEntry& hitEntry, const glm::v
 }
 
 
-bool Scene::m_isFragmentInPointShadow(const HitEntry& hitEntry, const glm::vec3& pointPos) {
+bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm::vec3& pointPos) {
     glm::vec3 distToLight = pointPos - hitEntry.hitPoint;
-    ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight)};
+    math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
     for (size_t i = 0; i < m_renderObjects.size(); ++i) {
         auto collisionLog = m_renderObjects[i]->shape->hit(toLight);
@@ -99,10 +102,10 @@ bool Scene::m_isFragmentInPointShadow(const HitEntry& hitEntry, const glm::vec3&
 }
 
 
-void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
- 
+void Scene::m_castRay(const math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
+
     // Find the object closest to the ray
-    HitEntry closestEntry = m_renderObjects[0]->shape->hit(r);
+    math::HitEntry closestEntry = m_renderObjects[0]->shape->hit(r);
 
     bool isClosestHitALight = false;
     int closestObjIdx = 0;
@@ -150,7 +153,7 @@ void Scene::m_castRay(const ray& r, COLORREF* pixel, const glm::vec3& camPos) {
 }
 
 
-void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr) 
+void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr)
 
 {
     // Don't render the minimized window
@@ -173,10 +176,11 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
     {
         for (int x = 0; x < winData.bufferWidth; ++x)
         {
-            ray r = camPtr->castRay(x, y);
+            math::ray r = camPtr->castRay(x, y);
             m_castRay(r, pixel, camPtr->getCamPosition());
             pixel = st_p + y * winData.bufferWidth + x;
         }
     }
 }
 
+} // engn

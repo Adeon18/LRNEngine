@@ -6,7 +6,12 @@
 #include "hitable.h"
 #include "../ray.h"
 
-class plane: public hitable{
+
+namespace engn {
+
+namespace math {
+
+class plane : public hitable {
 	const int MAX_DIST = 1000;
 	const float MIN_ANGLE_DOT = 1e-6;
 public:
@@ -44,3 +49,7 @@ private:
 	glm::vec3 m_normal;
 	glm::vec3 m_point;
 };
+
+} // math
+
+} // engn

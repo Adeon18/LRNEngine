@@ -6,6 +6,8 @@
 #include <windowsx.h>
 
 
+namespace engn {
+
 struct WindowClassData {
 	// Window handler
 	HWND handleWnd;
@@ -128,7 +130,7 @@ public:
 
 private:
 	// Basic window data that get's passed for renreding
-	inline static WindowRenderData m_windowRenderData {
+	inline static WindowRenderData m_windowRenderData{
 		nullptr,
 		W, H,
 		W / 2, H / 2
@@ -219,3 +221,4 @@ private:
 		m_bitmapInfo.bmiHeader.biClrImportant = 0;
 	}
 };
+} // engn

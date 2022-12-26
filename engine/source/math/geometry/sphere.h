@@ -7,7 +7,11 @@
 
 #include "../ray.h"
 
-class sphere: public hitable{
+namespace engn {
+
+namespace math {
+
+class sphere : public hitable {
 public:
 	sphere(const glm::vec3& center, float r) : m_center{ center }, m_radius{ r } {}
 
@@ -52,3 +56,7 @@ public:
 	glm::vec3 m_center;
 	float m_radius;
 };
+
+} // math
+
+} // engn

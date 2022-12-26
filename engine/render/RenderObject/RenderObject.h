@@ -4,8 +4,10 @@
 #include "source/math/geometry/hitable.h"
 
 
+namespace engn {
+
 struct RenderObject {
-	RenderObject(hitable* shapePtr, const Material& mat) :
+	RenderObject(math::hitable* shapePtr, const Material& mat) :
 		material{ mat }
 	{
 		shape = shapePtr;
@@ -15,6 +17,8 @@ struct RenderObject {
 		delete shape;
 	}
 
-	hitable* shape;
+	math::hitable* shape;
 	Material material;
 };
+
+} // engn

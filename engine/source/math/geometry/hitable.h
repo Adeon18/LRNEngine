@@ -7,6 +7,11 @@
 
 #include "../ray.h"
 
+
+namespace engn {
+
+namespace math {
+
 struct HitEntry
 {
 	bool isHit;
@@ -21,3 +26,7 @@ class hitable
 public:
 	[[nodiscard]] virtual HitEntry hit(const ray& r) const = 0;
 };
+
+} // math
+
+} // engn
