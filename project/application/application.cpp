@@ -65,21 +65,33 @@ void Application::m_handlePhysics() {
 
 
 void Application::m_createObjects() {
-	m_scene->setDirectionalLight(glm::vec3{ 0.2f, -0.5f, -0.3f }, engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.4f}, glm::vec3{0.2f}, });
+	m_scene->setDirectionalLight(
+		glm::vec3{ 0.2f, -0.5f, -0.3f },
+		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }
+	);
 	
-	m_scene->addPointLight(glm::vec3{ -6.0f, -1.0f, -23.0f }, engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.09f, 0.032f });
+	m_scene->addPointLight(
+		glm::vec3{ -6.0f, -1.0f, -23.0f },
+		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+		engn::light::PLIGHT_DIST_50
+	);
 	//m_scene->addPointLight(glm::vec3{ -6.0f, 6.0f, -15.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.07f, 0.017f });
 
-	m_scene->setSpotLight(glm::vec3{ 0.0f, -1.0f, 0.0f }, glm::vec3{ 5.f, 4.0f, -20.0f }, glm::vec2{ 0.9f, 0.7f }, engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{1.0f, 0.0f, 0.0f});
+	m_scene->setSpotLight(
+		glm::vec3{ 0.0f, -1.0f, 0.0f },
+		glm::vec3{ 5.f, 4.0f, -20.0f },
+		glm::vec2{ 0.9f, 0.7f },
+		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} }
+	);
 	
 	// Emerald sphere
 	m_scene->addSphereObject(
 		new engn::math::sphere{ glm::vec3{ 0, 0, -20 }, 5},
-		engn::Material{ glm::vec3{0.0215f, 0.1745f, 0.0215f}, glm::vec3{0.07568f, 0.61424f, 0.07568f}, glm::vec3{0.633f, 0.727811f, 0.633f}, 0.6f * 128 });
+		engn::mtrl::EMERALD);
 	// Whitw plastic plane
 	m_scene->addPlaneObject(
 		new engn::math::plane{ glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
-		engn::Material{ glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{0.55f, 0.55f, 0.55f}, glm::vec3{0.7f, 0.7f, 0.7f}, 0.25f * 128 });
+		engn::mtrl::WHITE_PLASTIC);
 }
 
 

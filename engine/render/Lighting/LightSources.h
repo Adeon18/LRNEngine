@@ -9,6 +9,12 @@
 namespace engn {
 
 namespace light {
+	//! Basic constant attenuation configs for
+	constexpr glm::vec3 PLIGHT_DIST_7{ 1.0f, 0.7f, 1.8f };
+	constexpr glm::vec3 PLIGHT_DIST_20{ 1.0f, 0.22f, 0.2f };
+	constexpr glm::vec3 PLIGHT_DIST_50{ 1.0f, 0.09, 0.032f };
+	constexpr glm::vec3 PLIGHT_DIST_65{ 1.0f, 0.07f, 0.017f };
+	constexpr glm::vec3 PLIGHT_DIST_100{ 1.0f, 0.045f, 0.0075f };
 
 	//! Basic Light data that is needed for each light type
 	struct LightProperties {
@@ -120,7 +126,7 @@ namespace light {
 		LightProperties properties;
 	};
 
-	inline glm::vec3 calculateDirLight(DirectionalLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir) {
+	inline glm::vec3 calculateDirLight(DirectionalLight* lightPtr, mtrl::Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir) {
 		glm::vec3 lightDir = glm::normalize(-lightPtr->direction);
 		// Diffuse shading
 		float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
@@ -146,7 +152,7 @@ namespace light {
 		return res;
 	}
 
-	inline glm::vec3 calculatePointLight(PointLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
+	inline glm::vec3 calculatePointLight(PointLight* lightPtr, mtrl::Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
 		glm::vec3 lightDir = glm::normalize(lightPtr->position - fragPos);
 
 		// Diffuse shading
@@ -175,7 +181,7 @@ namespace light {
 		return res;
 	}
 
-	inline glm::vec3 calculateSpotLight(SpotLight* lightPtr, Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
+	inline glm::vec3 calculateSpotLight(SpotLight* lightPtr, mtrl::Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir, const glm::vec3& fragPos) {
 
 		glm::vec3 lightDir = glm::normalize(lightPtr->position - fragPos);
 		float theta = glm::dot(lightDir, glm::normalize(-lightPtr->direction));

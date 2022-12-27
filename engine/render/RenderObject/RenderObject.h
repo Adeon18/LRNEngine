@@ -7,7 +7,7 @@
 namespace engn {
 
 struct RenderObject {
-	RenderObject(math::hitable* shapePtr, const Material& mat) :
+	RenderObject(math::hitable* shapePtr, const mtrl::Material& mat) :
 		material{ mat }
 	{
 		shape = shapePtr;
@@ -18,7 +18,7 @@ struct RenderObject {
 	}
 
 	math::hitable* shape;
-	Material material;
+	mtrl::Material material;
 };
 
 } // engn

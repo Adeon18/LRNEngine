@@ -48,11 +48,11 @@ public:
         m_objects.emplace_back(new math::plane{ normal, point });
     }
 
-    void addSphereObject(math::sphere* s, const Material& m) {
+    void addSphereObject(math::sphere* s, const mtrl::Material& m) {
         m_renderObjects.emplace_back(new RenderObject{ s, m });
     }
 
-    void addPlaneObject(math::plane* pl, const Material& m) {
+    void addPlaneObject(math::plane* pl, const mtrl::Material& m) {
         m_renderObjects.emplace_back(new RenderObject{ pl, m });
     }
 
