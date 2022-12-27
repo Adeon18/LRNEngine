@@ -10,6 +10,7 @@
 
 #include "utils/FPSTimer.h"
 #include "render/Camera/Camera.h"
+#include "source/math/geometry/triangle.h"
 #include "source/math/geometry/sphere.h"
 #include "render/Scene/Scene.h"
 

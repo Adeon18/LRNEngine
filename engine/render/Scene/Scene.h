@@ -48,12 +48,8 @@ public:
         m_objects.emplace_back(new math::plane{ normal, point });
     }
 
-    void addSphereObject(math::sphere* s, const mtrl::Material& m) {
-        m_renderObjects.emplace_back(new RenderObject{ s, m });
-    }
-
-    void addPlaneObject(math::plane* pl, const mtrl::Material& m) {
-        m_renderObjects.emplace_back(new RenderObject{ pl, m });
+    void addRenderObject(math::hitable* o, const mtrl::Material& m) {
+        m_renderObjects.emplace_back(new RenderObject{ o, m });
     }
 
     void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{ 1.0f }) {

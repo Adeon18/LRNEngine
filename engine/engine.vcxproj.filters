@@ -51,6 +51,9 @@
     <ClInclude Include="render\RenderObject\RenderObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\math\geometry\triangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp">

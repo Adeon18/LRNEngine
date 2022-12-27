@@ -85,13 +85,22 @@ void Application::m_createObjects() {
 	);
 	
 	// Emerald sphere
-	m_scene->addSphereObject(
+	m_scene->addRenderObject(
 		new engn::math::sphere{ glm::vec3{ 0, 0, -20 }, 5},
-		engn::mtrl::EMERALD);
+		engn::mtrl::EMERALD
+	);
+
+	m_scene->addRenderObject(
+		new engn::math::triangle{ glm::vec3{ 4, 4, -10 }, glm::vec3{ 0, 4, -10 }, glm::vec3{ 0, 0, -10 } },
+		engn::mtrl::SILVER
+	);
+
 	// Whitw plastic plane
-	m_scene->addPlaneObject(
+	m_scene->addRenderObject(
 		new engn::math::plane{ glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
-		engn::mtrl::WHITE_PLASTIC);
+		engn::mtrl::WHITE_PLASTIC
+	);
+
 }
 
 

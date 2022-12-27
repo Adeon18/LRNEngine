@@ -175,7 +175,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
     auto* st_p = pixel;
     for (int y = 0; y < winData.bufferHeight; ++y)
     {
-        for (int x = 0; x < winData.bufferWidth; ++x)
+        for (int x = 0; x <= winData.bufferWidth; ++x)
         {
             math::ray r = camPtr->castRay(x, y);
             m_castRay(r, pixel, camPtr->getCamPosition());

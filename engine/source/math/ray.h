@@ -8,7 +8,7 @@ namespace math {
 
 class ray {
 public:
-	ray() {}
+	ray() : m_A{}, m_B{} {}
 	ray(const glm::vec3& origin, const glm::vec3& direction) : m_A{ origin }, m_B{ direction } {}
 
 	glm::vec3 getOrigin() const { return m_A; }

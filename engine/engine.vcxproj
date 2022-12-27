@@ -28,6 +28,7 @@
     <ClInclude Include="source\math\geometry\hitable.h" />
     <ClInclude Include="source\math\geometry\plane.h" />
     <ClInclude Include="source\math\geometry\sphere.h" />
+    <ClInclude Include="source\math\geometry\triangle.h" />
     <ClInclude Include="source\math\ray.h" />
     <ClInclude Include="utils\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
