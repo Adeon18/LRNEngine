@@ -90,7 +90,7 @@ void Application::m_createObjects() {
 		engn::mtrl::EMERALD);
 	// Whitw plastic plane
 	m_scene->addPlaneObject(
-		new engn::math::plane{ glm::normalize(glm::vec3(0.0f, -1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
+		new engn::math::plane{ glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
 		engn::mtrl::WHITE_PLASTIC);
 }
 

@@ -118,6 +118,7 @@ void Scene::m_castRay(const math::ray& r, COLORREF* pixel, const glm::vec3& camP
             closestObjIdx = i;
         }
     }
+
     //! Check light collision(just so we can draw positions)
     // Begin with spotlight
     auto collisionLog = m_spotLight->shape->hit(r);

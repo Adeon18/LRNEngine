@@ -9,6 +9,8 @@
 namespace engn {
 
 namespace light {
+	constexpr bool MODEL_BLING_PHONG = true;
+
 	//! Basic constant attenuation configs for
 	constexpr glm::vec3 PLIGHT_DIST_7{ 1.0f, 0.7f, 1.8f };
 	constexpr glm::vec3 PLIGHT_DIST_20{ 1.0f, 0.22f, 0.2f };
@@ -133,7 +135,7 @@ namespace light {
 
 		// specular shading bling vs phong
 		float spec = 0.0f;
-		if (1) {
+		if (MODEL_BLING_PHONG) {
 			glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
 			spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
 		}
@@ -160,7 +162,7 @@ namespace light {
 
 		// specular shading bling vs phong
 		float spec = 0.0f;
-		if (1) {
+		if (MODEL_BLING_PHONG) {
 			glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
 			spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
 		}
@@ -192,7 +194,7 @@ namespace light {
 
 		// specular shading bling vs phong
 		float spec = 0.0f;
-		if (1) {
+		if (MODEL_BLING_PHONG) {
 			glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
 			spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
 		}
