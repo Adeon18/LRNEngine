@@ -11,16 +11,45 @@ namespace engn {
 
 namespace mesh {
 
+
+	struct BoundingBox {
+		static constexpr float Inf = std::numeric_limits<float>::infinity();
+		static constexpr BoundingBox empty() { return  { { Inf, Inf, Inf }, { -Inf, -Inf, -Inf } }; }
+		static constexpr BoundingBox unit() { return  { { -1.f, -1.f, -1.f }, { 1.f, 1.f, 1.f } }; }
+
+		glm::vec3 size() const { return max - min; }
+		glm::vec3 center() const { return (min + max) / 2.f; }
+		float radius() const { return size().length() / 2.f; }
+
+		void expand(const BoundingBox& other) {
+			min = other.min;
+			max = other.max;
+		}
+
+		bool contains(const glm::vec3& P) {
+			return
+				min[0] <= P[0] && P[0] <= max[0] &&
+				min[1] <= P[1] && P[1] <= max[1] &&
+				min[2] <= P[2] && P[2] <= max[2];
+		}
+
+		//! Member variables
+		glm::vec3 min;
+		glm::vec3 max;
+	};
+
 	//! A class which basically represents a vector of triangles
 	struct Mesh {
-	public:
+		BoundingBox box;
+		std::vector<math::triangle> triangles;
+
 		Mesh() {};
 
-		Mesh(const std::vector<math::triangle>& ts) {
+		Mesh(const std::vector<math::triangle>& ts, const glm::vec3& min, const glm::vec3& max) : box{ min, max} {
 			triangles = ts;
 		}
 
-		Mesh(std::vector<math::triangle>&& ts) {
+		Mesh(std::vector<math::triangle>&& ts, const glm::vec3& min, const glm::vec3& max) : box{ min, max } {
 			triangles = std::move(ts);
 		}
 
@@ -35,36 +64,6 @@ namespace mesh {
 			}
 			return closestTriangle;
 		}
-
-		std::vector<math::triangle> triangles;
-	};
-
-	struct BoundingBox {
-		static constexpr float Inf = std::numeric_limits<float>::infinity();
-		static constexpr BoundingBox empty() { return  { { Inf, Inf, Inf }, { -Inf, -Inf, -Inf } }; }
-		static constexpr BoundingBox unit() { return  { { -1.f, -1.f, -1.f }, { 1.f, 1.f, 1.f } }; }
-
-		glm::vec3 size() const { return max - min; }
-		glm::vec3 center() const { return (min + max) / 2.f; }
-		float radius() const { return size().length() / 2.f; }
-
-		void expand(const BoundingBox& other)
-		{
-			min = other.min;
-			max = other.max;
-		}
-
-		bool contains(const glm::vec3& P)
-		{
-			return
-				min[0] <= P[0] && P[0] <= max[0] &&
-				min[1] <= P[1] && P[1] <= max[1] &&
-				min[2] <= P[2] && P[2] <= max[2];
-		}
-
-		//! Member variables
-		glm::vec3 min;
-		glm::vec3 max;
 	};
 
 	//! Yes, I spend 30 minutes doing this
@@ -95,8 +94,8 @@ namespace mesh {
 		// bottom side
 		cubeTriangles.emplace_back(glm::vec3(max.x, min.y, max.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, min.y, max.z));
 		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, min.y, max.z));
-	
-		return Mesh{ std::move(cubeTriangles) };
+		
+		return Mesh{ std::move(cubeTriangles), min, max };
 	}
 
 } // mesh

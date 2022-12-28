@@ -57,12 +57,18 @@
     <ClInclude Include="source\mesh\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\mesh\TriangleOcTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="render\Scene\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh\TriangleOcTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
