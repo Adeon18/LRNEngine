@@ -80,8 +80,18 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
 bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir) {
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
+    // Math objects
     for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
         auto collisionLog = m_renderMathObjects[i]->shape->hit(toLight);
+        if (collisionLog.isHit && collisionLog.rayT > 0) {
+            return true;
+        }
+    }
+    // Meshes
+    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
+        toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
+
+        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0) {
             return true;
         }
@@ -94,12 +104,23 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
     glm::vec3 distToLight = pointPos - hitEntry.hitPoint;
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
+    // Math objects
     for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
         auto collisionLog = m_renderMathObjects[i]->shape->hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0 && glm::length(collisionLog.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
             return true;
         }
     }
+    // Meshes
+    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
+        toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
+
+        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(toLight);
+        if (collisionLog.isHit && collisionLog.rayT > 0 && glm::length(collisionLog.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
+            return true;
+        }
+    }
+
     return false;
 }
 
@@ -121,14 +142,19 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
             closestObjIdx = i;
         }
     }
+
+    // Check mesh intersection -> translate vector in mesh modelspace
     for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
-        //std::cout << glm::to_string(r.getOrigin()) << " " << glm::to_string(r.getDirection()) << std::endl;
-        //r.transform(m_renderMeshObjects[i]->modelMatrix);
+        auto prevRayOrigin = r.getOrigin();
+        r.transform(m_renderMeshObjects[i]->modelMatrixInv);
+
         auto collisionLog = m_renderMeshObjects[i]->mesh.hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             closestEntry = collisionLog;
             closestObjIdx = i;
         }
+
+        r.setOrigin(prevRayOrigin);
     }
     
 

@@ -24,14 +24,13 @@ namespace mesh {
 			triangles = std::move(ts);
 		}
 
-		math::HitEntry hit(const math::ray& r) {
-			int closestTriangleIdx = 0;
+		//! Manual iterative hit function for mesh
+		math::HitEntry hit(math::ray& r) {
 			math::HitEntry closestTriangle = triangles[0].hit(r);
 			for (size_t i = 1; i < triangles.size(); ++i) {
 				auto collisionLog = triangles[i].hit(r);
 				if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestTriangle.rayT) {
 					closestTriangle = collisionLog;
-					closestTriangleIdx = i;
 				}
 			}
 			return closestTriangle;
@@ -68,6 +67,7 @@ namespace mesh {
 		glm::vec3 max;
 	};
 
+	//! Yes, I spend 30 minutes doing this
 	static Mesh GET_BOX_MESH(const glm::vec3& min, const glm::vec3& max) {
 		std::vector<math::triangle> cubeTriangles;
 		cubeTriangles.reserve(12);

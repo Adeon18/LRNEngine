@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace engn {
 
@@ -19,13 +20,10 @@ public:
 
 	void transform(const glm::mat4& transMat) {
 		glm::vec4 oVec4 = glm::vec4(m_A, 1.0f);
-		glm::vec4 dVec4 = glm::vec4(m_B, 1.0f);
 
 		oVec4 = transMat * oVec4;
-		dVec4 = transMat * dVec4;
 
 		m_A = glm::vec3(oVec4);
-		m_B = glm::vec3(dVec4);
 	}
 
 	glm::vec3 cast(float t) const { return m_A + t * m_B; }

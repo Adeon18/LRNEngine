@@ -98,7 +98,7 @@ void Application::m_createObjects() {
 	m_scene->addRenderObject(
 		engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{1, 1, 1}),
 		engn::mtrl::EMERALD,
-		glm::vec3{ 0, 0, -1 }
+		glm::vec3{ 0, 0, -5 }
 	);
 
 	// Whitw plastic plane

@@ -23,14 +23,14 @@ struct RenderMathObject {
 };
 
 struct RenderMeshObject {
-	RenderMeshObject(const mesh::Mesh& msh, const mtrl::Material& mat, glm::vec3 mshPos) :
+	RenderMeshObject(const mesh::Mesh& msh, const mtrl::Material& mat, const glm::vec3& mshPos) :
 		material{ mat }
 	{
 		mesh = msh;
-		modelMatrix = glm::translate(modelMatrix, mshPos);
+		modelMatrixInv = glm::inverse(glm::translate(modelMatrixInv, mshPos));
 	}
 
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	glm::mat4 modelMatrixInv = glm::mat4(1.0f);
 	mesh::Mesh mesh;
 	mtrl::Material material;
 };
