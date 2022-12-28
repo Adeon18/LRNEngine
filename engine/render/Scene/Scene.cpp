@@ -39,7 +39,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
     if (!isInShadow) {
         totalLight += light::calculateDirLight(
             m_direcLight.get(),
-            &(m_renderObjects[objIdx]->material),
+            &(m_renderMathObjects[objIdx]->material),
             hitEntry.hitNormal,
             glm::normalize(camPos - hitEntry.hitPoint)
         );
@@ -50,7 +50,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
         if (!isInShadow) {
             totalLight += light::calculatePointLight(
                 m_pointLights[i].get(),
-                &(m_renderObjects[objIdx]->material),
+                &(m_renderMathObjects[objIdx]->material),
                 hitEntry.hitNormal,
                 glm::normalize(camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
@@ -58,15 +58,17 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
         }
         isInShadow = false;
     }
-    isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLight->position);
-    if (!isInShadow) {
-        totalLight += light::calculateSpotLight(
-            m_spotLight.get(),
-            &(m_renderObjects[objIdx]->material),
-            hitEntry.hitNormal,
-            glm::normalize(camPos - hitEntry.hitPoint),
-            hitEntry.hitPoint
-        );
+    for (size_t i = 0; i < m_spotLights.size(); ++i) {
+        isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->position);
+        if (!isInShadow) {
+            totalLight += light::calculateSpotLight(
+                m_spotLights[i].get(),
+                &(m_renderMathObjects[objIdx]->material),
+                hitEntry.hitNormal,
+                glm::normalize(camPos - hitEntry.hitPoint),
+                hitEntry.hitPoint
+            );
+        }
     }
 
     totalLight = glm::clamp(totalLight, 0.0f, 1.0f);
@@ -78,8 +80,8 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
 bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir) {
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
-    for (size_t i = 0; i < m_renderObjects.size(); ++i) {
-        auto collisionLog = m_renderObjects[i]->shape->hit(toLight);
+    for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
+        auto collisionLog = m_renderMathObjects[i]->shape->hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0) {
             return true;
         }
@@ -92,8 +94,8 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
     glm::vec3 distToLight = pointPos - hitEntry.hitPoint;
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
-    for (size_t i = 0; i < m_renderObjects.size(); ++i) {
-        auto collisionLog = m_renderObjects[i]->shape->hit(toLight);
+    for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
+        auto collisionLog = m_renderMathObjects[i]->shape->hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0 && glm::length(collisionLog.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
             return true;
         }
@@ -102,33 +104,49 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
 }
 
 
-void Scene::m_castRay(const math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
+void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
 
     // Find the object closest to the ray
-    math::HitEntry closestEntry = m_renderObjects[0]->shape->hit(r);
+    math::HitEntry closestEntry = m_renderMathObjects[0]->shape->hit(r);
 
     bool isClosestHitALight = false;
     int closestObjIdx = 0;
     //! Check object collision
-    for (size_t i = 1; i < m_renderObjects.size(); ++i) {
+
+    for (size_t i = 1; i < m_renderMathObjects.size(); ++i) {
         //std::cout << glm::to_string(r.getOrigin()) << " " << glm::to_string(r.getDirection()) << std::endl;
-        auto collisionLog = m_renderObjects[i]->shape->hit(r);
+        auto collisionLog = m_renderMathObjects[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             closestEntry = collisionLog;
             closestObjIdx = i;
         }
     }
+    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
+        //std::cout << glm::to_string(r.getOrigin()) << " " << glm::to_string(r.getDirection()) << std::endl;
+        //r.transform(m_renderMeshObjects[i]->modelMatrix);
+        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(r);
+        if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
+            closestEntry = collisionLog;
+            closestObjIdx = i;
+        }
+    }
+    
+
 
     //! Check light collision(just so we can draw positions)
     // Begin with spotlight
-    auto collisionLog = m_spotLight->shape->hit(r);
-    if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
-        if (!isClosestHitALight) { isClosestHitALight = true; }
-        closestObjIdx = -1;
+    bool closestHitSpecular = false;
+    for (size_t i = 0; i < m_spotLights.size(); ++i) {
+        auto collisionLog = m_spotLights[i]->shape->hit(r);
+        if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
+            if (!isClosestHitALight) { isClosestHitALight = true; }
+            closestObjIdx = i;
+            closestHitSpecular = true;
+        }
     }
     // Point lights after
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
-        collisionLog = m_pointLights[i]->shape->hit(r);
+        auto collisionLog = m_pointLights[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             if (!isClosestHitALight) { isClosestHitALight = true; }
             closestObjIdx = i;
@@ -137,8 +155,8 @@ void Scene::m_castRay(const math::ray& r, COLORREF* pixel, const glm::vec3& camP
 
     if (isClosestHitALight) {
         glm::vec3 lightColor{ 255.0f };
-        if (closestObjIdx < 0) {
-            lightColor *= m_spotLight->properties.specular;
+        if (closestHitSpecular) {
+            lightColor *= m_spotLights[closestObjIdx]->properties.specular;
         }
         else {
             lightColor *= m_pointLights[closestObjIdx]->properties.specular;

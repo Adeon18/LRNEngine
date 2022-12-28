@@ -9,7 +9,7 @@ Application::Application() :
 	m_screenHeight{ WIN_HEIGHT_DEF },
 	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::FPSTimer{300} },
-	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() },
+	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, 3>() },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
 	m_createObjects();
@@ -70,19 +70,19 @@ void Application::m_createObjects() {
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }
 	);
 	
-	m_scene->addPointLight(
-		glm::vec3{ -6.0f, -1.0f, -23.0f },
-		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
-		engn::light::PLIGHT_DIST_50
-	);
-	//m_scene->addPointLight(glm::vec3{ -6.0f, 6.0f, -15.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.07f, 0.017f });
+	//m_scene->addPointLight(
+	//	glm::vec3{ -6.0f, -1.0f, -23.0f },
+	//	engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+	//	engn::light::PLIGHT_DIST_50
+	//);
+	////m_scene->addPointLight(glm::vec3{ -6.0f, 6.0f, -15.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.07f, 0.017f });
 
-	m_scene->setSpotLight(
+	/*m_scene->addSpotLight(
 		glm::vec3{ 0.0f, -1.0f, 0.0f },
 		glm::vec3{ 5.f, 4.0f, -20.0f },
 		glm::vec2{ 0.9f, 0.7f },
 		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} }
-	);
+	);*/
 	
 	// Emerald sphere
 	m_scene->addRenderObject(
@@ -90,9 +90,15 @@ void Application::m_createObjects() {
 		engn::mtrl::EMERALD
 	);
 
-	m_scene->addRenderObject(
+	/*m_scene->addRenderObject(
 		new engn::math::triangle{ glm::vec3{ 4, 4, -10 }, glm::vec3{ 0, 4, -10 }, glm::vec3{ 0, 0, -10 } },
 		engn::mtrl::SILVER
+	);*/
+
+	m_scene->addRenderObject(
+		engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{1, 1, 1}),
+		engn::mtrl::EMERALD,
+		glm::vec3{ 0, 0, -1 }
 	);
 
 	// Whitw plastic plane

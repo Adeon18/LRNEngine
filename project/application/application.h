@@ -97,5 +97,5 @@ private:
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
 	std::unique_ptr<engn::FPSTimer> m_timer;
-	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
+	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, 3>> m_window;
 };

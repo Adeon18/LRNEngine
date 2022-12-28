@@ -28,7 +28,7 @@ struct WindowRenderData
 	int bufferHeight{};
 };
 
-template<int W, int H>
+template<int W, int H, int BDS>
 class Window {
 public:
 	const wchar_t* WINDOW_NAME = L"EngineClass";
@@ -133,7 +133,7 @@ private:
 	inline static WindowRenderData m_windowRenderData{
 		nullptr,
 		W, H,
-		W / 2, H / 2
+		W / BDS, H / BDS
 	};
 
 	inline static RECT m_windowRect{ 0, 0, W, H };
@@ -197,8 +197,8 @@ private:
 		m_windowRenderData.screenWidth = newClientRect.right - newClientRect.left;
 		m_windowRenderData.screenHeight = newClientRect.bottom - newClientRect.top;
 
-		m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / 2;
-		m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / 2;
+		m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / BDS;
+		m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / BDS;
 
 		m_windowRect = newClientRect;
 		AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);

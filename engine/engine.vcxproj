@@ -30,6 +30,7 @@
     <ClInclude Include="source\math\geometry\sphere.h" />
     <ClInclude Include="source\math\geometry\triangle.h" />
     <ClInclude Include="source\math\ray.h" />
+    <ClInclude Include="source\mesh\Mesh.h" />
     <ClInclude Include="utils\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>

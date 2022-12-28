@@ -38,18 +38,12 @@ public:
 
     void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
 
-    [[nodiscard]] math::sphere& getSphere() { return dynamic_cast<math::sphere&>(*m_objects[0]); }
-
-    void addSphere(const glm::vec3& center, float radius) {
-        m_objects.emplace_back(new math::sphere{ center, radius });
-    }
-
-    void addPlane(const glm::vec3& normal, glm::vec3 point) {
-        m_objects.emplace_back(new math::plane{ normal, point });
-    }
-
     void addRenderObject(math::hitable* o, const mtrl::Material& m) {
-        m_renderObjects.emplace_back(new RenderObject{ o, m });
+        m_renderMathObjects.emplace_back(new RenderMathObject{ o, m });
+    }
+
+    void addRenderObject(const mesh::Mesh& msh, const mtrl::Material& m, const glm::vec3 pos) {
+        m_renderMeshObjects.emplace_back(new RenderMeshObject{ msh, m, pos});
     }
 
     void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{ 1.0f }) {
@@ -60,14 +54,14 @@ public:
         m_direcLight = std::make_unique<light::DirectionalLight>(dir, prop);
     }
 
-    void setSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color = glm::vec3{ 1.0f }) {
-        m_spotLight = std::make_unique<light::SpotLight>(dir, pos, range, prop, color);
+    void addSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color = glm::vec3{ 1.0f }) {
+        m_spotLights.emplace_back( new light::SpotLight(dir, pos, range, prop, color));
     }
 
 private:
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
-    void m_castRay(const math::ray& r, COLORREF* pixel, const glm::vec3& camPos);
+    void m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos);
     //! Calculate lighting and materials and shadows
     void m_getObjectColor(int objIdx, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
     //! Get the combined lighing color on an object
@@ -78,12 +72,11 @@ private:
     bool m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm::vec3& pointPos);
 private:
     std::unique_ptr<light::DirectionalLight> m_direcLight;
-    std::unique_ptr<light::SpotLight> m_spotLight;
-    // obsolete
-    std::vector<std::unique_ptr<math::hitable>> m_objects;
 
-    std::vector<std::unique_ptr<RenderObject>> m_renderObjects;
+    std::vector<std::unique_ptr<RenderMathObject>> m_renderMathObjects;
+    std::vector<std::unique_ptr<RenderMeshObject>> m_renderMeshObjects;
     std::vector<std::unique_ptr<light::PointLight>> m_pointLights;
+    std::vector<std::unique_ptr<light::SpotLight>> m_spotLights;
 
     glm::vec3 m_lightPosition;
 };
