@@ -10,22 +10,26 @@
 namespace engn {
 
 namespace mesh {
-
-
+	//! A bounding box class for faster mesh collision detection
 	struct BoundingBox {
+	public:
 		static constexpr float Inf = std::numeric_limits<float>::infinity();
 		static constexpr BoundingBox empty() { return  { { Inf, Inf, Inf }, { -Inf, -Inf, -Inf } }; }
 		static constexpr BoundingBox unit() { return  { { -1.f, -1.f, -1.f }, { 1.f, 1.f, 1.f } }; }
 
+		//! Get size by diagonal
 		glm::vec3 size() const { return max - min; }
+		//! Get center point of box
 		glm::vec3 center() const { return (min + max) / 2.f; }
+		//! Get the radius of a outside sphere
 		float radius() const { return size().length() / 2.f; }
 
+		//! Change the BBs size
 		void expand(const BoundingBox& other) {
 			min = other.min;
 			max = other.max;
 		}
-
+		//! Check if BB contains a point
 		bool contains(const glm::vec3& P) {
 			return
 				min[0] <= P[0] && P[0] <= max[0] &&
@@ -33,6 +37,44 @@ namespace mesh {
 				min[2] <= P[2] && P[2] <= max[2];
 		}
 
+		bool hit(const math::ray& r) const {
+			// x values
+			float txMin = (min.x - r.origin.x) / r.direction.x;
+			float txMax = (max.x - r.origin.x) / r.direction.x;
+
+			float tMin = (std::min)(txMax, txMin);
+			float tMax = (std::max)(txMax, txMin);
+
+			// y values
+			float tyMin = (min.y - r.origin.y) / r.direction.y;
+			float tyMax = (max.y - r.origin.y) / r.direction.y;
+
+			if (tyMin > tyMax) { std::swap(tyMin, tyMax); }
+
+			if ((tMin > tyMax) || (tyMin > tMax)) { return false; }
+
+			tMin = (std::max)(tMin, tyMin);
+			tMax = (std::min)(tMax, tyMax);
+
+			// z values
+			float tzMin = (min.z - r.origin.z) / r.direction.z;
+			float tzMax = (max.z - r.origin.z) / r.direction.z;
+
+			if (tzMin > tzMax) { std::swap(tzMin, tzMax); }
+
+			if ((tMin > tzMax) || (tzMin > tMax))
+				return false;
+
+			/*if (tzMin > tMin)
+				tMin = tzMin;
+
+			if (tzMax < tMax)
+				tMax = tzMax;*/
+
+			return true;
+
+		}
+	public:
 		//! Member variables
 		glm::vec3 min;
 		glm::vec3 max;
@@ -43,7 +85,7 @@ namespace mesh {
 		BoundingBox box;
 		std::vector<math::triangle> triangles;
 
-		Mesh() {};
+		Mesh() : box{} {};
 
 		Mesh(const std::vector<math::triangle>& ts, const glm::vec3& min, const glm::vec3& max) : box{ min, max} {
 			triangles = ts;

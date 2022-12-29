@@ -145,7 +145,7 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
 
     // Check mesh intersection -> translate vector in mesh modelspace
     for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
-        auto prevRayOrigin = r.getOrigin();
+        auto prevRayOrigin = r.origin;
         r.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
         auto collisionLog = m_renderMeshObjects[i]->mesh.hit(r);
@@ -154,7 +154,7 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
             closestObjIdx = i;
         }
 
-        r.setOrigin(prevRayOrigin);
+        r.origin = prevRayOrigin;
     }
     
 

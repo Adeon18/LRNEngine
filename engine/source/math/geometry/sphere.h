@@ -19,10 +19,10 @@ public:
 	[[nodiscard]] HitEntry hit(const ray& r) const override {
 		HitEntry collisionRes{};
 
-		const glm::vec3 to_r = r.getOrigin() - m_center;
+		const glm::vec3 to_r = r.origin - m_center;
 
-		const float a = glm::dot(r.getDirection(), r.getDirection());
-		const float b = 2.f * glm::dot(to_r, r.getDirection());
+		const float a = glm::dot(r.direction, r.direction);
+		const float b = 2.f * glm::dot(to_r, r.direction);
 		const float c = glm::dot(to_r, to_r) - m_radius * m_radius;
 
 		const float discriminant = b * b - 4 * a * c;

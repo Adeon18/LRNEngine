@@ -25,6 +25,7 @@ namespace math {
 			vertices[1] = other.vertices[1];
 			vertices[2] = other.vertices[2];
 
+			normal = other.normal;
 			return *this;
 		}
 
@@ -36,7 +37,7 @@ namespace math {
 			glm::vec3 e1 = vertices[1] - vertices[0];
 			glm::vec3 e2 = vertices[2] - vertices[0];
 
-			glm::vec3 pv = glm::cross(r.getDirection(), e2);
+			glm::vec3 pv = glm::cross(r.direction, e2);
 
 			float det = glm::dot(e1, pv);
 
@@ -47,7 +48,7 @@ namespace math {
 
 			float invDet = 1.0f / det;
 
-			glm::vec3 toRayOrigin = r.getOrigin() - vertices[0];
+			glm::vec3 toRayOrigin = r.origin - vertices[0];
 			
 			float uParam = glm::dot(toRayOrigin, pv) * invDet;
 			if (uParam < 0.0f || uParam > 1.0f) {
@@ -56,7 +57,7 @@ namespace math {
 
 			glm::vec3 vParamTestVec = glm::cross(toRayOrigin, e1);
 
-			float vParam = glm::dot(r.getDirection(), vParamTestVec) * invDet;
+			float vParam = glm::dot(r.direction, vParamTestVec) * invDet;
 			if (vParam < 0.0f || uParam + vParam > 1.0f) {
 				return collisionRes;
 			}
@@ -70,7 +71,7 @@ namespace math {
 
 			return collisionRes;
 		}
-
+	public:
 		glm::vec3 vertices[3];
 		glm::vec3 normal;
 	};

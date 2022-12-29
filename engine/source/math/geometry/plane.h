@@ -21,13 +21,12 @@ public:
 	[[nodiscard]] HitEntry hit(const ray& r) const override {
 		HitEntry collisionRes{};
 
-		float res = glm::dot(r.getDirection(), m_normal);
-		//std::cout << res << std::endl;
-		// TODO: Replace constant
+		float res = glm::dot(r.direction, m_normal);
+
 		if (res > MIN_ANGLE_DOT || res < -MIN_ANGLE_DOT)
 		{
-			float dist = glm::dot(m_point - r.getOrigin(), m_normal) / res;
-			//std::cout << dist << std::endl;
+			float dist = glm::dot(m_point - r.origin, m_normal) / res;
+
 			if (dist < MAX_DIST)
 			{
 				collisionRes.isHit = true;

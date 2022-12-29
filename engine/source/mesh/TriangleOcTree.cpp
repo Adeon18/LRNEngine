@@ -14,11 +14,7 @@ namespace mesh {
 
 	inline const glm::vec3& getPos(const Mesh& mesh, uint32_t triangleIndex, uint32_t vertexIndex)
 	{
-		/*uint32_t index = mesh.triangles.empty() ?
-			triangleIndex * 3 + vertexIndex :
-			mesh.triangles[triangleIndex].indices[vertexIndex];
-
-		return mesh.vertices[index].pos;*/
+		return mesh.triangles[triangleIndex].vertices[vertexIndex];
 	}
 
 	void TriangleOctree::initialize(const Mesh& mesh)
@@ -165,9 +161,9 @@ namespace mesh {
 
 	bool TriangleOctree::intersect(const math::ray& ray, MeshIntersection& nearest) const
 	{
+		// my change
 		float boxT = nearest.t;
-		//if (!ray.intersect(boxT, m_box, true))
-		//	return false;
+		if (!m_box.hit(ray)) { return false; }
 
 		return intersectInternal(ray, nearest);
 	}
@@ -176,24 +172,25 @@ namespace mesh {
 	bool TriangleOctree::intersectInternal(const math::ray& ray, MeshIntersection& nearest) const
 	{
 		{
+			// my change
 			float boxT = nearest.t;
-			//if (!ray.intersect(boxT, m_box, true))
-			//	return false;
+			if (!m_box.hit(ray)) { return false; }
 		}
 
 		bool found = false;
 
 		for (uint32_t i = 0; i < m_triangles.size(); ++i)
 		{
-			const glm::vec3& V1 = getPos(*m_mesh, m_triangles[i], 0);
+			/*const glm::vec3& V1 = getPos(*m_mesh, m_triangles[i], 0);
 			const glm::vec3& V2 = getPos(*m_mesh, m_triangles[i], 1);
-			const glm::vec3& V3 = getPos(*m_mesh, m_triangles[i], 2);
+			const glm::vec3& V3 = getPos(*m_mesh, m_triangles[i], 2);*/
 
-			//if (ray.intersect(nearest, V1, V2, V3))
-			//{
-			//	nearest.triangle = i;
-			//	found = true;
-			//}
+			// Custom check if triangle was hit and t is the smallest
+			auto collisionLog = (*m_mesh).triangles[m_triangles[i]].hit(ray);
+			if (collisionLog.isHit && collisionLog.rayT < nearest.t) {
+				nearest.triangle = i;
+				found = true;
+			}
 		}
 
 		if (!m_children) return found;
@@ -208,7 +205,7 @@ namespace mesh {
 
 		for (int i = 0; i < 8; ++i)
 		{
-			if ((*m_children)[i].m_box.contains(ray.getOrigin()))
+			if ((*m_children)[i].m_box.contains(ray.origin))
 			{
 				boxIntersections[i].index = i;
 				boxIntersections[i].t = 0.f;
@@ -216,7 +213,7 @@ namespace mesh {
 			else
 			{
 				float boxT = nearest.t;
-				/*if (ray.intersect(boxT, (*m_children)[i].m_box, true))
+				if ((*m_children)[i].m_box.hit(ray))
 				{
 					boxIntersections[i].index = i;
 					boxIntersections[i].t = boxT;
@@ -224,7 +221,7 @@ namespace mesh {
 				else
 				{
 					boxIntersections[i].index = -1;
-				}*/
+				}
 			}
 		}
 

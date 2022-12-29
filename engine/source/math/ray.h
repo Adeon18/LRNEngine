@@ -9,27 +9,22 @@ namespace math {
 
 class ray {
 public:
-	ray() : m_A{}, m_B{} {}
-	ray(const glm::vec3& origin, const glm::vec3& direction) : m_A{ origin }, m_B{ direction } {}
+	ray() : origin{}, direction{} {}
+	ray(const glm::vec3& o, const glm::vec3& d) : origin{ o }, direction{ d } {}
 
-	glm::vec3 getOrigin() const { return m_A; }
-	glm::vec3 getDirection() const { return m_B; }
-
-	void setOrigin(const glm::vec3& o) { m_A = o; }
-	void setDirection(const glm::vec3& d) { m_B = d; }
-
+	//! Transform a ray by specified matrix
 	void transform(const glm::mat4& transMat) {
-		glm::vec4 oVec4 = glm::vec4(m_A, 1.0f);
+		glm::vec4 oVec4 = glm::vec4(origin, 1.0f);
 
 		oVec4 = transMat * oVec4;
 
-		m_A = glm::vec3(oVec4);
+		origin = glm::vec3(oVec4);
 	}
+	//! Cast a ray in the direction by t
+	glm::vec3 cast(float t) const { return origin + t * direction; }
 
-	glm::vec3 cast(float t) const { return m_A + t * m_B; }
-private:
-	glm::vec3 m_A;
-	glm::vec3 m_B;
+	glm::vec3 origin;
+	glm::vec3 direction;
 };
 
 } // math
