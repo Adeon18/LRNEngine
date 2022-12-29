@@ -161,7 +161,7 @@ namespace mesh {
 
 	bool TriangleOctree::intersect(const math::ray& ray, MeshIntersection& nearest) const
 	{
-		// my change
+		// my change - NEED to account for t
 		float boxT = nearest.t;
 		if (!m_box.hit(ray)) { return false; }
 
@@ -172,7 +172,7 @@ namespace mesh {
 	bool TriangleOctree::intersectInternal(const math::ray& ray, MeshIntersection& nearest) const
 	{
 		{
-			// my change
+			// my change - NEED to account for t
 			float boxT = nearest.t;
 			if (!m_box.hit(ray)) { return false; }
 		}
