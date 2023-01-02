@@ -99,8 +99,8 @@ void Camera::updateMatrices() {
 math::ray Camera::castRay(int x, int y) {
 
     glm::vec3 rayTo = m_BLNearClipInWorld +
-        (m_rayCastData.pixelWidth / 2.0f) * m_BRDirection + (m_rayCastData.pixelWidth * x * m_rayCastData.strideX) * m_BRDirection +
-        (m_rayCastData.pixelHeight / 2.0f) * m_TLDirection + (m_rayCastData.pixelHeight * y * m_rayCastData.strideY) * m_TLDirection;
+        (m_rayCastData.halfPixelWidth) * m_BRDirection + (m_rayCastData.pixelWidth * x * m_rayCastData.strideX) * m_BRDirection +
+        (m_rayCastData.halfPixelHeight) * m_TLDirection + (m_rayCastData.pixelHeight * y * m_rayCastData.strideY) * m_TLDirection;
 
     glm::vec3 rayDirection = glm::normalize(rayTo - m_position);
 

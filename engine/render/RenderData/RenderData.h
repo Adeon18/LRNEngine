@@ -7,6 +7,9 @@ struct RayCastData {
     float pixelWidth;
     float pixelHeight;
 
+    float halfPixelWidth;
+    float halfPixelHeight;
+
     float strideX;
     float strideY;
 };

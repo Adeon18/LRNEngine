@@ -14,10 +14,6 @@
 #include "source/math/geometry/sphere.h"
 #include "render/Scene/Scene.h"
 
-constexpr int WIN_WIDTH_DEF = 960;
-constexpr int WIN_HEIGHT_DEF = 540;
-
-constexpr float ROLL_SPEED_DEG = 1.0f;
 
 class Application
 {
@@ -35,6 +31,10 @@ class Application
 		inline static int KEY_CTRL = VK_CONTROL;
 		inline static int KEY_SPACE = VK_SPACE;
 	};
+	static constexpr int WIN_WIDTH_DEF = 960;
+	static constexpr int WIN_HEIGHT_DEF = 540;
+	static constexpr int BUFF_DECREASE_TIMES = 3;
+	static constexpr float ROLL_SPEED_DEG = 1.0f;
 public:
 	Application();
 	//! Run and render the application
@@ -97,5 +97,5 @@ private:
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
 	std::unique_ptr<engn::FPSTimer> m_timer;
-	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, 3>> m_window;
+	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
 };

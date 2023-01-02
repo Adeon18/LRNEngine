@@ -9,12 +9,12 @@ Scene::Scene() :
 }
 
 
-void Scene::m_getObjectColor(int objIdx, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos) {
+void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos) {
 
     COLORREF hit_color;
 
     if (hitEntry.isHit) {
-        auto objColor = m_getObjectLighting(objIdx, hitEntry, camPos);
+        auto objColor = m_getObjectLighting(closestObj, hitEntry, camPos);
         objColor *= 255;
 
         hit_color = RGBtoBE(RGB(
@@ -31,7 +31,7 @@ void Scene::m_getObjectColor(int objIdx, const math::HitEntry& hitEntry, COLORRE
 }
 
 
-glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry, const glm::vec3& camPos) {
+glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry, const glm::vec3& camPos) {
     glm::vec3 totalLight{ 0.0f };
 
     bool isInShadow = m_isFragmentInDirectionShadow(hitEntry, glm::normalize(-m_direcLight->direction));
@@ -40,7 +40,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
     if (!isInShadow) {
         totalLight += light::calculateDirLight(
             m_direcLight.get(),
-            &(m_renderMathObjects[objIdx]->material),
+            (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material): &(m_renderMathObjects[closestObj.objIdx]->material),
             hitEntry.hitNormal,
             glm::normalize(camPos - hitEntry.hitPoint)
         );
@@ -51,7 +51,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
         if (!isInShadow) {
             totalLight += light::calculatePointLight(
                 m_pointLights[i].get(),
-                &(m_renderMathObjects[objIdx]->material),
+                (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
                 hitEntry.hitNormal,
                 glm::normalize(camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
@@ -65,7 +65,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
         if (!isInShadow) {
             totalLight += light::calculateSpotLight(
                 m_spotLights[i].get(),
-                &(m_renderMathObjects[objIdx]->material),
+                (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
                 hitEntry.hitNormal,
                 glm::normalize(camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
@@ -132,16 +132,16 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
     // Find the object closest to the ray
     math::HitEntry closestEntry = m_renderMathObjects[0]->shape->hit(r);
 
-    bool isClosestHitALight = false;
-    int closestObjIdx = 0;
-    //! Check object collision
+    ClosestObj closestObj{0, false};
 
+    bool isClosestHitALight = false;
+    //! Check object collision
+    // Math objects
     for (size_t i = 1; i < m_renderMathObjects.size(); ++i) {
-        //std::cout << glm::to_string(r.getOrigin()) << " " << glm::to_string(r.getDirection()) << std::endl;
         auto collisionLog = m_renderMathObjects[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             closestEntry = collisionLog;
-            closestObjIdx = i;
+            closestObj.objIdx = i;
         }
     }
 
@@ -153,13 +153,14 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         auto collisionLog = m_renderMeshObjects[i]->mesh.hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             closestEntry = collisionLog;
-            closestObjIdx = i;
+            // Yes
+            closestEntry.hitPoint = glm::vec3(m_renderMeshObjects[i]->modelMatrix * glm::vec4(closestEntry.hitPoint, 1.0f));
+            closestObj.objIdx = i;
+            closestObj.isMesh = true;
         }
 
         r.origin = prevRayOrigin;
     }
-    
-
 
     //! Check light collision(just so we can draw positions)
     // Begin with spotlight
@@ -168,7 +169,7 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         auto collisionLog = m_spotLights[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             if (!isClosestHitALight) { isClosestHitALight = true; }
-            closestObjIdx = i;
+            closestObj.objIdx = i;
             closestHitSpecular = true;
         }
     }
@@ -177,17 +178,17 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         auto collisionLog = m_pointLights[i]->shape->hit(r);
         if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
             if (!isClosestHitALight) { isClosestHitALight = true; }
-            closestObjIdx = i;
+            closestObj.objIdx = i;
         }
     }
 
     if (isClosestHitALight) {
         glm::vec3 lightColor{ 255.0f };
         if (closestHitSpecular) {
-            lightColor *= m_spotLights[closestObjIdx]->properties.specular;
+            lightColor *= m_spotLights[closestObj.objIdx]->properties.specular;
         }
         else {
-            lightColor *= m_pointLights[closestObjIdx]->properties.specular;
+            lightColor *= m_pointLights[closestObj.objIdx]->properties.specular;
         }
         *pixel = RGBtoBE(RGB(
             lightColor.x,
@@ -196,7 +197,7 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         return;
     }
 
-    m_getObjectColor(closestObjIdx, closestEntry, pixel, camPos);
+    m_getObjectColor(closestObj, closestEntry, pixel, camPos);
 }
 
 
@@ -208,9 +209,14 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
         return;
     }
 
+     
+    float pixelWidth = glm::length(camPtr->getBRVec()) / static_cast<float>(winData.screenWidth);
+    float pixelHeight = glm::length(camPtr->getTLVec()) / static_cast<float>(winData.screenHeight);
     RayCastData rayCastData{
-        static_cast<double>(glm::length(camPtr->getBRVec())) / static_cast<double>(winData.screenWidth),
-        static_cast<double>(glm::length(camPtr->getTLVec())) / static_cast<double>(winData.screenHeight),
+        pixelWidth,
+        pixelHeight,
+        pixelWidth / 2.0f,
+        pixelHeight / 2.0f,
         winData.screenWidth / winData.bufferWidth,
         winData.screenHeight / winData.bufferHeight
     };

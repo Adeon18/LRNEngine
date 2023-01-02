@@ -27,6 +27,10 @@ static COLORREF RGBtoBE(const COLORREF& rgb)
 
 
 class Scene {
+    static struct ClosestObj{
+        int objIdx;
+        bool isMesh;
+    };
 public:
     const COLORREF SPHERE_COLOR = RGB(255, 0, 0);
     const COLORREF PLANE_COLOR = RGB(50, 50, 50);
@@ -63,9 +67,9 @@ private:
     //! Cast a single ray and fill a single ray entry
     void m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos);
     //! Calculate lighting and materials and shadows
-    void m_getObjectColor(int objIdx, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
+    void m_getObjectColor(const ClosestObj& closestObj, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
     //! Get the combined lighing color on an object
-    glm::vec3 m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry, const glm::vec3& camPos);
+    glm::vec3 m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry, const glm::vec3& camPos);
 
     bool m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir);
 

@@ -115,26 +115,26 @@ namespace mesh {
 
 		// right side
 		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, max.z), glm::vec3(max.x, min.y, max.z), glm::vec3(max.x, min.y, min.z));
-		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, max.z), glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, min.y, min.z));
+		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, max.y, max.z), glm::vec3(max.x, min.y, min.z));
 
 		// left side
-		cubeTriangles.emplace_back(glm::vec3(min.x, max.y, max.z), glm::vec3(min.x, min.y, max.z), glm::vec3(min.x, max.y, min.z));
-		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, max.z), glm::vec3(min.x, min.y, min.z), glm::vec3(min.x, max.y, min.z));
+		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, max.z), glm::vec3(min.x, max.y, max.z), glm::vec3(min.x, max.y, min.z));
+		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, min.z), glm::vec3(min.x, min.y, max.z), glm::vec3(min.x, max.y, min.z));	// bottom
 
 		// front side
-		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, max.z), glm::vec3(max.x, min.y, max.z), glm::vec3(min.x, max.y, max.z));
+		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, max.z), glm::vec3(min.x, max.y, max.z), glm::vec3(max.x, min.y, max.z));
 		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, max.z), glm::vec3(max.x, min.y, max.z), glm::vec3(min.x, max.y, max.z));
 
 		// back side
-		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, max.y, min.z));
-		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, max.y, min.z));
+		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, max.y, min.z));	// bottom
+		cubeTriangles.emplace_back(glm::vec3(min.x, max.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, min.y, min.z));	// top
 
 		// top side
-		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, min.z), glm::vec3(max.x, max.y, max.z), glm::vec3(min.x, max.y, min.z));
+		cubeTriangles.emplace_back(glm::vec3(max.x, max.y, max.z), glm::vec3(max.x, max.y, min.z), glm::vec3(min.x, max.y, min.z));
 		cubeTriangles.emplace_back(glm::vec3(min.x, max.y, max.z), glm::vec3(max.x, max.y, max.z), glm::vec3(min.x, max.y, min.z));
 
 		// bottom side
-		cubeTriangles.emplace_back(glm::vec3(max.x, min.y, max.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, min.y, max.z));
+		cubeTriangles.emplace_back(glm::vec3(max.x, min.y, max.z), glm::vec3(min.x, min.y, max.z), glm::vec3(max.x, min.y, min.z));
 		cubeTriangles.emplace_back(glm::vec3(min.x, min.y, min.z), glm::vec3(max.x, min.y, min.z), glm::vec3(min.x, min.y, max.z));
 		
 		return Mesh{ std::move(cubeTriangles), min, max };

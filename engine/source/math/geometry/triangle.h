@@ -20,7 +20,7 @@ namespace math {
 			vertices[2] = v2;
 			edges[0] = vertices[1] - vertices[0];
 			edges[1] = vertices[2] - vertices[0];
-			normal = glm::normalize(glm::cross(v0 - v1, v0 - v2));
+			normal = glm::normalize(glm::cross(edges[0], edges[1]));
 		}
 
 		triangle& operator=(const triangle& other) {
@@ -42,7 +42,7 @@ namespace math {
 			float det = glm::dot(edges[0], pv);
 
 			// If ray is paralell to the triangle
-			if (det < EPS && det > -EPS) {
+			if (det < EPS) {
 				return collisionRes;
 			}
 

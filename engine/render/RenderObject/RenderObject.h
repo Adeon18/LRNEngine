@@ -27,9 +27,11 @@ struct RenderMeshObject {
 		material{ mat }
 	{
 		mesh = msh;
-		modelMatrixInv = glm::inverse(glm::translate(modelMatrixInv, mshPos));
+		modelMatrix = glm::translate(modelMatrixInv, mshPos);
+		modelMatrixInv = glm::inverse(modelMatrix);
 	}
 
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	glm::mat4 modelMatrixInv = glm::mat4(1.0f);
 	mesh::Mesh mesh;
 	mtrl::Material material;
