@@ -37,7 +37,7 @@ namespace mesh {
 				min[2] <= P[2] && P[2] <= max[2];
 		}
 
-		bool hit(const math::ray& r) const {
+		bool hit(const math::ray& r, math::HitEntry& hitEntry) const {
 			// x values
 			float txMin = (min.x - r.origin.x) / r.direction.x;
 			float txMax = (max.x - r.origin.x) / r.direction.x;
@@ -65,11 +65,14 @@ namespace mesh {
 			if ((tMin > tzMax) || (tzMin > tMax))
 				return false;
 
-			/*if (tzMin > tMin)
+			if (tzMin > tMin)
 				tMin = tzMin;
 
 			if (tzMax < tMax)
-				tMax = tzMax;*/
+				tMax = tzMax;
+
+			hitEntry.isHit = true;
+			hitEntry.rayT = tMin;
 
 			return true;
 

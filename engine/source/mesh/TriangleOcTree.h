@@ -2,6 +2,7 @@
 
 
 #include <vector>
+#include <array>
 #include <memory>
 
 #include "source/mesh/Mesh.h"
@@ -33,7 +34,7 @@ namespace mesh {
 
 		void initialize(const Mesh& mesh);
 
-		bool intersect(const math::ray& ray, MeshIntersection& nearest) const;
+		bool intersect(const math::ray& ray, math::HitEntry& nearest) const;
 
 	protected:
 		const Mesh* m_mesh = nullptr;
@@ -48,7 +49,7 @@ namespace mesh {
 
 		bool addTriangle(uint32_t triangleIndex, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3, const glm::vec3& center);
 
-		bool intersectInternal(const math::ray& ray, MeshIntersection& nearest) const;
+		bool intersectInternal(const math::ray& ray, math::HitEntry& nearest) const;
 	};
 
 } // mesh

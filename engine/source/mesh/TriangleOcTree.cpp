@@ -159,26 +159,27 @@ namespace mesh {
 		return true;
 	}
 
-	bool TriangleOctree::intersect(const math::ray& ray, MeshIntersection& nearest) const
+	bool TriangleOctree::intersect(const math::ray& ray, math::HitEntry& nearest) const
 	{
 		// my change - NEED to account for t
-		float boxT = nearest.t;
-		if (!m_box.hit(ray)) { return false; }
+		math::HitEntry hitEntry;
+		if (!m_box.hit(ray, hitEntry)) { return false; }
 
 		return intersectInternal(ray, nearest);
 	}
 
 
-	bool TriangleOctree::intersectInternal(const math::ray& ray, MeshIntersection& nearest) const
+	bool TriangleOctree::intersectInternal(const math::ray& ray, math::HitEntry& nearest) const
 	{
 		{
 			// my change - NEED to account for t
-			float boxT = nearest.t;
-			if (!m_box.hit(ray)) { return false; }
+			math::HitEntry hitEntry;
+			if (!m_box.hit(ray, hitEntry)) { return false; }
 		}
 
 		bool found = false;
 
+		// Check for triangles in the current box
 		for (uint32_t i = 0; i < m_triangles.size(); ++i)
 		{
 			/*const glm::vec3& V1 = getPos(*m_mesh, m_triangles[i], 0);
@@ -187,12 +188,12 @@ namespace mesh {
 
 			// Custom check if triangle was hit and t is the smallest
 			auto collisionLog = (*m_mesh).triangles[m_triangles[i]].hit(ray);
-			if (collisionLog.isHit && collisionLog.rayT < nearest.t) {
-				nearest.triangle = i;
+			if (collisionLog.isHit && collisionLog.rayT < nearest.rayT) {
+				nearest = collisionLog;
 				found = true;
 			}
 		}
-
+		// If there are chidren, check if their triangles are closer
 		if (!m_children) return found;
 
 		struct OctantIntersection
@@ -202,7 +203,7 @@ namespace mesh {
 		};
 
 		std::array<OctantIntersection, 8> boxIntersections;
-
+		// Check for collisions in child boxes
 		for (int i = 0; i < 8; ++i)
 		{
 			if ((*m_children)[i].m_box.contains(ray.origin))
@@ -212,11 +213,12 @@ namespace mesh {
 			}
 			else
 			{
-				float boxT = nearest.t;
-				if ((*m_children)[i].m_box.hit(ray))
+				//float boxT = nearest.t;
+				math::HitEntry hitEntry;
+				if ((*m_children)[i].m_box.hit(ray, hitEntry))
 				{
 					boxIntersections[i].index = i;
-					boxIntersections[i].t = boxT;
+					boxIntersections[i].t = hitEntry.rayT;
 				}
 				else
 				{
@@ -224,13 +226,14 @@ namespace mesh {
 				}
 			}
 		}
-
+		// Sort by lowest to speed up funding lowest T
 		std::sort(boxIntersections.begin(), boxIntersections.end(),
 			[](const OctantIntersection& A, const OctantIntersection& B) -> bool { return A.t < B.t; });
 
+		// Check for collision in child boxes to find if there is a lower t
 		for (int i = 0; i < 8; ++i)
 		{
-			if (boxIntersections[i].index < 0 || boxIntersections[i].t > nearest.t)
+			if (boxIntersections[i].index < 0 || boxIntersections[i].t > nearest.rayT)
 				continue;
 
 			if ((*m_children)[boxIntersections[i].index].intersectInternal(ray, nearest))

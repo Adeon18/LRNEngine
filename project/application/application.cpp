@@ -12,6 +12,13 @@ Application::Application() :
 	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
+
+	/*engn::mesh::BoundingBox bb = engn::mesh::BoundingBox::unit();
+
+	engn::math::ray r{ glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3{0, 0.5, 0.5} };
+
+	std::cout << "BB Collide: " << bb.hit(r) << std::endl;*/
+
 	m_createObjects();
 }
 
@@ -98,8 +105,10 @@ void Application::m_createObjects() {
 		engn::mtrl::SILVER
 	);*/
 
+	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1}));
+
 	m_scene->addRenderObject(
-		engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{1, 1, 1}),
+		m_scene->getMeshPtr("unit_box"),
 		engn::mtrl::EMERALD,
 		glm::vec3{ 0, 0, -5 }
 	);

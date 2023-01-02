@@ -93,7 +93,7 @@ bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const 
     for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
         toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
-        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(toLight);
+        auto collisionLog = m_renderMeshObjects[i]->mesh->hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0) {
             return true;
         }
@@ -117,7 +117,7 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
     for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
         toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
-        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(toLight);
+        auto collisionLog = m_renderMeshObjects[i]->mesh->hit(toLight);
         if (collisionLog.isHit && collisionLog.rayT > 0 && glm::length(collisionLog.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
             return true;
         }
@@ -150,9 +150,9 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         auto prevRayOrigin = r.origin;
         r.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
-        auto collisionLog = m_renderMeshObjects[i]->mesh.hit(r);
-        if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestEntry.rayT) {
-            closestEntry = collisionLog;
+        math::HitEntry collisionLog;
+        if (m_renderMeshObjects[i]->collideOcTree.intersect(r, closestEntry)) {
+            //closestEntry = collisionLog;
             // Yes
             closestEntry.hitPoint = glm::vec3(m_renderMeshObjects[i]->modelMatrix * glm::vec4(closestEntry.hitPoint, 1.0f));
             closestObj.objIdx = i;

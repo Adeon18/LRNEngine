@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -46,8 +47,12 @@ public:
         m_renderMathObjects.emplace_back(new RenderMathObject{ o, m });
     }
 
-    void addRenderObject(const mesh::Mesh& msh, const mtrl::Material& m, const glm::vec3 pos) {
+    void addRenderObject(mesh::Mesh* msh, const mtrl::Material& m, const glm::vec3 pos) {
         m_renderMeshObjects.emplace_back(new RenderMeshObject{ msh, m, pos});
+    }
+
+    void addMesh(const std::string& name, const mesh::Mesh& mesh) {
+        m_meshes[name] = mesh;
     }
 
     void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{ 1.0f }) {
@@ -62,6 +67,10 @@ public:
         m_spotLights.emplace_back( new light::SpotLight(dir, pos, range, prop, color));
     }
 
+    [[nodiscard]] mesh::Mesh* getMeshPtr(const std::string& name) { return &m_meshes[name]; }
+
+public:
+    
 private:
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
@@ -81,6 +90,9 @@ private:
     std::vector<std::unique_ptr<RenderMeshObject>> m_renderMeshObjects;
     std::vector<std::unique_ptr<light::PointLight>> m_pointLights;
     std::vector<std::unique_ptr<light::SpotLight>> m_spotLights;
+
+    // Shared mesh storage as follows: name, mesh
+    std::unordered_map<std::string, mesh::Mesh> m_meshes;
 
     glm::vec3 m_lightPosition;
 };
