@@ -187,9 +187,7 @@ namespace mesh {
 			const glm::vec3& V3 = getPos(*m_mesh, m_triangles[i], 2);*/
 
 			// Custom check if triangle was hit and t is the smallest
-			auto collisionLog = (*m_mesh).triangles[m_triangles[i]].hit(ray);
-			if (collisionLog.isHit && collisionLog.rayT < nearest.rayT) {
-				nearest = collisionLog;
+			if ((*m_mesh).triangles[m_triangles[i]].hit(ray, nearest)) {
 				found = true;
 			}
 		}

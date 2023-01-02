@@ -12,14 +12,11 @@ namespace engn {
 namespace math {
 
 class sphere : public hitable {
-	static constexpr float MAX_DIST = 1000.0f;
 public:
 	sphere(const glm::vec3& center, float r) : center{ center }, radius{ r }, radiusSq{ r * r } {}
 
 	//! Hit function which determines if a ray hit a sphere
-	[[nodiscard]] HitEntry hit(const ray& r) const override {
-		HitEntry collisionRes;
-
+	[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const override {
 		const glm::vec3 to_r = r.origin - center;
 
 		const float a = glm::dot(r.direction, r.direction);
@@ -32,26 +29,24 @@ public:
 		{
 			// Code duplication but is more optimized than iteration because result computing is quite expensive because sqrt
 			float res = (-b - glm::sqrt(discriminant)) / (2.0f * a);
-			if (res > 0.0f && res < MAX_DIST) {
-				collisionRes.isHit = true;
-				collisionRes.rayT = res;
-				collisionRes.hitPoint = r.getPointAt(collisionRes.rayT);
-				collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - center);
-				return collisionRes;
+			if (res > 0.0f && res < closestHit.rayT) {
+				closestHit.isHit = true;
+				closestHit.rayT = res;
+				closestHit.hitPoint = r.getPointAt(closestHit.rayT);
+				closestHit.hitNormal = glm::normalize(closestHit.hitPoint - center);
+				return true;
 			}
 			res = (-b + glm::sqrt(discriminant)) / (2.0f * a);
-			if (res > 0.0f && res < MAX_DIST) {
-				collisionRes.isHit = true;
-				collisionRes.rayT = res;
-				collisionRes.hitPoint = r.getPointAt(collisionRes.rayT);
-				collisionRes.hitNormal = glm::normalize(collisionRes.hitPoint - center);
-				return collisionRes;
+			if (res > 0.0f && res < closestHit.rayT) {
+				closestHit.isHit = true;
+				closestHit.rayT = res;
+				closestHit.hitPoint = r.getPointAt(closestHit.rayT);
+				closestHit.hitNormal = glm::normalize(closestHit.hitPoint - center);
+				return true;
 			}
 		}
-		collisionRes.isHit = false;
-		collisionRes.rayT = MAX_DIST;
 
-		return collisionRes;
+		return false;
 	}
 public:
 	glm::vec3 center;

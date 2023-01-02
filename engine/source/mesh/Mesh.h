@@ -100,14 +100,11 @@ namespace mesh {
 
 		//! Manual iterative hit function for mesh
 		math::HitEntry hit(math::ray& r) {
-			math::HitEntry closestTriangle = triangles[0].hit(r);
-			for (size_t i = 1; i < triangles.size(); ++i) {
-				auto collisionLog = triangles[i].hit(r);
-				if (collisionLog.isHit && collisionLog.rayT > 0 && collisionLog.rayT < closestTriangle.rayT) {
-					closestTriangle = collisionLog;
-				}
+			math::HitEntry closest{false, math::hitable::MAX_DIST};
+			for (size_t i = 0; i < triangles.size(); ++i) {
+				triangles[i].hit(r, closest);
 			}
-			return closestTriangle;
+			return closest;
 		}
 	};
 

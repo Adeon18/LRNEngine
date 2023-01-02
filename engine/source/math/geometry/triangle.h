@@ -12,7 +12,6 @@ namespace math {
 
 	class triangle : public hitable {
 		static constexpr float EPS = 0.00001f;
-		static constexpr float MAX_DIST = 1000.0f;
 	public:
 		triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2) {
 			vertices[0] = v0;
@@ -32,10 +31,7 @@ namespace math {
 			return *this;
 		}
 
-		[[nodiscard]] HitEntry hit(const ray& r) const override {
-			HitEntry collisionRes{};
-			collisionRes.isHit = false;
-			collisionRes.rayT = MAX_DIST;
+		[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const override {
 
 			glm::vec3 pv = glm::cross(r.direction, edges[1]);
 
@@ -43,7 +39,7 @@ namespace math {
 
 			// If ray is paralell to the triangle
 			if (det < EPS) {
-				return collisionRes;
+				return false;
 			}
 
 			float invDet = 1.0f / det;
@@ -52,24 +48,26 @@ namespace math {
 			
 			float uParam = glm::dot(toRayOrigin, pv) * invDet;
 			if (uParam < 0.0f || uParam > 1.0f) {
-				return collisionRes;
+				return false;
 			}
 
 			glm::vec3 vParamTestVec = glm::cross(toRayOrigin, edges[0]);
 
 			float vParam = glm::dot(r.direction, vParamTestVec) * invDet;
 			if (vParam < 0.0f || uParam + vParam > 1.0f) {
-				return collisionRes;
+				return false;
 			}
 
 			float t = glm::dot(edges[1], vParamTestVec) * invDet;
 
-			collisionRes.isHit = true;
-			collisionRes.rayT = t;
-			collisionRes.hitPoint = r.getPointAt(t);
-			collisionRes.hitNormal = (glm::dot(toRayOrigin, normal) > 0.0f) ? normal: -normal;
+			if (t <= 0.0f || t >= closestHit.rayT) { return false; }
 
-			return collisionRes;
+			closestHit.isHit = true;
+			closestHit.rayT = t;
+			closestHit.hitPoint = r.getPointAt(t);
+			closestHit.hitNormal = (glm::dot(toRayOrigin, normal) > 0.0f) ? normal: -normal;
+
+			return true;
 		}
 	public:
 		glm::vec3 vertices[3];
