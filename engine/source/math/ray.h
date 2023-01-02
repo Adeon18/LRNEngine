@@ -21,7 +21,7 @@ public:
 		origin = glm::vec3(oVec4);
 	}
 	//! Cast a ray in the direction by t
-	glm::vec3 cast(float t) const { return origin + t * direction; }
+	glm::vec3 getPointAt(float t) const { return origin + t * direction; }
 
 	glm::vec3 origin;
 	glm::vec3 direction;

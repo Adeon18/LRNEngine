@@ -29,13 +29,6 @@ public:
 
 		m_lag += m_dt;
 
-		if (m_base - m_lastUpdated > 1s)
-		{
-			std::cout << "FPS: " << m_ActualFPS << std::endl;
-			m_lastUpdated = m_base;
-			m_ActualFPS = 0;
-		}
-
 		if (m_lag > m_fixed_dt) {
 			++m_ActualFPS;
 			m_lag -= m_fixed_dt;
@@ -43,6 +36,22 @@ public:
 		}
 
 		return false;
+	}
+	//! Should be called just after frameTimeElapsed to get the correct debug values
+	std::pair<bool, float> isDebugFPSShow() {
+		std::pair<bool, float> res;
+		if (m_base - m_lastUpdated > 1s)
+		{
+			res.first = true;
+			res.second = m_ActualFPS;
+
+			m_lastUpdated = m_base;
+			m_ActualFPS = 0;
+			return res;
+		}
+		res.first = false;
+		res.second = 0.0f;
+		return res;
 	}
 
 	float getFPSCurrent() { return m_ActualFPS; }

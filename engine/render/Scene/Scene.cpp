@@ -36,6 +36,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
 
     bool isInShadow = m_isFragmentInDirectionShadow(hitEntry, glm::normalize(-m_direcLight->direction));
 
+    // Directional
     if (!isInShadow) {
         totalLight += light::calculateDirLight(
             m_direcLight.get(),
@@ -44,7 +45,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
             glm::normalize(camPos - hitEntry.hitPoint)
         );
     }
-
+    // Point
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
         isInShadow = m_isFragmentInPointShadow(hitEntry, m_pointLights[i]->position);
         if (!isInShadow) {
@@ -58,6 +59,7 @@ glm::vec3 Scene::m_getObjectLighting(int objIdx, const math::HitEntry& hitEntry,
         }
         isInShadow = false;
     }
+    // Spot
     for (size_t i = 0; i < m_spotLights.size(); ++i) {
         isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->position);
         if (!isInShadow) {

@@ -12,14 +12,14 @@ namespace engn {
 namespace math {
 
 class plane : public hitable {
-	const int MAX_DIST = 1000;
-	const float MIN_ANGLE_DOT = 1e-6;
+	static constexpr float MAX_DIST = 1000.0f;
+	static constexpr float MIN_ANGLE_DOT = 1e-6;
 public:
 	plane(const glm::vec3& normal, const glm::vec3& point) : m_normal{ glm::normalize(normal) }, m_point{ point } {}
 
 	//! Hit function which determines if a ray hit a plane
 	[[nodiscard]] HitEntry hit(const ray& r) const override {
-		HitEntry collisionRes{};
+		HitEntry collisionRes;
 
 		float res = glm::dot(r.direction, m_normal);
 
@@ -31,7 +31,7 @@ public:
 			{
 				collisionRes.isHit = true;
 				collisionRes.rayT = dist;
-				collisionRes.hitPoint = r.cast(dist);
+				collisionRes.hitPoint = r.getPointAt(dist);
 				// I don't have any clue how this normal works but it does and I'm happy
 				collisionRes.hitNormal = glm::normalize(m_normal * -res);
 			}

@@ -26,6 +26,9 @@ int Application::run() {
 			if (m_window->allocateBitmapBuffer()) {
 				setWindowSize(m_window->getWidth(), m_window->getHeight());
 			}
+			// Debug
+			auto debug = m_timer->isDebugFPSShow();
+			if (debug.first) { std::cout << "FPS: " << debug.second << std::endl; }
 
 			m_handleRender();
 			m_handlePhysics();
