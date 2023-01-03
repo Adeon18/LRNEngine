@@ -72,13 +72,16 @@ public:
 public:
     
 private:
+    //! Setter for camera pos, private because pos should only be set from the scene
+    void m_setCameraPos(const glm::vec3& camPos) { m_camPos = camPos; }
+
     void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
     //! Cast a single ray and fill a single ray entry
-    void m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos);
+    void m_castRay(math::ray& r, COLORREF* pixel);
     //! Calculate lighting and materials and shadows
-    void m_getObjectColor(const ClosestObj& closestObj, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos);
+    void m_getObjectColor(const ClosestObj& closestObj, const math::HitEntry& hitEntry, COLORREF* pixel);
     //! Get the combined lighing color on an object
-    glm::vec3 m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry, const glm::vec3& camPos);
+    glm::vec3 m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry);
 
     bool m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir);
 
@@ -94,7 +97,7 @@ private:
     // Shared mesh storage as follows: name, mesh
     std::unordered_map<std::string, mesh::Mesh> m_meshes;
 
-    glm::vec3 m_lightPosition;
+    glm::vec3 m_camPos;
 };
 
 } // engn

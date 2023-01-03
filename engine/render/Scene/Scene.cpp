@@ -3,18 +3,16 @@
 
 namespace engn {
 
-Scene::Scene() :
-    m_lightPosition{ 0, 0, 10 }
-{
-}
+Scene::Scene()
+{}
 
 
-void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry& hitEntry, COLORREF* pixel, const glm::vec3& camPos) {
+void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry& hitEntry, COLORREF* pixel) {
 
     COLORREF hit_color;
 
     if (hitEntry.isHit) {
-        auto objColor = m_getObjectLighting(closestObj, hitEntry, camPos);
+        auto objColor = m_getObjectLighting(closestObj, hitEntry);
         objColor *= 255;
 
         hit_color = RGBtoBE(RGB(
@@ -31,7 +29,7 @@ void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry&
 }
 
 
-glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry, const glm::vec3& camPos) {
+glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry) {
     glm::vec3 totalLight{ 0.0f };
 
     bool isInShadow = m_isFragmentInDirectionShadow(hitEntry, glm::normalize(-m_direcLight->direction));
@@ -42,7 +40,7 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
             m_direcLight.get(),
             (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material): &(m_renderMathObjects[closestObj.objIdx]->material),
             hitEntry.hitNormal,
-            glm::normalize(camPos - hitEntry.hitPoint)
+            glm::normalize(m_camPos - hitEntry.hitPoint)
         );
     }
     // Point
@@ -53,7 +51,7 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
                 m_pointLights[i].get(),
                 (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
                 hitEntry.hitNormal,
-                glm::normalize(camPos - hitEntry.hitPoint),
+                glm::normalize(m_camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
             );
         }
@@ -67,7 +65,7 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
                 m_spotLights[i].get(),
                 (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
                 hitEntry.hitNormal,
-                glm::normalize(camPos - hitEntry.hitPoint),
+                glm::normalize(m_camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
             );
         }
@@ -134,7 +132,7 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
 }
 
 
-void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
+void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
 
     // Find the object closest to the ray
     math::HitEntry closestEntry{false, math::hitable::MAX_DIST};
@@ -198,7 +196,7 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         return;
     }
 
-    m_getObjectColor(closestObj, closestEntry, pixel, camPos);
+    m_getObjectColor(closestObj, closestEntry, pixel);
 }
 
 
@@ -223,6 +221,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
     };
 
     camPtr->setRayCastData(std::move(rayCastData));
+    m_setCameraPos(camPtr->getCamPosition());
 
     auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);
     auto* st_p = pixel;
@@ -231,7 +230,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
         for (int x = 0; x <= winData.bufferWidth; ++x)
         {
             math::ray r = camPtr->castRay(x, y);
-            m_castRay(r, pixel, camPtr->getCamPosition());
+            m_castRay(r, pixel);
             pixel = st_p + y * winData.bufferWidth + x;
         }
     }
