@@ -7,9 +7,64 @@ Scene::Scene()
 {}
 
 
-void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry& hitEntry, COLORREF* pixel) {
+void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
+
+    // Find the object closest to the ray
+    math::HitEntry closestEntry{false, math::hitable::MAX_DIST};
+    ObjRef closestObj{nullptr, nullptr, RenderType::NONE };
+
+    //! Check object collision
+    // plane
+    for (auto& plane : m_renderPlanes) {
+        plane->hit(r, closestEntry, closestObj);
+    }
+    // sphere
+    for (auto& sphere : m_renderSpheres) {
+        sphere->hit(r, closestEntry, closestObj);
+    }
+    // mesh
+    for (auto& mesh : m_renderMeshes) {
+        mesh->hit(r, closestEntry, closestObj);
+    }
+    // pointlight
+    for (auto& light : m_pointLights) {
+        light->hit(r, closestEntry, closestObj);
+    }
+    // spotlight
+    for (auto& light : m_spotLights) {
+        light->hit(r, closestEntry, closestObj);
+    }
+
+    m_getObjectColor(closestObj, closestEntry, pixel);
+}
+
+
+void Scene::m_getObjectColor(const ObjRef& closestObj, const math::HitEntry& hitEntry, COLORREF* pixel) {
 
     COLORREF hit_color;
+
+    // Can be made better
+    glm::vec3 lightColor{ 255.0f };
+    if (closestObj.type == RenderType::POINTLIGHT) {
+        RenderPointLightObj* obj = static_cast<RenderPointLightObj*>(closestObj.object);
+        lightColor *= obj->light->properties.specular;
+
+        *pixel = RGBtoBE(RGB(
+            lightColor.x,
+            lightColor.y,
+            lightColor.z));
+        return;
+    }
+    else if (closestObj.type == RenderType::SPOTLIGHT) {
+        RenderSpotLightObj* obj = static_cast<RenderSpotLightObj*>(closestObj.object);
+        lightColor *= obj->light->properties.specular;
+
+        *pixel = RGBtoBE(RGB(
+            lightColor.x,
+            lightColor.y,
+            lightColor.z));
+        return;
+    }
 
     if (hitEntry.isHit) {
         auto objColor = m_getObjectLighting(closestObj, hitEntry);
@@ -29,7 +84,7 @@ void Scene::m_getObjectColor(const ClosestObj &closestObj, const math::HitEntry&
 }
 
 
-glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::HitEntry& hitEntry) {
+glm::vec3 Scene::m_getObjectLighting(const ObjRef& closestObj, const math::HitEntry& hitEntry) {
     glm::vec3 totalLight{ 0.0f };
 
     bool isInShadow = m_isFragmentInDirectionShadow(hitEntry, glm::normalize(-m_direcLight->direction));
@@ -38,18 +93,18 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
     if (!isInShadow) {
         totalLight += light::calculateDirLight(
             m_direcLight.get(),
-            (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material): &(m_renderMathObjects[closestObj.objIdx]->material),
+            closestObj.material,
             hitEntry.hitNormal,
             glm::normalize(m_camPos - hitEntry.hitPoint)
         );
     }
     // Point
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
-        isInShadow = m_isFragmentInPointShadow(hitEntry, m_pointLights[i]->position);
+        isInShadow = m_isFragmentInPointShadow(hitEntry, m_pointLights[i]->light->position);
         if (!isInShadow) {
             totalLight += light::calculatePointLight(
-                m_pointLights[i].get(),
-                (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
+                m_pointLights[i]->light,
+                closestObj.material,
                 hitEntry.hitNormal,
                 glm::normalize(m_camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
@@ -59,11 +114,11 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
     }
     // Spot
     for (size_t i = 0; i < m_spotLights.size(); ++i) {
-        isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->position);
+        isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->light->position);
         if (!isInShadow) {
             totalLight += light::calculateSpotLight(
-                m_spotLights[i].get(),
-                (closestObj.isMesh) ? &(m_renderMeshObjects[closestObj.objIdx]->material) : &(m_renderMathObjects[closestObj.objIdx]->material),
+                m_spotLights[i]->light,
+                closestObj.material,
                 hitEntry.hitNormal,
                 glm::normalize(m_camPos - hitEntry.hitPoint),
                 hitEntry.hitPoint
@@ -80,123 +135,47 @@ glm::vec3 Scene::m_getObjectLighting(const ClosestObj& closestObj, const math::H
 bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir) {
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
-    math::HitEntry prop{false, math::hitable::MAX_DIST};
-    // Math objects
-    for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
-        if (m_renderMathObjects[i]->shape->hit(toLight, prop)) {
-            return true;
-        }
+    ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
+    math::HitEntry prop{ false, math::hitable::MAX_DIST };
+    //! Check object collision
+    // plane
+    for (auto& plane : m_renderPlanes) {
+        if (plane->hit(toLight, prop, propRef)) { return true; }
     }
-    // Meshes
-    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
-        auto prevOrigin = toLight.origin;
-        toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
-
-        auto collisionLog = m_renderMeshObjects[i]->mesh->hit(toLight);
-        if (m_renderMeshObjects[i]->collideOcTree.intersect(toLight, prop)) {
-            return true;
-        }
-
-        toLight.origin = prevOrigin;
+    // sphere
+    for (auto& sphere : m_renderSpheres) {
+        if (sphere->hit(toLight, prop, propRef)) { return true; }
+    }
+    // mesh
+    for (auto& mesh : m_renderMeshes) {
+        if (mesh->hit(toLight, prop, propRef)) { return true; }
     }
     return false;
 }
+
 
 
 bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm::vec3& pointPos) {
     glm::vec3 distToLight = pointPos - hitEntry.hitPoint;
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
+    ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
     math::HitEntry prop{ false, math::hitable::MAX_DIST };
-    // Math objects
-    for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
-        if (m_renderMathObjects[i]->shape->hit(toLight, prop) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
-            return true;
-        }
+    //! Check object collision
+    // plane
+    for (auto& plane : m_renderPlanes) {
+        if (plane->hit(toLight, prop, propRef) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) { return true; }
     }
-    // Meshes
-    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
-        auto prevOrigin = toLight.origin;
-        toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
-
-        if (m_renderMeshObjects[i]->collideOcTree.intersect(toLight, prop)) {
-            prop.hitPoint = m_renderMeshObjects[i]->modelMatrix * glm::vec4(prop.hitPoint, 1.0f);
-            if (glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
-                return true;
-            }
-        }
-        toLight.origin = prevOrigin;
+    // sphere
+    for (auto& sphere : m_renderSpheres) {
+        if (sphere->hit(toLight, prop, propRef) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) { return true; }
+    }
+    // mesh
+    for (auto& mesh : m_renderMeshes) {
+        if (mesh->hit(toLight, prop, propRef) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) { return true; }
     }
 
     return false;
-}
-
-
-void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
-
-    // Find the object closest to the ray
-    math::HitEntry closestEntry{false, math::hitable::MAX_DIST};
-
-    ClosestObj closestObj{0, false};
-
-    bool isClosestHitALight = false;
-    //! Check object collision
-    // Math objects
-    for (size_t i = 0; i < m_renderMathObjects.size(); ++i) {
-        if (m_renderMathObjects[i]->shape->hit(r, closestEntry)) {
-            closestObj.objIdx = i;
-        }
-    }
-
-    // Check mesh intersection -> translate vector in mesh modelspace
-    for (size_t i = 0; i < m_renderMeshObjects.size(); ++i) {
-        auto prevRayOrigin = r.origin;
-        r.transform(m_renderMeshObjects[i]->modelMatrixInv);
-
-        if (m_renderMeshObjects[i]->collideOcTree.intersect(r, closestEntry)) {
-            // Yes
-            closestEntry.hitPoint = glm::vec3(m_renderMeshObjects[i]->modelMatrix * glm::vec4(closestEntry.hitPoint, 1.0f));
-            closestObj.objIdx = i;
-            closestObj.isMesh = true;
-        }
-
-        r.origin = prevRayOrigin;
-    }
-
-    //! Check light collision(just so we can draw positions)
-    // Begin with spotlight
-    bool closestHitSpecular = false;
-    for (size_t i = 0; i < m_spotLights.size(); ++i) {
-        if (m_spotLights[i]->shape->hit(r, closestEntry)) {
-            if (!isClosestHitALight) { isClosestHitALight = true; }
-            closestObj.objIdx = i;
-            closestHitSpecular = true;
-        }
-    }
-    // Point lights after
-    for (size_t i = 0; i < m_pointLights.size(); ++i) {
-        if (m_pointLights[i]->shape->hit(r, closestEntry)) {
-            if (!isClosestHitALight) { isClosestHitALight = true; }
-            closestObj.objIdx = i;
-        }
-    }
-
-    if (isClosestHitALight) {
-        glm::vec3 lightColor{ 255.0f };
-        if (closestHitSpecular) {
-            lightColor *= m_spotLights[closestObj.objIdx]->properties.specular;
-        }
-        else {
-            lightColor *= m_pointLights[closestObj.objIdx]->properties.specular;
-        }
-        *pixel = RGBtoBE(RGB(
-            lightColor.x,
-            lightColor.y,
-            lightColor.z));
-        return;
-    }
-
-    m_getObjectColor(closestObj, closestEntry, pixel);
 }
 
 

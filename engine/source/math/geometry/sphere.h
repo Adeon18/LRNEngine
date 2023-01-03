@@ -16,7 +16,7 @@ public:
 	sphere(const glm::vec3& center, float r) : center{ center }, radius{ r }, radiusSq{ r * r } {}
 
 	//! Hit function which determines if a ray hit a sphere
-	[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const override {
+	[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
 		const glm::vec3 to_r = r.origin - center;
 
 		const float a = glm::dot(r.direction, r.direction);

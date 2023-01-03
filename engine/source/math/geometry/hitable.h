@@ -25,7 +25,6 @@ class hitable
 {
 public:
 	static constexpr float MAX_DIST = 1000.0f;
-	[[nodiscard]] virtual bool hit(const ray& r, HitEntry& closestHit) const = 0;
 };
 
 } // math

@@ -17,7 +17,7 @@ public:
 	plane(const glm::vec3& normal, const glm::vec3& point) : m_normal{ glm::normalize(normal) }, m_point{ point } {}
 
 	//! Hit function which determines if a ray hit a plane
-	[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const override {
+	[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
 		float res = glm::dot(r.direction, m_normal);
 
 		if (res > MIN_ANGLE_DOT || res < -MIN_ANGLE_DOT)

@@ -31,7 +31,7 @@ namespace math {
 			return *this;
 		}
 
-		[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const override {
+		[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
 
 			glm::vec3 pv = glm::cross(r.direction, edges[1]);
 

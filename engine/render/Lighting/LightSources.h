@@ -54,8 +54,6 @@ namespace light {
 			constant = attenuation.x;
 			linear = attenuation.y;
 			quadratic = attenuation.z;
-
-			shape = new math::sphere{ pos, 0.3f };
 		}
 
 		PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) :
@@ -68,14 +66,7 @@ namespace light {
 			constant = attenuation.x;
 			linear = attenuation.y;
 			quadratic = attenuation.z;
-
-			shape = new math::sphere{ pos, 0.3f };
 		}
-
-		~PointLight() {
-			delete shape;
-		}
-		math::hitable* shape = nullptr;
 
 		glm::vec3 position;
 
@@ -95,8 +86,6 @@ namespace light {
 		{
 			cutOffInner = range.x;
 			cutOffOuter = range.y;
-
-			shape = new math::sphere{ pos, 0.3f };
 		}
 
 		SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
@@ -109,15 +98,7 @@ namespace light {
 
 			cutOffInner = range.x;
 			cutOffOuter = range.y;
-
-			shape = new math::sphere{ pos, 0.3f };
 		}
-
-		~SpotLight() {
-			delete shape;
-		}
-
-		math::hitable* shape = nullptr;
 
 		glm::vec3 position;
 		glm::vec3 direction;
