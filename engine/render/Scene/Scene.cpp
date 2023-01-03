@@ -121,8 +121,11 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
         auto prevOrigin = toLight.origin;
         toLight.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
-        if (m_renderMeshObjects[i]->collideOcTree.intersect(toLight, prop) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
-            return true;
+        if (m_renderMeshObjects[i]->collideOcTree.intersect(toLight, prop)) {
+            prop.hitPoint = m_renderMeshObjects[i]->modelMatrix * glm::vec4(prop.hitPoint, 1.0f);
+            if (glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) {
+                return true;
+            }
         }
         toLight.origin = prevOrigin;
     }
@@ -152,7 +155,6 @@ void Scene::m_castRay(math::ray& r, COLORREF* pixel, const glm::vec3& camPos) {
         auto prevRayOrigin = r.origin;
         r.transform(m_renderMeshObjects[i]->modelMatrixInv);
 
-        math::HitEntry collisionLog;
         if (m_renderMeshObjects[i]->collideOcTree.intersect(r, closestEntry)) {
             // Yes
             closestEntry.hitPoint = glm::vec3(m_renderMeshObjects[i]->modelMatrix * glm::vec4(closestEntry.hitPoint, 1.0f));

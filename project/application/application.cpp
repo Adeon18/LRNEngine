@@ -77,11 +77,11 @@ void Application::m_handlePhysics() {
 void Application::m_createObjects() {
 	m_scene->setDirectionalLight(
 		glm::vec3{ 0.2f, -0.5f, -0.3f },
-		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.1f}, glm::vec3{0.0f} }
+		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.2f}, glm::vec3{0.3f} }
 	);
 	
 	m_scene->addPointLight(
-		glm::vec3{ 2.0f, 2.0f, -6.5f },
+		glm::vec3{ -2.0f, 2.0f, -3.5f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
 		engn::light::PLIGHT_DIST_50
 	);
