@@ -33,20 +33,11 @@ class Scene {
         bool isMesh;
     };
 public:
-    const COLORREF SPHERE_COLOR = RGB(255, 0, 0);
-    const COLORREF PLANE_COLOR = RGB(50, 50, 50);
-    const COLORREF PLANE_SHADE_COLOR = RGB(20, 20, 20);
-    const COLORREF SKY_COLOR = RGB(10, 10, 10);
-    const COLORREF LIGHT_COLOR = RGB(200, 200, 200);
+    static constexpr glm::vec3 SKY_COLOR = glm::vec3(0.05f, 0.05f, 0.05f);
 
     Scene();
 
     void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
-
-    // legacy
-    /*void addRenderObject(math::hitable* o, const mtrl::Material& m) {
-        m_renderMathObjects.emplace_back(new RenderMathObject{ o, m });
-    }*/
 
     //! Ass sphere
     void addRenderObject(math::sphere* s, const mtrl::Material& m) {
@@ -98,9 +89,6 @@ private:
     bool m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm::vec3& pointPos);
 private:
     std::unique_ptr<light::DirectionalLight> m_direcLight;
-
-    // legacy
-    std::vector<std::unique_ptr<RenderMathObject>> m_renderMathObjects;
 
     std::vector<std::unique_ptr<RenderPlaneObj>> m_renderPlanes;
     std::vector<std::unique_ptr<RenderSphereObj>> m_renderSpheres;

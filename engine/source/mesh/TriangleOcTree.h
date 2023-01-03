@@ -11,18 +11,6 @@
 namespace engn {
 
 namespace mesh {
-
-	struct MeshIntersection
-	{
-		glm::vec3 pos;
-		glm::vec3 normal;
-		float nr;
-		float t;
-		uint32_t triangle;
-
-		bool valid() const { return std::isfinite(t); }
-	};
-
 	class TriangleOctree
 	{
 	public:

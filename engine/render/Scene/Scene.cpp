@@ -43,44 +43,39 @@ void Scene::m_getObjectColor(const ObjRef& closestObj, const math::HitEntry& hit
 
     COLORREF hit_color;
 
-    // Can be made better
     glm::vec3 lightColor{ 255.0f };
+
+    // pointlight
     if (closestObj.type == RenderType::POINTLIGHT) {
         RenderPointLightObj* obj = static_cast<RenderPointLightObj*>(closestObj.object);
         lightColor *= obj->light->properties.specular;
-
-        *pixel = RGBtoBE(RGB(
-            lightColor.x,
-            lightColor.y,
-            lightColor.z));
-        return;
     }
+    // spotlight
     else if (closestObj.type == RenderType::SPOTLIGHT) {
         RenderSpotLightObj* obj = static_cast<RenderSpotLightObj*>(closestObj.object);
         lightColor *= obj->light->properties.specular;
+    }
+    // other
+    else if (
+        closestObj.type == RenderType::SPHERE ||
+        closestObj.type == RenderType::PLANE ||
+        closestObj.type == RenderType::MESH
+        )
+    {
+        lightColor *= m_getObjectLighting(closestObj, hitEntry);
+    }
+    // sky
+    else {
+        lightColor *= SKY_COLOR;
+    }
 
-        *pixel = RGBtoBE(RGB(
+    *pixel = RGBtoBE(
+        RGB(
             lightColor.x,
             lightColor.y,
-            lightColor.z));
-        return;
-    }
-
-    if (hitEntry.isHit) {
-        auto objColor = m_getObjectLighting(closestObj, hitEntry);
-        objColor *= 255;
-
-        hit_color = RGBtoBE(RGB(
-            objColor.x,
-            objColor.y,
-            objColor.z));
-
-    }
-    else {
-        hit_color = SKY_COLOR;
-    }
-
-    *pixel = hit_color;
+            lightColor.z
+        )
+    );
 }
 
 
@@ -137,7 +132,7 @@ bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const 
 
     ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
     math::HitEntry prop{ false, math::hitable::MAX_DIST };
-    //! Check object collision
+
     // plane
     for (auto& plane : m_renderPlanes) {
         if (plane->hit(toLight, prop, propRef)) { return true; }
@@ -161,7 +156,7 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
 
     ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
     math::HitEntry prop{ false, math::hitable::MAX_DIST };
-    //! Check object collision
+
     // plane
     for (auto& plane : m_renderPlanes) {
         if (plane->hit(toLight, prop, propRef) && glm::length(prop.hitPoint - hitEntry.hitPoint) < glm::length(distToLight)) { return true; }

@@ -60,6 +60,9 @@
     <ClInclude Include="source\mesh\TriangleOcTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\draggers\dragger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp">

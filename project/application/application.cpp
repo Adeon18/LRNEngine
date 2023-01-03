@@ -12,13 +12,6 @@ Application::Application() :
 	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
-
-	/*engn::mesh::BoundingBox bb = engn::mesh::BoundingBox::unit();
-
-	engn::math::ray r{ glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3{0, 0.5, 0.5} };
-
-	std::cout << "BB Collide: " << bb.hit(r) << std::endl;*/
-
 	m_createObjects();
 }
 
@@ -133,11 +126,18 @@ void Application::setWindowSize(int width, int height) {
 void Application::m_captureInput(MSG* mptr)
 {
 
+	// Capture and release LMB
 	if (mptr->message == WM_LBUTTONDOWN) {
 		m_onMouseLMBPressed(mptr);
 	}
 	else if (mptr->message == WM_LBUTTONUP) {
 		m_onMouseLMBReleased(mptr);
+	}
+	else if (mptr->message == WM_RBUTTONDOWN) {
+		m_onMouseRMBPressed(mptr);
+	}
+	else if (mptr->message == WM_RBUTTONUP) {
+		m_onMouseRMBReleased(mptr);
 	}
 
 	if (mptr->message == WM_MOUSEMOVE) {
@@ -148,37 +148,71 @@ void Application::m_captureInput(MSG* mptr)
 	if (mptr->message == WM_KEYDOWN)
 	{
 		m_pressedInputs[mptr->wParam] = true;
-		//std::cout << "Key Pressed: " << mptr->wParam << std::endl;
 	}
 	else if (mptr->message == WM_KEYUP)
 	{
 		m_pressedInputs[mptr->wParam] = false;
-		//std::cout << "Key Released: " << mptr->wParam << std::endl;
 	}
 }
 
 
 void Application::m_onMouseLMBPressed(MSG* mptr) {
 	m_pressedInputs[mptr->wParam] = true;
-	m_mousePos.x = GET_X_LPARAM(mptr->lParam);
-	m_mousePos.y = GET_Y_LPARAM(mptr->lParam);
+	m_camMoveData.mousePos.x = GET_X_LPARAM(mptr->lParam);
+	m_camMoveData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
 }
 
 
 void Application::m_onMouseLMBReleased(MSG* mptr) {
-	m_pressedInputs[VK_LBUTTON] = false;
+	m_pressedInputs[Keys::LMB] = false;
 }
 
+void Application::m_onMouseRMBPressed(MSG* mptr) {
+	m_pressedInputs[mptr->wParam] = true;
+	m_objDragData.mousePos.x = GET_X_LPARAM(mptr->lParam);
+	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
+}
+
+void Application::m_onMouseRMBReleased(MSG* mptr) {
+	m_pressedInputs[Keys::RMB] = false;
+}
 
 void Application::m_onMouseMove(MSG* mptr) {
-	if (m_pressedInputs[VK_LBUTTON]) {
+	if (m_pressedInputs[Keys::LMB]) {
 		glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
-		m_mouseOffset = newMosPos - m_mousePos;
-		m_mousePos = newMosPos;
+		m_camMoveData.mouseOffset = newMosPos - m_camMoveData.mousePos;
+		m_camMoveData.mousePos = newMosPos;
+	}
+	if (m_pressedInputs[Keys::RMB]) {
+		glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
+		m_objDragData.mouseOffset = newMosPos - m_objDragData.mousePos;
+		m_objDragData.mousePos = newMosPos;
 	}
 }
 
+void Application::m_findObject() {
+	if (!m_objectBinded && (m_pressedInputs[Keys::RMB])) {
+		// call to scene
+		m_objectBinded = true;
+	}
+}
 
+void Application::m_moveObject() {
+	if (m_objectBinded && (m_pressedInputs[Keys::RMB])) {
+		// second operation expensive
+		if (m_camStateChanged || glm::length(m_objDragData.mouseOffset) > 0) {
+			// call to scene move
+			m_camStateChanged = false;
+		}
+	}
+}
+
+void Application::m_releaseObject() {
+	if (!m_pressedInputs[Keys::RMB]) {
+		// call to scene release
+		m_objectBinded = false;
+	}
+}
 
 void Application::m_moveCamera()
 {
@@ -196,6 +230,8 @@ void Application::m_moveCamera()
 
 	if (m_isCamMoving || m_isCamRotating) {
 		m_camera->updateMatrices();
+		m_isCamMoving = false;
+		m_isCamRotating = false;
 	}
 }
 
@@ -230,13 +266,13 @@ glm::vec3 Application::m_getCamRotation() {
 	}
 
 	// pitch and yaw
-	if (m_pressedInputs[VK_LBUTTON] && glm::length(m_mouseOffset) > 0) {
+	if (m_pressedInputs[Keys::LMB] && glm::length(m_camMoveData.mouseOffset) > 0) {
 		if (!m_isCamRotating) { m_isCamRotating = true; }
 		float lastFPSCount = m_timer->getFPSCurrent();
 		// hardcoded for now
-		rotation.y += m_mouseOffset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
-		rotation.x += m_mouseOffset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
-		m_mouseOffset = glm::vec2{ 0.0f };
+		rotation.y += m_camMoveData.mouseOffset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
+		rotation.x += m_camMoveData.mouseOffset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
+		m_camMoveData.mouseOffset = glm::vec2{ 0.0f };
 	}
 
 	return rotation;

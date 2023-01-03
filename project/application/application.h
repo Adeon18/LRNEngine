@@ -30,11 +30,18 @@ class Application
 		inline static int KEY_L = 0x4C;
 		inline static int KEY_CTRL = VK_CONTROL;
 		inline static int KEY_SPACE = VK_SPACE;
+		inline static int LMB = VK_LBUTTON;
+		inline static int RMB = VK_RBUTTON;
 	};
 	static constexpr int WIN_WIDTH_DEF = 960;
 	static constexpr int WIN_HEIGHT_DEF = 540;
 	static constexpr int BUFF_DECREASE_TIMES = 3;
 	static constexpr float ROLL_SPEED_DEG = 1.0f;
+public:
+	struct MouseInputData {
+		glm::vec2 mousePos;
+		glm::vec2 mouseOffset;
+	};
 public:
 	Application();
 	//! Run and render the application
@@ -51,12 +58,24 @@ private:
 
 	//! Capture the input into a map
 	void m_captureInput(MSG* mptr);
+
+	//! Mouse Input
 	void m_onMouseLMBPressed(MSG* mptr);
 	void m_onMouseLMBReleased(MSG* mptr);
+	void m_onMouseRMBPressed(MSG* mptr);
+	void m_onMouseRMBReleased(MSG* mptr);
 	void m_onMouseMove(MSG* mptr);
 
 	//! Put objects on the scene
 	void m_createObjects();
+
+	//! Handle Object Dragging
+	//! Cast ray to find if we picked something
+	void m_findObject();
+	//! If we picked something and we are holding RMB, make scene get the new position of the ray and move sphere there
+	void m_moveObject();
+	//! Release the object from dragging
+	void m_releaseObject();
 
 	//! Handle the camera movement
 	void m_moveCamera();
@@ -70,12 +89,17 @@ private:
 
 	bool m_isRunning;
 
-	glm::vec2 m_mousePos;
-	glm::vec2 m_mouseOffset;
+	// Movement and game logic handling(separate for draggers and camera)
+	MouseInputData m_camMoveData;
+	MouseInputData m_objDragData;
+
+	bool m_objectBinded = false;
+	bool m_camStateChanged = false;
 
 	bool m_isCamMoving = false;
 	bool m_isCamRotating = false;
 
+	// Basically input handling
 	std::unordered_map<int, bool> m_pressedInputs;
 
 	std::vector<int> m_camMoveInputs{ Keys::KEY_A, Keys::KEY_D, Keys::KEY_W, Keys::KEY_S, Keys::KEY_CTRL, Keys::KEY_SPACE };
@@ -94,6 +118,7 @@ private:
 		{Keys::KEY_Q, glm::vec3(0.0f, 0.0f, ROLL_SPEED_DEG)},
 	};
 
+	// Application building blocks
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
 	std::unique_ptr<engn::FPSTimer> m_timer;

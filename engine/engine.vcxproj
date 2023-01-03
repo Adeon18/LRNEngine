@@ -25,6 +25,7 @@
     <ClInclude Include="render\RenderData\RenderData.h" />
     <ClInclude Include="render\RenderObject\RenderObject.h" />
     <ClInclude Include="render\Scene\Scene.h" />
+    <ClInclude Include="source\draggers\dragger.h" />
     <ClInclude Include="source\math\geometry\hitable.h" />
     <ClInclude Include="source\math\geometry\plane.h" />
     <ClInclude Include="source\math\geometry\sphere.h" />
