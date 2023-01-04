@@ -130,15 +130,21 @@ void Application::m_captureInput(MSG* mptr)
 	// Capture and release LMB
 	if (mptr->message == WM_LBUTTONDOWN) {
 		m_onMouseLMBPressed(mptr);
+		// std::cout << "LMB Down" << std::endl;
+		// std::cout << "LMB Logged: " << m_pressedInputs[Keys::LMB] << std::endl;
 	}
 	else if (mptr->message == WM_LBUTTONUP) {
 		m_onMouseLMBReleased(mptr);
+		// std::cout << "LMB Up" << std::endl;
 	}
-	else if (mptr->message == WM_RBUTTONDOWN) {
+	if (mptr->message == WM_RBUTTONDOWN) {
 		m_onMouseRMBPressed(mptr);
+		// std::cout << "RMB Down" << std::endl;
+		// std::cout << "RMB Logged: " << m_pressedInputs[Keys::RMB] << std::endl;
 	}
 	else if (mptr->message == WM_RBUTTONUP) {
 		m_onMouseRMBReleased(mptr);
+		// std::cout << "RMB Up" << std::endl;
 	}
 
 	if (mptr->message == WM_MOUSEMOVE) {
@@ -158,7 +164,7 @@ void Application::m_captureInput(MSG* mptr)
 
 
 void Application::m_onMouseLMBPressed(MSG* mptr) {
-	m_pressedInputs[mptr->wParam] = true;
+	m_pressedInputs[Keys::LMB] = true;
 	m_camMoveData.mousePos.x = GET_X_LPARAM(mptr->lParam);
 	m_camMoveData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
 }
@@ -169,7 +175,7 @@ void Application::m_onMouseLMBReleased(MSG* mptr) {
 }
 
 void Application::m_onMouseRMBPressed(MSG* mptr) {
-	m_pressedInputs[mptr->wParam] = true;
+	m_pressedInputs[Keys::RMB] = true;
 	m_objDragData.mousePos.x = GET_X_LPARAM(mptr->lParam);
 	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
 }
@@ -187,22 +193,24 @@ void Application::m_onMouseRMBReleased(MSG* mptr) {
 }
 
 void Application::m_onMouseMove(MSG* mptr) {
+	glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
 	if (m_pressedInputs[Keys::LMB]) {
-		glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
 		m_camMoveData.mouseOffset = newMosPos - m_camMoveData.mousePos;
 		m_camMoveData.mousePos = newMosPos;
+		// std::cout << "LMB Move" << std::endl;
 	}
 	if (m_pressedInputs[Keys::RMB]) {
-		glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
 		m_objDragData.mouseOffset = newMosPos - m_objDragData.mousePos;
 		m_objDragData.mousePos = newMosPos;
+		// std::cout << "RMB Move" << std::endl;
 	}
 }
 
 void Application::m_findObject() {
 	if (!m_objectBinded && (m_pressedInputs[Keys::RMB])) {
-		m_scene->findDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera);
-		m_objectBinded = true;
+		if (m_scene->findDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera)) {
+			m_objectBinded = true;
+		}
 	}
 }
 
@@ -210,7 +218,6 @@ void Application::m_moveObject() {
 	if (m_objectBinded && (m_pressedInputs[Keys::RMB])) {
 		// second operation expensive
 		if (m_camStateChanged || glm::length(m_objDragData.mouseOffset) > 0) {
-			// call to scene move
 			m_scene->moveDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera);
 			m_camStateChanged = false;
 		}
@@ -219,7 +226,6 @@ void Application::m_moveObject() {
 
 void Application::m_releaseObject() {
 	if (!m_pressedInputs[Keys::RMB]) {
-		// call to scene release
 		m_objectBinded = false;
 	}
 }
@@ -248,6 +254,7 @@ void Application::m_moveCamera()
 		m_camera->updateMatrices();
 		m_isCamMoving = false;
 		m_isCamRotating = false;
+		m_camStateChanged = true;
 	}
 }
 

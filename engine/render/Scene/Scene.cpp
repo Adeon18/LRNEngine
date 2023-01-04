@@ -10,8 +10,8 @@ Scene::Scene()
 void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
 
     // Find the object closest to the ray
-    math::HitEntry closestEntry{math::hitable::MAX_DIST};
-    ObjRef closestObj{nullptr, nullptr, RenderType::NONE };
+    math::HitEntry closestEntry{};
+    ObjRef closestObj;
 
     //! Check object collision
     // plane
@@ -130,8 +130,8 @@ glm::vec3 Scene::m_getObjectLighting(const ObjRef& closestObj, const math::HitEn
 bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const glm::vec3& lightDir) {
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
-    ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
-    math::HitEntry prop{ math::hitable::MAX_DIST };
+    ObjRef propRef;
+    math::HitEntry prop{};
 
     // plane
     for (auto& plane : m_renderPlanes) {
@@ -148,14 +148,12 @@ bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const 
     return false;
 }
 
-
-
 bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm::vec3& pointPos) {
     glm::vec3 distToLight = pointPos - hitEntry.hitPoint;
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
-    ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
-    math::HitEntry prop{ math::hitable::MAX_DIST };
+    ObjRef propRef;
+    math::HitEntry prop{};
 
     // plane
     for (auto& plane : m_renderPlanes) {
@@ -220,7 +218,6 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
     if (winData.screenWidth == 0 || winData.screenHeight == 0) {
         return;
     }
-
      
     float pixelWidth = glm::length(camPtr->getBRVec()) / static_cast<float>(winData.screenWidth);
     float pixelHeight = glm::length(camPtr->getTLVec()) / static_cast<float>(winData.screenHeight);

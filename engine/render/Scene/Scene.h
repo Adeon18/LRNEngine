@@ -32,11 +32,11 @@ class Scene {
 public:
     struct HitDraggerQuery {
         ObjRef objRef;
-        math::HitEntry hitEntry{ math::hitable::MAX_DIST };
+        math::HitEntry hitEntry{};
         std::unique_ptr<math::IDragger> dragger;
 
         void free() {
-            dragger.release();
+            dragger.reset(nullptr);
             objRef.clear();
             hitEntry.rayT = math::hitable::MAX_DIST;
         }
@@ -82,6 +82,7 @@ public:
     //! Find if there is an object we can drag, if there is => initialize query with a dragger
     //! Mouse coords should be already transformed to buffer coords
     bool findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr);
+
     //! Move the binded draggable object to the new position
     void moveDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr);
 

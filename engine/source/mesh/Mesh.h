@@ -97,9 +97,9 @@ namespace mesh {
 			triangles = std::move(ts);
 		}
 
-		//! Manual iterative hit function for mesh
+		//! Manual iterative hit function for mesh - legacy, just for degug, + it's slow
 		math::HitEntry hit(math::ray& r) {
-			math::HitEntry closest{math::hitable::MAX_DIST};
+			math::HitEntry closest{};
 			for (size_t i = 0; i < triangles.size(); ++i) {
 				triangles[i].hit(r, closest);
 			}

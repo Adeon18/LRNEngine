@@ -22,14 +22,7 @@ namespace math {
 			normal = glm::normalize(glm::cross(edges[0], edges[1]));
 		}
 
-		triangle& operator=(const triangle& other) {
-			vertices[0] = other.vertices[0];
-			vertices[1] = other.vertices[1];
-			vertices[2] = other.vertices[2];
-
-			normal = other.normal;
-			return *this;
-		}
+		
 
 		[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
 

@@ -26,7 +26,7 @@ namespace engn {
 	struct ObjRef {
 		void* object;
 		mtrl::Material* material;
-		RenderType type;
+		RenderType type = RenderType::NONE;
 
 		void clear() {
 			object = nullptr;

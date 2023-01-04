@@ -75,7 +75,7 @@ private:
 	void m_findObject();
 	//! If we picked something and we are holding RMB, make scene get the new position of the ray and move sphere there
 	void m_moveObject();
-	//! Release the object from dragging
+	//! Release the object from dragging(releases in application, in scsne is released on RMB Press)
 	void m_releaseObject();
 
 	void m_handleDragging();
