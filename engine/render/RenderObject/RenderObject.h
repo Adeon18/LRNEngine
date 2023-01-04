@@ -11,7 +11,7 @@
 
 
 namespace engn {
-
+	//! Specifies oject type
 	enum class RenderType {
 		SPHERE,
 		PLANE,
@@ -23,6 +23,7 @@ namespace engn {
 		NONE
 	};
 
+	//! Reference to the hit object
 	struct ObjRef {
 		void* object;
 		mtrl::Material* material;
@@ -38,81 +39,118 @@ namespace engn {
 	//! A RAII wrapper foe the math sphere class
 	struct RenderSphereObj {
 
-		RenderSphereObj(math::sphere* shapePtr, const mtrl::Material& mat) : material{ mat } {
-			shape = shapePtr;
+		RenderSphereObj(math::sphere* shapePtr, const mtrl::Material& mat) : m_material{ mat } {
+			m_shape = shapePtr;
+		}
+
+		RenderSphereObj(const RenderSphereObj& other) : m_material{ other.m_material } {
+			m_shape = new math::sphere{ *other.m_shape };
+		}
+
+		RenderSphereObj& operator=(const RenderSphereObj& other) {
+			m_shape = new math::sphere{ *other.m_shape };
+			m_material = mtrl::Material{ other.m_material };
+			return *this;
 		}
 
 		~RenderSphereObj() {
-			delete shape;
+			if (m_shape) { delete m_shape; };
 		}
 
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (shape->hit(ray, nearest)) {
+			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
-				objRef.material = &material;
+				objRef.material = &m_material;
 				objRef.type = RenderType::SPHERE;
 				return true;
 			}
 			return false;
 		}
 
-		void setPosition(const glm::vec3& newPos) {
-			shape->center = newPos;
-		}
+		void setPosition(const glm::vec3& newPos) { m_shape->center = newPos; }
+		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
+		[[nodiscard]] glm::vec3& getPosition() { return m_shape->center; }
+		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
 
-		math::sphere* shape;
-		mtrl::Material material;
+	private:
+		math::sphere* m_shape;
+		mtrl::Material m_material;
 	};
 
 	//! A RAII wrapper for the plane object
-	struct RenderPlaneObj {
+	class RenderPlaneObj {
+	public:
+		RenderPlaneObj(math::plane* shapePtr, const mtrl::Material& mat) : m_material{ mat } {
+			m_shape = shapePtr;
+		}
 
-		RenderPlaneObj(math::plane* shapePtr, const mtrl::Material& mat) : material{ mat } {
-			shape = shapePtr;
+		RenderPlaneObj(const RenderPlaneObj& other) : m_material{ other.m_material } {
+			m_shape = new math::plane{ *other.m_shape };
+		}
+
+		RenderPlaneObj& operator=(const RenderPlaneObj& other) {
+			m_shape = new math::plane{ *other.m_shape };
+			m_material = mtrl::Material{ other.m_material };
+			return *this;
 		}
 
 		~RenderPlaneObj() {
-			delete shape;
+			if (m_shape) { delete m_shape; };
 		}
 
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (shape->hit(ray, nearest)) {
+			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
-				objRef.material = &material;
+				objRef.material = &m_material;
 				objRef.type = RenderType::PLANE;
 				return true;
 			}
 			return false;
 		}
 
-		math::plane* shape;
-		mtrl::Material material;
+		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
+		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
+	private:
+		math::plane* m_shape;
+		mtrl::Material m_material;
 	};
 
 	//! A simple RAII wrapper for rendering and wrapping sped up intersection for a mesh object
-	struct RenderMeshObj {
+	class RenderMeshObj {
+	public:
 		RenderMeshObj(mesh::Mesh* msh, const mtrl::Material& mat, const glm::vec3& mshPos) :
-			material{ mat },
-			position{ mshPos }
+			m_material{ mat },
+			m_position{ mshPos }
 		{
 			// Mesh data
-			mesh = msh;
-			collideOcTree.initialize(*mesh);
-			// Precalculate matrices
-			modelMatrix = glm::translate(modelMatrixInv, mshPos);
-			modelMatrixInv = glm::inverse(modelMatrix);
+			m_mesh = msh;
+			m_init();
 		}
+
+		RenderMeshObj(const RenderMeshObj& other): m_material{ other.m_material }, m_position{ other.m_position } {
+			m_mesh = other.m_mesh;
+			m_init();
+		}
+
+		RenderMeshObj& operator=(const RenderMeshObj& other) {
+			m_position = other.m_position;
+			m_material = other.m_material;
+			m_mesh = other.m_mesh;
+			m_init();
+		}
+
+		~RenderMeshObj() = default;
 
 		bool hit(math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			auto prevRayOrigin = ray.origin;
-			ray.transform(modelMatrixInv);
+			ray.transform(m_modelMatrixInv);
 
-			if (collideOcTree.intersect(ray, nearest)) {
+			if (m_collideOcTree.intersect(ray, nearest)) {
 				// Yes
-				nearest.hitPoint = modelMatrix * glm::vec4(nearest.hitPoint, 1.0f);
+				nearest.hitPoint = m_modelMatrix * glm::vec4(nearest.hitPoint, 1.0f);
 				
 				objRef.object = this;
-				objRef.material = &material;
+				objRef.material = &m_material;
 				objRef.type = RenderType::MESH;
 
 				ray.origin = prevRayOrigin;
@@ -125,37 +163,63 @@ namespace engn {
 		}
 
 		void setPosition(const glm::vec3& newPos) {
-			position = newPos;
-			modelMatrix = glm::mat4(1.0f);
-			modelMatrix = glm::translate(modelMatrix, position);
-			modelMatrixInv = glm::inverse(modelMatrix);
+			m_position = newPos;
+			m_updateMatrices();
 		}
 
-		mesh::Mesh* mesh;
+		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
+		[[nodiscard]] glm::vec3& getPosition() { return m_position; }
+		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
+	private:
+		mesh::Mesh* m_mesh;
 
-		glm::vec3 position;
-		glm::mat4 modelMatrix = glm::mat4(1.0f);
-		glm::mat4 modelMatrixInv = glm::mat4(1.0f);
+		glm::vec3 m_position;
+		glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+		glm::mat4 m_modelMatrixInv = glm::mat4(1.0f);
 		// Speed up collison
-		mesh::TriangleOctree collideOcTree;
-		mtrl::Material material;
+		mesh::TriangleOctree m_collideOcTree;
+		mtrl::Material m_material;
+	private:
+		//! Initialize the octree and transformation matrices
+		void m_init() {
+			m_collideOcTree.initialize(*m_mesh);
+			// Precalculate matrices
+			m_updateMatrices();
+		}
+
+		void m_updateMatrices() {
+			m_modelMatrix = glm::mat4(1.0f);
+			m_modelMatrix = glm::translate(m_modelMatrix, m_position);
+			m_modelMatrixInv = glm::inverse(m_modelMatrix);
+		}
 	};
 
 	//! A RAII wrapper for the PointLight object - for visualization
-	struct RenderPointLightObj {
-
+	class RenderPointLightObj {
+	public:
 		RenderPointLightObj(light::PointLight* lightPtr) {
-			light = lightPtr;
-			shape = new math::sphere{ light->position, 0.4f };
+			m_light = lightPtr;
+			m_shape = new math::sphere{ m_light->position, 0.4f };
+		}
+
+		RenderPointLightObj(const RenderPointLightObj& other) {
+			m_light = new light::PointLight{ *other.m_light };
+			m_shape = new math::sphere{ m_light->position, 0.4f };
+		}
+
+		RenderPointLightObj& operator=(const RenderPointLightObj& other) {
+			m_light = new light::PointLight{ *other.m_light };
+			m_shape = new math::sphere{ m_light->position, 0.4f };
+			return *this;
 		}
 
 		~RenderPointLightObj() {
-			delete light;
-			delete shape;
+			delete m_light;
+			delete m_shape;
 		}
 
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (shape->hit(ray, nearest)) {
+			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
 				objRef.material = nullptr;
 				objRef.type = RenderType::POINTLIGHT;
@@ -164,25 +228,39 @@ namespace engn {
 			return false;
 		}
 
-		light::PointLight* light;
-		math::sphere* shape;
+		[[nodiscard]] light::PointLight* getLight() { return m_light; }
+
+	private:
+		light::PointLight* m_light;
+		math::sphere* m_shape;
 	};
 
 	//! A RAII wrapper for the PointLight object - for visualization
-	struct RenderSpotLightObj {
-
+	class RenderSpotLightObj {
+	public:
 		RenderSpotLightObj(light::SpotLight* lightPtr) {
-			light = lightPtr;
-			shape = new math::sphere{ light->position, 0.3f };
+			m_light = lightPtr;
+			m_shape = new math::sphere{ m_light->position, 0.3f };
+		}
+
+		RenderSpotLightObj(const RenderSpotLightObj& other) {
+			m_light = new light::SpotLight{ *other.m_light };
+			m_shape = new math::sphere{ m_light->position, 0.4f };
+		}
+
+		RenderSpotLightObj& operator=(const RenderSpotLightObj& other) {
+			m_light = new light::SpotLight{ *other.m_light };
+			m_shape = new math::sphere{ m_light->position, 0.4f };
+			return *this;
 		}
 
 		~RenderSpotLightObj() {
-			delete light;
-			delete shape;
+			delete m_light;
+			delete m_shape;
 		}
 
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (shape->hit(ray, nearest)) {
+			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
 				objRef.material = nullptr;
 				objRef.type = RenderType::SPOTLIGHT;
@@ -191,24 +269,10 @@ namespace engn {
 			return false;
 		}
 
-		light::SpotLight* light;
-		math::sphere* shape;
+		[[nodiscard]] light::SpotLight* getLight() { return m_light; }
+	private:
+		light::SpotLight* m_light;
+		math::sphere* m_shape;
 	};
-
-
-struct RenderMathObject {
-	RenderMathObject(math::hitable* shapePtr, const mtrl::Material& mat) :
-		material{ mat }
-	{
-		shape = shapePtr;
-	}
-
-	~RenderMathObject() {
-		delete shape;
-	}
-
-	math::hitable* shape;
-	mtrl::Material material;
-};
 
 } // engn

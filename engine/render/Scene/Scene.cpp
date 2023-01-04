@@ -48,12 +48,12 @@ void Scene::m_getObjectColor(const ObjRef& closestObj, const math::HitEntry& hit
     // pointlight
     if (closestObj.type == RenderType::POINTLIGHT) {
         RenderPointLightObj* obj = static_cast<RenderPointLightObj*>(closestObj.object);
-        lightColor *= obj->light->properties.specular;
+        lightColor *= obj->getLight()->properties.specular;
     }
     // spotlight
     else if (closestObj.type == RenderType::SPOTLIGHT) {
         RenderSpotLightObj* obj = static_cast<RenderSpotLightObj*>(closestObj.object);
-        lightColor *= obj->light->properties.specular;
+        lightColor *= obj->getLight()->properties.specular;
     }
     // other
     else if (
@@ -95,10 +95,10 @@ glm::vec3 Scene::m_getObjectLighting(const ObjRef& closestObj, const math::HitEn
     }
     // Point
     for (size_t i = 0; i < m_pointLights.size(); ++i) {
-        isInShadow = m_isFragmentInPointShadow(hitEntry, m_pointLights[i]->light->position);
+        isInShadow = m_isFragmentInPointShadow(hitEntry, m_pointLights[i]->getLight()->position);
         if (!isInShadow) {
             totalLight += light::calculatePointLight(
-                m_pointLights[i]->light,
+                m_pointLights[i]->getLight(),
                 closestObj.material,
                 hitEntry.hitNormal,
                 glm::normalize(m_camPos - hitEntry.hitPoint),
@@ -109,10 +109,10 @@ glm::vec3 Scene::m_getObjectLighting(const ObjRef& closestObj, const math::HitEn
     }
     // Spot
     for (size_t i = 0; i < m_spotLights.size(); ++i) {
-        isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->light->position);
+        isInShadow = m_isFragmentInPointShadow(hitEntry, m_spotLights[i]->getLight()->position);
         if (!isInShadow) {
             totalLight += light::calculateSpotLight(
-                m_spotLights[i]->light,
+                m_spotLights[i]->getLight(),
                 closestObj.material,
                 hitEntry.hitNormal,
                 glm::normalize(m_camPos - hitEntry.hitPoint),

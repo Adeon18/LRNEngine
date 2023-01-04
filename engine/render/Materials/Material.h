@@ -13,7 +13,9 @@ namespace engn {
 				shininess{ shine }
 			{}
 
-			// TODO: Add color constructor possibility - but do I need it?
+			Material(const Material& other) = default;
+			Material& operator=(const Material& other) = default;
+			~Material() = default;
 
 			glm::vec3 ambient;
 			glm::vec3 diffuse;

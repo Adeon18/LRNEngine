@@ -22,7 +22,7 @@ namespace engn {
 			//! Takes in pointer to object, int's hitentry and a normal to a plane to create a plane in which the hitpoint is
 			ISphereDragger(RenderSphereObj* sphereObj, math::HitEntry* hitEntry) {
 				sphere = sphereObj;
-				centerOffset = sphere->shape->center - hitEntry->hitPoint;
+				centerOffset = sphere->getPosition() - hitEntry->hitPoint;
 			}
 
 			void move(const glm::vec3& newPos) override {
@@ -38,7 +38,7 @@ namespace engn {
 		public:
 			IMeshDragger(RenderMeshObj* meshObj, math::HitEntry* hitEntry) {
 				mesh = meshObj;
-				centerOffset = mesh->position - hitEntry->hitPoint;
+				centerOffset = mesh->getPosition() - hitEntry->hitPoint;
 			}
 
 			void move(const glm::vec3& newPos) override {

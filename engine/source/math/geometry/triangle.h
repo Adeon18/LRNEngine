@@ -21,8 +21,10 @@ namespace math {
 			edges[1] = vertices[2] - vertices[0];
 			normal = glm::normalize(glm::cross(edges[0], edges[1]));
 		}
+		triangle(const triangle& other) = default;
+		triangle& operator=(const triangle& other) = default;
+		~triangle() = default;
 
-		
 
 		[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
 
