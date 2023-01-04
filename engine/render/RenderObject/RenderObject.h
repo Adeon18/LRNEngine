@@ -56,6 +56,10 @@ namespace engn {
 			return false;
 		}
 
+		void setPosition(const glm::vec3& newPos) {
+			shape->center = newPos;
+		}
+
 		math::sphere* shape;
 		mtrl::Material material;
 	};
@@ -118,6 +122,13 @@ namespace engn {
 			ray.origin = prevRayOrigin;
 
 			return false;
+		}
+
+		void setPosition(const glm::vec3& newPos) {
+			position = newPos;
+			modelMatrix = glm::mat4(1.0f);
+			modelMatrix = glm::translate(modelMatrix, position);
+			modelMatrixInv = glm::inverse(modelMatrix);
 		}
 
 		mesh::Mesh* mesh;

@@ -176,10 +176,8 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
 
 bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr) {
     math::ray r = camPtr->castRay(rayCastTo.x, rayCastTo.y);
+    m_dragBindedObject.free();
 
-    for (auto& plane : m_renderPlanes) {
-        plane->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
-    }
     // sphere
     for (auto& sphere : m_renderSpheres) {
         sphere->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
@@ -192,15 +190,28 @@ bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& c
     switch (m_dragBindedObject.objRef.type) {
     case RenderType::SPHERE:
     {
-        std::cout << "SPHERE YES" << std::endl;
         RenderSphereObj* sphere = static_cast<RenderSphereObj*>(m_dragBindedObject.objRef.object);
         m_dragBindedObject.dragger = std::unique_ptr<math::IDragger>(new math::ISphereDragger(sphere, &m_dragBindedObject.hitEntry));
+        return true;
+    }
+
+    case RenderType::MESH:
+    {
+        RenderMeshObj* mesh = static_cast<RenderMeshObj*>(m_dragBindedObject.objRef.object);
+        m_dragBindedObject.dragger = std::unique_ptr<math::IDragger>(new math::IMeshDragger(mesh, &m_dragBindedObject.hitEntry));
+        return true;
     }
     }
 
-    return true;
+    return false;
 }
 
+void Scene::moveDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr) {
+    math::ray newR = camPtr->castRay(rayCastTo.x, rayCastTo.y);
+    glm::vec3 newPos = newR.getPointAt(m_dragBindedObject.hitEntry.rayT);
+
+    m_dragBindedObject.dragger->move(newPos);
+}
 
 void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr)
 

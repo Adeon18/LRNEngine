@@ -23,8 +23,8 @@ namespace engn {
 				centerOffset = sphere->shape->center - hitEntry->hitPoint;
 			}
 
-			void move(const glm::vec3& offset) override {
-			
+			void move(const glm::vec3& newPos) override {
+				sphere->setPosition(newPos + centerOffset);
 			}
 
 			RenderSphereObj* sphere;
@@ -34,15 +34,17 @@ namespace engn {
 		//! Mesh Dragger
 		class IMeshDragger: public IDragger {
 		public:
-			IMeshDragger(RenderMeshObj* meshObj) {
+			IMeshDragger(RenderMeshObj* meshObj, math::HitEntry* hitEntry) {
 				mesh = meshObj;
+				centerOffset = mesh->position - hitEntry->hitPoint;
 			}
 
-			void move(const glm::vec3& offset) override {
-
+			void move(const glm::vec3& newPos) override {
+				mesh->setPosition(newPos + centerOffset);
 			}
 
 			RenderMeshObj* mesh;
+			glm::vec3 centerOffset;
 		};
 	} // math
 } // engn

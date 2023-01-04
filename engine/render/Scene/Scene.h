@@ -82,6 +82,8 @@ public:
     //! Find if there is an object we can drag, if there is => initialize query with a dragger
     //! Mouse coords should be already transformed to buffer coords
     bool findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr);
+    //! Move the binded draggable object to the new position
+    void moveDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr);
 
 public:
    
