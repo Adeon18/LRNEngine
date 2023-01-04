@@ -18,6 +18,8 @@ namespace engn {
 		//! Sphere Dragger
 		class ISphereDragger: public IDragger {
 		public:
+			ISphereDragger() = delete;
+			//! Takes in pointer to object, int's hitentry and a normal to a plane to create a plane in which the hitpoint is
 			ISphereDragger(RenderSphereObj* sphereObj, math::HitEntry* hitEntry) {
 				sphere = sphereObj;
 				centerOffset = sphere->shape->center - hitEntry->hitPoint;

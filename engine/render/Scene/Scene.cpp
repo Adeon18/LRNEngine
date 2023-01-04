@@ -189,7 +189,9 @@ bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& c
     case RenderType::SPHERE:
     {
         RenderSphereObj* sphere = static_cast<RenderSphereObj*>(m_dragBindedObject.objRef.object);
-        m_dragBindedObject.dragger = std::unique_ptr<math::IDragger>(new math::ISphereDragger(sphere, &m_dragBindedObject.hitEntry));
+        m_dragBindedObject.dragger = std::unique_ptr<math::IDragger>(
+            new math::ISphereDragger(sphere, &m_dragBindedObject.hitEntry)
+        );
         return true;
     }
 
@@ -206,9 +208,13 @@ bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& c
 
 void Scene::moveDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr) {
     math::ray newR = camPtr->castRay(rayCastTo.x, rayCastTo.y);
-    glm::vec3 newPos = newR.getPointAt(m_dragBindedObject.hitEntry.rayT);
+    math::plane planeOfPoint{ camPtr->getCamForward(), m_dragBindedObject.hitEntry.hitPoint };
 
-    m_dragBindedObject.dragger->move(newPos);
+    // Get the intersection point of the new ray and a plane in which the old point lies
+    math::HitEntry newPointEntry{};
+    if (planeOfPoint.hit(newR, newPointEntry)) {
+        m_dragBindedObject.dragger->move(newPointEntry.hitPoint);
+    }
 }
 
 void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr)
@@ -235,7 +241,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
 
     auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);
     auto* st_p = pixel;
-    for (int y = 20; y < winData.bufferHeight; ++y)
+    for (int y = 0; y < winData.bufferHeight; ++y)
     {
         for (int x = 0; x <= winData.bufferWidth; ++x)
         {
