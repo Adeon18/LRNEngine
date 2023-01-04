@@ -71,7 +71,6 @@ namespace mesh {
 			if (tzMax < tMax)
 				tMax = tzMax;
 
-			hitEntry.isHit = true;
 			hitEntry.rayT = tMin;
 
 			return true;
@@ -100,7 +99,7 @@ namespace mesh {
 
 		//! Manual iterative hit function for mesh
 		math::HitEntry hit(math::ray& r) {
-			math::HitEntry closest{false, math::hitable::MAX_DIST};
+			math::HitEntry closest{math::hitable::MAX_DIST};
 			for (size_t i = 0; i < triangles.size(); ++i) {
 				triangles[i].hit(r, closest);
 			}

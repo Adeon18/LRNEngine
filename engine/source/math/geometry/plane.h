@@ -26,7 +26,6 @@ public:
 
 			if (dist > 0.0f && dist < closestHit.rayT)
 			{
-				closestHit.isHit = true;
 				closestHit.rayT = dist;
 				closestHit.hitPoint = r.getPointAt(dist);
 				// I don't have any clue how this normal works but it does and I'm happy

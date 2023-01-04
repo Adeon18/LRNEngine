@@ -30,7 +30,6 @@ public:
 			// Code duplication but is more optimized than iteration because result computing is quite expensive because sqrt
 			float res = (-b - glm::sqrt(discriminant)) / (2.0f * a);
 			if (res > 0.0f && res < closestHit.rayT) {
-				closestHit.isHit = true;
 				closestHit.rayT = res;
 				closestHit.hitPoint = r.getPointAt(closestHit.rayT);
 				closestHit.hitNormal = glm::normalize(closestHit.hitPoint - center);
@@ -38,7 +37,6 @@ public:
 			}
 			res = (-b + glm::sqrt(discriminant)) / (2.0f * a);
 			if (res > 0.0f && res < closestHit.rayT) {
-				closestHit.isHit = true;
 				closestHit.rayT = res;
 				closestHit.hitPoint = r.getPointAt(closestHit.rayT);
 				closestHit.hitNormal = glm::normalize(closestHit.hitPoint - center);

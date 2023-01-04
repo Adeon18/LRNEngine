@@ -10,7 +10,7 @@ Scene::Scene()
 void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
 
     // Find the object closest to the ray
-    math::HitEntry closestEntry{false, math::hitable::MAX_DIST};
+    math::HitEntry closestEntry{math::hitable::MAX_DIST};
     ObjRef closestObj{nullptr, nullptr, RenderType::NONE };
 
     //! Check object collision
@@ -131,7 +131,7 @@ bool Scene::m_isFragmentInDirectionShadow(const math::HitEntry& hitEntry, const 
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), lightDir };
 
     ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
-    math::HitEntry prop{ false, math::hitable::MAX_DIST };
+    math::HitEntry prop{ math::hitable::MAX_DIST };
 
     // plane
     for (auto& plane : m_renderPlanes) {
@@ -155,7 +155,7 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
     math::ray toLight{ hitEntry.hitPoint + 0.001f * (hitEntry.hitNormal), glm::normalize(distToLight) };
 
     ObjRef propRef{ nullptr, nullptr, RenderType::NONE };
-    math::HitEntry prop{ false, math::hitable::MAX_DIST };
+    math::HitEntry prop{ math::hitable::MAX_DIST };
 
     // plane
     for (auto& plane : m_renderPlanes) {
@@ -171,6 +171,34 @@ bool Scene::m_isFragmentInPointShadow(const math::HitEntry& hitEntry, const glm:
     }
 
     return false;
+}
+
+
+bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr) {
+    math::ray r = camPtr->castRay(rayCastTo.x, rayCastTo.y);
+
+    for (auto& plane : m_renderPlanes) {
+        plane->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
+    }
+    // sphere
+    for (auto& sphere : m_renderSpheres) {
+        sphere->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
+    }
+    // mesh
+    for (auto& mesh : m_renderMeshes) {
+        mesh->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
+    }
+
+    switch (m_dragBindedObject.objRef.type) {
+    case RenderType::SPHERE:
+    {
+        std::cout << "SPHERE YES" << std::endl;
+        RenderSphereObj* sphere = static_cast<RenderSphereObj*>(m_dragBindedObject.objRef.object);
+        m_dragBindedObject.dragger = std::unique_ptr<math::IDragger>(new math::ISphereDragger(sphere, &m_dragBindedObject.hitEntry));
+    }
+    }
+
+    return true;
 }
 
 
@@ -199,7 +227,7 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
 
     auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);
     auto* st_p = pixel;
-    for (int y = 0; y < winData.bufferHeight; ++y)
+    for (int y = 20; y < winData.bufferHeight; ++y)
     {
         for (int x = 0; x <= winData.bufferWidth; ++x)
         {

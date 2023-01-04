@@ -16,6 +16,7 @@
 #include "source/math/ray.h"
 #include "source/math/geometry/sphere.h"
 #include "source/math/geometry/plane.h"
+#include "source/draggers/dragger.h"
 #include "windows/Window.h"
 #include "render/Camera/Camera.h"
 
@@ -28,9 +29,17 @@ static COLORREF RGBtoBE(const COLORREF& rgb)
 
 
 class Scene {
-    static struct ClosestObj{
-        int objIdx;
-        bool isMesh;
+public:
+    struct HitDraggerQuery {
+        ObjRef objRef;
+        math::HitEntry hitEntry{ math::hitable::MAX_DIST };
+        std::unique_ptr<math::IDragger> dragger;
+
+        void free() {
+            dragger.release();
+            objRef.clear();
+            hitEntry.rayT = math::hitable::MAX_DIST;
+        }
     };
 public:
     static constexpr glm::vec3 SKY_COLOR = glm::vec3(0.05f, 0.05f, 0.05f);
@@ -69,9 +78,13 @@ public:
     }
 
     [[nodiscard]] mesh::Mesh* getMeshPtr(const std::string& name) { return &m_meshes[name]; }
+    
+    //! Find if there is an object we can drag, if there is => initialize query with a dragger
+    //! Mouse coords should be already transformed to buffer coords
+    bool findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& camPtr);
 
 public:
-    
+   
 private:
     //! Setter for camera pos, private because pos should only be set from the scene
     void m_setCameraPos(const glm::vec3& camPos) { m_camPos = camPos; }
@@ -98,6 +111,8 @@ private:
 
     // Shared mesh storage as follows: name, mesh
     std::unordered_map<std::string, mesh::Mesh> m_meshes;
+    // Current object data that is dragged
+    HitDraggerQuery m_dragBindedObject;
 
     glm::vec3 m_camPos;
 };

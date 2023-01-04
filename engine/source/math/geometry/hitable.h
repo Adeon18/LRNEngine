@@ -14,7 +14,6 @@ namespace math {
 
 struct HitEntry
 {
-	bool isHit;
 	float rayT;
 	glm::vec3 hitPoint;
 	glm::vec3 hitNormal;

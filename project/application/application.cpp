@@ -64,6 +64,7 @@ void Application::m_handleRender() {
 
 void Application::m_handlePhysics() {
 	m_moveCamera();
+	m_handleDragging();
 }
 
 
@@ -171,6 +172,12 @@ void Application::m_onMouseRMBPressed(MSG* mptr) {
 	m_pressedInputs[mptr->wParam] = true;
 	m_objDragData.mousePos.x = GET_X_LPARAM(mptr->lParam);
 	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
+	m_processRMBInputs(m_objDragData.mousePos);
+}
+
+void Application::m_processRMBInputs(glm::vec2& mousePos) {
+	mousePos.y = m_window->getHeight() - mousePos.y;
+	mousePos /= static_cast<float>(BUFF_DECREASE_TIMES);
 }
 
 void Application::m_onMouseRMBReleased(MSG* mptr) {
@@ -192,7 +199,7 @@ void Application::m_onMouseMove(MSG* mptr) {
 
 void Application::m_findObject() {
 	if (!m_objectBinded && (m_pressedInputs[Keys::RMB])) {
-		// call to scene
+		m_scene->findDraggable(m_objDragData.mousePos, m_camera);
 		m_objectBinded = true;
 	}
 }
@@ -212,6 +219,11 @@ void Application::m_releaseObject() {
 		// call to scene release
 		m_objectBinded = false;
 	}
+}
+
+void Application::m_handleDragging() {
+	m_findObject();
+	m_releaseObject();
 }
 
 void Application::m_moveCamera()

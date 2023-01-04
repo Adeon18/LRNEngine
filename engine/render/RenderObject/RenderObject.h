@@ -27,6 +27,12 @@ namespace engn {
 		void* object;
 		mtrl::Material* material;
 		RenderType type;
+
+		void clear() {
+			object = nullptr;
+			material = nullptr;
+			type = RenderType::NONE;
+		}
 	};
 
 	//! A RAII wrapper foe the math sphere class
@@ -82,7 +88,8 @@ namespace engn {
 	//! A simple RAII wrapper for rendering and wrapping sped up intersection for a mesh object
 	struct RenderMeshObj {
 		RenderMeshObj(mesh::Mesh* msh, const mtrl::Material& mat, const glm::vec3& mshPos) :
-			material{ mat }
+			material{ mat },
+			position{ mshPos }
 		{
 			// Mesh data
 			mesh = msh;
@@ -115,6 +122,7 @@ namespace engn {
 
 		mesh::Mesh* mesh;
 
+		glm::vec3 position;
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
 		glm::mat4 modelMatrixInv = glm::mat4(1.0f);
 		// Speed up collison

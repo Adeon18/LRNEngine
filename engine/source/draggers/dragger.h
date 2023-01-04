@@ -11,13 +11,16 @@ namespace engn {
 
 		//! Abstract dragger decorator
 		class IDragger {
+		public:
 			virtual void move(const glm::vec3& offset) = 0;
 		};
 
 		//! Sphere Dragger
 		class ISphereDragger: public IDragger {
-			ISphereDragger(RenderSphereObj* sphereObj) {
+		public:
+			ISphereDragger(RenderSphereObj* sphereObj, math::HitEntry* hitEntry) {
 				sphere = sphereObj;
+				centerOffset = sphere->shape->center - hitEntry->hitPoint;
 			}
 
 			void move(const glm::vec3& offset) override {
@@ -25,10 +28,12 @@ namespace engn {
 			}
 
 			RenderSphereObj* sphere;
+			glm::vec3 centerOffset;
 		};
 
 		//! Mesh Dragger
 		class IMeshDragger: public IDragger {
+		public:
 			IMeshDragger(RenderMeshObj* meshObj) {
 				mesh = meshObj;
 			}

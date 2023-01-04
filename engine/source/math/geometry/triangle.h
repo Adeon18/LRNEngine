@@ -62,7 +62,6 @@ namespace math {
 
 			if (t <= 0.0f || t >= closestHit.rayT) { return false; }
 
-			closestHit.isHit = true;
 			closestHit.rayT = t;
 			closestHit.hitPoint = r.getPointAt(t);
 			closestHit.hitNormal = (glm::dot(toRayOrigin, normal) > 0.0f) ? normal: -normal;

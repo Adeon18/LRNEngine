@@ -64,6 +64,7 @@ private:
 	void m_onMouseLMBReleased(MSG* mptr);
 	void m_onMouseRMBPressed(MSG* mptr);
 	void m_onMouseRMBReleased(MSG* mptr);
+	void m_processRMBInputs(glm::vec2& mousePos);
 	void m_onMouseMove(MSG* mptr);
 
 	//! Put objects on the scene
@@ -76,6 +77,8 @@ private:
 	void m_moveObject();
 	//! Release the object from dragging
 	void m_releaseObject();
+
+	void m_handleDragging();
 
 	//! Handle the camera movement
 	void m_moveCamera();
