@@ -38,6 +38,5 @@ namespace engn {
 		const Material YELLOW_RUBBER{ glm::vec3{0.0f, 0.0f, 0.0f}, glm::vec3{0.5f, 0.5f, 0.0f}, glm::vec3{0.6f, 0.6f, 0.5f}, 0.078125f * 128 };
 		const Material RED_RUBBER{ glm::vec3{0.05f, 0.0f, 0.0f}, glm::vec3{0.5f, 0.4f, 0.4f}, glm::vec3{0.7f, 0.04f, 0.04f}, 0.078125f * 128 };
 		const Material GREEN_RUBBER{ glm::vec3{0.0f, 0.05f, 0.0f}, glm::vec3{0.4f, 0.5f, 0.4f}, glm::vec3{0.04f, 0.7f, 0.04f}, 0.078125f * 128 };
-	
 	}
 } // engn

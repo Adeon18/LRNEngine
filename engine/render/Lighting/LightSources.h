@@ -18,6 +18,13 @@ namespace light {
 	constexpr glm::vec3 PLIGHT_DIST_65{ 1.0f, 0.07f, 0.017f };
 	constexpr glm::vec3 PLIGHT_DIST_100{ 1.0f, 0.045f, 0.0075f };
 
+	//! colors
+	constexpr glm::vec3 RED{ 1.0f, 0.0f, 0.0f };
+	constexpr glm::vec3 GREEN{ 0.0f, 1.0f, 0.0f };
+	constexpr glm::vec3 BLUE{ 0.0f, 0.0f, 1.0f };
+	constexpr glm::vec3 LIGHTPURPLE{ 0.5f, 0.2f, 0.9f };
+	constexpr glm::vec3 CYAN{0.0f, 1.0f, 1.0f};
+
 	//! Basic Light data that is needed for each light type
 	struct LightProperties {
 		glm::vec3 ambient;

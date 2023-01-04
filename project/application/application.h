@@ -35,7 +35,7 @@ class Application
 	};
 	static constexpr int WIN_WIDTH_DEF = 960;
 	static constexpr int WIN_HEIGHT_DEF = 540;
-	static constexpr int BUFF_DECREASE_TIMES = 3;
+	static constexpr int BUFF_DECREASE_TIMES = 2;
 	static constexpr float ROLL_SPEED_DEG = 1.0f;
 public:
 	struct MouseInputData {

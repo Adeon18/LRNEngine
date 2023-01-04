@@ -71,40 +71,32 @@ void Application::m_handlePhysics() {
 void Application::m_createObjects() {
 	m_scene->setDirectionalLight(
 		glm::vec3{ 0.2f, -0.5f, -0.3f },
-		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.2f}, glm::vec3{0.3f} }
+		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.2f}, glm::vec3{0.5f} }
 	);
 	
 	m_scene->addPointLight(
-		glm::vec3{ -2.0f, 2.0f, -3.5f },
+		glm::vec3{ -0.0f, 2.0f, -10.0f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
 		engn::light::PLIGHT_DIST_50
 	);
-	////m_scene->addPointLight(glm::vec3{ -6.0f, 6.0f, -15.0f }, light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} }, glm::vec3{ 1.0f, 0.07f, 0.017f });
 
 	m_scene->addSpotLight(
 		glm::vec3{ 0.0f, -1.0f, 0.0f },
-		glm::vec3{ 5.f, 4.0f, -20.0f },
+		glm::vec3{ 0.f, 4.0f, -20.0f },
 		glm::vec2{ 0.9f, 0.7f },
-		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} }
+		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+		engn::light::LIGHTPURPLE
 	);
 	
 	// Emerald sphere
 	m_scene->addRenderObject(
-		new engn::math::sphere{ glm::vec3{ 0, 0, -20 }, 5},
+		new engn::math::sphere{ glm::vec3{ -3, 0, -20 }, 3},
 		engn::mtrl::EMERALD
 	);
 
-	/*m_scene->addRenderObject(
-		new engn::math::triangle{ glm::vec3{ 4, 4, -10 }, glm::vec3{ 0, 4, -10 }, glm::vec3{ 0, 0, -10 } },
-		engn::mtrl::SILVER
-	);*/
-
-	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1}));
-
 	m_scene->addRenderObject(
-		m_scene->getMeshPtr("unit_box"),
-		engn::mtrl::EMERALD,
-		glm::vec3{ 0, 0, -5 }
+		new engn::math::sphere{ glm::vec3{ 3, 1, -20 }, 2 },
+		engn::mtrl::RED_PLASTIC
 	);
 
 	// Whitw plastic plane
@@ -113,6 +105,19 @@ void Application::m_createObjects() {
 		engn::mtrl::WHITE_PLASTIC
 	);
 
+	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1}));
+
+	m_scene->addRenderObject(
+		m_scene->getMeshPtr("unit_box"),
+		engn::mtrl::YELLOW_RUBBER,
+		glm::vec3{ 2, -3, -10 }
+	);
+
+	m_scene->addRenderObject(
+		m_scene->getMeshPtr("unit_box"),
+		engn::mtrl::CHROME,
+		glm::vec3{ -2, -3, -10 }
+	);
 }
 
 

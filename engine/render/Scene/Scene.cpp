@@ -176,6 +176,10 @@ bool Scene::findDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& c
     math::ray r = camPtr->castRay(rayCastTo.x, rayCastTo.y);
     m_dragBindedObject.free();
 
+    // plane
+    for (auto& plane : m_renderPlanes) {
+        plane->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);
+    }
     // sphere
     for (auto& sphere : m_renderSpheres) {
         sphere->hit(r, m_dragBindedObject.hitEntry, m_dragBindedObject.objRef);

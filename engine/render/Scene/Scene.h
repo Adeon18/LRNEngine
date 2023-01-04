@@ -42,7 +42,7 @@ public:
         }
     };
 public:
-    static constexpr glm::vec3 SKY_COLOR = glm::vec3(0.05f, 0.05f, 0.05f);
+    static constexpr glm::vec3 SKY_COLOR = glm::vec3(0.05f, 0.05f, 0.2f);
 
     Scene();
 
