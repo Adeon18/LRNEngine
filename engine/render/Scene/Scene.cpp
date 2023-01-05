@@ -221,7 +221,7 @@ void Scene::moveDraggable(const glm::vec2& rayCastTo, std::unique_ptr<Camera>& c
     }
 }
 
-void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr)
+void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<ParallelExecutor>& executor)
 
 {
     // Don't render the minimized window
@@ -244,16 +244,30 @@ void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& cam
     m_setCameraPos(camPtr->getCamPosition());
 
     auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);
-    auto* st_p = pixel;
-    for (int y = 0; y < winData.bufferHeight; ++y)
+
+    auto func = [this, &winData, &pixel, &camPtr](uint32_t threadIndex, uint32_t taskIndex)
     {
-        for (int x = 0; x <= winData.bufferWidth; ++x)
-        {
-            math::ray r = camPtr->castRay(x, y);
-            m_castRay(r, pixel);
-            pixel = st_p + y * winData.bufferWidth + x;
-        }
-    }
+        m_computePixelColor(taskIndex / winData.bufferWidth, taskIndex % winData.bufferWidth, pixel, winData, camPtr);
+    };
+
+    executor->execute(func, winData.bufferWidth * winData.bufferHeight, 20);
+
+
+    //for (int y = 0; y < winData.bufferHeight; ++y)
+    //{
+    //    for (int x = 0; x <= winData.bufferWidth; ++x)
+    //    {
+    //        /*math::ray r = camPtr->castRay(x, y);
+    //        m_castRay(r, pixel);
+    //        pixel = st_p + y * winData.bufferWidth + x;*/
+    //        m_computePixelColor(y, x, pixel, winData, camPtr);
+    //    }
+    //}
+}
+
+void Scene::m_computePixelColor(int y, int x, COLORREF* pixel, const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr) {
+    math::ray r = camPtr->castRay(x, y);
+    m_castRay(r, pixel + y * winData.bufferWidth + x);
 }
 
 } // engn

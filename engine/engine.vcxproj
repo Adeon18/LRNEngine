@@ -34,12 +34,14 @@
     <ClInclude Include="source\mesh\Mesh.h" />
     <ClInclude Include="source\mesh\TriangleOcTree.h" />
     <ClInclude Include="utils\FPSTimer.h" />
+    <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp" />
     <ClCompile Include="render\Scene\Scene.cpp" />
     <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
+    <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

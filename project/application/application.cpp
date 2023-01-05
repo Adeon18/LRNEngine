@@ -12,6 +12,12 @@ Application::Application() :
 	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
 {
+	// Like this for now
+	const uint32_t MAX_THREADS = (std::max)(1u, std::thread::hardware_concurrency());
+	const uint32_t HALF_THREADS = (std::max)(1u, std::thread::hardware_concurrency() / 2);
+
+	m_executor = std::unique_ptr<engn::ParallelExecutor>(new engn::ParallelExecutor{ MAX_THREADS });
+
 	m_createObjects();
 }
 
@@ -58,7 +64,7 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 
 
 void Application::m_handleRender() {
-	m_scene->render(m_window->getWindowData(), m_camera);
+	m_scene->render(m_window->getWindowData(), m_camera, m_executor);
 }
 
 

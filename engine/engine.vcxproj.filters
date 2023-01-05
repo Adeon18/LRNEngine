@@ -63,6 +63,9 @@
     <ClInclude Include="source\draggers\dragger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\paralell_executor\parallel_executor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\mesh\TriangleOcTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\paralell_executor\parallel_executor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

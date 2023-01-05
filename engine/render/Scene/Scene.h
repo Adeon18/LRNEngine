@@ -18,6 +18,7 @@
 #include "source/math/geometry/plane.h"
 #include "source/draggers/dragger.h"
 #include "windows/Window.h"
+#include "utils/paralell_executor/parallel_executor.h"
 #include "render/Camera/Camera.h"
 
 namespace engn {
@@ -46,7 +47,7 @@ public:
 
     Scene();
 
-    void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
+    void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<ParallelExecutor>& executor);
 
     //! Ass sphere
     void addRenderObject(math::sphere* s, const mtrl::Material& m) {
@@ -92,7 +93,8 @@ private:
     //! Setter for camera pos, private because pos should only be set from the scene
     void m_setCameraPos(const glm::vec3& camPos) { m_camPos = camPos; }
 
-    void m_getRaycastOriginPaceData(float screenWidth, float screenHeight);
+    void m_computePixelColor(int y, int x, COLORREF* pixel, const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
+
     //! Cast a single ray and fill a single ray entry
     void m_castRay(math::ray& r, COLORREF* pixel);
     //! Calculate lighting and materials and shadows
