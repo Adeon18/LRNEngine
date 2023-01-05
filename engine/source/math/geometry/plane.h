@@ -1,7 +1,7 @@
 #pragma once
 
 #include <utility>
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "hitable.h"
 #include "source/math/ray.h"

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <utility>
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "render/Materials/Material.h"
 

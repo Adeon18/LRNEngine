@@ -4,8 +4,8 @@
 #include <iostream>
 #include <unordered_map>
 
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtx/string_cast.hpp>
 
 #include "render/Camera/Camera.h"
 #include "render/Lighting/Lights.h"

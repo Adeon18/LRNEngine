@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "source/math/ray.h"
 #include "source/math/geometry/triangle.h"

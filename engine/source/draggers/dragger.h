@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "source/mesh/Mesh.h"
 #include "source/math/geometry/sphere.h"

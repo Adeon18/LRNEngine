@@ -6,7 +6,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
 #include "utils/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
