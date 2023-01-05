@@ -32,7 +32,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Initialize Console
 	initConsole();
 	
-	// Create window
+	// Create application
 	std::unique_ptr<Application> application = std::make_unique<Application>();
 
 	return application->run();

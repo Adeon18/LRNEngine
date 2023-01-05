@@ -45,7 +45,7 @@
     <ClInclude Include="render\Materials\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Lighting\LightSources.h">
+    <ClInclude Include="render\Lighting\Lights.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render\RenderObject\RenderObject.h">
@@ -78,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Lighting\Lights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,22 +3,24 @@
 #include <iostream>
 #include <unordered_map>
 
-#include <glm/glm.hpp>
-
 #include <windows.h>
 #include <windowsx.h>
 
+#include <glm/glm.hpp>
+
 #include "utils/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
-#include "render/Camera/Camera.h"
-#include "source/math/geometry/triangle.h"
-#include "source/math/geometry/sphere.h"
+
 #include "render/Scene/Scene.h"
+#include "render/Camera/Camera.h"
+
+#include "source/math/geometry/sphere.h"
+#include "source/math/geometry/triangle.h"
 
 
 class Application
 {
-	static struct Keys {
+	struct Keys {
 		inline static int KEY_A = 0x41;
 		inline static int KEY_D = 0x44;
 		inline static int KEY_W = 0x57;

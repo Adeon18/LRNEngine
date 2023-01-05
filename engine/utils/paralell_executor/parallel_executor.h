@@ -1,11 +1,11 @@
 #pragma once
 
-// required headers
 #include <vector>
 #include <atomic>
-#include <functional>
 #include <thread>
+#include <functional>
 #include <shared_mutex>
+
 
 #define BREAK __debugbreak();
 
@@ -36,7 +36,7 @@ namespace engn {
 		~ParallelExecutor();
 
 		//! Getters
-		uint32_t numThreads() const { return m_threads.size(); }
+		uint32_t numThreads() const { return static_cast<uint32_t>(m_threads.size()); }
 		bool isWorking() const { return m_finishedThreadNum < m_threads.size(); }
 
 		//! Wait for the waitCV to unblock

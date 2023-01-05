@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render\Camera\Camera.h" />
-    <ClInclude Include="render\Lighting\LightSources.h" />
+    <ClInclude Include="render\Lighting\Lights.h" />
     <ClInclude Include="render\Materials\Material.h" />
     <ClInclude Include="render\RenderData\RenderData.h" />
     <ClInclude Include="render\RenderObject\RenderObject.h" />
@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Camera\Camera.cpp" />
+    <ClCompile Include="render\Lighting\Lights.cpp" />
     <ClCompile Include="render\Scene\Scene.cpp" />
     <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />

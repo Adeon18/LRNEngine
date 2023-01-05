@@ -10,13 +10,12 @@ Application::Application() :
 	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::FPSTimer{300} },
 	m_window{ new engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
-	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}} }
+	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
+	}
 {
-	// Like this for now
-	const uint32_t MAX_THREADS = (std::max)(1u, std::thread::hardware_concurrency());
-	const uint32_t HALF_THREADS = (std::max)(1u, std::thread::hardware_concurrency() / 2);
-
-	m_executor = std::unique_ptr<engn::ParallelExecutor>(new engn::ParallelExecutor{ MAX_THREADS });
+	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
+	uint32_t numThreads = (std::max)(1u, (std::max)(engn::ParallelExecutor::MAX_THREADS > 4u ? engn::ParallelExecutor::MAX_THREADS - 2u : 1u, engn::ParallelExecutor::HALF_THREADS));
+	m_executor = std::unique_ptr<engn::ParallelExecutor>(new engn::ParallelExecutor{ numThreads });
 
 	m_createObjects();
 }

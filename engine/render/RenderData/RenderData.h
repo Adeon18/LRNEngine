@@ -2,16 +2,16 @@
 
 namespace engn {
 
-//! A struct that storeal all data needed for ray cast
-struct RayCastData {
-    float pixelWidth;
-    float pixelHeight;
+    //! A struct that storeal all data needed for ray cast
+    struct RayCastData {
+        float pixelWidth;
+        float pixelHeight;
 
-    float halfPixelWidth;
-    float halfPixelHeight;
+        float halfPixelWidth;
+        float halfPixelHeight;
 
-    float strideX;
-    float strideY;
-};
+        float strideX;
+        float strideY;
+    };
 
 } // engn

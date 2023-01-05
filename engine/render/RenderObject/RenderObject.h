@@ -1,13 +1,15 @@
 #pragma once
 
-#include "render/Materials/Material.h"
-#include "source/math/geometry/hitable.h"
-#include "source/math/geometry/sphere.h"
-#include "source/math/geometry/plane.h"
-#include "render/Lighting/LightSources.h"
 #include "source/math/ray.h"
+#include "source/math/geometry/plane.h"
+#include "source/math/geometry/sphere.h"
+#include "source/math/geometry/hitable.h"
+
 #include "source/mesh/Mesh.h"
 #include "source/mesh/TriangleOcTree.h"
+
+#include "render/Lighting/Lights.h"
+#include "render/Materials/Material.h"
 
 
 namespace engn {
@@ -56,7 +58,7 @@ namespace engn {
 		~RenderSphereObj() {
 			if (m_shape) { delete m_shape; };
 		}
-
+		//! Check for collision and fill the data
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
@@ -97,7 +99,7 @@ namespace engn {
 		~RenderPlaneObj() {
 			if (m_shape) { delete m_shape; };
 		}
-
+		//! Check for collision and fill the data
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
@@ -141,6 +143,7 @@ namespace engn {
 
 		~RenderMeshObj() = default;
 
+		//! Check for collision and fill the data
 		bool hit(math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			auto prevRayOrigin = ray.origin;
 			ray.transform(m_modelMatrixInv);
@@ -186,7 +189,7 @@ namespace engn {
 			// Precalculate matrices
 			m_updateMatrices();
 		}
-
+		//! Update the model transformation matrix => should be done after every transform operation on an object
 		void m_updateMatrices() {
 			m_modelMatrix = glm::mat4(1.0f);
 			m_modelMatrix = glm::translate(m_modelMatrix, m_position);
@@ -217,7 +220,7 @@ namespace engn {
 			delete m_light;
 			delete m_shape;
 		}
-
+		//! Check for collision and fill the data
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;
@@ -258,7 +261,7 @@ namespace engn {
 			delete m_light;
 			delete m_shape;
 		}
-
+		//! Check for collision and fill the data
 		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
 			if (m_shape->hit(ray, nearest)) {
 				objRef.object = this;

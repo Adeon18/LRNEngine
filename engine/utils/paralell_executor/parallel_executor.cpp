@@ -1,9 +1,10 @@
-
 #include "parallel_executor.h"
 
 
 namespace engn {
 
+	const uint32_t ParallelExecutor::MAX_THREADS = (std::max)(1u, std::thread::hardware_concurrency());
+	const uint32_t ParallelExecutor::HALF_THREADS = (std::max)(1u, std::thread::hardware_concurrency() / 2);
 
 	ParallelExecutor::ParallelExecutor(uint32_t numThreads)
 	{
@@ -90,10 +91,7 @@ namespace engn {
 				if ((prevFinishedNum + 1) == m_threads.size())
 				{
 					m_executeTasks = {};
-					m_waitCV.notify_all(); // If an outer thread waits on m_waitCV, it will remain blocked until this thread enters m_workCV.wait(),
-					// because both CVs wait with the same m_mutex. This is needed to avoid this thread missing
-					// a notification on m_workCV in a situation when an outer thread unblocks after this line and before this thread
-					// enters m_workCV.wait(), which would result in this thread being blocked until a next notification.
+					m_waitCV.notify_all();
 				}
 
 				// Calling this unlocks m_mutex until m_workCV is notified, then re-locks it again until the end of the scope.

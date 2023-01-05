@@ -1,13 +1,12 @@
 #pragma once
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "render/RenderData/RenderData.h"
-#include "source/math/ray.h"
 #include "windows/Window.h"
+#include "source/math/ray.h"
+#include "render/RenderData/RenderData.h"
 
 
 namespace engn {
@@ -33,6 +32,7 @@ public:
     //! Cast a single ray and return it
     math::ray castRay(int x, int y);
 
+    //! Called wen the window is resized
     void setNewScreenSize(int width, int height) {
         setProjectionMatrix(m_fov, width, height);
     }
