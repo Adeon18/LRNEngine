@@ -80,7 +80,13 @@ void Application::m_createObjects() {
 	);
 	
 	m_scene->addPointLight(
-		glm::vec3{ -0.0f, 2.0f, -10.0f },
+		glm::vec3{ -4.0f, 2.0f, -7.0f },
+		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+		engn::light::PLIGHT_DIST_50
+	);
+
+	m_scene->addPointLight(
+		glm::vec3{ 4.0f, 2.0f, -7.0f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
 		engn::light::PLIGHT_DIST_50
 	);

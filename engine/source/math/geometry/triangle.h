@@ -21,6 +21,7 @@ namespace engn {
 				edges[0] = vertices[1] - vertices[0];
 				edges[1] = vertices[2] - vertices[0];
 				normal = glm::normalize(glm::cross(edges[0], edges[1]));
+				center = (v0 + v1 + v2) / 3.0f;
 			}
 			triangle(const triangle& other) = default;
 			triangle& operator=(const triangle& other) = default;
@@ -93,6 +94,7 @@ namespace engn {
 			glm::vec3 vertices[3];
 			glm::vec3 edges[2];
 			glm::vec3 normal;
+			glm::vec3 center;
 		};
 
 	} // math

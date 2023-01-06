@@ -34,7 +34,7 @@ namespace engn {
 				const glm::vec3& V2 = getPos(mesh, i, 1);
 				const glm::vec3& V3 = getPos(mesh, i, 2);
 
-				glm::vec3 P = (V1 + V2 + V3) / 3.f;
+				glm::vec3 P = mesh.triangles[i].center;
 
 				bool inserted = addTriangle(i, V1, V2, V3, P);
 			}
@@ -129,7 +129,7 @@ namespace engn {
 						const glm::vec3& P2 = getPos(*m_mesh, index, 1);
 						const glm::vec3& P3 = getPos(*m_mesh, index, 2);
 
-						glm::vec3 P = (P1 + P2 + P3) / 3.f;
+						glm::vec3 P = m_mesh->triangles[index].center;
 
 						int i = 0;
 						for (; i < 8; ++i)
