@@ -2,6 +2,29 @@
 
 
 namespace engn {
+    void Scene::addRenderObject(math::sphere* s, const mtrl::Material& m) {
+        m_renderSpheres.emplace_back(new RenderSphereObj{ s, m });
+    }
+    void Scene::addRenderObject(math::plane* p, const mtrl::Material& m) {
+        m_renderPlanes.emplace_back(new RenderPlaneObj{ p, m });
+    }
+    void Scene::addRenderObject(mesh::Mesh* msh, const mtrl::Material& m, const glm::vec3 pos) {
+        m_renderMeshes.emplace_back(new RenderMeshObj{ msh, m, pos });
+    }
+    void Scene::addMesh(const std::string& name, const mesh::Mesh& mesh) {
+        m_meshes[name] = mesh;
+    }
+    void Scene::addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) {
+        m_pointLights.emplace_back(new RenderPointLightObj{ new light::PointLight(pos, prop, attenuation, color) });
+    }
+    void Scene::setDirectionalLight(const glm::vec3& dir, const light::LightProperties& prop) {
+        m_direcLight = std::make_unique<light::DirectionalLight>(dir, prop);
+    }
+    void Scene::addSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color) {
+        m_spotLights.emplace_back(new RenderSpotLightObj{ new light::SpotLight(dir, pos, range, prop, color) });
+    }
+    [[nodiscard]] mesh::Mesh* Scene::getMeshPtr(const std::string& name) { return &m_meshes[name]; }
+
 
     void Scene::m_castRay(math::ray& r, COLORREF* pixel) {
 

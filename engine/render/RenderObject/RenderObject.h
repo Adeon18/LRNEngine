@@ -41,38 +41,20 @@ namespace engn {
 	//! A RAII wrapper foe the math sphere class
 	struct RenderSphereObj {
 
-		RenderSphereObj(math::sphere* shapePtr, const mtrl::Material& mat) : m_material{ mat } {
-			m_shape = shapePtr;
-		}
+		RenderSphereObj(math::sphere* shapePtr, const mtrl::Material& mat);
 
-		RenderSphereObj(const RenderSphereObj& other) : m_material{ other.m_material } {
-			m_shape = new math::sphere{ *other.m_shape };
-		}
+		RenderSphereObj(const RenderSphereObj& other);
 
-		RenderSphereObj& operator=(const RenderSphereObj& other) {
-			m_shape = new math::sphere{ *other.m_shape };
-			m_material = mtrl::Material{ other.m_material };
-			return *this;
-		}
+		RenderSphereObj& operator=(const RenderSphereObj& other);
 
-		~RenderSphereObj() {
-			if (m_shape) { delete m_shape; };
-		}
+		~RenderSphereObj();
 		//! Check for collision and fill the data
-		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (m_shape->hit(ray, nearest)) {
-				objRef.object = this;
-				objRef.material = &m_material;
-				objRef.type = RenderType::SPHERE;
-				return true;
-			}
-			return false;
-		}
+		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef);
 
-		void setPosition(const glm::vec3& newPos) { m_shape->center = newPos; }
-		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
-		[[nodiscard]] glm::vec3& getPosition() { return m_shape->center; }
-		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
+		void setPosition(const glm::vec3& newPos);
+		void setMaterial(const mtrl::Material& mat);
+		[[nodiscard]] glm::vec3& getPosition();
+		[[nodiscard]] mtrl::Material& getMaterial();
 
 	private:
 		math::sphere* m_shape;
@@ -82,36 +64,18 @@ namespace engn {
 	//! A RAII wrapper for the plane object
 	class RenderPlaneObj {
 	public:
-		RenderPlaneObj(math::plane* shapePtr, const mtrl::Material& mat) : m_material{ mat } {
-			m_shape = shapePtr;
-		}
+		RenderPlaneObj(math::plane* shapePtr, const mtrl::Material& mat);
 
-		RenderPlaneObj(const RenderPlaneObj& other) : m_material{ other.m_material } {
-			m_shape = new math::plane{ *other.m_shape };
-		}
+		RenderPlaneObj(const RenderPlaneObj& other);
 
-		RenderPlaneObj& operator=(const RenderPlaneObj& other) {
-			m_shape = new math::plane{ *other.m_shape };
-			m_material = mtrl::Material{ other.m_material };
-			return *this;
-		}
+		RenderPlaneObj& operator=(const RenderPlaneObj& other);
 
-		~RenderPlaneObj() {
-			if (m_shape) { delete m_shape; };
-		}
+		~RenderPlaneObj();
 		//! Check for collision and fill the data
-		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (m_shape->hit(ray, nearest)) {
-				objRef.object = this;
-				objRef.material = &m_material;
-				objRef.type = RenderType::PLANE;
-				return true;
-			}
-			return false;
-		}
+		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef);
 
-		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
-		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
+		void setMaterial(const mtrl::Material& mat);
+		[[nodiscard]] mtrl::Material& getMaterial();
 	private:
 		math::plane* m_shape;
 		mtrl::Material m_material;
@@ -120,59 +84,22 @@ namespace engn {
 	//! A simple RAII wrapper for rendering and wrapping sped up intersection for a mesh object
 	class RenderMeshObj {
 	public:
-		RenderMeshObj(mesh::Mesh* msh, const mtrl::Material& mat, const glm::vec3& mshPos) :
-			m_material{ mat },
-			m_position{ mshPos }
-		{
-			// Mesh data
-			m_mesh = msh;
-			m_init();
-		}
+		RenderMeshObj(mesh::Mesh* msh, const mtrl::Material& mat, const glm::vec3& mshPos);
 
-		RenderMeshObj(const RenderMeshObj& other): m_material{ other.m_material }, m_position{ other.m_position } {
-			m_mesh = other.m_mesh;
-			m_init();
-		}
+		RenderMeshObj(const RenderMeshObj& other);
 
-		RenderMeshObj& operator=(const RenderMeshObj& other) {
-			m_position = other.m_position;
-			m_material = other.m_material;
-			m_mesh = other.m_mesh;
-			m_init();
-		}
+		RenderMeshObj& operator=(const RenderMeshObj& other);
 
 		~RenderMeshObj() = default;
 
 		//! Check for collision and fill the data
-		bool hit(math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			auto prevRayOrigin = ray.origin;
-			ray.transform(m_modelMatrixInv);
+		bool hit(math::ray& ray, math::HitEntry& nearest, ObjRef& objRef);
 
-			if (m_collideOcTree.intersect(ray, nearest)) {
-				// Yes
-				nearest.hitPoint = m_modelMatrix * glm::vec4(nearest.hitPoint, 1.0f);
-				
-				objRef.object = this;
-				objRef.material = &m_material;
-				objRef.type = RenderType::MESH;
+		void setPosition(const glm::vec3& newPos);
 
-				ray.origin = prevRayOrigin;
-
-				return true;
-			}
-			ray.origin = prevRayOrigin;
-
-			return false;
-		}
-
-		void setPosition(const glm::vec3& newPos) {
-			m_position = newPos;
-			m_updateMatrices();
-		}
-
-		void setMaterial(const mtrl::Material& mat) { m_material = mat; }
-		[[nodiscard]] glm::vec3& getPosition() { return m_position; }
-		[[nodiscard]] mtrl::Material& getMaterial() { return m_material; }
+		void setMaterial(const mtrl::Material& mat);
+		[[nodiscard]] glm::vec3& getPosition();
+		[[nodiscard]] mtrl::Material& getMaterial();
 	private:
 		mesh::Mesh* m_mesh;
 
@@ -184,54 +111,25 @@ namespace engn {
 		mtrl::Material m_material;
 	private:
 		//! Initialize the octree and transformation matrices
-		void m_init() {
-			m_collideOcTree.initialize(*m_mesh);
-			// Precalculate matrices
-			m_updateMatrices();
-		}
+		void m_init();
 		//! Update the model transformation matrix => should be done after every transform operation on an object
-		void m_updateMatrices() {
-			m_modelMatrix = glm::mat4(1.0f);
-			m_modelMatrix = glm::translate(m_modelMatrix, m_position);
-			m_modelMatrixInv = glm::inverse(m_modelMatrix);
-		}
+		void m_updateMatrices();
 	};
 
 	//! A RAII wrapper for the PointLight object - for visualization
 	class RenderPointLightObj {
 	public:
-		RenderPointLightObj(light::PointLight* lightPtr) {
-			m_light = lightPtr;
-			m_shape = new math::sphere{ m_light->position, 0.4f };
-		}
+		RenderPointLightObj(light::PointLight* lightPtr);
 
-		RenderPointLightObj(const RenderPointLightObj& other) {
-			m_light = new light::PointLight{ *other.m_light };
-			m_shape = new math::sphere{ m_light->position, 0.4f };
-		}
+		RenderPointLightObj(const RenderPointLightObj& other);
 
-		RenderPointLightObj& operator=(const RenderPointLightObj& other) {
-			m_light = new light::PointLight{ *other.m_light };
-			m_shape = new math::sphere{ m_light->position, 0.4f };
-			return *this;
-		}
+		RenderPointLightObj& operator=(const RenderPointLightObj& other);
 
-		~RenderPointLightObj() {
-			delete m_light;
-			delete m_shape;
-		}
+		~RenderPointLightObj();
 		//! Check for collision and fill the data
-		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (m_shape->hit(ray, nearest)) {
-				objRef.object = this;
-				objRef.material = nullptr;
-				objRef.type = RenderType::POINTLIGHT;
-				return true;
-			}
-			return false;
-		}
+		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef);
 
-		[[nodiscard]] light::PointLight* getLight() { return m_light; }
+		[[nodiscard]] light::PointLight* getLight();
 
 	private:
 		light::PointLight* m_light;
@@ -241,38 +139,17 @@ namespace engn {
 	//! A RAII wrapper for the PointLight object - for visualization
 	class RenderSpotLightObj {
 	public:
-		RenderSpotLightObj(light::SpotLight* lightPtr) {
-			m_light = lightPtr;
-			m_shape = new math::sphere{ m_light->position, 0.3f };
-		}
+		RenderSpotLightObj(light::SpotLight* lightPtr);
 
-		RenderSpotLightObj(const RenderSpotLightObj& other) {
-			m_light = new light::SpotLight{ *other.m_light };
-			m_shape = new math::sphere{ m_light->position, 0.4f };
-		}
+		RenderSpotLightObj(const RenderSpotLightObj& other);
 
-		RenderSpotLightObj& operator=(const RenderSpotLightObj& other) {
-			m_light = new light::SpotLight{ *other.m_light };
-			m_shape = new math::sphere{ m_light->position, 0.4f };
-			return *this;
-		}
+		RenderSpotLightObj& operator=(const RenderSpotLightObj& other);
 
-		~RenderSpotLightObj() {
-			delete m_light;
-			delete m_shape;
-		}
+		~RenderSpotLightObj();
 		//! Check for collision and fill the data
-		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef) {
-			if (m_shape->hit(ray, nearest)) {
-				objRef.object = this;
-				objRef.material = nullptr;
-				objRef.type = RenderType::SPOTLIGHT;
-				return true;
-			}
-			return false;
-		}
+		bool hit(const math::ray& ray, math::HitEntry& nearest, ObjRef& objRef);
 
-		[[nodiscard]] light::SpotLight* getLight() { return m_light; }
+		[[nodiscard]] light::SpotLight* getLight();
 	private:
 		light::SpotLight* m_light;
 		math::sphere* m_shape;

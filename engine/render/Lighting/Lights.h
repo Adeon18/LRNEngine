@@ -42,13 +42,7 @@ namespace light {
 			properties{ prop }
 		{}
 
-		DirectionalLight(const glm::vec3& dir, const LightProperties& prop, const glm::vec3& color) :
-			direction{ dir }
-		{
-			properties.diffuse = color * prop.diffuse;
-			properties.ambient = properties.diffuse * prop.ambient;
-			properties.specular = prop.specular;
-		}
+		DirectionalLight(const glm::vec3& dir, const LightProperties& prop, const glm::vec3& color);
 
 		glm::vec3 direction;
 
@@ -57,26 +51,9 @@ namespace light {
 
 	//! Basic pointlight that spits light in all directions
 	struct PointLight {
-		PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation) :
-			position{ pos },
-			properties{ prop }
-		{
-			constant = attenuation.x;
-			linear = attenuation.y;
-			quadratic = attenuation.z;
-		}
+		PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation);
 
-		PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) :
-			position{ pos }
-		{
-			properties.diffuse = color * prop.diffuse;
-			properties.ambient = properties.diffuse * prop.ambient;
-			properties.specular = color * prop.specular;
-
-			constant = attenuation.x;
-			linear = attenuation.y;
-			quadratic = attenuation.z;
-		}
+		PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color);
 
 		glm::vec3 position;
 
@@ -89,26 +66,9 @@ namespace light {
 
 	//! Light type that works like a flashlight and has a cutoff angle
 	struct SpotLight {
-		SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop) :
-			direction{ dir },
-			position{ pos },
-			properties{ prop }
-		{
-			cutOffInner = range.x;
-			cutOffOuter = range.y;
-		}
+		SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop);
 
-		SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
-			direction{ dir },
-			position{ pos }
-		{
-			properties.diffuse = color * prop.diffuse;
-			properties.ambient = properties.diffuse * prop.ambient;
-			properties.specular = color * prop.specular;
-
-			cutOffInner = range.x;
-			cutOffOuter = range.y;
-		}
+		SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color);
 
 		glm::vec3 position;
 		glm::vec3 direction;

@@ -5,6 +5,58 @@ namespace engn {
 
 	namespace light {
 
+		DirectionalLight::DirectionalLight(const glm::vec3& dir, const LightProperties& prop, const glm::vec3& color) :
+			direction{ dir }
+		{
+			properties.diffuse = color * prop.diffuse;
+			properties.ambient = properties.diffuse * prop.ambient;
+			properties.specular = prop.specular;
+		}
+
+
+		PointLight::PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation) :
+			position{ pos },
+			properties{ prop }
+		{
+			constant = attenuation.x;
+			linear = attenuation.y;
+			quadratic = attenuation.z;
+		}
+
+		PointLight::PointLight(const glm::vec3& pos, const LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color) :
+			position{ pos }
+		{
+			properties.diffuse = color * prop.diffuse;
+			properties.ambient = properties.diffuse * prop.ambient;
+			properties.specular = color * prop.specular;
+
+			constant = attenuation.x;
+			linear = attenuation.y;
+			quadratic = attenuation.z;
+		}
+
+
+		SpotLight::SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop) :
+			direction{ dir },
+			position{ pos },
+			properties{ prop }
+		{
+			cutOffInner = range.x;
+			cutOffOuter = range.y;
+		}
+
+		SpotLight::SpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const LightProperties& prop, const glm::vec3& color) :
+			direction{ dir },
+			position{ pos }
+		{
+			properties.diffuse = color * prop.diffuse;
+			properties.ambient = properties.diffuse * prop.ambient;
+			properties.specular = color * prop.specular;
+
+			cutOffInner = range.x;
+			cutOffOuter = range.y;
+		}
+
 		glm::vec3 calculateDirLight(DirectionalLight* lightPtr, mtrl::Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir) {
 			glm::vec3 lightDir = glm::normalize(-lightPtr->direction);
 			// Diffuse shading

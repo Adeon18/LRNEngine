@@ -20,14 +20,9 @@ namespace engn {
 		public:
 			ISphereDragger() = delete;
 			//! Takes in pointer to object, int's hitentry and a normal to a plane to create a plane in which the hitpoint is
-			ISphereDragger(RenderSphereObj* sphereObj, math::HitEntry* hitEntry) {
-				sphere = sphereObj;
-				centerOffset = sphere->getPosition() - hitEntry->hitPoint;
-			}
+			ISphereDragger(RenderSphereObj* sphereObj, math::HitEntry* hitEntry);
 
-			void move(const glm::vec3& newPos) override {
-				sphere->setPosition(newPos + centerOffset);
-			}
+			void move(const glm::vec3& newPos) override;
 
 			RenderSphereObj* sphere;
 			glm::vec3 centerOffset;
@@ -36,14 +31,9 @@ namespace engn {
 		//! Mesh Dragger
 		class IMeshDragger: public IDragger {
 		public:
-			IMeshDragger(RenderMeshObj* meshObj, math::HitEntry* hitEntry) {
-				mesh = meshObj;
-				centerOffset = mesh->getPosition() - hitEntry->hitPoint;
-			}
+			IMeshDragger(RenderMeshObj* meshObj, math::HitEntry* hitEntry);
 
-			void move(const glm::vec3& newPos) override {
-				mesh->setPosition(newPos + centerOffset);
-			}
+			void move(const glm::vec3& newPos) override;
 
 			RenderMeshObj* mesh;
 			glm::vec3 centerOffset;

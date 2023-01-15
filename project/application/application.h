@@ -8,7 +8,7 @@
 
 #include <glm/glm/glm.hpp>
 
-#include "utils/FPSTimer.h"
+#include "utils/Timer/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
 #include "render/Scene/Scene.h"

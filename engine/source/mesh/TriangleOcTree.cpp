@@ -17,6 +17,9 @@ namespace engn {
 			return mesh.triangles[triangleIndex].vertices[vertexIndex];
 		}
 
+		void TriangleOctree::clear() { m_mesh = nullptr; }
+		bool TriangleOctree::inited() const { return m_mesh != nullptr; }
+
 		void TriangleOctree::initialize(const Mesh& mesh)
 		{
 			m_triangles.clear();

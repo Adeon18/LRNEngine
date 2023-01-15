@@ -17,8 +17,8 @@ namespace engn {
 			const static int PREFFERED_TRIANGLE_COUNT;
 			const static float MAX_STRETCHING_RATIO;
 
-			void clear() { m_mesh = nullptr; }
-			bool inited() const { return m_mesh != nullptr; }
+			void clear();
+			bool inited() const;
 
 			//! Build the tree
 			void initialize(const Mesh& mesh);

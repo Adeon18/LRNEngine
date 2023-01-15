@@ -20,25 +20,7 @@ namespace engn {
 			~plane() = default;
 
 			//! Hit function which determines if a ray hit a plane
-			[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const {
-				float res = glm::dot(r.direction, m_normal);
-
-				if (res > MIN_ANGLE_DOT || res < -MIN_ANGLE_DOT)
-				{
-					float dist = glm::dot(m_point - r.origin, m_normal) / res;
-
-					if (dist > 0.0f && dist < closestHit.rayT)
-					{
-						closestHit.rayT = dist;
-						closestHit.hitPoint = r.getPointAt(dist);
-						// I don't have any clue how this normal works but it does and I'm happy
-						closestHit.hitNormal = glm::normalize(m_normal * -res);
-						return true;
-					}
-				}
-
-				return false;
-			}
+			[[nodiscard]] bool hit(const ray& r, HitEntry& closestHit) const;
 		private:
 			glm::vec3 m_normal;
 			glm::vec3 m_point;

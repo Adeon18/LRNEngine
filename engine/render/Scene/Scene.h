@@ -53,36 +53,22 @@ namespace engn {
         void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<ParallelExecutor>& executor);
 
         //! Add sphere
-        void addRenderObject(math::sphere* s, const mtrl::Material& m) {
-            m_renderSpheres.emplace_back(new RenderSphereObj{ s, m });
-        }
+        void addRenderObject(math::sphere* s, const mtrl::Material& m);
         //! Add plane
-        void addRenderObject(math::plane* p, const mtrl::Material& m) {
-            m_renderPlanes.emplace_back(new RenderPlaneObj{ p, m });
-        }
+        void addRenderObject(math::plane* p, const mtrl::Material& m);
         //! Add Mesh
-        void addRenderObject(mesh::Mesh* msh, const mtrl::Material& m, const glm::vec3 pos) {
-            m_renderMeshes.emplace_back(new RenderMeshObj{ msh, m, pos });
-        }
+        void addRenderObject(mesh::Mesh* msh, const mtrl::Material& m, const glm::vec3 pos);
 
-        void addMesh(const std::string& name, const mesh::Mesh& mesh) {
-            m_meshes[name] = mesh;
-        }
+        void addMesh(const std::string& name, const mesh::Mesh& mesh);
 
-        void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{ 1.0f }) {
-            m_pointLights.emplace_back(new RenderPointLightObj{ new light::PointLight(pos, prop, attenuation, color) });
-        }
+        void addPointLight(const glm::vec3& pos, const light::LightProperties& prop, const glm::vec3& attenuation, const glm::vec3& color = glm::vec3{ 1.0f });
 
-        void setDirectionalLight(const glm::vec3& dir, const light::LightProperties& prop) {
-            m_direcLight = std::make_unique<light::DirectionalLight>(dir, prop);
-        }
+        void setDirectionalLight(const glm::vec3& dir, const light::LightProperties& prop);
 
-        void addSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color = glm::vec3{ 1.0f }) {
-            m_spotLights.emplace_back(new RenderSpotLightObj{ new light::SpotLight(dir, pos, range, prop, color) });
-        }
+        void addSpotLight(const glm::vec3& dir, const glm::vec3& pos, const glm::vec2& range, const light::LightProperties& prop, const glm::vec3& color = glm::vec3{ 1.0f });
 
         //! Get the pointer to the shared mesh object by name
-        [[nodiscard]] mesh::Mesh* getMeshPtr(const std::string& name) { return &m_meshes[name]; }
+        [[nodiscard]] mesh::Mesh* getMeshPtr(const std::string& name);
 
         //! Find if there is an object we can drag, if there is => initialize query with a dragger
         //! Mouse coords should be already transformed to buffer coords
