@@ -78,7 +78,7 @@ void Application::m_createObjects() {
 		glm::vec3{ 0.2f, -0.5f, -0.3f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.2f}, glm::vec3{0.5f} }
 	);
-	
+
 	m_scene->addPointLight(
 		glm::vec3{ -4.0f, 2.0f, -7.0f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
@@ -98,10 +98,10 @@ void Application::m_createObjects() {
 		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
 		engn::light::LIGHTPURPLE
 	);
-	
+
 	// Emerald sphere
 	m_scene->addRenderObject(
-		new engn::math::sphere{ glm::vec3{ -3, 0, -20 }, 3},
+		new engn::math::sphere{ glm::vec3{ -3, 0, -20 }, 3 },
 		engn::mtrl::EMERALD
 	);
 
@@ -116,7 +116,7 @@ void Application::m_createObjects() {
 		engn::mtrl::WHITE_PLASTIC
 	);
 
-	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{-1, -1, -1}, glm::vec3{1, 1, 1}));
+	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{ 1, 1, 1 }));
 
 	m_scene->addRenderObject(
 		m_scene->getMeshPtr("unit_box"),
@@ -173,7 +173,7 @@ void Application::m_captureInput(MSG* mptr)
 		m_pressedInputs[mptr->wParam] = true;
 	}
 	else if (mptr->message == WM_KEYUP)
-		{
+	{
 		m_pressedInputs[mptr->wParam] = false;
 	}
 }
@@ -227,9 +227,8 @@ void Application::m_findObject() {
 		if (m_scene->findDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera)) {
 			m_objectBinded = true;
 		}
-		}
 	}
-	glm::normalize(direction);
+}
 
 void Application::m_moveObject() {
 	if (m_objectBinded && (m_pressedInputs[Keys::RMB])) {
@@ -251,17 +250,17 @@ void Application::m_handleDragging() {
 	m_findObject();
 	m_moveObject();
 	m_releaseObject();
-	}
+}
 
 void Application::m_moveCamera()
-		{
+{
 	glm::vec3 rotation = m_getCamRotation();
 	glm::vec3 direction = m_getCamMovement();
 
 
 	if (m_isCamMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
-		}
+	}
 
 	if (m_isCamRotating) {
 		m_camera->addWorldRotation(rotation);
@@ -272,8 +271,8 @@ void Application::m_moveCamera()
 		m_isCamMoving = false;
 		m_isCamRotating = false;
 		m_camStateChanged = true;
-		}
 	}
+}
 
 
 glm::vec3 Application::m_getCamMovement() {

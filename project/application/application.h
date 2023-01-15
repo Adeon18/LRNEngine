@@ -3,8 +3,6 @@
 #include <iostream>
 #include <unordered_map>
 
-#include <glm/glm.hpp>
-
 #include <windows.h>
 #include <windowsx.h>
 
@@ -49,15 +47,13 @@ public:
 	};
 public:
 	Application();
-	//! Capture the input in sctuctures
-	void captureInput(MSG* mptr);
 	//! Run and render the application
 	int run();
 
 	void setWindowSize(int width, int height);
 private:
 	//! Process the win32 API message queue
-	void m_processWIN32Queue(MSG *mptr);
+	void m_processWIN32Queue(MSG* mptr);
 	//! A function responsible for scene render
 	void m_handleRender();
 	// A function responsible for handling "physics" like camera movement

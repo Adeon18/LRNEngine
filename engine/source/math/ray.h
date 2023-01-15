@@ -7,8 +7,8 @@ namespace engn {
 
 	namespace math {
 
-class ray {
-public:
+		class ray {
+		public:
 			ray() : origin{}, direction{} {}
 			ray(const glm::vec3& o, const glm::vec3& d) : origin{ o }, direction{ d } {}
 
@@ -26,7 +26,7 @@ public:
 
 			glm::vec3 origin;
 			glm::vec3 direction;
-};
+		};
 
 	} // math
 
