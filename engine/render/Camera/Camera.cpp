@@ -9,9 +9,26 @@
 namespace engn {
 
     Camera::Camera(float fov, int screenWidth, int screenHeight, const glm::vec3& position) : m_position{ position } {
-        std::cout << "Camera Initialized" << std::endl;
         setProjectionMatrix(fov, screenWidth, screenHeight);
         updateMatrices();
+    }
+
+    void Camera::setNewScreenSize(int width, int height) {
+        setProjectionMatrix(m_fov, width, height);
+    }
+
+    void Camera::setProjectionMatrix(float fov, int width, int height) {
+        m_fov = fov;
+        m_projection = glm::perspective(glm::radians(m_fov), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
+        m_projectionInv = glm::inverse(m_projection);
+    }
+
+    void Camera::setRayCastData(const RayCastData& castData) {
+        m_rayCastData = castData;
+    }
+
+    void Camera::setRayCastData(RayCastData&& castData) {
+        m_rayCastData = std::move(castData);
     }
 
 

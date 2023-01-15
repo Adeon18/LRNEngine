@@ -33,24 +33,14 @@ public:
     math::ray castRay(int x, int y);
 
     //! Called wen the window is resized
-    void setNewScreenSize(int width, int height) {
-        setProjectionMatrix(m_fov, width, height);
-    }
+    void setNewScreenSize(int width, int height);
 
     //! Set the projection matrix
-    void setProjectionMatrix(float fov, int width, int height) {
-        m_fov = fov;
-        m_projection = glm::perspective(glm::radians(m_fov), static_cast<float>(width) / static_cast<float>(height), 0.1f, 100.0f);
-        m_projectionInv = glm::inverse(m_projection);
-    }
+    void setProjectionMatrix(float fov, int width, int height);
     //! Set the raycastdata based on which the rays are being casted
-    void setRayCastData(const RayCastData& castData) {
-        m_rayCastData = castData;
-    }
+    void setRayCastData(const RayCastData& castData);
     //! Same but move setter
-    void setRayCastData(RayCastData&& castData) {
-        m_rayCastData = std::move(castData);
-    }
+    void setRayCastData(RayCastData&& castData);
 
     //! Getters for the near plane vectors
     [[nodiscard]] glm::vec3& getBRVec() { return m_BRNearClipInWorld; }

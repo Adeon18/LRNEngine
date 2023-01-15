@@ -38,28 +38,28 @@ namespace engn {
     void Scene::m_getObjectColor(const ObjRef& closestObj, const math::HitEntry& hitEntry, COLORREF* pixel) {
         glm::vec3 lightColor{ 255.0f };
 
+        switch (closestObj.type) {
         // pointlight
-        if (closestObj.type == RenderType::POINTLIGHT) {
+        case RenderType::POINTLIGHT: {
             RenderPointLightObj* obj = static_cast<RenderPointLightObj*>(closestObj.object);
             lightColor *= obj->getLight()->properties.specular;
+            break;
         }
         // spotlight
-        else if (closestObj.type == RenderType::SPOTLIGHT) {
+        case RenderType::SPOTLIGHT: {
             RenderSpotLightObj* obj = static_cast<RenderSpotLightObj*>(closestObj.object);
             lightColor *= obj->getLight()->properties.specular;
+            break;
         }
-        // other
-        else if (
-            closestObj.type == RenderType::SPHERE ||
-            closestObj.type == RenderType::PLANE ||
-            closestObj.type == RenderType::MESH
-            )
-        {
+        // Render Objects
+        case RenderType::SPHERE: case RenderType::PLANE: case RenderType::MESH: {
             lightColor *= m_getObjectLighting(closestObj, hitEntry);
+            break;
         }
         // sky
-        else {
+        default:
             lightColor *= light::SKY_COLOR;
+            break;
         }
 
         *pixel = vecToCOLORREF(lightColor);
