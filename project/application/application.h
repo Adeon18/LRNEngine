@@ -3,6 +3,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include <glm/glm.hpp>
+
 #include <windows.h>
 #include <windowsx.h>
 
@@ -47,6 +49,8 @@ public:
 	};
 public:
 	Application();
+	//! Capture the input in sctuctures
+	void captureInput(MSG* mptr);
 	//! Run and render the application
 	int run();
 

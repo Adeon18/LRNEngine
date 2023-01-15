@@ -24,6 +24,9 @@
     <ClInclude Include="source\math\ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="source\math\geometry\hitable.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -16,16 +16,16 @@ namespace engn {
 			static constexpr float MAX_DIST = 1000.0f;
 		};
 
-		struct HitEntry
-		{
+struct HitEntry
+{
 			HitEntry() {
 				rayT = hitable::MAX_DIST;
 			}
 
-			float rayT;
-			glm::vec3 hitPoint;
-			glm::vec3 hitNormal;
-		};
+	float rayT;
+	glm::vec3 hitPoint;
+	glm::vec3 hitNormal;
+};
 
 	} // math
 
