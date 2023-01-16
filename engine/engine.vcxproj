@@ -19,12 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="render\Camera\Camera.h" />
-    <ClInclude Include="render\Lighting\Lights.h" />
-    <ClInclude Include="render\Materials\Material.h" />
-    <ClInclude Include="render\RenderData\RenderData.h" />
-    <ClInclude Include="render\RenderObject\RenderObject.h" />
-    <ClInclude Include="render\Scene\Scene.h" />
+    <ClInclude Include="render\RayTracer\Camera\Camera.h" />
+    <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
+    <ClInclude Include="render\RayTracer\Materials\Material.h" />
+    <ClInclude Include="render\RayTracer\RenderData\RenderData.h" />
+    <ClInclude Include="render\RayTracer\RenderObject\RenderObject.h" />
+    <ClInclude Include="render\RayTracer\Scene\Scene.h" />
     <ClInclude Include="source\draggers\dragger.h" />
     <ClInclude Include="source\math\geometry\hitable.h" />
     <ClInclude Include="source\math\geometry\plane.h" />
@@ -38,10 +38,10 @@
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="render\Camera\Camera.cpp" />
-    <ClCompile Include="render\Lighting\Lights.cpp" />
-    <ClCompile Include="render\RenderObject\RenderObject.cpp" />
-    <ClCompile Include="render\Scene\Scene.cpp" />
+    <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
+    <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
+    <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
+    <ClCompile Include="render\RayTracer\Scene\Scene.cpp" />
     <ClCompile Include="source\draggers\dragger.cpp" />
     <ClCompile Include="source\math\geometry\plane.cpp" />
     <ClCompile Include="source\math\geometry\sphere.cpp" />

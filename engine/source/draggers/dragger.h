@@ -4,7 +4,7 @@
 
 #include "source/mesh/Mesh.h"
 #include "source/math/geometry/sphere.h"
-#include "render/RenderObject/RenderObject.h"
+#include "render/RayTracer/RenderObject/RenderObject.h"
 
 namespace engn {
 	namespace math {

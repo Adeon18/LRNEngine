@@ -6,7 +6,7 @@
 
 #include "windows/Window.h"
 #include "source/math/ray.h"
-#include "render/RenderData/RenderData.h"
+#include "render/RayTracer/RenderData/RenderData.h"
 
 
 namespace engn {

@@ -7,11 +7,11 @@
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtx/string_cast.hpp>
 
-#include "render/Camera/Camera.h"
-#include "render/Lighting/Lights.h"
-#include "render/Materials/Material.h"
-#include "render/RenderData/RenderData.h"
-#include "render/RenderObject/RenderObject.h"
+#include "render/RayTracer/Camera/Camera.h"
+#include "render/RayTracer/Lighting/Lights.h"
+#include "render/RayTracer/Materials/Material.h"
+#include "render/RayTracer/RenderData/RenderData.h"
+#include "render/RayTracer/RenderObject/RenderObject.h"
 
 #include "source/math/ray.h"
 #include "source/math/geometry/plane.h"
@@ -50,7 +50,7 @@ namespace engn {
         Scene() = default;
 
         //! Responsible for rendering the entire scene
-        void render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<ParallelExecutor>& executor);
+        void render(const win::WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<util::ParallelExecutor>& executor);
 
         //! Add sphere
         void addRenderObject(math::sphere* s, const mtrl::Material& m);
@@ -81,7 +81,7 @@ namespace engn {
         //! Setter for camera pos, private because pos should only be set from the scene
         void m_setCameraPos(const glm::vec3& camPos) { m_camPos = camPos; }
         //! Compute the color of the pixel by the x and y coordinates
-        void m_computePixelColor(int y, int x, COLORREF* pixel, const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
+        void m_computePixelColor(int y, int x, COLORREF* pixel, const win::WindowRenderData& winData, std::unique_ptr<Camera>& camPtr);
 
         //! Cast a single ray and fill a single ray entry
         void m_castRay(math::ray& r, COLORREF* pixel);

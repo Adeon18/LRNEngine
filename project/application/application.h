@@ -11,8 +11,8 @@
 #include "utils/Timer/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
-#include "render/Scene/Scene.h"
-#include "render/Camera/Camera.h"
+#include "render/RayTracer/Scene/Scene.h"
+#include "render/RayTracer/Camera/Camera.h"
 
 #include "source/math/geometry/sphere.h"
 #include "source/math/geometry/triangle.h"
@@ -127,7 +127,7 @@ private:
 	// Application building blocks
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
-	std::unique_ptr<engn::FPSTimer> m_timer;
-	std::unique_ptr<engn::ParallelExecutor> m_executor;
-	std::unique_ptr<engn::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
+	std::unique_ptr<engn::util::FPSTimer> m_timer;
+	std::unique_ptr<engn::util::ParallelExecutor> m_executor;
+	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
 };

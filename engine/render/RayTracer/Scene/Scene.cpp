@@ -231,7 +231,7 @@ namespace engn {
         }
     }
 
-    void Scene::render(const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<ParallelExecutor>& executor)
+    void Scene::render(const win::WindowRenderData& winData, std::unique_ptr<Camera>& camPtr, std::unique_ptr<util::ParallelExecutor>& executor)
 
     {
         // Don't render the minimized window
@@ -262,7 +262,7 @@ namespace engn {
         executor->execute(funcToExecute, winData.bufferWidth * winData.bufferHeight, 20);
     }
 
-    void Scene::m_computePixelColor(int y, int x, COLORREF* pixel, const WindowRenderData& winData, std::unique_ptr<Camera>& camPtr) {
+    void Scene::m_computePixelColor(int y, int x, COLORREF* pixel, const win::WindowRenderData& winData, std::unique_ptr<Camera>& camPtr) {
         math::ray r = camPtr->castRay(x, y);
         m_castRay(r, pixel + y * winData.bufferWidth + x);
     }

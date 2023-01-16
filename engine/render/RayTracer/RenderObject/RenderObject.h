@@ -8,8 +8,8 @@
 #include "source/mesh/Mesh.h"
 #include "source/mesh/TriangleOcTree.h"
 
-#include "render/Lighting/Lights.h"
-#include "render/Materials/Material.h"
+#include "render/RayTracer/Lighting/Lights.h"
+#include "render/RayTracer/Materials/Material.h"
 
 
 namespace engn {

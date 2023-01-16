@@ -5,7 +5,7 @@
 
 #include <glm/glm/glm.hpp>
 
-#include "render/Materials/Material.h"
+#include "render/RayTracer/Materials/Material.h"
 
 
 namespace engn {
