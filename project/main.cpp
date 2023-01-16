@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 
+#include "render/D3D/d3d.hpp"
+
 #include <windows.h>
 #include <windowsx.h>
 

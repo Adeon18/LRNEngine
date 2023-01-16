@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\DX">
+      <UniqueIdentifier>{9f99b876-21b1-4e9a-af06-620ce0576591}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DX">
+      <UniqueIdentifier>{653b3748-7c3f-46cb-a392-cd6423db0a68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="windows\Window.h">
@@ -66,6 +72,18 @@
     <ClInclude Include="render\RayTracer\Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\D3D\d3d.hpp">
+      <Filter>Header Files\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DxRes.hpp">
+      <Filter>Header Files\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\win_def.hpp">
+      <Filter>Header Files\DX</Filter>
+    </ClInclude>
+    <ClInclude Include="include\win_undef.hpp">
+      <Filter>Header Files\DX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\mesh\TriangleOcTree.cpp">
@@ -106,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\D3D\d3d.cpp">
+      <Filter>Source Files\DX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -19,6 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\DxRes.hpp" />
+    <ClInclude Include="include\win_def.hpp" />
+    <ClInclude Include="include\win_undef.hpp" />
+    <ClInclude Include="render\D3D\d3d.hpp" />
     <ClInclude Include="render\RayTracer\Camera\Camera.h" />
     <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
     <ClInclude Include="render\RayTracer\Materials\Material.h" />
@@ -38,6 +42,7 @@
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="render\D3D\d3d.cpp" />
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
     <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
@@ -162,7 +167,7 @@
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)\engine;$(SolutionDir)\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\engine;$(SolutionDir)\engine\include;$(SolutionDir)\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
