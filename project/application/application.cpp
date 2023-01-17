@@ -2,6 +2,9 @@
 
 #include "application.h"
 
+#include "render/D3D/d3d.hpp"
+
+#define RAYDRACER 0
 
 Application::Application() :
 	m_isRunning{ true },
@@ -13,11 +16,12 @@ Application::Application() :
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
 	}
 {
+#if RAYDRACER
 	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
 	uint32_t numThreads = (std::max)(1u, (std::max)(engn::util::ParallelExecutor::MAX_THREADS > 4u ? engn::util::ParallelExecutor::MAX_THREADS - 2u : 1u, engn::util::ParallelExecutor::HALF_THREADS));
 	m_executor = std::unique_ptr<engn::util::ParallelExecutor>(new engn::util::ParallelExecutor{ numThreads });
-
 	m_createObjects();
+#endif
 }
 
 
@@ -28,6 +32,7 @@ int Application::run() {
 		m_processWIN32Queue(&msg);
 
 		if (m_timer->frameElapsed()) {
+#if RAYDRACER
 			if (m_window->allocateBitmapBuffer()) {
 				setWindowSize(m_window->getWidth(), m_window->getHeight());
 			}
@@ -39,6 +44,11 @@ int Application::run() {
 			m_handlePhysics();
 
 			m_window->flush();
+#else
+			float bgColor[] = {0.0f, 0.0f, 1.0f, 1.0f};
+
+			m_window->clear(bgColor);
+#endif
 		}
 		std::this_thread::yield();
 	}

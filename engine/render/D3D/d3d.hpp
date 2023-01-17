@@ -20,22 +20,32 @@ namespace engn
 		extern IDXGIFactory5* s_factory;
 	} // d3d
 
-	class D3D // a singletone for accessing global rendering resources
-	{
-	public:
-		void init();
-		void deinit();
-	private:
-		DxResPtr<IDXGIFactory> m_factory;
-		DxResPtr<IDXGIFactory5> m_factory5;
-		DxResPtr<ID3D11Device> m_device;
-		DxResPtr<ID3D11Device5> m_device5;
-		DxResPtr<ID3D11DeviceContext> m_devcon;
-		DxResPtr<ID3D11DeviceContext4> m_devcon4;
-		DxResPtr<ID3D11Debug> m_devdebug;
-	};
+	namespace rend {
+		class D3D // a singletone for accessing global rendering resources
+		{
+		public:
+			static D3D& getInstance()
+			{
+				static D3D instance;
+				return instance;
+			}
+			void init();
+			void deinit();
 
-
+			D3D(const D3D&) = delete;
+			void operator=(D3D const&) = delete;
+		private:
+			D3D() {}
+		private:
+			DxResPtr<IDXGIFactory> m_factory;
+			DxResPtr<IDXGIFactory5> m_factory5;
+			DxResPtr<ID3D11Device> m_device;
+			DxResPtr<ID3D11Device5> m_device5;
+			DxResPtr<ID3D11DeviceContext> m_devcon;
+			DxResPtr<ID3D11DeviceContext4> m_devcon4;
+			DxResPtr<ID3D11Debug> m_devdebug;
+		};
+	} // rend
 } // engn
 
 #include "include/win_undef.hpp"

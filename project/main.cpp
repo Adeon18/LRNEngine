@@ -1,6 +1,11 @@
 // project.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+
+// Basically tell the linker to look for these libraries
+#pragma comment(lib, "dxgi")
+#pragma comment(lib, "d3d11.lib")
+
 #include <iostream>
 #include <sstream>
 
@@ -9,6 +14,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include "Engine.hpp"
 #include "application/application.h"
 
 
@@ -34,6 +40,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Initialize Console
 	initConsole();
 
+	engn::Engine::init();
 	// Create application
 	std::unique_ptr<Application> application = std::make_unique<Application>();
 

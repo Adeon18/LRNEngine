@@ -46,6 +46,8 @@ namespace engn
 			return &m_ptr;
 		}
 
+		T** getAddressOf() { return &m_ptr; }
+
 		void reset(T* ptr)
 		{
 			release();
@@ -60,6 +62,8 @@ namespace engn
 				m_ptr = nullptr;
 			}
 		}
+
+		bool valid() { return m_ptr != nullptr; }
 
 	protected:
 		T* m_ptr = nullptr;

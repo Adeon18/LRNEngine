@@ -5,6 +5,12 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <d3d11_4.h>
+
+//#include "include/DxRes.hpp"
+#include "render/D3D/d3d.hpp"
+#include "utils/paralell_executor/parallel_executor.h"
+
 
 namespace engn {
 	namespace win {
@@ -48,6 +54,10 @@ namespace engn {
 				m_createWindow();
 
 				ShowWindow(m_windowClassData.handleWnd, SW_SHOW);
+
+				initSwapchain();
+				initBackBuffer();
+				initRenderTargetView();
 			}
 
 
@@ -71,6 +81,85 @@ namespace engn {
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 
+			//! Fill the swapchain description and initialize it
+			void initSwapchain()
+			{
+				DXGI_SWAP_CHAIN_DESC1 desc;
+
+				// clear out the struct for use
+				memset(&desc, 0, sizeof(DXGI_SWAP_CHAIN_DESC1));
+
+				// fill the swap chain description struct
+				// If width and height are unspecified, they will be pulled from the output window
+				desc.AlphaMode = DXGI_ALPHA_MODE::DXGI_ALPHA_MODE_UNSPECIFIED;
+				desc.BufferCount = 2;
+				desc.BufferUsage = DXGI_USAGE_BACK_BUFFER | DXGI_USAGE_RENDER_TARGET_OUTPUT; // CPU access options for back buffer
+				desc.Flags = 0;
+				desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				desc.SampleDesc.Count = 1;                               // how many multisamples
+				desc.SampleDesc.Quality = 0;                             // ???
+				desc.Scaling = DXGI_SCALING_NONE; // Identifies scaling behaviour if the size of the back buffer is not equal to the output target
+				desc.Stereo = false;
+				desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+				HRESULT res = d3d::s_factory->CreateSwapChainForHwnd(
+					d3d::s_device,
+					m_windowClassData.handleWnd,
+					&desc,
+					nullptr, nullptr,
+					m_swapChain.reset()
+				);
+
+				if (res) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
+			}
+
+			//! Called at resize. Free the backBuffer and resize it to a new one
+			void initBackBuffer() {
+				// Release the RTV before resizing
+				if (m_renderTargetView.valid())
+				{
+					m_renderTargetView.release();
+				}
+				// Release the backBuffer before resize
+				if (m_backBuffer.valid())
+				{
+					m_backBuffer.release();
+					m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+				}
+
+				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_backBuffer.reset());
+				if (result) { std::cout << "onResize GetBuffer fail" << std::endl; }
+
+				ID3D11Texture2D* pTextureInterface = 0;
+				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
+				pTextureInterface->GetDesc(&m_backBufferDesc);
+				pTextureInterface->Release();
+			}
+
+			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
+			void initRenderTargetView()
+			{
+				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), nullptr, m_renderTargetView.reset());
+				if (res) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
+
+				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), nullptr);
+			}
+
+			//! Clear the window with the specified color
+			//! TODO: Will be heavily edited
+			void clear(float* color)
+			{
+				// Resize if there was a call
+				if (m_toBeResized)
+				{
+					initBackBuffer();
+					initRenderTargetView();
+					m_toBeResized = false;
+				}
+
+				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.ptr(), color);
+				m_swapChain->Present(0, NULL);
+			}
 
 			//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer, return true if allocation happened
 			bool allocateBitmapBuffer()
@@ -94,7 +183,6 @@ namespace engn {
 				}
 				return false;
 			}
-
 
 			//! Calls stretchDIBits which in turn copies all data from the bitmap buffer to screen
 			void flush() const
@@ -143,9 +231,15 @@ namespace engn {
 
 			WindowClassData m_windowClassData;
 
+			DxResPtr<IDXGISwapChain1> m_swapChain;
+			DxResPtr<ID3D11Texture2D> m_backBuffer;
+			DxResPtr<ID3D11RenderTargetView> m_renderTargetView;
+			D3D11_TEXTURE2D_DESC m_backBufferDesc;
+
 			// Bitmap information struct
 			BITMAPINFO m_bitmapInfo;
 
+		private:
 			//! Initialize window class and basic window data
 			void m_initWindowClass() {
 				m_windowClassData.hInstance = GetModuleHandle(nullptr);
