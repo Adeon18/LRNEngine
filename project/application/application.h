@@ -8,6 +8,8 @@
 
 #include <glm/glm/glm.hpp>
 
+#include "Engine.hpp"
+
 #include "utils/Timer/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -125,6 +127,9 @@ private:
 	};
 
 	// Application building blocks
+
+	std::unique_ptr<engn::Engine> m_engine;
+
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
 	std::unique_ptr<engn::util::FPSTimer> m_timer;

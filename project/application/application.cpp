@@ -2,7 +2,6 @@
 
 #include "application.h"
 
-#include "render/D3D/d3d.hpp"
 
 #define RAYDRACER 0
 
@@ -10,6 +9,7 @@ Application::Application() :
 	m_isRunning{ true },
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
+	m_engine{ new engn::Engine{} },
 	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::util::FPSTimer{300} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },

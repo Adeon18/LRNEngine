@@ -2,8 +2,6 @@
 
 #include <utility>
 
-#include "render/D3D/d3d.hpp"
-
 namespace engn
 {
 	// A helping struct holding a raw pointer to a D3D resource

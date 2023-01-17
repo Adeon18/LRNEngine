@@ -20,10 +20,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="render\Graphics\Graphics.hpp" />
     <ClInclude Include="include\DxRes.hpp" />
     <ClInclude Include="include\win_def.hpp" />
     <ClInclude Include="include\win_undef.hpp" />
     <ClInclude Include="render\D3D\d3d.hpp" />
+    <ClInclude Include="render\Graphics\Vertex.hpp" />
+    <ClInclude Include="render\Graphics\VertexShader.hpp" />
     <ClInclude Include="render\RayTracer\Camera\Camera.h" />
     <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
     <ClInclude Include="render\RayTracer\Materials\Material.h" />
@@ -44,10 +47,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp" />
+    <ClCompile Include="render\Graphics\VertexShader.cpp" />
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
     <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
     <ClCompile Include="render\RayTracer\Scene\Scene.cpp" />
+    <ClCompile Include="render\Graphics\Graphics.cpp" />
     <ClCompile Include="source\draggers\dragger.cpp" />
     <ClCompile Include="source\math\geometry\plane.cpp" />
     <ClCompile Include="source\math\geometry\sphere.cpp" />
@@ -57,6 +62,12 @@
     <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="render\Graphics\VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
