@@ -26,9 +26,5 @@ namespace engn {
 		[[nodiscard]] ID3D10Blob* PixelShader::getBuffer() {
 			return m_shaderBuffer.ptr();
 		}
-		ID3D11InputLayout* PixelShader::getInputLayout()
-		{
-			return m_inputLayout.ptr();
-		}
 	} // rend
 } // engn

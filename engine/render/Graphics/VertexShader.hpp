@@ -10,8 +10,6 @@ namespace engn {
 		/// <summary>
 		/// A wrapper class for a VertexShader
 		/// </summary>
-		/// 
-		///
 		class VertexShader {
 		public:
 			void init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem);

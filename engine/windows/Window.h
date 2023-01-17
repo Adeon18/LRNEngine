@@ -140,10 +140,10 @@ namespace engn {
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
 			void initRenderTargetView()
 			{
-				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), nullptr, m_renderTargetView.reset());
+				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), NULL, m_renderTargetView.reset());
 				if (res) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
 
-				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), nullptr);
+				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), NULL);
 			}
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
@@ -157,7 +157,7 @@ namespace engn {
 				viewPort.Height = m_windowRenderData.screenHeight;
 
 				d3d::s_devcon->RSSetViewports(1, &viewPort);
-			}
+			} 
 
 			//! Clear the window with the specified color
 			//! TODO: Will be heavily edited
@@ -173,6 +173,9 @@ namespace engn {
 				}
 
 				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.ptr(), color);
+			}
+			//! Present the swapchain. Called after clear and Engine::render
+			void present() {
 				m_swapChain->Present(0, NULL);
 			}
 

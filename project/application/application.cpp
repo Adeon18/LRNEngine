@@ -48,6 +48,8 @@ int Application::run() {
 			float bgColor[] = {0.0f, 0.0f, 1.0f, 1.0f};
 
 			m_window->clear(bgColor);
+			m_engine->render();
+			m_window->present();
 #endif
 		}
 		std::this_thread::yield();

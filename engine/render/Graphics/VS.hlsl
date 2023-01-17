@@ -1,4 +1,4 @@
-float4 main(float2 inPos: POSITION) : SV_POSITION // SV_POSITION specifies that we return position
+float4 main(float2 inPos: POSITION) : SV_POSITION
 {
-	return float4(inPos, 0, 1);
+	return float4(inPos, 0.0f, 1.0f);
 }

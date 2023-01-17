@@ -11,6 +11,10 @@ namespace engn {
 			m_graphics.init();
 		}
 
+		void render() {
+			m_graphics.renderFrame();
+		}
+
 		// called from main.cpp
 		static void init()
 		{

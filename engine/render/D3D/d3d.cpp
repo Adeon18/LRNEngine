@@ -64,12 +64,13 @@ namespace engn {
 			if (featureLevelInitialized != featureLevelRequested) { std::cout << "D3D_FEATURE_LEVEL_11_0 fail" << std::endl; }
 
 			result = m_device->QueryInterface(__uuidof(ID3D11Device5), (void**)m_device5.reset());
-
+			if (FAILED(result)) { std::cout << "QueryInterface fail m_device5" << std::endl; }
 
 			result = m_devcon->QueryInterface(__uuidof(ID3D11DeviceContext4), (void**)m_devcon4.reset());
-
+			if (FAILED(result)) { std::cout << "QueryInterface fail m_devcon4" << std::endl; }
 
 			result = m_device->QueryInterface(__uuidof(ID3D11Debug), (void**)m_devdebug.reset());
+			if (FAILED(result)) { std::cout << "QueryInterface fail m_devdebug" << std::endl; }
 
 
 			// Write global pointers
