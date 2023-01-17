@@ -6,9 +6,11 @@
 namespace engn {
 	namespace rend {
 		void VertexShader::init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem) {
+			// Read vertex Shader
 			HRESULT res = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.reset());
 			if (res) { std::wcout << L"Failed to load Vertex shader: " + shaderPath << std::endl; }
 
+			// CreateVertexShader
 			res = d3d::s_device->CreateVertexShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
@@ -17,6 +19,7 @@ namespace engn {
 			);
 			if (res) { std::wcout << L"Failed to create Vertex shader: " + shaderPath << std::endl; }
 
+			// InputLayout
 			HRESULT hr = d3d::s_device->CreateInputLayout(
 				layoutDesc,
 				numElem,

@@ -58,6 +58,7 @@ namespace engn {
 				initSwapchain();
 				initBackBuffer();
 				initRenderTargetView();
+				initViewPort();
 			}
 
 
@@ -145,6 +146,19 @@ namespace engn {
 				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), nullptr);
 			}
 
+			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
+			void initViewPort() {
+				D3D11_VIEWPORT viewPort;
+				memset(&viewPort, 0, sizeof(D3D11_VIEWPORT));
+
+				viewPort.TopLeftX = 0;
+				viewPort.TopLeftY = 0;
+				viewPort.Width = m_windowRenderData.screenWidth;
+				viewPort.Height = m_windowRenderData.screenHeight;
+
+				d3d::s_devcon->RSSetViewports(1, &viewPort);
+			}
+
 			//! Clear the window with the specified color
 			//! TODO: Will be heavily edited
 			void clear(float* color)
@@ -154,6 +168,7 @@ namespace engn {
 				{
 					initBackBuffer();
 					initRenderTargetView();
+					initViewPort();
 					m_toBeResized = false;
 				}
 

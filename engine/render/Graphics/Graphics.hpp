@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VertexShader.hpp"
+#include "PixelShader.hpp"
 
 namespace engn {
 	namespace rend {
@@ -14,6 +15,7 @@ namespace engn {
 			void m_initShaders();
 			
 			VertexShader m_vertexShader;
+			PixelShader m_pixelShader;
 		};
 	} // render
 } // engn

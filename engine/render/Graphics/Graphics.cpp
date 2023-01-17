@@ -31,7 +31,7 @@ namespace engn {
 #endif
 
 			m_vertexShader.init(shaderFolder + L"VS.cso", layout, ARRAYSIZE(layout));
-
+			m_pixelShader.init(shaderFolder + L"PS.cso");
 		}
 	} // rend
 } // engn
