@@ -37,7 +37,8 @@ namespace engn {
 		void Graphics::m_initShaders() {
 
 			D3D11_INPUT_ELEMENT_DESC layout[] = {
-				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vertex::pos), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 			std::wstring shaderFolder = util::getExeDirW();
 			std::wcout << "Shader Folder found: " << shaderFolder << std::endl;
@@ -50,9 +51,9 @@ namespace engn {
 		{
 			Vertex vertices[] =
 			{
-				Vertex{0.0f, 0.5f}, // top
-				Vertex{0.5f, -0.5f}, // right
-				Vertex{-0.5f, -0.5f}, // bottom
+				Vertex{{0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top - red
+				Vertex{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // right - blue
+				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // bottom - green
 			};
 
 			// Create vertex buffer description
