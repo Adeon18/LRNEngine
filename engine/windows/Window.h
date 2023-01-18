@@ -48,17 +48,14 @@ namespace engn {
 				// Register window class
 				RegisterClassExW(&m_windowClassData.windowClass);
 
-				// Gets the size of the actual window and stores it in the rect
-				m_windowRect.left = 300;
-				m_windowRect.top = 300;
-				m_windowRect.right = m_windowRect.left + m_windowRenderData.screenWidth;
-				m_windowRect.bottom = m_windowRect.top + m_windowRenderData.screenHeight;
-				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
-
+				// Adjust rect
+				m_initWindowRect();
+				
 				m_createWindow();
 
 				ShowWindow(m_windowClassData.handleWnd, SW_SHOW);
 
+				// Initialize DX stuff for render
 				initSwapchain();
 				initBackBuffer();
 				initRenderTargetView();
@@ -163,8 +160,6 @@ namespace engn {
 				viewPort.TopLeftY = m_windowRect.top;
 				viewPort.Width = m_windowRect.right - m_windowRect.left;
 				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
-				viewPort.MinDepth = 0.0f;
-				viewPort.MaxDepth = 1.0f;
 
 				d3d::s_devcon->RSSetViewports(1, &viewPort);
 			} 
@@ -181,7 +176,8 @@ namespace engn {
 					initViewPort();
 					m_toBeResized = false;
 				}
-
+				// We set the rendertargetview each frame
+				setRenderTargetView();
 				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.ptr(), color);
 			}
 			//! Present the swapchain. Called after clear and Engine::render
@@ -282,6 +278,15 @@ namespace engn {
 				m_windowClassData.windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);	// load the cursor
 				m_windowClassData.windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW;			// define the brush that will color window
 				m_windowClassData.windowClass.lpszClassName = WINDOW_NAME;					// Name of the class, L because 16 bit Unicode
+			}
+			
+			//! Sets the window location and gets the actual client size
+			void m_initWindowRect() {
+				m_windowRect.left = 300;
+				m_windowRect.top = 300;
+				m_windowRect.right = m_windowRect.left + m_windowRenderData.screenWidth;
+				m_windowRect.bottom = m_windowRect.top + m_windowRenderData.screenHeight;
+				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 			}
 
 			//! Create the window and initialize additional window class data

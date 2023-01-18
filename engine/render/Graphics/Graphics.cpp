@@ -31,7 +31,6 @@ namespace engn {
 			);
 			// Draw(vertexCount and startLocation)
 			d3d::s_devcon->Draw(3, 0);
-			//std::cout << "Should draw" << std::endl;
 		}
 
 		void Graphics::m_initShaders() {
@@ -51,7 +50,7 @@ namespace engn {
 	#endif
 #else // Release
 	#ifdef _WIN64 // x64
-					shaderFolder = L"C:/Users/o.trush/Desktop/NOW_THESE_ARE_HW/otrush/x64/Release/";
+					shaderFolder = L"../x64/Release/";
 	#else
 					shaderFolder = L"../Release/";
 	#endif
@@ -65,9 +64,9 @@ namespace engn {
 		{
 			Vertex vertices[] =
 			{
-				Vertex{0.0f, 0.5f}, // 
-				Vertex{0.5f, -0.5f}, // 
-				Vertex{-0.5f, -0.5f}, // 
+				Vertex{0.0f, 0.5f}, // top
+				Vertex{0.5f, -0.5f}, // right
+				Vertex{-0.5f, -0.5f}, // bottom
 			};
 
 
