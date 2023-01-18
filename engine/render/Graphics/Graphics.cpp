@@ -23,6 +23,12 @@ namespace engn {
 			d3d::s_devcon->VSSetShader(m_vertexShader.getShader(), NULL, 0);
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
 
+			// VS constant buffer
+			m_constantBuffer.data.offset.x = 0.0f;
+			m_constantBuffer.data.offset.y = 0.0f;
+			m_constantBuffer.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBuffer.getBufferAddress());
+
 			// Bind the buffer
 			UINT offset = 0;
 			d3d::s_devcon->IASetVertexBuffers(
@@ -59,6 +65,7 @@ namespace engn {
 				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // bottom - green
 			};
 			m_vertexBuffer.init(vertices);
+			m_constantBuffer.init();
 		}
 
 		void Graphics::m_initRasterizer()

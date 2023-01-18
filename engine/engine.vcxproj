@@ -22,6 +22,7 @@
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="include\utility\utility.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
+    <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
     <ClInclude Include="include\DxRes.hpp" />
     <ClInclude Include="include\win_def.hpp" />
