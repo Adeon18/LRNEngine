@@ -55,7 +55,6 @@ namespace engn {
 				Vertex{-0.5f, -0.5f}, // bottom
 			};
 
-
 			// Create vertex buffer description
 			D3D11_BUFFER_DESC vertexBufferDesc;
 			memset(&vertexBufferDesc, 0, sizeof(vertexBufferDesc));
@@ -74,7 +73,7 @@ namespace engn {
 
 			// Create Buffer
 			HRESULT res = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_vertexBuffer.reset());
-			if (res) { std::cout << "CreateBuffer fail" << std::endl; }
+			if (FAILED(res)) { std::cout << "CreateBuffer fail" << std::endl; }
 		}
 	} // rend
 } // engn

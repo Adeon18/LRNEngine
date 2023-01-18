@@ -15,11 +15,10 @@ namespace engn {
 			m_graphics.renderFrame();
 		}
 
-		// called from main.cpp
+		// called from main.cpp - Must be called BEFORE engine construction
 		static void init()
 		{
 			// initilizes engine singletons
-			
 			m_d3d.init();
 		}
 

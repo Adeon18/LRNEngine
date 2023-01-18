@@ -40,9 +40,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Initialize Console
 	initConsole();
 
+	// Initialize engine
 	engn::Engine::init();
+
 	// Create application
 	std::unique_ptr<Application> application = std::make_unique<Application>();
+	auto res = application->run();
 
-	return application->run();
+	engn::Engine::deinit();
+
+	return res;
 }

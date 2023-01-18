@@ -28,10 +28,10 @@ namespace engn {
 
 			// Manage video adapters
 			result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)m_factory.reset());
-			if (result) { std::cout << "CreateDXGIFactory fail" << std::endl; }
+			if (FAILED(result)) { std::cout << "CreateDXGIFactory fail" << std::endl; }
 
 			result = m_factory->QueryInterface(__uuidof(IDXGIFactory5), (void**)m_factory5.reset());
-			if (result) { std::cout << "m_factory->QueryInterface fail" << std::endl; }
+			if (FAILED(result)) { std::cout << "m_factory->QueryInterface fail" << std::endl; }
 
 			{
 				uint32_t index = 0;
@@ -60,7 +60,7 @@ namespace engn {
 				&featureLevelInitialized, // If successful => return the first feature level from the feature level array which succeeded
 				m_devcon.reset() // The address of the pointer to the ID3D11DeviceContext object
 			);
-			if (result) { std::cout << "D3D11CreateDevice fail" << std::endl; }
+			if (FAILED(result)) { std::cout << "D3D11CreateDevice fail" << std::endl; }
 			if (featureLevelInitialized != featureLevelRequested) { std::cout << "D3D_FEATURE_LEVEL_11_0 fail" << std::endl; }
 
 			result = m_device->QueryInterface(__uuidof(ID3D11Device5), (void**)m_device5.reset());
@@ -78,6 +78,10 @@ namespace engn {
 			d3d::s_factory = m_factory5.ptr();
 			d3d::s_device = m_device5.ptr();
 			d3d::s_devcon = m_devcon4.ptr();
+		}
+		void D3D::deinit()
+		{
+			// Pointers are released at destruction
 		}
 	} // rend
 } // engn

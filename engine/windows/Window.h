@@ -113,7 +113,7 @@ namespace engn {
 					m_swapChain.reset()
 				);
 
-				if (res) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
+				if (FAILED(res)) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
 			}
 
 			//! Called at resize. Free the backBuffer and resize it to a new one
@@ -131,7 +131,7 @@ namespace engn {
 				}
 
 				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_backBuffer.reset());
-				if (result) { std::cout << "onResize GetBuffer fail" << std::endl; }
+				if (FAILED(result)) { std::cout << "onResize GetBuffer fail" << std::endl; }
 
 				ID3D11Texture2D* pTextureInterface = 0;
 				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
@@ -143,7 +143,7 @@ namespace engn {
 			void initRenderTargetView()
 			{
 				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), NULL, m_renderTargetView.reset());
-				if (res) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
+				if (FAILED(res)) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
 				setRenderTargetView();
 			}
 
@@ -164,8 +164,7 @@ namespace engn {
 				d3d::s_devcon->RSSetViewports(1, &viewPort);
 			} 
 
-			//! Clear the window with the specified color
-			//! TODO: Will be heavily edited
+			//! Set the RTV and clear the window with the specified color
 			void clear(float* color)
 			{
 				// Resize if there was a call
