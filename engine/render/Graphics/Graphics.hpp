@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VertexBuffer.hpp"
+
 #include "VertexShader.hpp"
 #include "PixelShader.hpp"
 
@@ -25,7 +27,7 @@ namespace engn {
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
 
-			DxResPtr<ID3D11Buffer> m_vertexBuffer;
+			VertexBuffer<Vertex> m_vertexBuffer;
 			DxResPtr<ID3D11RasterizerState> m_rasterizerState;
 		};
 	} // render

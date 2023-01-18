@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="include\utility\utility.hpp" />
+    <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
     <ClInclude Include="include\DxRes.hpp" />
     <ClInclude Include="include\win_def.hpp" />
@@ -51,6 +52,7 @@
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp" />
     <ClCompile Include="render\Graphics\PixelShader.cpp" />
+    <ClCompile Include="render\Graphics\VertexShader.cpp" />
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
     <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
