@@ -6,5 +6,5 @@ struct PS_INPUT
 
 float4 main(PS_INPUT inp) : SV_TARGET
 {
-	return inp.outColor;
+	return float4(0.5f, 0.7f, 0.2f, 1.0f);
 }
