@@ -46,7 +46,7 @@ int Application::run() {
 			m_window->flush();
 #else
 			float bgColor[] = {0.0f, 0.0f, 1.0f, 1.0f};
-
+			m_window->setRenderTargetView();
 			m_window->clear(bgColor);
 			m_engine->render();
 			m_window->present();

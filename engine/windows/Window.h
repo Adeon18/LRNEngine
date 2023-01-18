@@ -49,6 +49,10 @@ namespace engn {
 				RegisterClassExW(&m_windowClassData.windowClass);
 
 				// Gets the size of the actual window and stores it in the rect
+				m_windowRect.left = 300;
+				m_windowRect.top = 300;
+				m_windowRect.right = m_windowRect.left + m_windowRenderData.screenWidth;
+				m_windowRect.bottom = m_windowRect.top + m_windowRenderData.screenHeight;
 				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
 				m_createWindow();
@@ -103,6 +107,7 @@ namespace engn {
 				desc.Stereo = false;
 				desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
+
 				HRESULT res = d3d::s_factory->CreateSwapChainForHwnd(
 					d3d::s_device,
 					m_windowClassData.handleWnd,
@@ -142,7 +147,10 @@ namespace engn {
 			{
 				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), NULL, m_renderTargetView.reset());
 				if (res) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
+				setRenderTargetView();
+			}
 
+			void setRenderTargetView() {
 				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), NULL);
 			}
 
@@ -150,11 +158,13 @@ namespace engn {
 			void initViewPort() {
 				D3D11_VIEWPORT viewPort;
 				memset(&viewPort, 0, sizeof(D3D11_VIEWPORT));
-
-				viewPort.TopLeftX = 0;
-				viewPort.TopLeftY = 0;
-				viewPort.Width = m_windowRenderData.screenWidth;
-				viewPort.Height = m_windowRenderData.screenHeight;
+					
+				viewPort.TopLeftX = m_windowRect.left;
+				viewPort.TopLeftY = m_windowRect.top;
+				viewPort.Width = m_windowRect.right - m_windowRect.left;
+				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+				viewPort.MinDepth = 0.0f;
+				viewPort.MaxDepth = 1.0f;
 
 				d3d::s_devcon->RSSetViewports(1, &viewPort);
 			} 
@@ -281,8 +291,8 @@ namespace engn {
 					WINDOW_NAME,						//�name�of�the�window�class
 					WINDOW_TITLE,						//�title�of�the�window
 					WS_OVERLAPPEDWINDOW,				//�window�style
-					300,								//�x-position�of�the�window
-					300,								//�y-position�of�the�window
+					m_windowRect.left,								//�x-position�of�the�window
+					m_windowRect.top,								//�y-position�of�the�window
 					m_windowRect.right - m_windowRect.left,	//�width�of�the�window
 					m_windowRect.bottom - m_windowRect.top, //�height�of�the�window
 					nullptr,							//�we�have�no�parent�window,�NULL

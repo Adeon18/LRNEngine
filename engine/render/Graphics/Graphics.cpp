@@ -65,9 +65,9 @@ namespace engn {
 		{
 			Vertex vertices[] =
 			{
-				Vertex{-0.5f, 0.0f}, // left
-				Vertex{0.5f, 0.0f}, // right
-				Vertex{0.0f, 0.5f}, // top
+				Vertex{0.0f, 0.5f}, // 
+				Vertex{0.5f, -0.5f}, // 
+				Vertex{-0.5f, -0.5f}, // 
 			};
 
 
