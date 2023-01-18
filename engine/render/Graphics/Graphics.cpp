@@ -2,6 +2,7 @@
 
 #include "Graphics.hpp"
 
+#include "include/utility/utility.hpp"
 
 namespace engn {
 	namespace rend {
@@ -38,23 +39,8 @@ namespace engn {
 			D3D11_INPUT_ELEMENT_DESC layout[] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
-
-			std::wstring shaderFolder;
-
-// Determine the shader path
-#ifdef _DEBUG // Debug
-	#ifdef _WIN64 // x64
-					shaderFolder = L"../x64/Debug/";
-	#else
-					shaderFolder = L"../Debug/";
-	#endif
-#else // Release
-	#ifdef _WIN64 // x64
-					shaderFolder = L"../x64/Release/";
-	#else
-					shaderFolder = L"../Release/";
-	#endif
-#endif
+			std::wstring shaderFolder = util::getExeDirW();
+			std::wcout << "Shader Folder found: " << shaderFolder << std::endl;
 
 			m_vertexShader.init(shaderFolder + L"VS.cso", layout, ARRAYSIZE(layout));
 			m_pixelShader.init(shaderFolder + L"PS.cso");

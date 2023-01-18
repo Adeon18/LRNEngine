@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="include\utility\utility.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
     <ClInclude Include="include\DxRes.hpp" />
     <ClInclude Include="include\win_def.hpp" />
@@ -62,6 +63,7 @@
     <ClCompile Include="source\math\ray.cpp" />
     <ClCompile Include="source\mesh\Mesh.cpp" />
     <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
+    <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>
