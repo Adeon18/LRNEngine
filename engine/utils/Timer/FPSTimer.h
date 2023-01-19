@@ -11,17 +11,17 @@ namespace engn {
 
 		class FPSTimer {
 			using clock = std::chrono::high_resolution_clock;
+			using sys_clock = std::chrono::system_clock;
 		public:
 			//! Default constructor
 			FPSTimer(float FPS) :
 				m_base{ clock::now() },
 				m_dt{ 0ns }, m_lag{ 0ns },
 				m_lastUpdated{ clock::now() },
+				m_progStart{ sys_clock::now() },
 				m_FPS{ FPS }, m_ActualFPS{},
 				m_fixed_dt{ static_cast<uint64_t>(1.0f / FPS * std::nano::den) }
-			{
-				m_progStart = std::chrono::system_clock::now();
-			}
+			{}
 
 			//! Check if frame passed and return true if it did
 			bool frameElapsed();
@@ -33,15 +33,19 @@ namespace engn {
 			float getSecondsSinceStart() const;
 
 		private:
-			std::chrono::time_point<std::chrono::system_clock> m_progStart;
+			// Time point to calculate seconds since the program start from shader
+			std::chrono::time_point<sys_clock> m_progStart;
+			// Where we start FPS count
 			std::chrono::time_point<clock> m_base;
-			std::chrono::nanoseconds m_dt;
 
+			std::chrono::nanoseconds m_dt;
 			std::chrono::nanoseconds m_lag;
 			std::chrono::nanoseconds m_fixed_dt;
-			float m_FPS;
-			float m_ActualFPS;
 			std::chrono::time_point<clock> m_lastUpdated;
+			// Fps we want the clock to run at
+			float m_FPS;
+			// FPS we print to debug
+			float m_ActualFPS;
 		};
 	} // util
 } // engn

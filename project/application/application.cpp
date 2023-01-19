@@ -85,7 +85,7 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 
 void Application::m_handleRender() {
 #if DX_ENGINE == 1
-	float bgColor[] = { 0.5f, 0.2f, 0.9f, 1.0f };
+	// Get the render data for the shader
 	engn::rend::RenderData renderData{
 		m_timer->getSecondsSinceStart(),
 		m_window->getWidth(),
@@ -93,7 +93,8 @@ void Application::m_handleRender() {
 		1.0f / m_window->getWidth(),
 		1.0f / m_window->getHeight(),
 	};
-	m_window->clear(bgColor);
+	// Render fucntions
+	m_window->clear(BG_COLOR);
 	m_engine->render(renderData);
 	m_window->present();
 #else
