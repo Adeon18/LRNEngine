@@ -1,3 +1,4 @@
+// It's here if I need it.
 cbuffer perFrame : register(b0)
 {
 	float xOffset;
@@ -19,7 +20,6 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	input.inPos.x += xOffset;
 	output.outPos = float4(input.inPos, 1.0f);
 	output.outColor = input.inColor;
 	return output;

@@ -190,10 +190,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="render\Graphics\VS.hlsl">
+    <FxCompile Include="render\Graphics\shaders\VS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="render\Graphics\PS.hlsl">
+    <FxCompile Include="render\Graphics\shaders\PS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>
