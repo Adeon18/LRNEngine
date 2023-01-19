@@ -2,7 +2,6 @@
 
 #include "application.h"
 
-
 #define RAYDRACER 0
 
 Application::Application() :
@@ -13,8 +12,7 @@ Application::Application() :
 	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::util::FPSTimer{300} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
-	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
-	}
+	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
 {
 #if RAYDRACER
 	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
@@ -46,8 +44,16 @@ int Application::run() {
 			m_window->flush();
 #else
 			float bgColor[] = {0.5f, 0.2f, 0.9f, 1.0f};
+			engn::rend::RenderData renderData{
+				m_timer->getSecondsSinceStart(),
+				m_window->getWidth(),
+				m_window->getHeight(),
+				1.0f / m_window->getWidth(),
+				1.0f / m_window->getHeight(),
+			};
+
 			m_window->clear(bgColor);
-			m_engine->render();
+			m_engine->render(renderData);
 			m_window->present();
 #endif
 		}

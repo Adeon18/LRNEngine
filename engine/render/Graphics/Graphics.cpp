@@ -13,7 +13,7 @@ namespace engn {
 			m_initScene();
 		}
 
-		void Graphics::renderFrame()
+		void Graphics::renderFrame(const RenderData& renderData)
 		{
 			// Set Input Assembler Data
 			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
@@ -24,10 +24,15 @@ namespace engn {
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
 
 			// VS constant buffer
-			m_constantBuffer.data.offset.x = 0.0f;
-			m_constantBuffer.data.offset.y = 0.0f;
-			m_constantBuffer.fill();
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBuffer.getBufferAddress());
+			m_constantBufferVS.data.offset.x = 0.0f;
+			m_constantBufferVS.data.offset.y = 0.0f;
+			m_constantBufferVS.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+
+			m_constantBufferPS.data.gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
+			m_constantBufferPS.data.gTime = renderData.iTime;
+			m_constantBufferPS.fill();
+			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferPS.getBufferAddress());
 
 			// Bind the buffer
 			UINT offset = 0;
@@ -65,7 +70,8 @@ namespace engn {
 				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // bottom - green
 			};
 			m_vertexBuffer.init(vertices);
-			m_constantBuffer.init();
+			m_constantBufferVS.init();
+			m_constantBufferPS.init();
 		}
 
 		void Graphics::m_initRasterizer()

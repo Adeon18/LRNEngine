@@ -10,13 +10,20 @@
 
 namespace engn {
 	namespace rend {
+		struct RenderData {
+			float iTime;
+			float iResolutionX;
+			float iResolutionY;
+			float invResolutionX;
+			float invResolutionY;
+		};
 		/// <summary>
 		/// This class facilitates everything needed for the rendering pipeline
 		/// </summary>
 		class Graphics {
 		public:
 			void init();
-			void renderFrame();
+			void renderFrame(const RenderData& renderData);
 		private:
 			void m_initShaders();
 			void m_initScene();
@@ -29,7 +36,8 @@ namespace engn {
 			PixelShader m_pixelShader;
 
 			VertexBuffer<Vertex> m_vertexBuffer;
-			ConstantBuffer<CB_VS_MoveBuffer> m_constantBuffer;
+			ConstantBuffer<CB_VS_MoveBuffer> m_constantBufferVS;
+			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
 
 			DxResPtr<ID3D11RasterizerState> m_rasterizerState;
 		};

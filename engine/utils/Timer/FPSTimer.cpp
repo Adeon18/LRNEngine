@@ -14,6 +14,7 @@ namespace engn {
 				std::cout << "FPS: " << m_ActualFPS << std::endl;
 				m_lastUpdated = m_base;
 				m_ActualFPS = 0;
+				
 			}
 
 			if (m_lag > m_fixed_dt) {
@@ -41,6 +42,10 @@ namespace engn {
 			return res;
 		}
 
-		float FPSTimer::getFPSCurrent() { return m_ActualFPS; }
+		float FPSTimer::getFPSCurrent() const { return m_ActualFPS; }
+		float FPSTimer::getSecondsSinceStart() const {
+			const std::chrono::duration<float, std::ratio<1>> t = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - m_progStart);
+			return t.count();
+		}
 	} // util
 } //engn

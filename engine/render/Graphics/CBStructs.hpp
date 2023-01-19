@@ -9,7 +9,7 @@ namespace engn {
 			DirectX::XMFLOAT2 offset;
 		};
 		//! This struct contains basic data that ShaderToy has out of the box
-		struct CB_FS_ShaderToy {
+		struct CB_PS_ShaderToy {
 			DirectX::XMFLOAT4 gResolution;
 			float gTime;
 		};

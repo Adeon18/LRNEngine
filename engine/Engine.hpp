@@ -11,8 +11,8 @@ namespace engn {
 			m_graphics.init();
 		}
 
-		void render() {
-			m_graphics.renderFrame();
+		void render(const rend::RenderData& data) {
+			m_graphics.renderFrame(data);
 		}
 
 		// called from main.cpp - Must be called BEFORE engine construction
