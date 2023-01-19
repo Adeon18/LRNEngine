@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.hpp" />
+    <ClInclude Include="include\config.hpp" />
     <ClInclude Include="include\utility\utility.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />

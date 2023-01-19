@@ -2,19 +2,22 @@
 
 #include "application.h"
 
-#define RAYDRACER 0
+
 
 Application::Application() :
 	m_isRunning{ true },
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
-	m_engine{ new engn::Engine{} },
-	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::util::FPSTimer{300} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
+#if DX_ENGINE == 1
+	m_engine{ new engn::Engine{} }
+#else
+	m_scene{ new engn::Scene{} },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
+#endif
 {
-#if RAYDRACER
+#if DX_ENGINE == 0
 	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
 	uint32_t numThreads = (std::max)(1u, (std::max)(engn::util::ParallelExecutor::MAX_THREADS > 4u ? engn::util::ParallelExecutor::MAX_THREADS - 2u : 1u, engn::util::ParallelExecutor::HALF_THREADS));
 	m_executor = std::unique_ptr<engn::util::ParallelExecutor>(new engn::util::ParallelExecutor{ numThreads });
@@ -30,7 +33,12 @@ int Application::run() {
 		m_processWIN32Queue(&msg);
 
 		if (m_timer->frameElapsed()) {
-#if RAYDRACER
+#if DX_ENGINE == 1
+			auto debug = m_timer->isDebugFPSShow();
+			if (debug.first) { std::cout << "FPS: " << debug.second << std::endl; }
+
+			m_handleRender();
+#else
 			if (m_window->allocateBitmapBuffer()) {
 				setWindowSize(m_window->getWidth(), m_window->getHeight());
 			}
@@ -42,25 +50,20 @@ int Application::run() {
 			m_handlePhysics();
 
 			m_window->flush();
-#else
-			float bgColor[] = {0.5f, 0.2f, 0.9f, 1.0f};
-			engn::rend::RenderData renderData{
-				m_timer->getSecondsSinceStart(),
-				m_window->getWidth(),
-				m_window->getHeight(),
-				1.0f / m_window->getWidth(),
-				1.0f / m_window->getHeight(),
-			};
-
-			m_window->clear(bgColor);
-			m_engine->render(renderData);
-			m_window->present();
 #endif
 		}
 		std::this_thread::yield();
 	}
 
 	return msg.wParam;
+}
+
+
+void Application::setWindowSize(int width, int height) {
+	m_screenWidth = width;
+	m_screenHeight = height;
+
+	m_camera->setNewScreenSize(width, height);
 }
 
 
@@ -80,9 +83,22 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 
 
 void Application::m_handleRender() {
+#if DX_ENGINE == 1
+	float bgColor[] = { 0.5f, 0.2f, 0.9f, 1.0f };
+	engn::rend::RenderData renderData{
+		m_timer->getSecondsSinceStart(),
+		m_window->getWidth(),
+		m_window->getHeight(),
+		1.0f / m_window->getWidth(),
+		1.0f / m_window->getHeight(),
+	};
+	m_window->clear(bgColor);
+	m_engine->render(renderData);
+	m_window->present();
+#else
 	m_scene->render(m_window->getWindowData(), m_camera, m_executor);
+#endif
 }
-
 
 void Application::m_handlePhysics() {
 	m_moveCamera();
@@ -147,15 +163,6 @@ void Application::m_createObjects() {
 		glm::vec3{ -2, -3, -10 }
 	);
 }
-
-
-void Application::setWindowSize(int width, int height) {
-	m_screenWidth = width;
-	m_screenHeight = height;
-
-	m_camera->setNewScreenSize(width, height);
-}
-
 
 void Application::m_captureInput(MSG* mptr)
 {

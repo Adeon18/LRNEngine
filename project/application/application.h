@@ -10,6 +10,8 @@
 
 #include "Engine.hpp"
 
+#include "include/config.hpp"
+
 #include "utils/Timer/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -72,6 +74,7 @@ private:
 	glm::vec2 m_processRMBInputs(const glm::vec2& mousePos);
 	void m_onMouseMove(MSG* mptr);
 
+
 	//! Put objects on the scene
 	void m_createObjects();
 
@@ -91,6 +94,7 @@ private:
 	glm::vec3 m_getCamRotation();
 	//! Get the normalized camera movement vector
 	glm::vec3 m_getCamMovement();
+
 private:
 	int m_screenWidth;
 	int m_screenHeight;
@@ -127,12 +131,12 @@ private:
 	};
 
 	// Application building blocks
-
+	std::unique_ptr<engn::util::FPSTimer> m_timer;
+	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
+	// Engine
 	std::unique_ptr<engn::Engine> m_engine;
-
+	// Raytracer
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
-	std::unique_ptr<engn::util::FPSTimer> m_timer;
 	std::unique_ptr<engn::util::ParallelExecutor> m_executor;
-	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
 };
