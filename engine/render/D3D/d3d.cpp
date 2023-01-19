@@ -27,10 +27,10 @@ namespace engn {
 			HRESULT result;
 
 			// Manage video adapters
-			result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)m_factory.reset());
+			result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(m_factory.GetAddressOf()));
 			if (FAILED(result)) { std::cout << "CreateDXGIFactory fail" << std::endl; }
 
-			result = m_factory->QueryInterface(__uuidof(IDXGIFactory5), (void**)m_factory5.reset());
+			result = m_factory.As(&m_factory5);
 			if (FAILED(result)) { std::cout << "m_factory->QueryInterface fail" << std::endl; }
 
 			{
@@ -56,32 +56,44 @@ namespace engn {
 				&featureLevelRequested, // Pointer to an array of featureLevels
 				1, // Number of elements in featureLayers array
 				D3D11_SDK_VERSION, // Version of SDK
-				m_device.reset(), // The address of the pointer to ID3D11Device -> will return the address
+				m_device.GetAddressOf(), // The address of the pointer to ID3D11Device -> will return the address
 				&featureLevelInitialized, // If successful => return the first feature level from the feature level array which succeeded
-				m_devcon.reset() // The address of the pointer to the ID3D11DeviceContext object
+				m_devcon.GetAddressOf() // The address of the pointer to the ID3D11DeviceContext object
 			);
 			if (FAILED(result)) { std::cout << "D3D11CreateDevice fail" << std::endl; }
 			if (featureLevelInitialized != featureLevelRequested) { std::cout << "D3D_FEATURE_LEVEL_11_0 fail" << std::endl; }
 
-			result = m_device->QueryInterface(__uuidof(ID3D11Device5), (void**)m_device5.reset());
+			result = m_device.As(&m_device5);
 			if (FAILED(result)) { std::cout << "QueryInterface fail m_device5" << std::endl; }
 
-			result = m_devcon->QueryInterface(__uuidof(ID3D11DeviceContext4), (void**)m_devcon4.reset());
+			result = m_devcon.As(&m_devcon4);
 			if (FAILED(result)) { std::cout << "QueryInterface fail m_devcon4" << std::endl; }
 
-			result = m_device->QueryInterface(__uuidof(ID3D11Debug), (void**)m_devdebug.reset());
+			result = m_device.As(&m_devdebug);
 			if (FAILED(result)) { std::cout << "QueryInterface fail m_devdebug" << std::endl; }
 
 
 			// Write global pointers
 
-			d3d::s_factory = m_factory5.ptr();
-			d3d::s_device = m_device5.ptr();
-			d3d::s_devcon = m_devcon4.ptr();
+			d3d::s_factory = m_factory5.Get();
+			d3d::s_device = m_device5.Get();
+			d3d::s_devcon = m_devcon4.Get();
 		}
 		void D3D::deinit()
 		{
 			// Pointers are released at destruction
+			// Globals
+			d3d::s_devcon = nullptr;
+			d3d::s_device = nullptr;
+			d3d::s_factory = nullptr;
+			// ComPtrs
+			std::cout << m_factory.Reset() << std::endl;
+			std::cout << m_factory5.Reset() << std::endl;
+			std::cout << m_device.Reset() << std::endl;
+			std::cout << m_devcon.Reset() << std::endl;
+			std::cout << m_device5.Reset() << std::endl;
+			std::cout << m_devcon4.Reset() << std::endl;
+			std::cout << m_devdebug.Reset() << std::endl;
 		}
 	} // rend
 } // engn

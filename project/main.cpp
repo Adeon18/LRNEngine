@@ -48,6 +48,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	auto res = application->run();
 
 	engn::Engine::deinit();
-
 	return res;
 }

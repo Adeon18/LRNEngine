@@ -39,7 +39,7 @@ namespace engn {
 			ConstantBuffer<CB_VS_MoveBuffer> m_constantBufferVS;
 			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
 
-			DxResPtr<ID3D11RasterizerState> m_rasterizerState;
+			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 		};
 	} // render
 } // engn

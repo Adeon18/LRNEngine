@@ -15,8 +15,8 @@ namespace engn {
 			[[nodiscard]] ID3D11PixelShader* getShader();
 			[[nodiscard]] ID3D10Blob* getBuffer();
 		private:
-			DxResPtr<ID3D11PixelShader> m_shader;
-			DxResPtr<ID3D10Blob> m_shaderBuffer;
+			Microsoft::WRL::ComPtr<ID3D11PixelShader> m_shader;
+			Microsoft::WRL::ComPtr<ID3D10Blob> m_shaderBuffer;
 		};
 	} // rend
 } // engn

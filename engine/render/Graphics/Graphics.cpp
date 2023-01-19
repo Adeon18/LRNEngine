@@ -18,7 +18,7 @@ namespace engn {
 			// Set Input Assembler Data
 			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
 			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			d3d::s_devcon->RSSetState(m_rasterizerState.ptr());
+			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			// Set Shaders
 			d3d::s_devcon->VSSetShader(m_vertexShader.getShader(), NULL, 0);
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
@@ -80,7 +80,7 @@ namespace engn {
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
-			HRESULT res = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.reset());
+			HRESULT res = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
 			if (FAILED(res)) { std::cout << "CreateRasterizerState fail" << std::endl; }
 		}
 	} // rend

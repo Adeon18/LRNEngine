@@ -9,7 +9,8 @@
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
 
-#include "include/DxRes.hpp"
+#include <wrl/client.h>
+
 
 namespace engn
 {
@@ -37,13 +38,13 @@ namespace engn
 		private:
 			D3D() {}
 		private:
-			DxResPtr<IDXGIFactory> m_factory;
-			DxResPtr<IDXGIFactory5> m_factory5;
-			DxResPtr<ID3D11Device> m_device;
-			DxResPtr<ID3D11Device5> m_device5;
-			DxResPtr<ID3D11DeviceContext> m_devcon;
-			DxResPtr<ID3D11DeviceContext4> m_devcon4;
-			DxResPtr<ID3D11Debug> m_devdebug;
+			Microsoft::WRL::ComPtr<IDXGIFactory> m_factory;
+			Microsoft::WRL::ComPtr<IDXGIFactory5> m_factory5;
+			Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+			Microsoft::WRL::ComPtr<ID3D11Device5> m_device5;
+			Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_devcon;
+			Microsoft::WRL::ComPtr<ID3D11DeviceContext4> m_devcon4;
+			Microsoft::WRL::ComPtr<ID3D11Debug> m_devdebug;
 		};
 	} // rend
 } // engn

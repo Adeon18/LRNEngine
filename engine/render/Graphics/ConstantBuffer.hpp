@@ -23,22 +23,22 @@ namespace engn {
 				desc.ByteWidth = static_cast<UINT>(sizeof(T) + 16 - (sizeof(T) % 16)); // 16 byte aligned, maybe edit later style
 				desc.StructureByteStride = 0;
 
-				HRESULT res = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.reset());
+				HRESULT res = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
 				if (FAILED(res)) { std::cout << "ConstantBuffer::init::CreateBuffer fail" << std::endl; }
 			}
 
 			//! Fill the buffer with data via map
 			void fill() {
 				D3D11_MAPPED_SUBRESOURCE mappedResource;
-				HRESULT res = d3d::s_devcon->Map(m_buffer.ptr(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				HRESULT res = d3d::s_devcon->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 				if (FAILED(res)) { std::cout << "ConstantBuffer::fill::Map fail" << std::endl; }
 				memcpy(mappedResource.pData, &data, sizeof(T));
-				d3d::s_devcon->Unmap(m_buffer.ptr(), 0);
+				d3d::s_devcon->Unmap(m_buffer.Get(), 0);
 			}
 
-			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.getAddressOf(); }
+			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }
 		private:
-			DxResPtr<ID3D11Buffer> m_buffer;
+			Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 		};
 	} // rend
 } // engn

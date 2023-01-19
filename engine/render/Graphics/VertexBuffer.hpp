@@ -16,7 +16,7 @@ namespace engn {
 			}
 
 			void init(const std::vector<T>& vertices) {
-				m_bufferSize = vertices.size();
+				m_bufferSize = static_cast<UINT>(vertices.size());
 				// Create vertex buffer description
 				D3D11_BUFFER_DESC vertexBufferDesc{};
 
@@ -32,15 +32,15 @@ namespace engn {
 				vertexBufferData.pSysMem = vertices.data();
 
 				// Create Buffer
-				HRESULT res = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.reset());
+				HRESULT res = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.GetAddressOf());
 				if (FAILED(res)) { std::cout << "CreateBuffer fail" << std::endl; }
 			}
 
-			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.getAddressOf(); }
+			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }
 			[[nodiscard]] UINT getBufferSize() const { return m_bufferSize; }
 			[[nodiscard]] const UINT* getStride() const { return &m_stride; }
 		private:
-			DxResPtr<ID3D11Buffer> m_buffer;
+			Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 			UINT m_bufferSize = 0;
 			UINT m_stride;
 		};

@@ -45,9 +45,6 @@
     <ClInclude Include="render\D3D\d3d.hpp">
       <Filter>Header Files\DX</Filter>
     </ClInclude>
-    <ClInclude Include="include\DxRes.hpp">
-      <Filter>Header Files\DX</Filter>
-    </ClInclude>
     <ClInclude Include="include\win_def.hpp">
       <Filter>Header Files\DX</Filter>
     </ClInclude>
@@ -126,11 +123,11 @@
     <ClInclude Include="render\Graphics\VertexBuffer.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\CBStructs.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\CBStructs.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

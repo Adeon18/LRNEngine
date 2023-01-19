@@ -13,13 +13,13 @@ namespace engn {
 		class VertexShader {
 		public:
 			void init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem);
-			[[nodiscard]] ID3D11VertexShader* getShader();
-			[[nodiscard]] ID3D10Blob* getBuffer();
-			[[nodiscard]] ID3D11InputLayout* getInputLayout();
+			[[nodiscard]] ID3D11VertexShader* getShader() const;
+			[[nodiscard]] ID3D10Blob* getBuffer() const;
+			[[nodiscard]] ID3D11InputLayout* getInputLayout() const;
 		private:
-			DxResPtr<ID3D11VertexShader> m_shader;
-			DxResPtr<ID3D10Blob> m_shaderBuffer;
-			DxResPtr<ID3D11InputLayout> m_inputLayout;
+			Microsoft::WRL::ComPtr<ID3D11VertexShader> m_shader;
+			Microsoft::WRL::ComPtr<ID3D10Blob> m_shaderBuffer;
+			Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
 		};
 	} // rend
 } // engn

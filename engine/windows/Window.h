@@ -110,7 +110,7 @@ namespace engn {
 					m_windowClassData.handleWnd,
 					&desc,
 					nullptr, nullptr,
-					m_swapChain.reset()
+					m_swapChain.GetAddressOf()
 				);
 
 				if (FAILED(res)) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
@@ -119,18 +119,12 @@ namespace engn {
 			//! Called at resize. Free the backBuffer and resize it to a new one
 			void initBackBuffer() {
 				// Release the RTV before resizing
-				if (m_renderTargetView.valid())
-				{
-					m_renderTargetView.release();
-				}
+				m_renderTargetView.Reset();
 				// Release the backBuffer before resize
-				if (m_backBuffer.valid())
-				{
-					m_backBuffer.release();
-					m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-				}
+				m_backBuffer.Reset();
+				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)m_backBuffer.reset());
+				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
 				if (FAILED(result)) { std::cout << "onResize GetBuffer fail" << std::endl; }
 
 				ID3D11Texture2D* pTextureInterface = 0;
@@ -142,13 +136,13 @@ namespace engn {
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
 			void initRenderTargetView()
 			{
-				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.ptr(), NULL, m_renderTargetView.reset());
+				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
 				if (FAILED(res)) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
 				setRenderTargetView();
 			}
 
 			void setRenderTargetView() {
-				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.getAddressOf(), NULL);
+				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
 			}
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
@@ -177,7 +171,7 @@ namespace engn {
 				}
 				// We set the rendertargetview each frame
 				setRenderTargetView();
-				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.ptr(), color);
+				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
 			}
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
@@ -254,9 +248,9 @@ namespace engn {
 
 			WindowClassData m_windowClassData;
 
-			DxResPtr<IDXGISwapChain1> m_swapChain;
-			DxResPtr<ID3D11Texture2D> m_backBuffer;
-			DxResPtr<ID3D11RenderTargetView> m_renderTargetView;
+			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
+			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 			D3D11_TEXTURE2D_DESC m_backBufferDesc;
 
 			// Bitmap information struct
