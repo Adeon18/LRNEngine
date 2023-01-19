@@ -68,16 +68,17 @@ void Application::setWindowSize(int width, int height) {
 
 
 void Application::m_processWIN32Queue(MSG* mptr) {
-	while (const auto peekRes = PeekMessageW(mptr, nullptr, 0, 0, PM_REMOVE)) {
-		if (mptr->message == WM_QUIT) {
-			m_isRunning = false;
-		}
+	while (const auto peekRes = PeekMessageW(mptr, NULL, 0, 0, PM_REMOVE)) {
 		// Translate keystroke message into correct format
 		TranslateMessage(mptr);
 		// Capture input into application
 		this->m_captureInput(mptr);
 		// Send the message to WindowProc
 		DispatchMessageW(mptr);
+
+		if (mptr->message == WM_QUIT) {
+			m_isRunning = false;
+		}
 	}
 }
 

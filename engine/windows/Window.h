@@ -38,7 +38,7 @@ namespace engn {
 		template<int W, int H, int BDS>
 		class Window {
 		public:
-			const wchar_t* WINDOW_NAME = L"EngineClass";
+			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
 			const wchar_t* WINDOW_TITLE = L"Engine";
 		public:
 			Window()
@@ -63,7 +63,10 @@ namespace engn {
 			}
 
 
-			~Window() { UnregisterClassW(WINDOW_NAME, m_windowClassData.hInstance); }
+			~Window() {
+				UnregisterClassW(WINDOW_NAME, m_windowClassData.hInstance);
+				DestroyWindow(m_windowClassData.handleWnd);
+			}
 
 
 			//! Callback message handler
@@ -73,10 +76,12 @@ namespace engn {
 				case WM_DESTROY:
 				{
 					m_destroyWindow();
+					return 0;
 				} break;
 				case WM_SIZE:
 				{
 					m_updateWindowSize(hWnd);
+					return 0;
 				} break;
 				}
 				// Handle what the switch didn't
@@ -246,7 +251,7 @@ namespace engn {
 
 			inline static bool m_toBeResized = true;
 
-			WindowClassData m_windowClassData;
+			inline static WindowClassData m_windowClassData;
 
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;

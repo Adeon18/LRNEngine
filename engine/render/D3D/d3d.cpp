@@ -87,13 +87,13 @@ namespace engn {
 			d3d::s_device = nullptr;
 			d3d::s_factory = nullptr;
 			// ComPtrs
-			std::cout << m_factory.Reset() << std::endl;
-			std::cout << m_factory5.Reset() << std::endl;
-			std::cout << m_device.Reset() << std::endl;
-			std::cout << m_devcon.Reset() << std::endl;
-			std::cout << m_device5.Reset() << std::endl;
-			std::cout << m_devcon4.Reset() << std::endl;
-			std::cout << m_devdebug.Reset() << std::endl;
+			m_factory.Reset();
+			m_factory5.Reset();
+			m_device.Reset();
+			m_devcon.Reset();
+			m_device5.Reset();
+			m_devcon4.Reset();
+			m_devdebug.Reset();
 		}
 	} // rend
 } // engn
