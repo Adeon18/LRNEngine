@@ -72,7 +72,7 @@ private:
 	void m_onMouseLMBReleased(MSG* mptr);
 	void m_onMouseRMBPressed(MSG* mptr);
 	void m_onMouseRMBReleased(MSG* mptr);
-	glm::vec2 m_processRMBInputs(const glm::vec2& mousePos);
+	glm::vec2 m_processRMBInputs(const DirectX::XMINT2& mousePos);
 	void m_onMouseMove(MSG* mptr);
 
 

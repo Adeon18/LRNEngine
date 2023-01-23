@@ -1,5 +1,8 @@
 #include <thread>
 
+
+#include "input/MouseHandle.hpp"
+
 #include "application.h"
 
 
@@ -171,26 +174,20 @@ void Application::m_captureInput(MSG* mptr)
 
 	// Capture and release LMB
 	if (mptr->message == WM_LBUTTONDOWN) {
-		m_onMouseLMBPressed(mptr);
-		// std::cout << "LMB Down" << std::endl;
-		// std::cout << "LMB Logged: " << m_pressedInputs[Keys::LMB] << std::endl;
+		engn::inp::MouseHandle::getInstance().onLMBPressed(mptr);
 	}
 	else if (mptr->message == WM_LBUTTONUP) {
-		m_onMouseLMBReleased(mptr);
-		// std::cout << "LMB Up" << std::endl;
+		engn::inp::MouseHandle::getInstance().onLMBReleased(mptr);
 	}
 	if (mptr->message == WM_RBUTTONDOWN) {
-		m_onMouseRMBPressed(mptr);
-		// std::cout << "RMB Down" << std::endl;
-		// std::cout << "RMB Logged: " << m_pressedInputs[Keys::RMB] << std::endl;
+		engn::inp::MouseHandle::getInstance().onRMBPressed(mptr);
 	}
 	else if (mptr->message == WM_RBUTTONUP) {
-		m_onMouseRMBReleased(mptr);
-		// std::cout << "RMB Up" << std::endl;
+		engn::inp::MouseHandle::getInstance().onRMBReleased(mptr);
 	}
 
 	if (mptr->message == WM_MOUSEMOVE) {
-		m_onMouseMove(mptr);
+		engn::inp::MouseHandle::getInstance().onMove(mptr);
 	}
 
 	// Capture press and release of keys
@@ -222,12 +219,13 @@ void Application::m_onMouseRMBPressed(MSG* mptr) {
 	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
 }
 
-glm::vec2 Application::m_processRMBInputs(const glm::vec2& mousePos) {
-	glm::vec2 newPos;
+glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
+	DirectX::XMINT2 newPos;
 	newPos = mousePos;
 	newPos.y = m_window->getHeight() - mousePos.y;
-	newPos /= static_cast<float>(BUFF_DECREASE_TIMES);
-	return newPos;
+	newPos.x /= static_cast<float>(BUFF_DECREASE_TIMES);
+	newPos.y /= static_cast<float>(BUFF_DECREASE_TIMES);
+	return glm::vec2{ newPos.x, newPos.y };
 }
 
 void Application::m_onMouseRMBReleased(MSG* mptr) {
@@ -249,25 +247,26 @@ void Application::m_onMouseMove(MSG* mptr) {
 }
 
 void Application::m_findObject() {
-	if (!m_objectBinded && (m_pressedInputs[Keys::RMB])) {
-		if (m_scene->findDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera)) {
+	if (!m_objectBinded && (engn::inp::MouseHandle::getInstance().isRMBPressed())) {
+		if (m_scene->findDraggable(m_processRMBInputs(engn::inp::MouseHandle::getInstance().getMoveData().mousePos), m_camera)) {
 			m_objectBinded = true;
 		}
 	}
 }
 
 void Application::m_moveObject() {
-	if (m_objectBinded && (m_pressedInputs[Keys::RMB])) {
+	if (m_objectBinded && (engn::inp::MouseHandle::getInstance().isRMBPressed())) {
 		// second operation expensive
-		if (m_camStateChanged || glm::length(m_objDragData.mouseOffset) > 0) {
-			m_scene->moveDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera);
+		DirectX::XMINT2 offset = engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset;
+		if (m_camStateChanged || (offset.x * offset.x + offset.y * offset.y) > 0) {
+			m_scene->moveDraggable(m_processRMBInputs(engn::inp::MouseHandle::getInstance().getMoveData().mousePos), m_camera);
 			m_camStateChanged = false;
 		}
 	}
 }
 
 void Application::m_releaseObject() {
-	if (!m_pressedInputs[Keys::RMB]) {
+	if (!engn::inp::MouseHandle::getInstance().isRMBPressed()) {
 		m_objectBinded = false;
 	}
 }
@@ -331,13 +330,14 @@ glm::vec3 Application::m_getCamRotation() {
 	}
 
 	// pitch and yaw
-	if (m_pressedInputs[Keys::LMB] && glm::length(m_camMoveData.mouseOffset) > 0) {
+	DirectX::XMINT2& offset = engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset;
+	if (engn::inp::MouseHandle::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
 		if (!m_isCamRotating) { m_isCamRotating = true; }
 		float lastFPSCount = m_timer->getFPSCurrent();
 		// hardcoded for now
-		rotation.y += m_camMoveData.mouseOffset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
-		rotation.x += m_camMoveData.mouseOffset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
-		m_camMoveData.mouseOffset = glm::vec2{ 0.0f };
+		rotation.y += offset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
+		rotation.x += offset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
+		engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
 	}
 
 	return rotation;

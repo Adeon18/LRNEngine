@@ -135,6 +135,9 @@
     <ClInclude Include="render\Graphics\IndexBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="input\MouseHandle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -192,6 +195,9 @@
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="render\Graphics\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="input\MouseHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

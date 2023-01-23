@@ -22,6 +22,7 @@
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="include\config.hpp" />
     <ClInclude Include="include\utility\utility.hpp" />
+    <ClInclude Include="input\MouseHandle.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
@@ -52,6 +53,7 @@
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="input\MouseHandle.cpp" />
     <ClCompile Include="render\D3D\d3d.cpp" />
     <ClCompile Include="render\Graphics\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\PixelShader.cpp" />
