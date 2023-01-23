@@ -10,8 +10,6 @@ namespace engn {
 		template<typename T>
 		class ConstantBuffer {
 		public:
-			T data;
-		public:
 			ConstantBuffer() {}
 
 			void init() {
@@ -37,7 +35,9 @@ namespace engn {
 			}
 
 			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }
+			[[nodiscard]] T& getData() { return data; }
 		private:
+			T data;
 			Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 		};
 	} // rend

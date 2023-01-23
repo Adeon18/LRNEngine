@@ -24,13 +24,13 @@ namespace engn {
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
 
 			// VS constant buffer
-			m_constantBufferVS.data.offset.x = 0.0f;
-			m_constantBufferVS.data.offset.y = 0.0f;
+			m_constantBufferVS.getData().offset.x = 0.0f;
+			m_constantBufferVS.getData().offset.y = 0.0f;
 			m_constantBufferVS.fill();
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
 
-			m_constantBufferPS.data.gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
-			m_constantBufferPS.data.gTime = renderData.iTime;
+			m_constantBufferPS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
+			m_constantBufferPS.getData().gTime = renderData.iTime;
 			m_constantBufferPS.fill();
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferPS.getBufferAddress());
 
@@ -58,7 +58,7 @@ namespace engn {
 			std::wcout << "Shader Folder found: " << shaderFolder << std::endl;
 
 			m_vertexShader.init(shaderFolder + L"VS.cso", layout, ARRAYSIZE(layout));
-			m_pixelShader.init(shaderFolder + L"PS.cso");
+			m_pixelShader.init(shaderFolder + L"Voronoi.cso");
 		}
 
 		void Graphics::m_initScene()

@@ -193,7 +193,7 @@
     <FxCompile Include="render\Graphics\shaders\VS.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\PS.hlsl">
+    <FxCompile Include="render\Graphics\shaders\Voronoi.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

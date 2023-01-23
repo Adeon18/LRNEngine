@@ -1,5 +1,7 @@
 #define VORONOI 1
 
+#define PI 3.14159
+
 cbuffer perFrame : register(b0)
 {
 	float4 iResolution;
@@ -34,10 +36,12 @@ float2 voronoi(in float2 x)
             float2 g = float2(float(i), float(j));
             float2 o = hash(n + g);
             //vec2  r = g - f + o;
-            float2 r = g - f + (0.5 + 0.5 * sin(iTime + 6.2831 * o));
+            float2 r = g - f + (0.5 + 0.5 * sin(iTime + 2 * PI * o));
             float d = dot(r, r);
             if (d < m.x)
+            {
                 m = float3(d, o);
+            }
         }
 
     return float2(sqrt(m.x), m.y + m.z);
