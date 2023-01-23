@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/Logger/Logger.hpp"
+
 #include "render/D3D/d3d.hpp"
 #include "render/Graphics/Graphics.hpp"
 
@@ -19,6 +21,9 @@ namespace engn {
 		static void init()
 		{
 			// initilizes engine singletons
+			Logger::initConsoleLogger();
+			Logger::createFileLogger("Engine", "logs/engine.log");
+			Logger::instance().setDefaultLoggerName("Engine");
 			m_d3d.init();
 		}
 

@@ -31,8 +31,8 @@ namespace engn {
 			Keyboard& operator=(const Keyboard& other) = delete;
 
 			//! Log each key press via logger
-			[[nodiscard]] bool isInputLogged() const { return logInput; }
-			void setInputLogging(bool value) { logInput = value; }
+			[[nodiscard]] bool isInputLogged() const { return m_logInput; }
+			void setInputLogging(bool value) { m_logInput = value; }
 			//! Actions on key press and release
 			void onKeyPressed(MSG* m);
 			void onKeyReleased(MSG* m);
@@ -42,7 +42,7 @@ namespace engn {
 			Keyboard() {}
 
 			std::unordered_map<int, bool> m_pressedKeys;
-			bool logInput = false;
+			bool m_logInput = false;
 		};
 	} // inp
 } // engn

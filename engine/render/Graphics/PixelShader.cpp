@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "utils/Logger/Logger.hpp"
+
 #include "PixelShader.hpp"
 
 
@@ -7,17 +9,23 @@ namespace engn {
 	namespace rend {
 		void PixelShader::init(const std::wstring& shaderPath) {
 			// Read vertex Shader
-			HRESULT res = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
-			if (res) { std::wcout << L"Failed to load Pixel shader: " + shaderPath << std::endl; }
+			HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Failed to load Pixel Shader " +
+					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+			}
 
 			// CreateVertexShader
-			res = d3d::s_device->CreatePixelShader(
+			hr = d3d::s_device->CreatePixelShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				NULL, // The pointer to class linkage
 				m_shader.GetAddressOf()
 			);
-			if (res) { std::wcout << L"Failed to create Pixel shader: " + shaderPath << std::endl; }
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Failed to create Pixel Shader " +
+					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+			}
 		}
 
 		[[nodiscard]] ID3D11PixelShader* PixelShader::getShader() {

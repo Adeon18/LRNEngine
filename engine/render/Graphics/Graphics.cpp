@@ -57,10 +57,10 @@ namespace engn {
 				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vertex::pos), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 			std::wstring shaderFolder = util::getExeDirW();
-			std::wcout << "Shader Folder found: " << shaderFolder << std::endl;
+			Logger::instance().logInfo("Shader Folder found: " + std::string(shaderFolder.begin(), shaderFolder.end()));
 
-			m_vertexShader.init(shaderFolder + L"VS.cso", layout, ARRAYSIZE(layout));
-			m_pixelShader.init(shaderFolder + L"Voronoi.cso");
+			m_vertexShader.init(shaderFolder + L"VSMoveByOffset.cso", layout, ARRAYSIZE(layout));
+			m_pixelShader.init(shaderFolder + L"PSVoronoi.cso");
 		}
 
 		void Graphics::m_initScene()
@@ -87,8 +87,8 @@ namespace engn {
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
-			HRESULT res = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
-			if (FAILED(res)) { std::cout << "CreateRasterizerState fail" << std::endl; }
+			HRESULT hr = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
+			if (FAILED(hr)) { Logger::instance().logErr("CreateRasterizerState fail: " + std::system_category().message(hr)); }
 		}
 	} // rend
 } // engn

@@ -214,10 +214,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="render\Graphics\shaders\VS.hlsl">
+    <FxCompile Include="render\Graphics\shaders\VSMoveByOffset.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\Voronoi.hlsl">
+    <FxCompile Include="render\Graphics\shaders\PSVoronoi.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
   </ItemGroup>

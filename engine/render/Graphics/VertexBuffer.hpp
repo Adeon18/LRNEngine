@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+#include "utils/Logger/Logger.hpp"
+
 #include "render/d3d/d3d.hpp"
 
 
@@ -32,8 +34,8 @@ namespace engn {
 				vertexBufferData.pSysMem = vertices.data();
 
 				// Create Buffer
-				HRESULT res = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.GetAddressOf());
-				if (FAILED(res)) { std::cout << "CreateBuffer fail" << std::endl; }
+				HRESULT hr = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.GetAddressOf());
+				if (FAILED(hr)) { Logger::instance().logErr("VertexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
 			}
 
 			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }

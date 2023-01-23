@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "utils/Logger/Logger.hpp"
+
 #include "VertexShader.hpp"
 
 
@@ -7,27 +9,36 @@ namespace engn {
 	namespace rend {
 		void VertexShader::init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem) {
 			// Read vertex Shader
-			HRESULT res = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
-			if (res) { std::wcout << L"Failed to load Vertex shader: " + shaderPath << std::endl; }
+			HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Failed to load Vertex Shader " +
+					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+				return;
+			}
 
 			// CreateVertexShader
-			res = d3d::s_device->CreateVertexShader(
+			hr = d3d::s_device->CreateVertexShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				NULL, // The pointer to class linkage
 				m_shader.GetAddressOf()
 			);
-			if (res) { std::wcout << L"Failed to create Vertex shader: " + shaderPath << std::endl; }
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Failed to create Vertex Shader " +
+					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+			}
 
 			// InputLayout
-			HRESULT hr = d3d::s_device->CreateInputLayout(
+			hr = d3d::s_device->CreateInputLayout(
 				layoutDesc,
 				numElem,
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				m_inputLayout.GetAddressOf()
 			);
-			if (res) { std::cout << "Failed to create InputLayout" << std::endl; }
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Failed to create Input Layout: " + std::system_category().message(hr));
+			}
 		}
 
 		[[nodiscard]] ID3D11VertexShader* VertexShader::getShader() const {

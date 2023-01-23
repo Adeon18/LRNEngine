@@ -1,6 +1,8 @@
 #pragma once
 
-#include "vector"
+#include <vector>
+
+#include "utils/Logger/Logger.hpp"
 
 #include "render/d3d/d3d.hpp"
 

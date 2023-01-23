@@ -27,6 +27,9 @@ Application::Application() :
 	m_executor = std::unique_ptr<engn::util::ParallelExecutor>(new engn::util::ParallelExecutor{ numThreads });
 	m_createObjects();
 #endif
+
+	//engn::inp::Mouse::getInstance().setInputLogging(true);
+	//engn::inp::Keyboard::getInstance().setInputLogging(true);
 }
 
 
@@ -39,7 +42,7 @@ int Application::run() {
 		if (m_timer->frameElapsed()) {
 #if DX_ENGINE == 1
 			auto debug = m_timer->isDebugFPSShow();
-			if (debug.first) { std::cout << "FPS: " << debug.second << std::endl; }
+			if (debug.first) { engn::Logger::instance().logDebug("FPS", debug.second); }
 
 			m_handleRender();
 #else

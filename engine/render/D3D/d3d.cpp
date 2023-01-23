@@ -24,14 +24,12 @@ namespace engn {
 	namespace rend {
 		void D3D::init()
 		{
-			HRESULT result;
-
 			// Manage video adapters
-			result = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(m_factory.GetAddressOf()));
-			if (FAILED(result)) { std::cout << "CreateDXGIFactory fail" << std::endl; }
+			HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory), reinterpret_cast<void**>(m_factory.GetAddressOf()));
+			if (FAILED(hr)) { Logger::instance().logErr("CreateDXGIFactory fail: " + std::system_category().message(hr)); }
 
-			result = m_factory.As(&m_factory5);
-			if (FAILED(result)) { std::cout << "m_factory->QueryInterface fail" << std::endl; }
+			hr = m_factory.As(&m_factory5);
+			if (FAILED(hr)) { Logger::instance().logErr("Factory Interface generation fail: " + std::system_category().message(hr)); }
 
 			{
 				uint32_t index = 0;
@@ -41,14 +39,14 @@ namespace engn {
 					DXGI_ADAPTER_DESC1 desc;
 					adapter->GetDesc1(&desc);
 
-					std::cout << "GPU #" << index << desc.Description << std::endl;
+					Logger::instance().logInfo("GPU #", index);
 				}
 			}
 
 			// Init D3D Device & Context
 			const D3D_FEATURE_LEVEL featureLevelRequested = D3D_FEATURE_LEVEL_11_0;
 			D3D_FEATURE_LEVEL featureLevelInitialized = D3D_FEATURE_LEVEL_11_0; 
-			result = D3D11CreateDevice(
+			hr = D3D11CreateDevice(
 				nullptr, // Adapter ptr
 				D3D_DRIVER_TYPE_HARDWARE, // Adapter type, HW if Adapter = nulptr, UNKNOWN if we specify adapter
 				nullptr, // A handle to the dll that implements software rasterizer
@@ -60,17 +58,17 @@ namespace engn {
 				&featureLevelInitialized, // If successful => return the first feature level from the feature level array which succeeded
 				m_devcon.GetAddressOf() // The address of the pointer to the ID3D11DeviceContext object
 			);
-			if (FAILED(result)) { std::cout << "D3D11CreateDevice fail" << std::endl; }
-			if (featureLevelInitialized != featureLevelRequested) { std::cout << "D3D_FEATURE_LEVEL_11_0 fail" << std::endl; }
+			if (FAILED(hr)) { Logger::instance().logErr("D3D11CreateDevice fail: " + std::system_category().message(hr)); }
+			if (featureLevelInitialized != featureLevelRequested) { Logger::instance().logErr("D3D_FEATURE_LEVEL_11_0 fail: " + std::system_category().message(hr)); }
 
-			result = m_device.As(&m_device5);
-			if (FAILED(result)) { std::cout << "QueryInterface fail m_device5" << std::endl; }
+			hr = m_device.As(&m_device5);
+			if (FAILED(hr)) { Logger::instance().logErr("Device Interface generation fail: " + std::system_category().message(hr)); }
 
-			result = m_devcon.As(&m_devcon4);
-			if (FAILED(result)) { std::cout << "QueryInterface fail m_devcon4" << std::endl; }
+			hr = m_devcon.As(&m_devcon4);
+			if (FAILED(hr)) { Logger::instance().logErr("Device Context Interface generation fail: " + std::system_category().message(hr)); }
 
-			result = m_device.As(&m_devdebug);
-			if (FAILED(result)) { std::cout << "QueryInterface fail m_devdebug" << std::endl; }
+			hr = m_device.As(&m_devdebug);
+			if (FAILED(hr)) { Logger::instance().logErr("Device debug generation fail: " + std::system_category().message(hr)); }
 
 
 			// Write global pointers

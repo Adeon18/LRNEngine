@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+#include "utils/Logger/Logger.hpp"
+
 #include "render/d3d/d3d.hpp"
 
 #include "CBStructs.hpp"
@@ -21,15 +23,15 @@ namespace engn {
 				desc.ByteWidth = static_cast<UINT>(sizeof(T) + 16 - (sizeof(T) % 16)); // 16 byte aligned, maybe edit later style
 				desc.StructureByteStride = 0;
 
-				HRESULT res = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
-				if (FAILED(res)) { std::cout << "ConstantBuffer::init::CreateBuffer fail" << std::endl; }
+				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
+				if (FAILED(hr)) { Logger::instance().logErr("ConstantBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
 			}
 
 			//! Fill the buffer with data via map
 			void fill() {
 				D3D11_MAPPED_SUBRESOURCE mappedResource;
-				HRESULT res = d3d::s_devcon->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				if (FAILED(res)) { std::cout << "ConstantBuffer::fill::Map fail" << std::endl; }
+				HRESULT hr = d3d::s_devcon->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				if (FAILED(hr)) { Logger::instance().logErr("ConstantBuffer::fill::Map fail: " + std::system_category().message(hr)); }
 				memcpy(mappedResource.pData, &data, sizeof(T));
 				d3d::s_devcon->Unmap(m_buffer.Get(), 0);
 			}

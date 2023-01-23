@@ -11,6 +11,8 @@
 
 #include <wrl/client.h>
 
+#include <utils/Logger/Logger.hpp>
+
 
 namespace engn
 {

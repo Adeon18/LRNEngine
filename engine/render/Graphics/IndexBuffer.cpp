@@ -21,8 +21,8 @@ namespace engn {
 			indexBufferData.pSysMem = indices.data();
 
 			// Create Buffer
-			HRESULT res = d3d::s_device->CreateBuffer(&indexBufferDesc, &indexBufferData, m_buffer.GetAddressOf());
-			if (FAILED(res)) { std::cout << "CreateBuffer fail for indices" << std::endl; }
+			HRESULT hr = d3d::s_device->CreateBuffer(&indexBufferDesc, &indexBufferData, m_buffer.GetAddressOf());
+			if (FAILED(hr)) { Logger::instance().logErr("IndexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
 		}
 	} // rend
 } // engn

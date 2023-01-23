@@ -33,8 +33,8 @@ namespace engn {
 			Mouse& operator=(const Mouse& other) = delete;
 
 			//! Log each key press via logger
-			[[nodiscard]] bool isInputLogged() const { return logInput; }
-			void setInputLogging(bool value) { logInput = value; }
+			[[nodiscard]] bool isInputLogged() const { return m_logInput; }
+			void setInputLogging(bool value) { m_logInput = value; }
 
 			//! Get move data by ref
 			[[nodiscard]] MouseMoveData& getMoveData() { return m_moveData; }
@@ -57,7 +57,7 @@ namespace engn {
 
 			std::unordered_map<int, bool> m_pressedButtons;
 			MouseMoveData m_moveData;
-			bool logInput = false;
+			bool m_logInput = false;
 		};
 	} // inp
 } // engn

@@ -13,5 +13,6 @@ namespace engn {
 		std::string getExeDir();
 		//! Get the absolute path to the directory that contains the executable(wstring). PATH ends with "\"
 		std::wstring getExeDirW();
+		bool deleteFile(const std::string& path);
 	} // util
 } // engn
