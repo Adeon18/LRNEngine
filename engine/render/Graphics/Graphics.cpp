@@ -43,8 +43,10 @@ namespace engn {
 				m_vertexBuffer.getStride(),
 				&offset
 			);
+			d3d::s_devcon->IASetIndexBuffer(m_indexBuffer.getBufferPtr(), DXGI_FORMAT_R32_UINT, 0);
+
 			// Draw(vertexCount and startLocation)
-			d3d::s_devcon->Draw(m_vertexBuffer.getBufferSize(), 0);
+			d3d::s_devcon->DrawIndexed(m_indexBuffer.getBufferSize(), 0, 0);
 		}
 
 		void Graphics::m_initShaders() {
@@ -67,9 +69,14 @@ namespace engn {
 			{
 				Vertex{{0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top - red
 				Vertex{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // right - blue
-				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // bottom - green
+				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // left - green
+			};
+			std::vector<DWORD> indices =
+			{
+				0, 1, 2
 			};
 			m_vertexBuffer.init(vertices);
+			m_indexBuffer.init(indices);
 			m_constantBufferVS.init();
 			m_constantBufferPS.init();
 		}

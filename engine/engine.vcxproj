@@ -28,6 +28,7 @@
     <ClInclude Include="include\win_def.hpp" />
     <ClInclude Include="include\win_undef.hpp" />
     <ClInclude Include="render\D3D\d3d.hpp" />
+    <ClInclude Include="render\Graphics\IndexBuffer.hpp" />
     <ClInclude Include="render\Graphics\PixelShader.hpp" />
     <ClInclude Include="render\Graphics\Vertex.hpp" />
     <ClInclude Include="render\Graphics\VertexBuffer.hpp" />
@@ -52,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp" />
+    <ClCompile Include="render\Graphics\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\PixelShader.cpp" />
     <ClCompile Include="render\Graphics\VertexShader.cpp" />
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />

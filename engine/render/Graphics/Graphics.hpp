@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "ConstantBuffer.hpp"
 
@@ -35,6 +36,7 @@ namespace engn {
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
 
+			IndexBuffer m_indexBuffer;
 			VertexBuffer<Vertex> m_vertexBuffer;
 			ConstantBuffer<CB_VS_MoveBuffer> m_constantBufferVS;
 			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;

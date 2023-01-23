@@ -132,6 +132,9 @@
     <ClInclude Include="include\config.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\IndexBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -187,6 +190,9 @@
     </ClCompile>
     <ClCompile Include="render\Graphics\VertexShader.cpp">
       <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\IndexBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
