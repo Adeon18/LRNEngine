@@ -1,25 +1,25 @@
-#include "MouseHandle.hpp"
+#include "Mouse.hpp"
 
 
 namespace engn {
 	namespace inp {
-		void MouseHandle::onLMBPressed(MSG* m)
+		void Mouse::onLMBPressed(MSG* m)
 		{
 			m_pressedButtons[Keys::LMB] = true;
 		}
-		void MouseHandle::onLMBReleased(MSG* m)
+		void Mouse::onLMBReleased(MSG* m)
 		{
 			m_pressedButtons[Keys::LMB] = false;
 		}
-		void MouseHandle::onRMBPressed(MSG* m)
+		void Mouse::onRMBPressed(MSG* m)
 		{
 			m_pressedButtons[Keys::RMB] = true;
 		}
-		void MouseHandle::onRMBReleased(MSG* m)
+		void Mouse::onRMBReleased(MSG* m)
 		{
 			m_pressedButtons[Keys::RMB] = false;
 		}
-		void MouseHandle::onMove(MSG* m)
+		void Mouse::onMove(MSG* m)
 		{
 			DirectX::XMINT2 newMosPos = DirectX::XMINT2{ GET_X_LPARAM(m->lParam), GET_Y_LPARAM(m->lParam) };
 			m_moveData.mouseOffset.x = newMosPos.x - m_moveData.mousePos.x;

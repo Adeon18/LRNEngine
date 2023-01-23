@@ -22,7 +22,8 @@
     <ClInclude Include="Engine.hpp" />
     <ClInclude Include="include\config.hpp" />
     <ClInclude Include="include\utility\utility.hpp" />
-    <ClInclude Include="input\MouseHandle.hpp" />
+    <ClInclude Include="input\Keyboard.hpp" />
+    <ClInclude Include="input\Mouse.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
@@ -48,12 +49,14 @@
     <ClInclude Include="source\math\ray.h" />
     <ClInclude Include="source\mesh\Mesh.h" />
     <ClInclude Include="source\mesh\TriangleOcTree.h" />
+    <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
     <ClInclude Include="utils\Timer\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="input\MouseHandle.cpp" />
+    <ClCompile Include="input\Keyboard.cpp" />
+    <ClCompile Include="input\Mouse.cpp" />
     <ClCompile Include="render\D3D\d3d.cpp" />
     <ClCompile Include="render\Graphics\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\PixelShader.cpp" />
@@ -71,6 +74,7 @@
     <ClCompile Include="source\mesh\Mesh.cpp" />
     <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
+    <ClCompile Include="utils\Logger\Logger.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>

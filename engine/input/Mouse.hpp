@@ -9,7 +9,8 @@
 
 namespace engn {
 	namespace inp {
-		class MouseHandle {
+		class Mouse {
+		public:
 			struct Keys {
 				static constexpr int LMB = VK_LBUTTON;
 				static constexpr int RMB = VK_RBUTTON;
@@ -23,16 +24,19 @@ namespace engn {
 				DirectX::XMINT2 mouseOffset;
 			};
 		public:
-			static MouseHandle& getInstance() {
-				static MouseHandle handle;
+			//! Constructor chicanery
+			static Mouse& getInstance() {
+				static Mouse handle;
 				return handle;
 			}
-			MouseHandle(const MouseHandle& other) = delete;
-			MouseHandle& operator=(const MouseHandle& other) = delete;
+			Mouse(const Mouse& other) = delete;
+			Mouse& operator=(const Mouse& other) = delete;
 
-			[[nodiscard]] bool isInputLogged() { return logInput; }
+			//! Log each key press via logger
+			[[nodiscard]] bool isInputLogged() const { return logInput; }
 			void setInputLogging(bool value) { logInput = value; }
 
+			//! Get move data by ref
 			[[nodiscard]] MouseMoveData& getMoveData() { return m_moveData; }
 
 			[[nodiscard]] bool isKeyPressed(int key) { return m_pressedButtons[key]; }
@@ -49,7 +53,7 @@ namespace engn {
 
 			// For now only 2 buttons and movement
 		private:
-			MouseHandle(){}
+			Mouse(){}
 
 			std::unordered_map<int, bool> m_pressedButtons;
 			MouseMoveData m_moveData;

@@ -1,7 +1,8 @@
 #include <thread>
 
 
-#include "input/MouseHandle.hpp"
+#include "input/Mouse.hpp"
+#include "input/Keyboard.hpp"
 
 #include "application.h"
 
@@ -174,49 +175,31 @@ void Application::m_captureInput(MSG* mptr)
 
 	// Capture and release LMB
 	if (mptr->message == WM_LBUTTONDOWN) {
-		engn::inp::MouseHandle::getInstance().onLMBPressed(mptr);
+		engn::inp::Mouse::getInstance().onLMBPressed(mptr);
 	}
 	else if (mptr->message == WM_LBUTTONUP) {
-		engn::inp::MouseHandle::getInstance().onLMBReleased(mptr);
+		engn::inp::Mouse::getInstance().onLMBReleased(mptr);
 	}
 	if (mptr->message == WM_RBUTTONDOWN) {
-		engn::inp::MouseHandle::getInstance().onRMBPressed(mptr);
+		engn::inp::Mouse::getInstance().onRMBPressed(mptr);
 	}
 	else if (mptr->message == WM_RBUTTONUP) {
-		engn::inp::MouseHandle::getInstance().onRMBReleased(mptr);
+		engn::inp::Mouse::getInstance().onRMBReleased(mptr);
 	}
 
 	if (mptr->message == WM_MOUSEMOVE) {
-		engn::inp::MouseHandle::getInstance().onMove(mptr);
+		engn::inp::Mouse::getInstance().onMove(mptr);
 	}
 
 	// Capture press and release of keys
 	if (mptr->message == WM_KEYDOWN)
 	{
-		m_pressedInputs[mptr->wParam] = true;
+		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
 	}
 	else if (mptr->message == WM_KEYUP)
 	{
-		m_pressedInputs[mptr->wParam] = false;
+		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
 	}
-}
-
-
-void Application::m_onMouseLMBPressed(MSG* mptr) {
-	m_pressedInputs[Keys::LMB] = true;
-	m_camMoveData.mousePos.x = GET_X_LPARAM(mptr->lParam);
-	m_camMoveData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
-}
-
-
-void Application::m_onMouseLMBReleased(MSG* mptr) {
-	m_pressedInputs[Keys::LMB] = false;
-}
-
-void Application::m_onMouseRMBPressed(MSG* mptr) {
-	m_pressedInputs[Keys::RMB] = true;
-	m_objDragData.mousePos.x = GET_X_LPARAM(mptr->lParam);
-	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
 }
 
 glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
@@ -228,45 +211,27 @@ glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
 	return glm::vec2{ newPos.x, newPos.y };
 }
 
-void Application::m_onMouseRMBReleased(MSG* mptr) {
-	m_pressedInputs[Keys::RMB] = false;
-}
-
-void Application::m_onMouseMove(MSG* mptr) {
-	glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
-	if (m_pressedInputs[Keys::LMB]) {
-		m_camMoveData.mouseOffset = newMosPos - m_camMoveData.mousePos;
-		m_camMoveData.mousePos = newMosPos;
-		// std::cout << "LMB Move" << std::endl;
-	}
-	if (m_pressedInputs[Keys::RMB]) {
-		m_objDragData.mouseOffset = newMosPos - m_objDragData.mousePos;
-		m_objDragData.mousePos = newMosPos;
-		// std::cout << "RMB Move" << std::endl;
-	}
-}
-
 void Application::m_findObject() {
-	if (!m_objectBinded && (engn::inp::MouseHandle::getInstance().isRMBPressed())) {
-		if (m_scene->findDraggable(m_processRMBInputs(engn::inp::MouseHandle::getInstance().getMoveData().mousePos), m_camera)) {
+	if (!m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
+		if (m_scene->findDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera)) {
 			m_objectBinded = true;
 		}
 	}
 }
 
 void Application::m_moveObject() {
-	if (m_objectBinded && (engn::inp::MouseHandle::getInstance().isRMBPressed())) {
+	if (m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
 		// second operation expensive
-		DirectX::XMINT2 offset = engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset;
+		DirectX::XMINT2 offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
 		if (m_camStateChanged || (offset.x * offset.x + offset.y * offset.y) > 0) {
-			m_scene->moveDraggable(m_processRMBInputs(engn::inp::MouseHandle::getInstance().getMoveData().mousePos), m_camera);
+			m_scene->moveDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera);
 			m_camStateChanged = false;
 		}
 	}
 }
 
 void Application::m_releaseObject() {
-	if (!engn::inp::MouseHandle::getInstance().isRMBPressed()) {
+	if (!engn::inp::Mouse::getInstance().isRMBPressed()) {
 		m_objectBinded = false;
 	}
 }
@@ -305,7 +270,7 @@ glm::vec3 Application::m_getCamMovement() {
 	m_isCamMoving = false;
 	for (const auto& key : m_camMoveInputs)
 	{
-		if (m_pressedInputs[key])
+		if (engn::inp::Keyboard::getInstance().isKeyPressed(key))
 		{
 			direction += m_cameraDirections[key];
 			m_isCamMoving = true;
@@ -322,7 +287,7 @@ glm::vec3 Application::m_getCamRotation() {
 	m_isCamRotating = false;
 	// Roll
 	for (const auto& key : m_camRotateInputs) {
-		if (m_pressedInputs[key])
+		if (engn::inp::Keyboard::getInstance().isKeyPressed(key))
 		{
 			rotation += m_cameraRotations[key];
 			if (!m_isCamRotating) { m_isCamRotating = true; }
@@ -330,14 +295,14 @@ glm::vec3 Application::m_getCamRotation() {
 	}
 
 	// pitch and yaw
-	DirectX::XMINT2& offset = engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset;
-	if (engn::inp::MouseHandle::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
+	DirectX::XMINT2& offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
+	if (engn::inp::Mouse::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
 		if (!m_isCamRotating) { m_isCamRotating = true; }
 		float lastFPSCount = m_timer->getFPSCurrent();
 		// hardcoded for now
 		rotation.y += offset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
 		rotation.x += offset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
-		engn::inp::MouseHandle::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
+		engn::inp::Mouse::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
 	}
 
 	return rotation;

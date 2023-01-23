@@ -68,12 +68,7 @@ private:
 	void m_captureInput(MSG* mptr);
 
 	//! Mouse Input
-	void m_onMouseLMBPressed(MSG* mptr);
-	void m_onMouseLMBReleased(MSG* mptr);
-	void m_onMouseRMBPressed(MSG* mptr);
-	void m_onMouseRMBReleased(MSG* mptr);
 	glm::vec2 m_processRMBInputs(const DirectX::XMINT2& mousePos);
-	void m_onMouseMove(MSG* mptr);
 
 
 	//! Put objects on the scene
@@ -112,8 +107,6 @@ private:
 	bool m_isCamMoving = false;
 	bool m_isCamRotating = false;
 
-	// Basically input handling
-	std::unordered_map<int, bool> m_pressedInputs;
 
 	std::vector<int> m_camMoveInputs{ Keys::KEY_A, Keys::KEY_D, Keys::KEY_W, Keys::KEY_S, Keys::KEY_CTRL, Keys::KEY_SPACE };
 	std::unordered_map<int, glm::vec3> m_cameraDirections{
