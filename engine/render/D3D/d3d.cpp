@@ -39,7 +39,7 @@ namespace engn {
 					DXGI_ADAPTER_DESC1 desc;
 					adapter->GetDesc1(&desc);
 
-					Logger::instance().logInfo("GPU #", index);
+					Logger::instance().logInfo(std::wstring{ L"GPU Desc: " } + desc.Description + L" #", index);
 				}
 			}
 

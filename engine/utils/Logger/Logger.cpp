@@ -24,6 +24,11 @@ namespace engn {
 		spdlog::get(m_defaultLoggerName)->info(s);
 	}
 
+	void Logger::logInfo(const std::wstring& s)
+	{
+		logInfo(std::string{ s.begin(), s.end() });
+	}
+
 	void Logger::logInfo(const std::string& s, int c)
 	{
 		if (m_defaultLoggerName != "C") {
@@ -32,24 +37,49 @@ namespace engn {
 		spdlog::get(m_defaultLoggerName)->info(s + "{}", c);
 	}
 
+	void Logger::logInfo(const std::wstring& s, int c)
+	{
+		logInfo(std::string{ s.begin(), s.end() }, c);
+	}
+
 	void Logger::logWarn(const std::string& s)
 	{
 		spdlog::get(m_defaultLoggerName)->warn(s);
+	}
+	void Logger::logWarn(const std::wstring& s)
+	{
+		logWarn(std::string{ s.begin(), s.end() });
 	}
 	void Logger::logErr(const std::string& s)
 	{
 		spdlog::get(m_defaultLoggerName)->error(s);
 	}
+	void Logger::logErr(const std::wstring& s)
+	{
+		logErr(std::string{ s.begin(), s.end() });
+	}
 	void Logger::logCrit(const std::string& s)
 	{
 		spdlog::get(m_defaultLoggerName)->critical(s);
+	}
+	void Logger::logCrit(const std::wstring& s)
+	{
+		logCrit(std::string{ s.begin(), s.end() });
 	}
 	void Logger::logDebug(const std::string& s)
 	{
 		spdlog::get("C")->debug(s);
 	}
+	void Logger::logDebug(const std::wstring& s)
+	{
+		logDebug(std::string{ s.begin(), s.end() });
+	}
 	void Logger::logDebug(const std::string& s, int c)
 	{
 		spdlog::get("C")->debug(s + ": {}", c);
+	}
+	void Logger::logDebug(const std::wstring& s, int c)
+	{
+		logDebug(std::string{ s.begin(), s.end() }, c);
 	}
 } // engn

@@ -26,6 +26,7 @@ namespace engn {
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to create Vertex Shader " +
 					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+				return;
 			}
 
 			// InputLayout
@@ -38,6 +39,7 @@ namespace engn {
 			);
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to create Input Layout: " + std::system_category().message(hr));
+				return;
 			}
 		}
 

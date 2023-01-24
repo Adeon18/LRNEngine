@@ -13,6 +13,7 @@ namespace engn {
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to load Pixel Shader " +
 					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+				return;
 			}
 
 			// CreateVertexShader
@@ -25,6 +26,7 @@ namespace engn {
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to create Pixel Shader " +
 					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
+				return;
 			}
 		}
 

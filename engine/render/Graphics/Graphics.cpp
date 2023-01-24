@@ -57,7 +57,7 @@ namespace engn {
 				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vertex::pos), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo("Shader Folder found: " + std::string(shaderFolder.begin(), shaderFolder.end()));
+			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_vertexShader.init(shaderFolder + L"VSMoveByOffset.cso", layout, ARRAYSIZE(layout));
 			m_pixelShader.init(shaderFolder + L"PSVoronoi.cso");

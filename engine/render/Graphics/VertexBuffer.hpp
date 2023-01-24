@@ -35,7 +35,10 @@ namespace engn {
 
 				// Create Buffer
 				HRESULT hr = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.GetAddressOf());
-				if (FAILED(hr)) { Logger::instance().logErr("VertexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
+				if (FAILED(hr)) {
+					Logger::instance().logErr("VertexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));
+					return;
+				}
 			}
 
 			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }

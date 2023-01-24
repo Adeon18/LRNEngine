@@ -24,14 +24,20 @@ namespace engn {
 				desc.StructureByteStride = 0;
 
 				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
-				if (FAILED(hr)) { Logger::instance().logErr("ConstantBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
+				if (FAILED(hr)) {
+					Logger::instance().logErr("ConstantBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));
+					return;
+				}
 			}
 
 			//! Fill the buffer with data via map
 			void fill() {
 				D3D11_MAPPED_SUBRESOURCE mappedResource;
 				HRESULT hr = d3d::s_devcon->Map(m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-				if (FAILED(hr)) { Logger::instance().logErr("ConstantBuffer::fill::Map fail: " + std::system_category().message(hr)); }
+				if (FAILED(hr)) {
+					Logger::instance().logErr("ConstantBuffer::fill::Map fail: " + std::system_category().message(hr));
+					return;
+				}
 				memcpy(mappedResource.pData, &data, sizeof(T));
 				d3d::s_devcon->Unmap(m_buffer.Get(), 0);
 			}

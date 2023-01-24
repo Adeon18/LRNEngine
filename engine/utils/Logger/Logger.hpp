@@ -29,17 +29,24 @@ namespace engn {
 
 		//! Log data with INFO tag - goes to DEFAULT LOGGER and COUT both
 		void logInfo(const std::string& s);
+		void logInfo(const std::wstring& s);
 		void logInfo(const std::string& s, int c);
+		void logInfo(const std::wstring& s, int c);
 		//! Log data with WARN tag - goes to DEFAULT LOGGER
 		void logWarn(const std::string& s);
+		void logWarn(const std::wstring& s);
 		//! Log data with ERR tag - goes to DEFAULT LOGGER
 		void logErr(const std::string& s);
+		void logErr(const std::wstring& s);
 		//! Log data with CRIT tag - goes to DEFAULT LOGGER
 		void logCrit(const std::string& s);
+		void logCrit(const std::wstring& s);
 
 		//! Log data with DEBUG tag - goes to cout by default
 		void logDebug(const std::string& s);
+		void logDebug(const std::wstring& s);
 		void logDebug(const std::string& s, int c);
+		void logDebug(const std::wstring& s, int c);
 
 		Logger(const Logger& l) = delete;
 		Logger& operator=(const Logger& l) = delete;
