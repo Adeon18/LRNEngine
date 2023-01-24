@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{01af2287-b4bd-4def-83c1-026bf0fd24c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Input">
+      <UniqueIdentifier>{388628d7-f4ae-4587-a9e4-8ad157c113dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Input">
+      <UniqueIdentifier>{ba996a7b-b4cc-4d6a-bd95-42833f53265c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render\D3D\d3d.hpp">
@@ -130,19 +136,19 @@
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="include\config.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\IndexBuffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="input\Mouse.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="input\Keyboard.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Util</Filter>
     </ClInclude>
     <ClInclude Include="utils\Logger\Logger.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\IndexBuffer.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Keyboard.hpp">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\Mouse.hpp">
+      <Filter>Header Files\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -200,17 +206,17 @@
     <ClCompile Include="render\Graphics\VertexShader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\IndexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="input\Mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="input\Keyboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Graphics\IndexBuffer.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="utils\Logger\Logger.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="input\Mouse.cpp">
+      <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

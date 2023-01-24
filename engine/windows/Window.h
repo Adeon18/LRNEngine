@@ -7,7 +7,8 @@
 
 #include <d3d11_4.h>
 
-//#include "include/DxRes.hpp"
+#include "utils/Logger/Logger.hpp"
+
 #include "render/D3D/d3d.hpp"
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -57,8 +58,10 @@ namespace engn {
 
 				// Initialize DX stuff for render
 				initSwapchain();
+
 				initBackBuffer();
 				initRenderTargetView();
+				initDepthStensilBuffer();
 				initViewPort();
 			}
 
@@ -110,7 +113,7 @@ namespace engn {
 				desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
 
-				HRESULT res = d3d::s_factory->CreateSwapChainForHwnd(
+				HRESULT hr = d3d::s_factory->CreateSwapChainForHwnd(
 					d3d::s_device,
 					m_windowClassData.handleWnd,
 					&desc,
@@ -118,7 +121,10 @@ namespace engn {
 					m_swapChain.GetAddressOf()
 				);
 
-				if (FAILED(res)) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
+				if (FAILED(hr)) {
+					m_logger.logErr("Window CreateSwapChainForHwnd fail: " + std::system_category().message(hr));
+					return;
+				}
 			}
 
 			//! Called at resize. Free the backBuffer and resize it to a new one
@@ -129,8 +135,11 @@ namespace engn {
 				m_backBuffer.Reset();
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
-				if (FAILED(result)) { std::cout << "onResize GetBuffer fail" << std::endl; }
+				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
+				if (FAILED(hr)) {
+					m_logger.logErr("Window GetBuffer on BackBuffer fail: " + std::system_category().message(hr));
+					return;
+				}
 
 				ID3D11Texture2D* pTextureInterface = 0;
 				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
@@ -141,13 +150,45 @@ namespace engn {
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
 			void initRenderTargetView()
 			{
-				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-				if (FAILED(res)) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
-				setRenderTargetView();
+				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
+				if (FAILED(hr)) {
+					m_logger.logErr("Window CreateRenderTargetView fail: " + std::system_category().message(hr));
+					return;
+				}
 			}
 
 			void setRenderTargetView() {
-				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
+				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStensilView.Get());
+			}
+			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
+			void initDepthStensilBuffer() {
+				m_depthStensilView.Reset();
+				m_depthStensilBuffer.Reset();
+
+				D3D11_TEXTURE2D_DESC depthStencilDesc{};
+				depthStencilDesc.Width = m_windowRenderData.screenWidth;
+				depthStencilDesc.Height = m_windowRenderData.screenHeight;
+				depthStencilDesc.MipLevels = 1;
+				depthStencilDesc.ArraySize = 1;
+				depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+				depthStencilDesc.SampleDesc.Count = 1;
+				depthStencilDesc.SampleDesc.Quality = 0;
+				depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+				depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+				depthStencilDesc.CPUAccessFlags = 0;
+				depthStencilDesc.MiscFlags = 0;
+
+				HRESULT hr = d3d::s_device->CreateTexture2D(&depthStencilDesc, NULL, m_depthStensilBuffer.GetAddressOf());
+				if (FAILED(hr)) {
+					m_logger.logErr("Window DepthStensilBuffer create fail: " + std::system_category().message(hr));
+					return;
+				}
+
+				hr = d3d::s_device->CreateDepthStencilView(m_depthStensilBuffer.Get(), NULL, m_depthStensilView.GetAddressOf());
+				if (FAILED(hr)) {
+					m_logger.logErr("Window CreateDepthStencilView fail: " + std::system_category().message(hr));
+					return;
+				}
 			}
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
@@ -159,9 +200,13 @@ namespace engn {
 				viewPort.TopLeftY = m_windowRect.top;
 				viewPort.Width = m_windowRect.right - m_windowRect.left;
 				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+				// It is set this way, despite the reversed depth matrix
+				viewPort.MinDepth = 0.0f;
+				viewPort.MaxDepth = 1.0f;
 
 				d3d::s_devcon->RSSetViewports(1, &viewPort);
-			} 
+			}
+
 
 			//! Set the RTV and clear the window with the specified color
 			void clear(float* color)
@@ -171,12 +216,15 @@ namespace engn {
 				{
 					initBackBuffer();
 					initRenderTargetView();
+					initDepthStensilBuffer();
 					initViewPort();
 					m_toBeResized = false;
 				}
 				// We set the rendertargetview each frame
 				setRenderTargetView();
 				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+				// Depth is 0.0f because we utilize reversed depth matrix
+				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			}
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
@@ -240,6 +288,8 @@ namespace engn {
 
 
 		private:
+			Logger& m_logger = Logger::instance();
+
 			// Basic window data that get's passed for renreding
 			inline static WindowRenderData m_windowRenderData{
 				nullptr,
@@ -256,6 +306,8 @@ namespace engn {
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
 			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStensilView;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStensilBuffer;
 			D3D11_TEXTURE2D_DESC m_backBufferDesc;
 
 			// Bitmap information struct

@@ -32,6 +32,7 @@ namespace engn {
 			/// RasterizerState basically tells us HOW to draw triangles
 			///	Cull back, draw only Wireframe, etc.
 			void m_initRasterizer();
+			void m_initDepthStencilState();
 			
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
@@ -41,6 +42,7 @@ namespace engn {
 			ConstantBuffer<CB_VS_MoveBuffer> m_constantBufferVS;
 			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
 
+			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 		};
 	} // render

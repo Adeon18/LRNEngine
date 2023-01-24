@@ -9,6 +9,7 @@ namespace engn {
 	namespace rend {
 		void Graphics::init() {
 			m_initRasterizer();
+			m_initDepthStencilState();
 			m_initShaders();
 			m_initScene();
 		}
@@ -19,6 +20,7 @@ namespace engn {
 			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
 			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
+			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 			// Set Shaders
 			d3d::s_devcon->VSSetShader(m_vertexShader.getShader(), NULL, 0);
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
@@ -67,13 +69,18 @@ namespace engn {
 		{
 			std::vector vertices =
 			{
-				Vertex{{0.0f, 0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top - red
-				Vertex{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // right - blue
-				Vertex{{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}}, // left - green
+				Vertex{{0.0f, 0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top
+				Vertex{{0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // right
+				Vertex{{-0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // left
+				// Second triangle with new points
+				Vertex{{0.0f, 0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
+				Vertex{{0.3f, -0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
+				Vertex{{-0.3f, -0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
 			};
 			std::vector<DWORD> indices =
 			{
-				0, 1, 2
+				3, 4, 5,
+				0, 1, 2,
 			};
 			m_vertexBuffer.init(vertices);
 			m_indexBuffer.init(indices);
@@ -88,7 +95,25 @@ namespace engn {
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
 			HRESULT hr = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
-			if (FAILED(hr)) { Logger::instance().logErr("CreateRasterizerState fail: " + std::system_category().message(hr)); }
+			if (FAILED(hr)) {
+				Logger::instance().logErr("CreateRasterizerState fail: " + std::system_category().message(hr));
+				return;
+			}
+		}
+		//! Initialize the depth stencil state, set only once in window constructor
+		void Graphics::m_initDepthStencilState() {
+			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
+
+			depthStencilStateDesc.DepthEnable = true;
+			// If it is ALL, the stancil is turned ON, if ZERO, turned OFF
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+
+			HRESULT hr = d3d::s_device->CreateDepthStencilState(&depthStencilStateDesc, m_depthStensilState.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("Window CreateDepthStencilState fail: " + std::system_category().message(hr));
+				return;
+			}
 		}
 	} // rend
 } // engn

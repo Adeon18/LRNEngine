@@ -1,4 +1,4 @@
-#define VORONOI 1
+#define VORONOI 0
 
 #define PI 3.14159
 
