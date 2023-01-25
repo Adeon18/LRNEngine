@@ -24,6 +24,7 @@
     <ClInclude Include="include\utility\utility.hpp" />
     <ClInclude Include="input\Keyboard.hpp" />
     <ClInclude Include="input\Mouse.hpp" />
+    <ClInclude Include="render\Graphics\EngineCamera.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
     <ClInclude Include="render\Graphics\Graphics.hpp" />
@@ -58,6 +59,7 @@
     <ClCompile Include="input\Keyboard.cpp" />
     <ClCompile Include="input\Mouse.cpp" />
     <ClCompile Include="render\D3D\d3d.cpp" />
+    <ClCompile Include="render\Graphics\EngineCamera.cpp" />
     <ClCompile Include="render\Graphics\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\PixelShader.cpp" />
     <ClCompile Include="render\Graphics\VertexShader.cpp" />

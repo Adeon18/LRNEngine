@@ -1,8 +1,7 @@
 // It's here if I need it.
 cbuffer perFrame : register(b0)
 {
-	float xOffset;
-	float yOffset;
+    float4x4 worldToClip;
 };
 
 struct VS_INPUT
@@ -20,7 +19,7 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.outPos = float4(input.inPos, 1.0f);
+    output.outPos = mul(float4(input.inPos, 1.0f), worldToClip);
 	output.outColor = input.inColor;
 	return output;
 }

@@ -9,6 +9,8 @@
 
 #include "Vertex.hpp"
 
+#include "EngineCamera.hpp"
+
 namespace engn {
 	namespace rend {
 		struct RenderData {
@@ -24,7 +26,7 @@ namespace engn {
 		class Graphics {
 		public:
 			void init();
-			void renderFrame(const RenderData& renderData);
+			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 		private:
 			void m_initShaders();
 			void m_initScene();

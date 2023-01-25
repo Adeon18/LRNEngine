@@ -150,6 +150,9 @@
     <ClInclude Include="input\Mouse.hpp">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\EngineCamera.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -206,9 +209,6 @@
     <ClCompile Include="render\Graphics\VertexShader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="input\Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="render\Graphics\IndexBuffer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -216,6 +216,12 @@
       <Filter>Source Files\Util</Filter>
     </ClCompile>
     <ClCompile Include="input\Mouse.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\EngineCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="input\Keyboard.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
   </ItemGroup>

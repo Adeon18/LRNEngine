@@ -15,7 +15,7 @@ Application::Application() :
 	m_timer{ new engn::util::FPSTimer{300} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 #if DX_ENGINE == 1
-	m_engine{ new engn::Engine{} }
+	m_engine{ new engn::Engine{WIN_WIDTH_DEF, WIN_HEIGHT_DEF} }
 #else
 	m_scene{ new engn::Scene{} },
 	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
@@ -70,7 +70,7 @@ void Application::setWindowSize(int width, int height) {
 	m_screenWidth = width;
 	m_screenHeight = height;
 
-	m_camera->setNewScreenSize(width, height);
+	//m_camera->setNewScreenSize(width, height);
 }
 
 
@@ -102,6 +102,7 @@ void Application::m_handleRender() {
 	};
 	// Render fucntions
 	m_window->clear(BG_COLOR);
+	m_engine->handlePhysics();
 	m_engine->render(renderData);
 	m_window->present();
 #else
@@ -116,61 +117,61 @@ void Application::m_handlePhysics() {
 
 
 void Application::m_createObjects() {
-	m_scene->setDirectionalLight(
+	/*m_scene->setDirectionalLight(
 		glm::vec3{ 0.2f, -0.5f, -0.3f },
 		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.2f}, glm::vec3{0.5f} }
-	);
+	);*/
 
-	m_scene->addPointLight(
-		glm::vec3{ -4.0f, 2.0f, -7.0f },
-		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
-		engn::light::PLIGHT_DIST_50
-	);
+	//m_scene->addPointLight(
+	//	glm::vec3{ -4.0f, 2.0f, -7.0f },
+	//	engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+	//	engn::light::PLIGHT_DIST_50
+	//);
 
-	m_scene->addPointLight(
-		glm::vec3{ 4.0f, 2.0f, -7.0f },
-		engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
-		engn::light::PLIGHT_DIST_50
-	);
+	//m_scene->addPointLight(
+	//	glm::vec3{ 4.0f, 2.0f, -7.0f },
+	//	engn::light::LightProperties{ glm::vec3{0.1f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+	//	engn::light::PLIGHT_DIST_50
+	//);
 
-	m_scene->addSpotLight(
-		glm::vec3{ 0.0f, -1.0f, 0.0f },
-		glm::vec3{ 0.f, 4.0f, -20.0f },
-		glm::vec2{ 0.9f, 0.7f },
-		engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
-		engn::light::LIGHTPURPLE
-	);
+	//m_scene->addSpotLight(
+	//	glm::vec3{ 0.0f, -1.0f, 0.0f },
+	//	glm::vec3{ 0.f, 4.0f, -20.0f },
+	//	glm::vec2{ 0.9f, 0.7f },
+	//	engn::light::LightProperties{ glm::vec3{0.05f},  glm::vec3{0.8f}, glm::vec3{1.0f} },
+	//	engn::light::LIGHTPURPLE
+	//);
 
-	// Emerald sphere
-	m_scene->addRenderObject(
-		new engn::math::sphere{ glm::vec3{ -3, 0, -20 }, 3 },
-		engn::mtrl::EMERALD
-	);
+	//// Emerald sphere
+	//m_scene->addRenderObject(
+	//	new engn::math::sphere{ glm::vec3{ -3, 0, -20 }, 3 },
+	//	engn::mtrl::EMERALD
+	//);
 
-	m_scene->addRenderObject(
-		new engn::math::sphere{ glm::vec3{ 3, 1, -20 }, 2 },
-		engn::mtrl::RED_PLASTIC
-	);
+	//m_scene->addRenderObject(
+	//	new engn::math::sphere{ glm::vec3{ 3, 1, -20 }, 2 },
+	//	engn::mtrl::RED_PLASTIC
+	//);
 
-	// Whitw plastic plane
-	m_scene->addRenderObject(
-		new engn::math::plane{ glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
-		engn::mtrl::WHITE_PLASTIC
-	);
+	//// Whitw plastic plane
+	//m_scene->addRenderObject(
+	//	new engn::math::plane{ glm::normalize(glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec3(0.0f, -4.0f, 0.0f) },
+	//	engn::mtrl::WHITE_PLASTIC
+	//);
 
-	m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{ 1, 1, 1 }));
+	//m_scene->addMesh("unit_box", engn::mesh::GET_BOX_MESH(glm::vec3{ -1, -1, -1 }, glm::vec3{ 1, 1, 1 }));
 
-	m_scene->addRenderObject(
-		m_scene->getMeshPtr("unit_box"),
-		engn::mtrl::YELLOW_RUBBER,
-		glm::vec3{ 2, -3, -10 }
-	);
+	//m_scene->addRenderObject(
+	//	m_scene->getMeshPtr("unit_box"),
+	//	engn::mtrl::YELLOW_RUBBER,
+	//	glm::vec3{ 2, -3, -10 }
+	//);
 
-	m_scene->addRenderObject(
-		m_scene->getMeshPtr("unit_box"),
-		engn::mtrl::CHROME,
-		glm::vec3{ -2, -3, -10 }
-	);
+	//m_scene->addRenderObject(
+	//	m_scene->getMeshPtr("unit_box"),
+	//	engn::mtrl::CHROME,
+	//	glm::vec3{ -2, -3, -10 }
+	//);
 }
 
 void Application::m_captureInput(MSG* mptr)
@@ -215,22 +216,22 @@ glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
 }
 
 void Application::m_findObject() {
-	if (!m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
+	/*if (!m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
 		if (m_scene->findDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera)) {
 			m_objectBinded = true;
 		}
-	}
+	}*/
 }
 
 void Application::m_moveObject() {
-	if (m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
-		// second operation expensive
-		DirectX::XMINT2 offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
-		if (m_camStateChanged || (offset.x * offset.x + offset.y * offset.y) > 0) {
-			m_scene->moveDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera);
-			m_camStateChanged = false;
-		}
-	}
+	//if (m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
+	//	// second operation expensive
+	//	DirectX::XMINT2 offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
+	//	if (m_camStateChanged || (offset.x * offset.x + offset.y * offset.y) > 0) {
+	//		m_scene->moveDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera);
+	//		m_camStateChanged = false;
+	//	}
+	//}
 }
 
 void Application::m_releaseObject() {
@@ -251,7 +252,7 @@ void Application::m_moveCamera()
 	glm::vec3 direction = m_getCamMovement();
 
 
-	if (m_isCamMoving) {
+	/*if (m_isCamMoving) {
 		m_camera->addRelativeOffset(direction * 0.1f);
 	}
 
@@ -264,7 +265,7 @@ void Application::m_moveCamera()
 		m_isCamMoving = false;
 		m_isCamRotating = false;
 		m_camStateChanged = true;
-	}
+	}*/
 }
 
 
@@ -298,15 +299,14 @@ glm::vec3 Application::m_getCamRotation() {
 	}
 
 	// pitch and yaw
-	DirectX::XMINT2& offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
-	if (engn::inp::Mouse::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
-		if (!m_isCamRotating) { m_isCamRotating = true; }
-		float lastFPSCount = m_timer->getFPSCurrent();
-		// hardcoded for now
-		rotation.y += offset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
-		rotation.x += offset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
-		engn::inp::Mouse::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
-	}
+	//DirectX::XMINT2& offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
+	//if (engn::inp::Mouse::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
+	//	if (!m_isCamRotating) { m_isCamRotating = true; }
+	//	// hardcoded for now
+	//	rotation.y += offset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
+	//	rotation.x += offset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
+	//	engn::inp::Mouse::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
+	//}
 
 	return rotation;
 }

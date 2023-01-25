@@ -9,6 +9,7 @@
 
 namespace engn {
 	namespace inp {
+		using namespace DirectX;
 		class Mouse {
 		public:
 			struct Keys {
@@ -20,8 +21,8 @@ namespace engn {
 			};
 
 			struct MouseMoveData {
-				DirectX::XMINT2 mousePos;
-				DirectX::XMINT2 mouseOffset;
+				XMVECTOR mousePos;
+				XMVECTOR mouseOffset;
 			};
 		public:
 			//! Constructor chicanery

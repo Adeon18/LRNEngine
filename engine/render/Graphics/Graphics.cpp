@@ -14,7 +14,7 @@ namespace engn {
 			m_initScene();
 		}
 
-		void Graphics::renderFrame(const RenderData& renderData)
+		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// Set Input Assembler Data
 			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
@@ -26,11 +26,13 @@ namespace engn {
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
 
 			// VS constant buffer
-			m_constantBufferVS.getData().offset.x = 0.0f;
-			m_constantBufferVS.getData().offset.y = 0.0f;
+			XMMATRIX world = DirectX::XMMatrixIdentity();
+			m_constantBufferVS.getData().worldToClip = world * camPtr->getViewMatrix() * camPtr->getProjMatrix();
+			m_constantBufferVS.getData().worldToClip = DirectX::XMMatrixTranspose(m_constantBufferVS.getData().worldToClip);
 			m_constantBufferVS.fill();
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
 
+			// PS constant Buffer
 			m_constantBufferPS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
 			m_constantBufferPS.getData().gTime = renderData.iTime;
 			m_constantBufferPS.fill();
@@ -69,9 +71,9 @@ namespace engn {
 		{
 			std::vector vertices =
 			{
-				Vertex{{0.0f, 0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top
-				Vertex{{0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // right
-				Vertex{{-0.5f, -0.5f, 0.1f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // left
+				Vertex{{0.0f, 0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top
+				Vertex{{0.5f, -0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // right
+				Vertex{{-0.5f, -0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // left
 				// Second triangle with new points
 				Vertex{{0.0f, 0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
 				Vertex{{0.3f, -0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left

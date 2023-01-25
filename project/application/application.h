@@ -13,13 +13,14 @@
 #include "include/config.hpp"
 
 #include "utils/Timer/FPSTimer.h"
+#include "windows/Window.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
-#include "render/RayTracer/Scene/Scene.h"
-#include "render/RayTracer/Camera/Camera.h"
+//#include "render/RayTracer/Scene/Scene.h"
+//#include "render/RayTracer/Camera/Camera.h"
 
-#include "source/math/geometry/sphere.h"
-#include "source/math/geometry/triangle.h"
+//#include "source/math/geometry/sphere.h"
+//#include "source/math/geometry/triangle.h"
 
 
 class Application
@@ -130,7 +131,7 @@ private:
 	// Engine
 	std::unique_ptr<engn::Engine> m_engine;
 	// Raytracer
-	std::unique_ptr<engn::Scene> m_scene;
-	std::unique_ptr<engn::Camera> m_camera;
+	//std::unique_ptr<engn::Scene> m_scene;
+	//std::unique_ptr<engn::Camera> m_camera;
 	std::unique_ptr<engn::util::ParallelExecutor> m_executor;
 };
