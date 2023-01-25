@@ -18,7 +18,7 @@ namespace engn {
             void addWorldRotationQuat(const XMVECTOR& angles);
             void addWorldRotationMat(const XMVECTOR& angles);
             //! Relative quaternions rotation, don't quite understand why would I need this
-            void addRelativeRotation(const XMVECTOR& angles);
+            void addRelativeRotationQuat(const XMVECTOR& angles);
 
             void setPosition(const XMVECTOR& pos);
             void setRotation(const XMVECTOR& rot);
@@ -35,11 +35,11 @@ namespace engn {
             void setProjectionMatrix(float fov, int width, int height);
 
             //! Getters
-            const XMMATRIX& getViewMatrix() { return m_view; }
+            const XMMATRIX& getViewMatrix() { return m_viewInv; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
-            [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewT.r[0]; }
-            [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewT.r[1]; }
-            [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewT.r[2]; }
+            [[nodiscard]] const XMVECTOR& getCamRight() { return m_view.r[0]; }
+            [[nodiscard]] const XMVECTOR& getCamUp() { return m_view.r[1]; }
+            [[nodiscard]] const XMVECTOR& getCamForward() { return m_view.r[2]; }
             [[nodiscard]] const XMVECTOR& getCamPosition() { return m_positionVec; }
 
         private:
@@ -54,12 +54,15 @@ namespace engn {
 
             //! Projection data
             XMMATRIX m_view;
-            XMMATRIX m_viewT;
+            XMMATRIX m_viewInv;
+            //XMMATRIX m_viewT;
             XMMATRIX m_projection;
 
             //! Rotation data
             XMVECTOR m_rotationVec;
             XMFLOAT3 m_rotation;
+
+            XMVECTOR m_rotationQuat{ 0.0f, 0.0f, 0.0f, 1.0f };
 
             XMVECTOR m_leftVec;
             XMVECTOR m_upVec;
