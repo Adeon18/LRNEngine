@@ -2,6 +2,8 @@
 
 #include <DirectXMath.h>
 
+#include "include/utility/utility.hpp"
+
 namespace engn {
     namespace rend {
         using namespace DirectX;

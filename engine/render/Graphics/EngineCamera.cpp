@@ -6,12 +6,10 @@
 namespace engn {
     namespace rend {
         EngineCamera::EngineCamera(float fov, int screenWidth, int screenHeight, const XMFLOAT3& position) :
-            m_position{ position },
-            m_rotation{0.0f, 0.0f, 0.0f}
+            m_position{ position }
         {
             m_positionVec = XMLoadFloat3(&m_position);
             m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
-            m_rotationVec = XMLoadFloat3(&m_rotation);
             setProjectionMatrix(fov, screenWidth, screenHeight);
             updateViewMatrix();
         }
@@ -84,11 +82,7 @@ namespace engn {
             m_view.r[3] = m_positionVec;
             m_viewInv = XMMatrixInverse(nullptr, m_view);
 
-            std::cout << "[" << XMVectorGetX(m_view.r[0]) << " " << XMVectorGetY(m_view.r[0]) << " " << XMVectorGetZ(m_view.r[0]) << " " << XMVectorGetW(m_view.r[0]) << "]" << std::endl;
-            std::cout << "[" << XMVectorGetX(m_view.r[1]) << " " << XMVectorGetY(m_view.r[1]) << " " << XMVectorGetZ(m_view.r[1]) << " " << XMVectorGetW(m_view.r[1]) << "]" << std::endl;
-            std::cout << "[" << XMVectorGetX(m_view.r[2]) << " " << XMVectorGetY(m_view.r[2]) << " " << XMVectorGetZ(m_view.r[2]) << " " << XMVectorGetW(m_view.r[2]) << "]" << std::endl;
-            std::cout << "[" << XMVectorGetX(m_view.r[3]) << " " << XMVectorGetY(m_view.r[3]) << " " << XMVectorGetZ(m_view.r[3]) << " " << XMVectorGetW(m_view.r[3]) << "]" << std::endl;
-
+            std::cout << m_view << std::endl;
         }
 
 
