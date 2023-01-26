@@ -23,7 +23,7 @@ namespace engn {
 				desc.ByteWidth = static_cast<UINT>(sizeof(T) + 16 - (sizeof(T) % 16)); // 16 byte aligned, maybe edit later style
 				desc.StructureByteStride = 0;
 
-				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
+				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.ReleaseAndGetAddressOf());
 				if (FAILED(hr)) {
 					Logger::instance().logErr("ConstantBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));
 					return;

@@ -34,7 +34,7 @@ namespace engn {
 				vertexBufferData.pSysMem = vertices.data();
 
 				// Create Buffer
-				HRESULT hr = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.GetAddressOf());
+				HRESULT hr = d3d::s_device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, m_buffer.ReleaseAndGetAddressOf());
 				if (FAILED(hr)) {
 					Logger::instance().logErr("VertexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));
 					return;

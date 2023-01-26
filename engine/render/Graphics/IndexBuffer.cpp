@@ -21,7 +21,7 @@ namespace engn {
 			indexBufferData.pSysMem = indices.data();
 
 			// Create Buffer
-			HRESULT hr = d3d::s_device->CreateBuffer(&indexBufferDesc, &indexBufferData, m_buffer.GetAddressOf());
+			HRESULT hr = d3d::s_device->CreateBuffer(&indexBufferDesc, &indexBufferData, m_buffer.ReleaseAndGetAddressOf());
 			if (FAILED(hr)) { Logger::instance().logErr("IndexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
 		}
 	} // rend
