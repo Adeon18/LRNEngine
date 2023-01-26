@@ -79,11 +79,11 @@ namespace engn {
 		// Render
 		std::unique_ptr<rend::EngineCamera> m_camera;
 		rend::Graphics m_graphics;
+
 	private:
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement() {
 			bool cameraMoved = false;
-			m_keyboard.setInputLogging(true);
 			
 			XMVECTOR position{0.0f, 0.0f, 0.0f, 0.0f};
 			for (const auto& key : CameraSettings::MOVE_KEYS) {
@@ -92,9 +92,12 @@ namespace engn {
 					position += CameraSettings::MOVE_TO_ACTION[key];
 				}
 			}
-			if (cameraMoved) { m_camera->addRelativeOffset(position * CameraSettings::CAMERA_SPEED); }
+			if (cameraMoved) {
+				position = XMVector3Normalize(position);
+				m_camera->addRelativeOffset(position * CameraSettings::CAMERA_SPEED);
+			}
 		}
-
+		//! check for camera rotation and update if there was
 		void handleCameraRotation() {
 			bool cameraRotated = false;
 			XMVECTOR rotation{ 0.0f, 0.0f, 0.0f };

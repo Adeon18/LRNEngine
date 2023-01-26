@@ -18,17 +18,17 @@ namespace engn {
             void addRelativeOffset(const XMVECTOR& offset);
             //! Add basic quaternion rotation
             void addWorldRotationQuat(const XMVECTOR& angles);
-            void addWorldRotationMat(const XMVECTOR& angles);
-            //! Relative quaternions rotation, don't quite understand why would I need this
+            //void addWorldRotationMat(const XMVECTOR& angles);
+            //! Relative quaternions rotation
             void addRelativeRotationQuat(const XMVECTOR& angles);
 
+            // Set the camera position
             void setPosition(const XMVECTOR& pos);
-            void setRotation(const XMVECTOR& rot);
 
-            //! Update all the iternal matrices and near plane data - includes updating basis, should be called after movement
-            void updateMatrices();
-            //! Turn the rotation quaternion to view matrix
+            //! Update the entire view matrix, recalc inverse
             void updateViewMatrix();
+            //! Update only the position part of the view matrix, recalc inverse, CAN BE OPTIMIZED
+            void updateViewMatrixPos();
 
             //! Called wen the window is resized
             void setNewScreenSize(int width, int height);
@@ -37,11 +37,11 @@ namespace engn {
             void setProjectionMatrix(float fov, int width, int height);
 
             //! Getters
-            const XMMATRIX& getViewMatrix() { return m_viewInv; }
+            const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
-            [[nodiscard]] const XMVECTOR& getCamRight() { return m_view.r[0]; }
-            [[nodiscard]] const XMVECTOR& getCamUp() { return m_view.r[1]; }
-            [[nodiscard]] const XMVECTOR& getCamForward() { return m_view.r[2]; }
+            [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewInv.r[0]; }
+            [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewInv.r[1]; }
+            [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewInv.r[2]; }
             [[nodiscard]] const XMVECTOR& getCamPosition() { return m_positionVec; }
 
         private:
@@ -57,23 +57,9 @@ namespace engn {
             //! Projection data
             XMMATRIX m_view;
             XMMATRIX m_viewInv;
-            //XMMATRIX m_viewT;
             XMMATRIX m_projection;
-
             //! Rotation data
-            XMVECTOR m_rotationVec;
-            XMFLOAT3 m_rotation;
-
             XMVECTOR m_rotationQuat{ 0.0f, 0.0f, 0.0f, 1.0f };
-
-            XMVECTOR m_leftVec;
-            XMVECTOR m_upVec;
-            XMVECTOR m_rightVec;
-            XMVECTOR m_forwardVec;
-            XMVECTOR m_backwardVec;
-
-            bool m_basisUpdated = false;
-            bool m_matricesUpdated = false;
         };
     } // rend
 } // engn

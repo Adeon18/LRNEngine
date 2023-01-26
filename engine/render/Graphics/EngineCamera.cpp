@@ -29,14 +29,14 @@ namespace engn {
         void EngineCamera::setPosition(const XMVECTOR& pos) {
             XMStoreFloat3(&m_position, pos);
             m_positionVec = pos;
-            updateViewMatrix();
+            updateViewMatrixPos();
         }
 
         void EngineCamera::addWorldOffset(const XMVECTOR& offset) {
             m_positionVec += offset;
             m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
             XMStoreFloat3(&m_position, m_positionVec);
-            updateViewMatrix();
+            updateViewMatrixPos();
         }
 
         void EngineCamera::addRelativeOffset(const XMVECTOR& offset) {
@@ -46,25 +46,13 @@ namespace engn {
                 XMVectorGetZ(offset) * getCamForward();
             m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
             XMStoreFloat3(&m_position, m_positionVec);
-            updateViewMatrix();
-        }
-
-        void EngineCamera::setRotation(const XMVECTOR& rot) {
-            XMStoreFloat3(&m_rotation, rot);
-            m_rotationVec = rot;
-            updateViewMatrix();
-        }
-
-        void EngineCamera::addWorldRotationMat(const XMVECTOR& angles) {
-            m_rotationVec += angles;
-            XMStoreFloat3(&m_rotation, m_rotationVec);
-            updateViewMatrix();
+            updateViewMatrixPos();
         }
 
         void EngineCamera::addWorldRotationQuat(const XMVECTOR& angles) {
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(DEF_UP_VECTOR, XMConvertToRadians(XMVectorGetY(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(DEF_RIGHT_VECTOR, XMConvertToRadians(XMVectorGetX(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(DEF_FORWARD_VECTOR, XMConvertToRadians(XMVectorGetZ(angles))));
+            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_UP_VECTOR, XMConvertToRadians(XMVectorGetY(angles))));
+            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_RIGHT_VECTOR, XMConvertToRadians(XMVectorGetX(angles))));
+            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_FORWARD_VECTOR, XMConvertToRadians(XMVectorGetZ(angles))));
             m_rotationQuat = XMQuaternionNormalize(m_rotationQuat);
             updateViewMatrix();
         }
@@ -78,21 +66,14 @@ namespace engn {
         }
 
         void EngineCamera::updateViewMatrix() {
-            m_view = XMMatrixRotationQuaternion(m_rotationQuat);
-            m_view.r[3] = m_positionVec;
-            m_viewInv = XMMatrixInverse(nullptr, m_view);
-
-            std::cout << m_view << std::endl;
+            m_viewInv = XMMatrixRotationQuaternion(m_rotationQuat);
+            m_viewInv.r[3] = m_positionVec;
+            m_view = XMMatrixInverse(nullptr, m_viewInv);
         }
 
-
-        void EngineCamera::updateMatrices() {
-
-            if (m_matricesUpdated) { return; }
-            m_matricesUpdated = true;
-
-            updateViewMatrix();
-
+        void EngineCamera::updateViewMatrixPos() {
+            m_viewInv.r[3] = m_positionVec;
+            m_view = XMMatrixInverse(nullptr, m_viewInv);
         }
     } // rend
 } // engn
