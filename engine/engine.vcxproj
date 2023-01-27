@@ -36,21 +36,24 @@
     <ClInclude Include="render\Graphics\Vertex.hpp" />
     <ClInclude Include="render\Graphics\VertexBuffer.hpp" />
     <ClInclude Include="render\Graphics\VertexShader.hpp" />
+    <ClInclude Include="render\Instances\Model.hpp" />
     <ClInclude Include="render\RayTracer\Camera\Camera.h" />
     <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
     <ClInclude Include="render\RayTracer\Materials\Material.h" />
     <ClInclude Include="render\RayTracer\RenderData\RenderData.h" />
     <ClInclude Include="render\RayTracer\RenderObject\RenderObject.h" />
     <ClInclude Include="render\RayTracer\Scene\Scene.h" />
-    <ClInclude Include="source\draggers\dragger.h" />
-    <ClInclude Include="source\math\geometry\hitable.h" />
-    <ClInclude Include="source\math\geometry\plane.h" />
-    <ClInclude Include="source\math\geometry\sphere.h" />
-    <ClInclude Include="source\math\geometry\triangle.h" />
-    <ClInclude Include="source\math\ray.h" />
-    <ClInclude Include="source\mesh\Mesh.h" />
-    <ClInclude Include="source\mesh\TriangleOcTree.h" />
+    <ClInclude Include="render\RayTracer\draggers\dragger.h" />
+    <ClInclude Include="render\RayTracer\math\geometry\hitable.h" />
+    <ClInclude Include="render\RayTracer\math\geometry\plane.h" />
+    <ClInclude Include="render\RayTracer\math\geometry\sphere.h" />
+    <ClInclude Include="render\RayTracer\math\geometry\triangle.h" />
+    <ClInclude Include="render\RayTracer\math\ray.h" />
+    <ClInclude Include="render\RayTracer\mesh\Mesh.h" />
+    <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h" />
+    <ClInclude Include="source\mesh\Mesh.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
+    <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
     <ClInclude Include="utils\Timer\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
@@ -68,15 +71,17 @@
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
     <ClCompile Include="render\RayTracer\Scene\Scene.cpp" />
     <ClCompile Include="render\Graphics\Graphics.cpp" />
-    <ClCompile Include="source\draggers\dragger.cpp" />
-    <ClCompile Include="source\math\geometry\plane.cpp" />
-    <ClCompile Include="source\math\geometry\sphere.cpp" />
-    <ClCompile Include="source\math\geometry\triangle.cpp" />
-    <ClCompile Include="source\math\ray.cpp" />
+    <ClCompile Include="render\RayTracer\draggers\dragger.cpp" />
+    <ClCompile Include="render\RayTracer\math\geometry\plane.cpp" />
+    <ClCompile Include="render\RayTracer\math\geometry\sphere.cpp" />
+    <ClCompile Include="render\RayTracer\math\geometry\triangle.cpp" />
+    <ClCompile Include="render\RayTracer\math\ray.cpp" />
+    <ClCompile Include="render\RayTracer\mesh\Mesh.cpp" />
+    <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="source\mesh\Mesh.cpp" />
-    <ClCompile Include="source\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
+    <ClCompile Include="utils\ModelManager\ModelManager.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>
@@ -146,6 +151,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgInstalledDir>C:\Users\o.trush\Desktop\vcpkg\installed</VcpkgInstalledDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>

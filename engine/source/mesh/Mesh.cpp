@@ -1,67 +1,34 @@
-#include "Mesh.h"
+#include "Mesh.hpp"
 
 namespace engn {
 
-	namespace mesh {
+	namespace model {
 		// Bounding Box
-		glm::vec3 BoundingBox::size() const { return max - min; }
-		glm::vec3 BoundingBox::center() const { return (min + max) / 2.f; }
-		float BoundingBox::radius() const { return size().length() / 2.f; }
+		XMVECTOR BoundingBox::size() const { return max - min; }
+		XMVECTOR BoundingBox::center() const { return (min + max) / 2.f; }
+		float BoundingBox::radius() const { return XMVectorGetX(XMVector3Length(size())) / 2.f; }
 
 		void BoundingBox::expand(const BoundingBox& other) {
 			min = other.min;
 			max = other.max;
 		}
 
-		bool BoundingBox::contains(const glm::vec3& P) {
+		bool BoundingBox::contains(const XMVECTOR& P) {
+			XMFLOAT3 pF3;
+			XMStoreFloat3(&pF3, P);
 			return
-				min[0] <= P[0] && P[0] <= max[0] &&
-				min[1] <= P[1] && P[1] <= max[1] &&
-				min[2] <= P[2] && P[2] <= max[2];
+				minF3.x <= pF3.x && pF3.x <= maxF3.x &&
+				minF3.y <= pF3.y && pF3.y <= maxF3.y &&
+				minF3.z <= pF3.z && pF3.z <= maxF3.z;
 		}
 
-		bool BoundingBox::hit(const math::ray& r, math::HitEntry& hitEntry) const {
-			// x values
-			float txMin = (min.x - r.origin.x) / r.direction.x;
-			float txMax = (max.x - r.origin.x) / r.direction.x;
-
-			float tMin = (std::min)(txMax, txMin);
-			float tMax = (std::max)(txMax, txMin);
-
-			// y values
-			float tyMin = (min.y - r.origin.y) / r.direction.y;
-			float tyMax = (max.y - r.origin.y) / r.direction.y;
-
-			if (tyMin > tyMax) { std::swap(tyMin, tyMax); }
-
-			if ((tMin > tyMax) || (tyMin > tMax)) { return false; }
-
-			tMin = (std::max)(tMin, tyMin);
-			tMax = (std::min)(tMax, tyMax);
-
-			// z values
-			float tzMin = (min.z - r.origin.z) / r.direction.z;
-			float tzMax = (max.z - r.origin.z) / r.direction.z;
-
-			if (tzMin > tzMax) { std::swap(tzMin, tzMax); }
-
-			if ((tMin > tzMax) || (tzMin > tMax))
-				return false;
-
-			if (tzMin > tMin)
-				tMin = tzMin;
-
-			if (tzMax < tMax)
-				tMax = tzMax;
-
-			hitEntry.rayT = tMin;
-
-			return true;
+		bool BoundingBox::contains(const XMFLOAT3& P) {
+			return
+				minF3.x <= P.x && P.x <= maxF3.x &&
+				minF3.y <= P.y && P.y <= maxF3.y &&
+				minF3.z <= P.z && P.z <= maxF3.z;
 		}
 
-		// Mesh
-		Mesh::Mesh(const std::vector<math::triangle>& ts, const glm::vec3& min, const glm::vec3& max) : box{ min, max } { triangles = ts; }
-		Mesh::Mesh(std::vector<math::triangle>&& ts, const glm::vec3& min, const glm::vec3& max) : box{ min, max } { triangles = std::move(ts); }
-	} // mesh
+	} // model
 
 } // engn

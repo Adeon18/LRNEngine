@@ -17,6 +17,19 @@ namespace engn {
 				m_stride = sizeof(T);
 			}
 
+			VertexBuffer(const VertexBuffer<T>& other) {
+				this->m_buffer = other.m_buffer;
+				this->m_bufferSize = other.m_bufferSize;
+				this->m_stride = other.m_stride;
+			}
+
+			VertexBuffer<T>& operator=(const VertexBuffer<T>& other) {
+				this->m_buffer = other.m_buffer;
+				this->m_bufferSize = other.m_bufferSize;
+				this->m_stride = other.m_stride;
+				return *this;
+			}
+
 			void init(const std::vector<T>& vertices) {
 				m_bufferSize = static_cast<UINT>(vertices.size());
 				// Create vertex buffer description

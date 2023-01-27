@@ -57,16 +57,16 @@
     <ClInclude Include="include\win_undef.hpp">
       <Filter>Header Files\DX</Filter>
     </ClInclude>
-    <ClInclude Include="source\draggers\dragger.h">
+    <ClInclude Include="render\RayTracer\draggers\dragger.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\geometry\hitable.h">
+    <ClInclude Include="render\RayTracer\math\geometry\hitable.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\geometry\plane.h">
+    <ClInclude Include="render\RayTracer\math\geometry\plane.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\ray.h">
+    <ClInclude Include="render\RayTracer\math\ray.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
     <ClInclude Include="render\RayTracer\RenderData\RenderData.h">
@@ -75,10 +75,10 @@
     <ClInclude Include="render\RayTracer\RenderObject\RenderObject.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\geometry\sphere.h">
+    <ClInclude Include="render\RayTracer\math\geometry\sphere.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\geometry\triangle.h">
+    <ClInclude Include="render\RayTracer\math\geometry\triangle.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
     <ClInclude Include="render\RayTracer\Lighting\Lights.h">
@@ -102,10 +102,10 @@
     <ClInclude Include="render\RayTracer\Camera\Camera.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\mesh\Mesh.h">
+    <ClInclude Include="render\RayTracer\mesh\Mesh.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
-    <ClInclude Include="source\mesh\TriangleOcTree.h">
+    <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h">
       <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
     <ClInclude Include="Engine.hpp">
@@ -153,30 +153,39 @@
     <ClInclude Include="render\Graphics\EngineCamera.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\ModelManager\ModelManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Instances\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
       <Filter>Source Files\DX</Filter>
     </ClCompile>
-    <ClCompile Include="source\draggers\dragger.cpp">
+    <ClCompile Include="render\RayTracer\draggers\dragger.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="render\RayTracer\Lighting\Lights.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\geometry\plane.cpp">
+    <ClCompile Include="render\RayTracer\math\geometry\plane.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\ray.cpp">
+    <ClCompile Include="render\RayTracer\math\ray.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\geometry\sphere.cpp">
+    <ClCompile Include="render\RayTracer\math\geometry\sphere.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\geometry\triangle.cpp">
+    <ClCompile Include="render\RayTracer\math\geometry\triangle.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp">
@@ -185,13 +194,13 @@
     <ClCompile Include="utils\Timer\FPSTimer.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="source\mesh\TriangleOcTree.cpp">
+    <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="source\mesh\Mesh.cpp">
+    <ClCompile Include="render\RayTracer\mesh\Mesh.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="render\RayTracer\Scene\Scene.cpp">
@@ -223,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="input\Keyboard.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\ModelManager\ModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mesh\Mesh.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

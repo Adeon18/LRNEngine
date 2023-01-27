@@ -12,6 +12,7 @@ namespace engn {
 			m_initDepthStencilState();
 			m_initShaders();
 			m_initScene();
+			std::cout << "Sizeof XMFLOAT: " << sizeof(XMFLOAT3) << std::endl;
 		}
 
 		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)

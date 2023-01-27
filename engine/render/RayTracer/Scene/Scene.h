@@ -13,11 +13,11 @@
 #include "render/RayTracer/RenderData/RenderData.h"
 #include "render/RayTracer/RenderObject/RenderObject.h"
 
-#include "source/math/ray.h"
-#include "source/math/geometry/plane.h"
-#include "source/math/geometry/sphere.h"
+#include "render/RayTracer/math/ray.h"
+#include "render/RayTracer/math/geometry/plane.h"
+#include "render/RayTracer/math/geometry/sphere.h"
 
-#include "source/draggers/dragger.h"
+#include "render/RayTracer/draggers/dragger.h"
 
 #include "windows/Window.h"
 #include "utils/paralell_executor/parallel_executor.h"
