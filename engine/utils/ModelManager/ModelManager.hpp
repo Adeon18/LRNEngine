@@ -37,6 +37,8 @@ namespace engn {
 
 			//! Load and cache the model into a map
 			bool loadModel(const std::string& filename);
+			//! Recursively load transformaton matrices(instances) for the specified node
+			void loadModelMatrices(aiNode* node);
 		private:
 			std::unordered_map<std::string, std::shared_ptr<model::Model>> m_loadedModels;
 		};

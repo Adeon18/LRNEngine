@@ -39,22 +39,33 @@ namespace engn {
 			//! Check if BB contains a point
 			bool contains(const XMVECTOR& P);
 			bool contains(const XMFLOAT3& P);
-		public:
+
+			//! Set min vectors
+			void setMin(const XMVECTOR& min);
+			//! Set max vectors
+			void setMax(const XMVECTOR& max);
+
+			[[nodiscard]] XMVECTOR& getMin() { return min; }
+			[[nodiscard]] XMVECTOR& getMax() { return max; }
+		private:
 			//! Member variables
 			XMVECTOR min, max;
-		private:
 			XMFLOAT3 minF3, maxF3;
 		};
 
 		class Mesh {
 		public:
+
+
 			struct Triangle {
 				uint32_t indices[3];
 			};
 			std::string name;
-			BoundingBox box;
+			BoundingBox box = BoundingBox::empty();
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;
+			std::vector<XMMATRIX> instances;
+			std::vector<XMMATRIX> instancesInv;
 		private:
 		};
 	} // model

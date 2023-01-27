@@ -1,9 +1,12 @@
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 #include "Graphics.hpp"
 
 #include "include/utility/utility.hpp"
+
+#include "utils/ModelManager/ModelManager.hpp"
 
 namespace engn {
 	namespace rend {
@@ -12,7 +15,17 @@ namespace engn {
 			m_initDepthStencilState();
 			m_initShaders();
 			m_initScene();
-			std::cout << "Sizeof XMFLOAT: " << sizeof(XMFLOAT3) << std::endl;
+			
+			std::shared_ptr<model::Model> mptr = util::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			for (auto& m : mptr->getMeshes()) {
+				std::stringstream ss;
+				ss << "Name: " << m.name << std::endl;
+				ss << "Vertice num: " << m.vertices.size() << std::endl;
+				ss << "Trinagles num: " << m.triangles.size() << std::endl;
+				ss << "Instances size: " << m.instances.size() << std::endl;
+				ss << "Instances Inverse size: " << m.instancesInv.size() << std::endl;
+				Logger::instance().logInfo(ss.str());
+			}
 		}
 
 		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)

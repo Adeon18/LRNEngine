@@ -39,7 +39,28 @@ namespace engn {
 			delete[] exePathDyn;
 			return dir;
 		}
-	}
+
+		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec)
+		{
+			return { vec.x, vec.y, vec.z };
+		}
+		XMMATRIX aiMatrix4x4toXMMATRIX(const aiMatrix4x4& mat)
+		{
+			XMMATRIX outMat;
+			/*for (uint32_t i = 0; i < 4; i++) {
+				outMat.r[i] = { mat[i][0], mat[i][1], mat[i][2], mat[i][3]};
+			}*/
+			outMat.r[0] = { mat.a1, mat.a2, mat.a3, mat.a4 };
+			outMat.r[1] = { mat.b1, mat.b2, mat.b3, mat.b4 };
+			outMat.r[2] = { mat.c1, mat.c2, mat.c3, mat.c4 };
+			outMat.r[3] = { mat.d1, mat.d2, mat.d3, mat.d4 };
+			return outMat;
+		}
+		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec)
+		{
+			return { vec.x, vec.y, vec.z };
+		}
+	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec) {
 		arr[0] = std::to_string(XMVectorGetX(vec));
@@ -87,5 +108,4 @@ namespace engn {
 		}
 		return os;
 	}
-	// util
 } // engn

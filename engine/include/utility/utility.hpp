@@ -7,8 +7,11 @@
 #include <array>
 
 #include <DirectXMath.h>
+#include <assimp/vector3.h>
+#include <assimp/matrix4x4.h>
 
 namespace engn {
+	using namespace DirectX;
 	namespace util {
 		//! Get the absolute path to the executable
 		std::string getExePath();
@@ -18,9 +21,11 @@ namespace engn {
 		std::string getExeDir();
 		//! Get the absolute path to the directory that contains the executable(wstring). PATH ends with "\"
 		std::wstring getExeDirW();
+		//! Convert the assimp library vector3 type to XMVECTOR
+		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
+		XMMATRIX aiMatrix4x4toXMMATRIX(const aiMatrix4x4& mat);
+		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec);
 	} // util
-
-	using namespace DirectX;
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec);
 

@@ -29,6 +29,18 @@ namespace engn {
 				minF3.z <= P.z && P.z <= maxF3.z;
 		}
 
+		void BoundingBox::setMin(const XMVECTOR& min)
+		{
+			this->min = min;
+			XMStoreFloat3(&minF3, this->min);
+		}
+
+		void BoundingBox::setMax(const XMVECTOR& max)
+		{
+			this->max = max;
+			XMStoreFloat3(&maxF3, this->max);
+		}
+
 	} // model
 
 } // engn
