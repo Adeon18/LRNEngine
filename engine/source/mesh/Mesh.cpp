@@ -2,7 +2,7 @@
 
 namespace engn {
 
-	namespace model {
+	namespace mdl {
 		// Bounding Box
 		XMVECTOR BoundingBox::size() const { return max - min; }
 		XMVECTOR BoundingBox::center() const { return (min + max) / 2.f; }
@@ -41,6 +41,6 @@ namespace engn {
 			XMStoreFloat3(&maxF3, this->max);
 		}
 
-	} // model
+	} // mdl
 
 } // engn

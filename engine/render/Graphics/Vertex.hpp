@@ -5,9 +5,8 @@
 namespace engn {
 	struct Vertex {
 		Vertex() {}
-		Vertex(const DirectX::XMFLOAT3& p, const DirectX::XMFLOAT4& c) : pos{ p }, col{ c } {};
+		Vertex(const DirectX::XMFLOAT3& p) : pos{ p } {};
 
 		DirectX::XMFLOAT3 pos;
-		DirectX::XMFLOAT4 col;
 	};
 } // engn

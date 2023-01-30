@@ -5,7 +5,7 @@
 namespace engn {
 	namespace rend {
 		//! This struct is for moving the vertices in the VS by some offset
-		struct CB_VS_MoveBuffer {
+		struct CB_VS_MeshData {
 			DirectX::XMMATRIX worldToClip;
 		};
 		//! This struct contains basic data that ShaderToy has out of the box

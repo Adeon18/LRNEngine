@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "source/mesh/Mesh.hpp"
 
 #include "render/Graphics/Vertex.hpp"
@@ -7,7 +9,7 @@
 #include "render/Graphics/IndexBuffer.hpp"
 
 namespace engn {
-	namespace model {
+	namespace mdl {
 		class Model {
 		public:
 			struct MeshRange
@@ -23,10 +25,10 @@ namespace engn {
 			rend::VertexBuffer<Vertex>& getVertices() { return m_vertices; }
 			rend::IndexBuffer& getIndices() { return m_indices; }
 		protected:
-			std::vector<Mesh> m_meshes;  // TO CHANGE!!!!!!!!!!!!!
+			std::vector<Mesh> m_meshes;
 			std::vector<MeshRange> m_ranges; // where each mesh data is stored in m_vertices
 			rend::VertexBuffer<Vertex> m_vertices; // stores vertices of all meshes of this Model
 			rend::IndexBuffer m_indices; // stores vertex indices of all meshes of this Model
 		};
-	} // model
+	} // mdl
 } // engn

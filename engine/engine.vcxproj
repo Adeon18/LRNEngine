@@ -32,6 +32,7 @@
     <ClInclude Include="include\win_undef.hpp" />
     <ClInclude Include="render\D3D\d3d.hpp" />
     <ClInclude Include="render\Graphics\IndexBuffer.hpp" />
+    <ClInclude Include="render\Graphics\InstanceBuffer.hpp" />
     <ClInclude Include="render\Graphics\PixelShader.hpp" />
     <ClInclude Include="render\Graphics\Vertex.hpp" />
     <ClInclude Include="render\Graphics\VertexBuffer.hpp" />
@@ -51,6 +52,7 @@
     <ClInclude Include="render\RayTracer\math\ray.h" />
     <ClInclude Include="render\RayTracer\mesh\Mesh.h" />
     <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h" />
+    <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
@@ -78,6 +80,7 @@
     <ClCompile Include="render\RayTracer\math\ray.cpp" />
     <ClCompile Include="render\RayTracer\mesh\Mesh.cpp" />
     <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp" />
+    <ClCompile Include="render\Systems\MeshSystem.cpp" />
     <ClCompile Include="source\mesh\Mesh.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />

@@ -3,6 +3,7 @@
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "ConstantBuffer.hpp"
+#include "InstanceBuffer.hpp"
 
 #include "VertexShader.hpp"
 #include "PixelShader.hpp"
@@ -41,7 +42,8 @@ namespace engn {
 
 			IndexBuffer m_indexBuffer;
 			VertexBuffer<Vertex> m_vertexBuffer;
-			ConstantBuffer<CB_VS_MoveBuffer> m_constantBufferVS;
+			InstanceBuffer<XMFLOAT3> m_instanceBuffer;
+			ConstantBuffer<CB_VS_MeshData> m_constantBufferVS;
 			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;

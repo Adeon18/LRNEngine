@@ -3,11 +3,11 @@
 #include "utility/utility.hpp"
 
 namespace engn {
-	namespace util {
-		std::shared_ptr<model::Model> ModelManager::getModel(const std::string& filename)
+	namespace mdl {
+		std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
 		{
 			try {
-				return std::shared_ptr<model::Model>(m_loadedModels.at(filename));
+				return m_loadedModels.at(filename);
 			}
 			catch (std::out_of_range& e) {
 				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: " + filename);
@@ -21,8 +21,77 @@ namespace engn {
 				return nullptr;
 			}
 
-			return std::shared_ptr<model::Model>(m_loadedModels.at(filename));
+			return m_loadedModels.at(filename);
 		}
+
+		std::shared_ptr<Model> ModelManager::getCubeModel()
+		{
+			try {
+				return m_loadedModels.at("unit_box");
+			}
+			catch (std::out_of_range& e) {
+				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: unit_box");
+			}
+
+			std::shared_ptr<Model> mPtr = std::shared_ptr<Model>(new Model{});
+			std::vector vertices =
+			{
+				Vertex{{0.5f, 0.5f, -0.5f}}, // top-right-front
+				Vertex{{-0.5f, 0.5f, -0.5f}}, // top-left-front
+				Vertex{{0.5f, -0.5f, -0.5f}}, // bottom-right-front
+				Vertex{{-0.5f, -0.5f, -0.5f}}, // bottom-left-front
+
+				Vertex{{0.5f, 0.5f, 0.5f}}, // top-right-back
+				Vertex{{-0.5f, 0.5f, 0.5f}}, // top-left-back
+				Vertex{{0.5f, -0.5f, 0.5f}}, // bottom-right-back
+				Vertex{{-0.5f, -0.5f, 0.5f}}, // bottom-left-back
+			};
+			std::vector<DWORD> indices =
+			{
+				1, 0, 2, // front right
+				1, 2, 3, // front left
+
+				2, 0, 4, // right left
+				2, 4, 6, // right right
+
+				3, 5, 1, // left right
+				3, 7, 5, // left left
+
+				6, 5, 7, // back right
+				6, 4, 5, // back left
+
+				1, 5, 4, // top right
+				1, 4, 0, // top left
+
+				3, 2, 6, // back right
+				3, 6, 7, // back left
+			};
+
+			Mesh boxMesh;
+			boxMesh.name = "unit_box";
+			boxMesh.box = BoundingBox::unit();
+			boxMesh.vertices = vertices;
+			boxMesh.triangles.resize(indices.size() / 3);
+			for (size_t i = 0; i < indices.size(); i += 3) {
+				for (size_t j = 0; j < 3; j++) {
+					boxMesh.triangles[i].indices[j] = indices[i + j];
+				}
+			}
+			boxMesh.instances.push_back(XMMatrixIdentity());
+			boxMesh.instancesInv.push_back(XMMatrixIdentity());
+
+			Model::MeshRange boxMeshRange{ 0, 0, vertices.size(), indices.size() };
+
+			mPtr->getMeshes().push_back(boxMesh);
+			mPtr->getRanges().push_back(boxMeshRange);
+			mPtr->getVertices().init(vertices);
+			mPtr->getIndices().init(indices);
+
+			m_loadedModels["unit_box"] = mPtr;
+
+			return mPtr;
+		}
+
 		bool ModelManager::loadModel(const std::string& filename)
 		{
 			Assimp::Importer importer;
@@ -36,7 +105,7 @@ namespace engn {
 
 			// Load vertex data
 
-			std::shared_ptr<model::Model> modelPtr = std::shared_ptr<model::Model>(new model::Model{});
+			std::shared_ptr<mdl::Model> modelPtr = std::shared_ptr<mdl::Model>(new mdl::Model{});
 			//model.name = path;
 			//model.box = {};
 			modelPtr->getMeshes().resize(numMeshes);
@@ -76,6 +145,7 @@ namespace engn {
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)
 			{
 				const XMMATRIX nodeToParent = util::aiMatrix4x4toXMMATRIX(node->mTransformation.Transpose());
+
 				const XMMATRIX parentToNode = XMMatrixInverse(nullptr, nodeToParent);
 
 				// The same node may contain multiple meshes in its space, referring to them by indices
@@ -95,5 +165,5 @@ namespace engn {
 			m_loadedModels[filename] = modelPtr;
 			return true;
 		}
-	} // util
+	} // mdl
 } // engn

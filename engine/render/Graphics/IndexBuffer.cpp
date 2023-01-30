@@ -6,7 +6,7 @@
 namespace engn {
 	namespace rend {
 		void IndexBuffer::init(const std::vector<DWORD>& indices) {
-			m_bufferSize = static_cast<UINT>(indices.size());
+			m_bufferSize = static_cast<uint32_t>(indices.size());
 			// Create index buffer description
 			D3D11_BUFFER_DESC indexBufferDesc{};
 
@@ -23,6 +23,10 @@ namespace engn {
 			// Create Buffer
 			HRESULT hr = d3d::s_device->CreateBuffer(&indexBufferDesc, &indexBufferData, m_buffer.ReleaseAndGetAddressOf());
 			if (FAILED(hr)) { Logger::instance().logErr("IndexBuffer::init::CreateBuffer fail: " + std::system_category().message(hr)); }
+		}
+		void IndexBuffer::bind()
+		{
+			d3d::s_devcon->IASetIndexBuffer(m_buffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		}
 	} // rend
 } // engn

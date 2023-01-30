@@ -8,10 +8,11 @@
 
 #include "utils/Logger/Logger.hpp"
 
+#include "source/mesh/Mesh.hpp"
 #include "render/Instances/Model.hpp"
 
 namespace engn {
-	namespace util {
+	namespace mdl {
 		class ModelManager {
 		public:
 			static constexpr uint32_t IMPORT_FLAGS = uint32_t(
@@ -31,16 +32,16 @@ namespace engn {
 
 			//! Loads models with a specified filename, caches it and returns a shared_ptr to it
 			//! If model was cached, just returns the shared_ptr
-			std::shared_ptr<model::Model> getModel(const std::string& filename);
+			std::shared_ptr<Model> getModel(const std::string& filename);
+			//! Get the prebuilt cube model, if there is no availible, build it and cache it
+			std::shared_ptr<Model> getCubeModel();
 		private:
 			ModelManager() {}
 
 			//! Load and cache the model into a map
 			bool loadModel(const std::string& filename);
-			//! Recursively load transformaton matrices(instances) for the specified node
-			void loadModelMatrices(aiNode* node);
 		private:
-			std::unordered_map<std::string, std::shared_ptr<model::Model>> m_loadedModels;
+			std::unordered_map<std::string, std::shared_ptr<Model>> m_loadedModels;
 		};
-	} // util
+	} // mdl
 } // engn

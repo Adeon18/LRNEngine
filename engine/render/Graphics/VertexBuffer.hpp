@@ -31,7 +31,7 @@ namespace engn {
 			}
 
 			void init(const std::vector<T>& vertices) {
-				m_bufferSize = static_cast<UINT>(vertices.size());
+				m_bufferSize = static_cast<uint32_t>(vertices.size());
 				// Create vertex buffer description
 				D3D11_BUFFER_DESC vertexBufferDesc{};
 
@@ -54,13 +54,24 @@ namespace engn {
 				}
 			}
 
+			void bind() {
+				uint32_t offset = 0;
+				d3d::s_devcon->IASetVertexBuffers(
+					0, // slot
+					1, // number of buffers
+					m_buffer.GetAddressOf(),
+					&m_stride,
+					&offset
+				);
+			}
+
 			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }
-			[[nodiscard]] UINT getBufferSize() const { return m_bufferSize; }
-			[[nodiscard]] const UINT* getStride() const { return &m_stride; }
+			[[nodiscard]] uint32_t getBufferSize() const { return m_bufferSize; }
+			[[nodiscard]] const uint32_t* getStride() const { return &m_stride; }
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
-			UINT m_bufferSize = 0;
-			UINT m_stride;
+			uint32_t m_bufferSize = 0;
+			uint32_t m_stride;
 		};
 	} // rend
 } // engn

@@ -11,7 +11,7 @@
 
 namespace engn {
 
-	namespace model {
+	namespace mdl {
 		using namespace DirectX;
 		//! A bounding box class for faster mesh collision detection
 		struct BoundingBox {
@@ -55,8 +55,6 @@ namespace engn {
 
 		class Mesh {
 		public:
-
-
 			struct Triangle {
 				uint32_t indices[3];
 			};
@@ -68,6 +66,6 @@ namespace engn {
 			std::vector<XMMATRIX> instancesInv;
 		private:
 		};
-	} // model
+	} // mdl
 
 } // engn

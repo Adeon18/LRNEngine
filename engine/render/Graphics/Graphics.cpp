@@ -16,8 +16,8 @@ namespace engn {
 			m_initShaders();
 			m_initScene();
 			
-			std::shared_ptr<model::Model> mptr = util::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
-			for (auto& m : mptr->getMeshes()) {
+			//std::shared_ptr<mdl::Model> mptr = util::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			/*for (auto& m : mptr->getMeshes()) {
 				std::stringstream ss;
 				ss << "Name: " << m.name << std::endl;
 				ss << "Vertice num: " << m.vertices.size() << std::endl;
@@ -25,7 +25,7 @@ namespace engn {
 				ss << "Instances size: " << m.instances.size() << std::endl;
 				ss << "Instances Inverse size: " << m.instancesInv.size() << std::endl;
 				Logger::instance().logInfo(ss.str());
-			}
+			}*/
 		}
 
 		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
@@ -40,7 +40,7 @@ namespace engn {
 			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
 
 			// VS constant buffer
-			XMMATRIX world = DirectX::XMMatrixIdentity();
+			XMMATRIX world = DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f);
 			m_constantBufferVS.getData().worldToClip = world * camPtr->getViewMatrix() * camPtr->getProjMatrix();
 			m_constantBufferVS.getData().worldToClip = DirectX::XMMatrixTranspose(m_constantBufferVS.getData().worldToClip);
 			m_constantBufferVS.fill();
@@ -52,19 +52,30 @@ namespace engn {
 			m_constantBufferPS.fill();
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferPS.getBufferAddress());
 
+			std::vector<XMFLOAT3> poss =
+			{
+				{3.0f, 0.0f, 0.0f},
+				{-3.0f, 0.0f, 0.0f}
+			};
+
+			if (!m_instanceBuffer.map()) {
+				return;
+			}
+			XMFLOAT3* dst = static_cast<XMFLOAT3*>(m_instanceBuffer.getMappedBuffer().pData);
+			dst[0] = { 3.0f, 0.0f, 0.0f };
+			dst[1] = { -5.0f, 0.0f, 0.0f };
+			m_instanceBuffer.unmap();
+
 			// Bind the buffer
-			UINT offset = 0;
-			d3d::s_devcon->IASetVertexBuffers(
-				0, // start slot
-				1, // number of buffers
-				m_vertexBuffer.getBufferAddress(),
-				m_vertexBuffer.getStride(),
-				&offset
-			);
-			d3d::s_devcon->IASetIndexBuffer(m_indexBuffer.getBufferPtr(), DXGI_FORMAT_R32_UINT, 0);
+			m_vertexBuffer.bind();
+			m_instanceBuffer.bind();
+			m_indexBuffer.bind();
 
 			// Draw(vertexCount and startLocation)
-			d3d::s_devcon->DrawIndexed(m_indexBuffer.getBufferSize(), 0, 0);
+			//d3d::s_devcon->DrawIndexed(m_indexBuffer.getBufferSize(), 0, 0);
+			//for (size_t i = 0; i < 2; ++i) {
+			d3d::s_devcon->DrawIndexedInstanced(36, 2, 0, 0, 0);
+			//}
 		}
 
 		void Graphics::m_initShaders() {
@@ -72,8 +83,8 @@ namespace engn {
 			// Interleaved layout for now
 			D3D11_INPUT_ELEMENT_DESC layout[] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(Vertex::pos), D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0}
-			};
+				{"INSTANCEPOS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+			};	
 			std::wstring shaderFolder = util::getExeDirW();
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
@@ -85,21 +96,40 @@ namespace engn {
 		{
 			std::vector vertices =
 			{
-				Vertex{{0.0f, 0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // top
-				Vertex{{0.5f, -0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // right
-				Vertex{{-0.5f, -0.5f, 10.0f}, {1.0f, 0.0f, 0.0f, 1.0f}}, // left
-				// Second triangle with new points
-				Vertex{{0.0f, 0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
-				Vertex{{0.3f, -0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
-				Vertex{{-0.3f, -0.3f, 0.9f}, {0.0f, 1.0f, 0.0f, 1.0f}}, // left
+				Vertex{{1.0f, 1.0f, -1.0f}}, // top-right-front
+				Vertex{{-1.0f, 1.0f, -1.0f}}, // top-left-front
+				Vertex{{1.0f, -1.0f, -1.0f}}, // bottom-right-front
+				Vertex{{-1.0f, -1.0f, -1.0f}}, // bottom-left-front
+
+				Vertex{{1.0f, 1.0f, 1.0f}}, // top-right-back
+				Vertex{{-1.0f, 1.0f, 1.0f}}, // top-left-back
+				Vertex{{1.0f, -1.0f, 1.0f}}, // bottom-right-back
+				Vertex{{-1.0f, -1.0f, 1.0f}}, // bottom-left-back
 			};
 			std::vector<DWORD> indices =
 			{
-				3, 4, 5,
-				0, 1, 2,
+				1, 0, 2, // front right
+				1, 2, 3, // front left
+
+				2, 0, 4, // right left
+				2, 4, 6, // right right
+
+				3, 5, 1, // left right
+				3, 7, 5, // left left
+
+				6, 5, 7, // back right
+				6, 4, 5, // back left
+
+				1, 5, 4, // top right
+				1, 4, 0, // top left
+
+				3, 2, 6, // bottom right
+				3, 6, 7, // back left
 			};
+
 			m_vertexBuffer.init(vertices);
 			m_indexBuffer.init(indices);
+			m_instanceBuffer.init(2); // yeah
 			m_constantBufferVS.init();
 			m_constantBufferPS.init();
 		}
