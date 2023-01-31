@@ -168,6 +168,9 @@
     <ClInclude Include="render\Graphics\InstanceBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Systems\RenderStructs.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -250,11 +253,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="render\Graphics\shaders\VSMoveByOffset.hlsl">
+    <FxCompile Include="render\Graphics\shaders\VSBasicColor.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\PSVoronoi.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\PSHologram.hlsl" />
   </ItemGroup>
 </Project>

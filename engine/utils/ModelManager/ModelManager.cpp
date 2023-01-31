@@ -36,15 +36,15 @@ namespace engn {
 			m_loadedModels.insert({ "unit_box", std::make_shared<mdl::Model>() });
 			std::vector vertices =
 			{
-				Vertex{{0.5f, 0.5f, -0.5f}}, // top-right-front
-				Vertex{{-0.5f, 0.5f, -0.5f}}, // top-left-front
-				Vertex{{0.5f, -0.5f, -0.5f}}, // bottom-right-front
-				Vertex{{-0.5f, -0.5f, -0.5f}}, // bottom-left-front
+				Vertex{{0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-front
+				Vertex{{-0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-front
+				Vertex{{0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-front
+				Vertex{{-0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-front
 
-				Vertex{{0.5f, 0.5f, 0.5f}}, // top-right-back
-				Vertex{{-0.5f, 0.5f, 0.5f}}, // top-left-back
-				Vertex{{0.5f, -0.5f, 0.5f}}, // bottom-right-back
-				Vertex{{-0.5f, -0.5f, 0.5f}}, // bottom-left-back
+				Vertex{{0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-back
+				Vertex{{-0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-back
+				Vertex{{0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-back
+				Vertex{{-0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-back
 			};
 			std::vector<DWORD> indices =
 			{
@@ -123,10 +123,12 @@ namespace engn {
 				{
 					Vertex& vertex = modelMesh.vertices[v];
 					vertex.pos = util::aiVector3DtoXMFLOAT3(assimpMesh->mVertices[v]);
-					//vertex.tc = (assimpMesh->mTextureCoords[0][v]);
-					//vertex.normal = (assimpMesh->mNormals[v]);
-					//vertex.tangent = (assimpMesh->mTangents[v]);
-					//vertex.bitangent = (assimpMesh->mBitangents[v]) * -1.f; // Flip V
+					auto tcc = util::aiVector3DtoXMFLOAT3(assimpMesh->mTextureCoords[0][v]);
+					vertex.tc = XMFLOAT2{tcc.x, tcc.y};
+					vertex.normal = util::aiVector3DtoXMFLOAT3(assimpMesh->mNormals[v]);
+					vertex.tangent = util::aiVector3DtoXMFLOAT3(assimpMesh->mTangents[v]);
+					auto btanOrig = util::aiVector3DtoXMFLOAT3((assimpMesh->mBitangents[v]));
+					vertex.bitangent = XMFLOAT3{ btanOrig.x * -1.f, btanOrig.y * -1.f, btanOrig.z * -1.f }; // Flip V
 				}
 
 				for (uint32_t f = 0; f < assimpMesh->mNumFaces; ++f)

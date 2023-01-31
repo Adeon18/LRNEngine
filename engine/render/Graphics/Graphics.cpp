@@ -51,7 +51,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/KnightHorse/KnightHorse.fbx");
 			for (auto& m : mptr->getMeshes()) {
 				std::stringstream ss;
 				ss << "Name: " << m.name << std::endl;
@@ -62,7 +62,7 @@ namespace engn {
 				Logger::instance().logInfo(ss.str());
 			}
 
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 200.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixTranslation(0.0f, 0.0f, 30.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
 		}
 
 		void Graphics::m_initRasterizer()
