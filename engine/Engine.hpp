@@ -4,6 +4,8 @@
 #include "input/Keyboard.hpp"
 #include "utils/Logger/Logger.hpp"
 
+#include "render/Systems/MeshSystem.hpp"
+
 #include "render/D3D/d3d.hpp"
 #include "render/Graphics/EngineCamera.hpp"
 #include "render/Graphics/Graphics.hpp"
@@ -61,9 +63,11 @@ namespace engn {
 		{
 			// initilizes engine singletons
 			Logger::initConsoleLogger();
-			Logger::createFileLogger("Engine", "logs/engine.log");
+			Logger::createFileLogger("Engine", "engine.log");
 			Logger::instance().setDefaultLoggerName("Engine");
+
 			m_d3d.init();
+			rend::MeshSystem::getInstance().init();
 		}
 
 		static void deinit()

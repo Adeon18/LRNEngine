@@ -4,7 +4,7 @@
 
 namespace engn {
 	namespace mdl {
-		std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
+		/*std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
 		{
 			try {
 				return m_loadedModels.at(filename);
@@ -20,20 +20,20 @@ namespace engn {
 			if (!loadModel(filename)) {
 				return nullptr;
 			}
-
+			
 			return m_loadedModels.at(filename);
-		}
+		}*/
 
 		std::shared_ptr<Model> ModelManager::getCubeModel()
 		{
 			try {
-				return m_loadedModels.at("unit_box");
+				return std::shared_ptr<Model>(m_loadedModels.at("unit_box"));
 			}
-			catch (std::out_of_range& e) {
+			catch (const std::out_of_range& e) {
 				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: unit_box");
 			}
 
-			std::shared_ptr<Model> mPtr = std::shared_ptr<Model>(new Model{});
+			m_loadedModels.insert({ "unit_box", std::make_shared<mdl::Model>() });
 			std::vector vertices =
 			{
 				Vertex{{0.5f, 0.5f, -0.5f}}, // top-right-front
@@ -71,25 +71,21 @@ namespace engn {
 			boxMesh.name = "unit_box";
 			boxMesh.box = BoundingBox::unit();
 			boxMesh.vertices = vertices;
-			boxMesh.triangles.resize(indices.size() / 3);
 			for (size_t i = 0; i < indices.size(); i += 3) {
-				for (size_t j = 0; j < 3; j++) {
-					boxMesh.triangles[i].indices[j] = indices[i + j];
-				}
+				Mesh::Triangle t{ indices[i], indices[i + 1], indices[i + 2] };
+				boxMesh.triangles.push_back(t);
 			}
 			boxMesh.instances.push_back(XMMatrixIdentity());
 			boxMesh.instancesInv.push_back(XMMatrixIdentity());
 
 			Model::MeshRange boxMeshRange{ 0, 0, vertices.size(), indices.size() };
 
-			mPtr->getMeshes().push_back(boxMesh);
-			mPtr->getRanges().push_back(boxMeshRange);
-			mPtr->getVertices().init(vertices);
-			mPtr->getIndices().init(indices);
+			m_loadedModels["unit_box"]->getMeshes().push_back(boxMesh);
+			m_loadedModels["unit_box"]->getRanges().push_back(boxMeshRange);
+			m_loadedModels["unit_box"]->getVertices().init(vertices);
+			m_loadedModels["unit_box"]->getIndices().init(indices);
 
-			m_loadedModels["unit_box"] = mPtr;
-
-			return mPtr;
+			return std::shared_ptr<Model>(m_loadedModels["unit_box"]);
 		}
 
 		bool ModelManager::loadModel(const std::string& filename)

@@ -43,6 +43,11 @@ namespace engn {
 			}
 		}
 
+		void VertexShader::bind()
+		{
+			d3d::s_devcon->VSSetShader(m_shader.Get(), NULL, 0);
+		}
+
 		[[nodiscard]] ID3D11VertexShader* VertexShader::getShader() const {
 			return m_shader.Get();
 		}

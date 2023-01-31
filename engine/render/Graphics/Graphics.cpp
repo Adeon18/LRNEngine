@@ -4,6 +4,8 @@
 
 #include "Graphics.hpp"
 
+#include "render/Systems/MeshSystem.hpp"
+
 #include "include/utility/utility.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
@@ -15,8 +17,9 @@ namespace engn {
 			m_initDepthStencilState();
 			m_initShaders();
 			m_initScene();
-			
-			//std::shared_ptr<mdl::Model> mptr = util::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+
+			//std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
+			////std::shared_ptr<mdl::Model> mptr = util::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
 			/*for (auto& m : mptr->getMeshes()) {
 				std::stringstream ss;
 				ss << "Name: " << m.name << std::endl;
@@ -26,18 +29,22 @@ namespace engn {
 				ss << "Instances Inverse size: " << m.instancesInv.size() << std::endl;
 				Logger::instance().logInfo(ss.str());
 			}*/
+
 		}
 
 		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// Set Input Assembler Data
-			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
+			//d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
+			d3d::s_devcon->IASetInputLayout(MeshSystem::getInstance().getNormalVS());
 			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 			// Set Shaders
-			d3d::s_devcon->VSSetShader(m_vertexShader.getShader(), NULL, 0);
-			d3d::s_devcon->PSSetShader(m_pixelShader.getShader(), NULL, 0);
+			//m_vertexShader.bind();
+			//m_pixelShader.bind();
+
+			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
 
 			// VS constant buffer
 			XMMATRIX world = DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f);
@@ -52,44 +59,30 @@ namespace engn {
 			m_constantBufferPS.fill();
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferPS.getBufferAddress());
 
-			std::vector<XMFLOAT3> poss =
-			{
-				{3.0f, 0.0f, 0.0f},
-				{-3.0f, 0.0f, 0.0f}
-			};
-
-			if (!m_instanceBuffer.map()) {
-				return;
-			}
-			XMFLOAT3* dst = static_cast<XMFLOAT3*>(m_instanceBuffer.getMappedBuffer().pData);
-			dst[0] = { 3.0f, 0.0f, 0.0f };
-			dst[1] = { -5.0f, 0.0f, 0.0f };
-			m_instanceBuffer.unmap();
-
 			// Bind the buffer
-			m_vertexBuffer.bind();
+			/*m_vertexBuffer.bind();
 			m_instanceBuffer.bind();
-			m_indexBuffer.bind();
+			m_indexBuffer.bind();*/
 
 			// Draw(vertexCount and startLocation)
 			//d3d::s_devcon->DrawIndexed(m_indexBuffer.getBufferSize(), 0, 0);
 			//for (size_t i = 0; i < 2; ++i) {
-			d3d::s_devcon->DrawIndexedInstanced(36, 2, 0, 0, 0);
+			//d3d::s_devcon->DrawIndexedInstanced(36, 2, 0, 0, 0);
 			//}
 		}
 
 		void Graphics::m_initShaders() {
 
-			// Interleaved layout for now
-			D3D11_INPUT_ELEMENT_DESC layout[] = {
-				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"INSTANCEPOS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
-			};	
-			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
+			//// Interleaved layout for now
+			//D3D11_INPUT_ELEMENT_DESC layout[] = {
+			//	{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+			//	{"INSTANCEPOS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+			//};	
+			//std::wstring shaderFolder = util::getExeDirW();
+			//Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
-			m_vertexShader.init(shaderFolder + L"VSMoveByOffset.cso", layout, ARRAYSIZE(layout));
-			m_pixelShader.init(shaderFolder + L"PSVoronoi.cso");
+			//m_vertexShader.init(shaderFolder + L"VSMoveByOffset.cso", layout, ARRAYSIZE(layout));
+			//m_pixelShader.init(shaderFolder + L"PSVoronoi.cso");
 		}
 
 		void Graphics::m_initScene()
@@ -127,9 +120,9 @@ namespace engn {
 				3, 6, 7, // back left
 			};
 
-			m_vertexBuffer.init(vertices);
-			m_indexBuffer.init(indices);
-			m_instanceBuffer.init(2); // yeah
+			//m_vertexBuffer.init(vertices);
+			//m_indexBuffer.init(indices);
+			//m_instanceBuffer.init(2); // yeah
 			m_constantBufferVS.init();
 			m_constantBufferPS.init();
 		}

@@ -15,9 +15,13 @@ namespace engn {
 		template<typename T>
 		class InstanceBuffer {
 		public:
-			InstanceBuffer() {}
+			InstanceBuffer() : m_size{}, m_byteSize{} {}
 
 			void init(uint32_t size) {
+				if (m_size > 0) {
+					return;
+				}
+
 				m_size = size;
 				m_byteSize = size * sizeof(T);
 
@@ -76,6 +80,8 @@ namespace engn {
 
 			[[nodiscard]] ID3D11Buffer* const* getBufferAddress() { return m_buffer.GetAddressOf(); }
 			[[nodiscard]] D3D11_MAPPED_SUBRESOURCE& getMappedBuffer() { return m_mappedBuffer; }
+			[[nodiscard]] uint32_t getSize() const { return m_size; }
+			[[nodiscard]] uint32_t getByteSize() const { return m_byteSize; }
 		private:
 			uint32_t m_size;
 			uint32_t m_byteSize;

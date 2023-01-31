@@ -51,6 +51,7 @@ float2 voronoi(in float2 x)
 struct PS_INPUT
 {
 	float4 outPos: SV_POSITION;
+    float4 outCol: COLOR;
 };
 
 float4 main(PS_INPUT inp) : SV_TARGET
@@ -68,7 +69,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
 #if VORONOI
 	float4 outCol = float4(col, 1.0);
 #else
-    float4 outCol = float4(1.0f, 0.0f, 0.0f, 1.0f);
+    float4 outCol = inp.outCol;
 #endif
 	return outCol;
 }

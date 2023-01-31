@@ -12,6 +12,7 @@ namespace engn {
 		class PixelShader {
 		public:
 			void init(const std::wstring& shaderPath);
+			void bind();
 			[[nodiscard]] ID3D11PixelShader* getShader();
 			[[nodiscard]] ID3D10Blob* getBuffer();
 		private:

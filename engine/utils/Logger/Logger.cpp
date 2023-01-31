@@ -12,7 +12,9 @@ namespace engn {
 	void Logger::createFileLogger(const std::string& name, const std::string& path)
 	{
 		std::string logFilePath = util::getExeDir() + path;
-		std::filesystem::resize_file(logFilePath, 0);
+		if (std::filesystem::exists(logFilePath)) {
+			std::filesystem::resize_file(logFilePath, 0);
+		}
 		auto logger = spdlog::basic_logger_mt(name, logFilePath);
 		logger->info("Initialized file logger");
 	}

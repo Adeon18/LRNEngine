@@ -30,6 +30,11 @@ namespace engn {
 			}
 		}
 
+		void PixelShader::bind()
+		{
+			d3d::s_devcon->PSSetShader(m_shader.Get(), NULL, 0);
+		}
+
 		[[nodiscard]] ID3D11PixelShader* PixelShader::getShader() {
 			return m_shader.Get();
 		}

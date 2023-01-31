@@ -12,6 +12,17 @@ namespace engn {
 		class IndexBuffer {
 		public:
 			IndexBuffer() {}
+
+			IndexBuffer(const IndexBuffer& other) {
+				this->m_buffer = other.m_buffer;
+				this->m_bufferSize = other.m_bufferSize;
+			}
+
+			IndexBuffer& operator=(const IndexBuffer& other) {
+				this->m_buffer = other.m_buffer;
+				this->m_bufferSize = other.m_bufferSize;
+				return *this;
+			}
 			// May be improved via concepts
 			void init(const std::vector<DWORD>& indices);
 			//! Bind the indexBuffer to devcon

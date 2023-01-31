@@ -13,6 +13,7 @@ namespace engn {
 		class VertexShader {
 		public:
 			void init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem);
+			void bind();
 			[[nodiscard]] ID3D11VertexShader* getShader() const;
 			[[nodiscard]] ID3D10Blob* getBuffer() const;
 			[[nodiscard]] ID3D11InputLayout* getInputLayout() const;
