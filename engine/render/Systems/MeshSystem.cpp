@@ -47,22 +47,21 @@ namespace engn {
 				}
 			}
 
-			Logger::instance().logInfo("Cube model created for the first time, creating PerModel struct...");
+			Logger::instance().logInfo("Model " + mod->name + " created for the first time, creating PerModel struct...");
 
 			PerModel newModel;
 			newModel.model = std::shared_ptr<mdl::Model>(mod);
 
-			PerMesh perMesh;
-
-			PerMaterial perMat;
-			perMat.material = mtrl;
 			for (auto& mesh : newModel.model->getMeshes()) {
+				PerMesh perMesh;
+
+				PerMaterial perMat;
+				perMat.material = mtrl;
 				perMat.instances.push_back(inc);
+
+				perMesh.push_back(perMat);
+				newModel.perMesh.push_back(perMesh);
 			}
-
-			perMesh.push_back(perMat);
-
-			newModel.perMesh.push_back(perMesh);
 
 			m_models.push_back(newModel);
 		}

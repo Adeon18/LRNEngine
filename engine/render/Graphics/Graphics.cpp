@@ -49,6 +49,20 @@ namespace engn {
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getCubeModel();
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			for (auto& m : mptr->getMeshes()) {
+				std::stringstream ss;
+				ss << "Name: " << m.name << std::endl;
+				ss << "Vertice num: " << m.vertices.size() << std::endl;
+				ss << "Trinagles num: " << m.triangles.size() << std::endl;
+				ss << "Instances size: " << m.instances.size() << std::endl;
+				ss << "Instances Inverse size: " << m.instancesInv.size() << std::endl;
+				Logger::instance().logInfo(ss.str());
+			}
+
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 200.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
 		}
 
 		void Graphics::m_initRasterizer()
