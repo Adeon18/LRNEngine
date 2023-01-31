@@ -55,14 +55,6 @@ namespace engn {
 
 		class Mesh {
 		public:
-			/*Mesh() {}
-			Mesh(const Mesh& other) {
-				name = other.name;
-				vertices = other.vertices;
-				triangles = other.triangles;
-				instances = other.instances;
-				instancesInv = other.instancesInv;
-			}*/
 			struct Triangle {
 				uint32_t indices[3];
 			};

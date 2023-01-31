@@ -1,8 +1,3 @@
-cbuffer perFrame : register(b0)
-{
-    float4x4 worldToClip;
-};
-
 struct VS_INPUT
 {
 	float3 inPos : POSITION;

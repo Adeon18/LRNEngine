@@ -9,9 +9,9 @@ namespace engn {
 			m_normalGroup.render();
 		}
 
-		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod)
+		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const NormalGroup::Material& mtrl, const NormalGroup::Instance& inc)
 		{
-			m_normalGroup.addModel(mod);
+			m_normalGroup.addModel(mod, mtrl, inc);
 		}
 
 		void NormalGroup::init()
@@ -31,20 +31,33 @@ namespace engn {
 			m_pixelShader.init(shaderFolder + L"PSVoronoi.cso");
 		}
 
-		void NormalGroup::addModel(std::shared_ptr<mdl::Model> mod)
+		void NormalGroup::addModel(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
+			// In all the meshes, looks for the first matching material
+			for (auto& perModel : m_models) {
+				if (perModel.model->name == mod->name) {
+					for (auto& perMesh : perModel.perMesh) {
+						for (auto& perMaterial : perMesh) {
+							if (perMaterial.material == mtrl) {
+								perMaterial.instances.push_back(inc);
+								return;
+							}
+						}
+					}
+				}
+			}
+
+			Logger::instance().logInfo("Cube model created for the first time, creating PerModel struct...");
+
 			PerModel newModel;
-			newModel.model = std::shared_ptr < mdl::Model > (mod);
+			newModel.model = std::shared_ptr<mdl::Model>(mod);
 
 			PerMesh perMesh;
 
 			PerMaterial perMat;
-			perMat.material = {};
+			perMat.material = mtrl;
 			for (auto& mesh : newModel.model->getMeshes()) {
-				Instance i;
-				i.modelToWorld = mesh.instances[0];
-				i.color = { 1.0f, 0.0f, 0.0f, 1.0f };
-				perMat.instances.push_back(i);
+				perMat.instances.push_back(inc);
 			}
 
 			perMesh.push_back(perMat);
@@ -65,7 +78,6 @@ namespace engn {
 
 
 			if (totalInstances == 0)
-				//std::cout << "AAA" << std::endl;
 				return;
 
 			// Initialize instanceBuffer
@@ -107,9 +119,9 @@ namespace engn {
 		void NormalGroup::render()
 		{
 			if (m_instanceBuffer.getSize() == 0)
-				//std::cout << "DDDD" << std::endl;
 				return;
 
+			d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
 			m_vertexShader.bind();
 			m_pixelShader.bind();
 			m_instanceBuffer.bind();
@@ -144,6 +156,7 @@ namespace engn {
 						uint32_t numInstances = uint32_t(perMaterial.instances.size());
 						d3d::s_devcon->DrawIndexedInstanced(meshRange.indexNum, numInstances, meshRange.indexOffset, meshRange.vertexOffset, renderedInstances);
 						renderedInstances += numInstances;
+
 					}
 				}
 			}

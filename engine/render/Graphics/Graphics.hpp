@@ -29,7 +29,6 @@ namespace engn {
 			void init();
 			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 		private:
-			void m_initShaders();
 			void m_initScene();
 			//! Initialize the RasterizerState
 			/// RasterizerState basically tells us HOW to draw triangles
@@ -37,13 +36,6 @@ namespace engn {
 			void m_initRasterizer();
 			void m_initDepthStencilState();
 			
-			VertexShader m_vertexShader;
-			PixelShader m_pixelShader;
-
-			IndexBuffer m_indexBuffer;
-			VertexBuffer<Vertex> m_vertexBuffer;
-			InstanceBuffer<XMFLOAT3> m_instanceBuffer;
-			ConstantBuffer<CB_VS_MeshData> m_constantBufferVS;
 			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;

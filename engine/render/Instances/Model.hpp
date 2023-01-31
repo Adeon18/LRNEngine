@@ -19,11 +19,12 @@ namespace engn {
 				uint32_t vertexNum; // num of vertices
 				uint32_t indexNum; // num of indices
 			};
-
 			std::vector<Mesh>& getMeshes() { return m_meshes; }
 			std::vector<MeshRange>& getRanges() { return m_ranges; }
 			rend::VertexBuffer<Vertex>& getVertices() { return m_vertices; }
 			rend::IndexBuffer& getIndices() { return m_indices; }
+
+			std::string name;
 		protected:
 			std::vector<Mesh> m_meshes;
 			std::vector<MeshRange> m_ranges; // where each mesh data is stored in m_vertices

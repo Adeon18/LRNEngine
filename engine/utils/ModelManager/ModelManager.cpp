@@ -4,7 +4,7 @@
 
 namespace engn {
 	namespace mdl {
-		/*std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
+		std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
 		{
 			try {
 				return m_loadedModels.at(filename);
@@ -22,12 +22,12 @@ namespace engn {
 			}
 			
 			return m_loadedModels.at(filename);
-		}*/
+		}
 
 		std::shared_ptr<Model> ModelManager::getCubeModel()
 		{
 			try {
-				return std::shared_ptr<Model>(m_loadedModels.at("unit_box"));
+				return m_loadedModels.at("unit_box");
 			}
 			catch (const std::out_of_range& e) {
 				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: unit_box");
@@ -80,12 +80,13 @@ namespace engn {
 
 			Model::MeshRange boxMeshRange{ 0, 0, vertices.size(), indices.size() };
 
+			m_loadedModels["unit_box"]->name = "unit_box";
 			m_loadedModels["unit_box"]->getMeshes().push_back(boxMesh);
 			m_loadedModels["unit_box"]->getRanges().push_back(boxMeshRange);
 			m_loadedModels["unit_box"]->getVertices().init(vertices);
 			m_loadedModels["unit_box"]->getIndices().init(indices);
 
-			return std::shared_ptr<Model>(m_loadedModels["unit_box"]);
+			return m_loadedModels["unit_box"];
 		}
 
 		bool ModelManager::loadModel(const std::string& filename)

@@ -16,20 +16,16 @@ namespace engn {
 	namespace rend {
 		class NormalGroup {
 		public:
-			void init();
-			void addModel(std::shared_ptr<mdl::Model> mod);
-			//! Fill the data to be passed by instance
-			void fillInstanceBuffer(const XMMATRIX& worldToView);
-			void render();
-			// For debug
-			ID3D11InputLayout* getVS() { return m_vertexShader.getInputLayout(); }
-		private:
 			struct Instance {
 				XMMATRIX modelToWorld;
 				XMFLOAT4 color;
 			};
 
-			struct Material {};
+			struct Material {
+				bool operator==(const Material& other) {
+					return true;
+				}
+			};
 
 			struct PerMaterial {
 				Material material;
@@ -49,6 +45,12 @@ namespace engn {
 
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
+		public:
+			void init();
+			void addModel(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			//! Fill the data to be passed by instance
+			void fillInstanceBuffer(const XMMATRIX& worldToView);
+			void render();
 		};
 
 		class MeshSystem {
@@ -62,14 +64,11 @@ namespace engn {
 
 			void init() {
 				m_normalGroup.init();
-				m_normalGroup.addModel(mdl::ModelManager::getInstance().getCubeModel());
 			}
 
 			void render(const XMMATRIX& worldToClip);
 			
-			void addNormalInstance(std::shared_ptr<mdl::Model> mod);
-
-			ID3D11InputLayout* getNormalVS() { return m_normalGroup.getVS(); }
+			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const NormalGroup::Material& mtrl, const NormalGroup::Instance& inc);
 		private:
 			MeshSystem() {};
 			NormalGroup m_normalGroup;
