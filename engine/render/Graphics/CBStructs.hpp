@@ -9,8 +9,9 @@ namespace engn {
 			DirectX::XMMATRIX worldToClip;
 		};
 		//! This struct contains basic data that ShaderToy has out of the box
-		struct CB_PS_ShaderToy {
+		struct CB_RealTimeData {
 			DirectX::XMFLOAT4 gResolution;
+			DirectX::XMFLOAT4 gCameraPosition;
 			float gTime;
 		};
 	} // rend

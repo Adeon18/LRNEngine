@@ -260,5 +260,6 @@
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\PSHologram.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\VSHologram.hlsl" />
   </ItemGroup>
 </Project>

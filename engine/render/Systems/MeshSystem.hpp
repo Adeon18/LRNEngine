@@ -198,17 +198,20 @@ namespace engn {
 
 			void init() {
 				initNormalGroup();
+				initHologramGroup();
 			}
 
 			void initNormalGroup();
-			//void initHologramGroup();
+			void initHologramGroup();
 
 			void render(const XMMATRIX& worldToClip);
 			
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 		private:
 			MeshSystem() {};
 			RenderGroup<Instance, Material> m_normalGroup;
+			RenderGroup<Instance, Material> m_hologramGroup;
 		};
 	} // rend
 } // engn

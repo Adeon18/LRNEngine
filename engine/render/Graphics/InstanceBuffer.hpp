@@ -21,7 +21,6 @@ namespace engn {
 				if (m_size > 0) {
 					return;
 				}
-
 				m_size = size;
 				m_byteSize = size * sizeof(T);
 

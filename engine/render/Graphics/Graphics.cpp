@@ -25,18 +25,20 @@ namespace engn {
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
-			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
-
 			// PS constant Buffer
-			m_constantBufferPS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
-			m_constantBufferPS.getData().gTime = renderData.iTime;
-			m_constantBufferPS.fill();
-			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferPS.getBufferAddress());
+			m_constantBufferVS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
+			XMStoreFloat4(&(m_constantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
+			m_constantBufferVS.getData().gTime = renderData.iTime;
+			m_constantBufferVS.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+
+			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
 		}
 
 		void Graphics::m_initScene()
 		{
-			m_constantBufferPS.init();
+			m_constantBufferVS.init();
 
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
@@ -51,7 +53,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/KnightHorse/KnightHorse.fbx");
+			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
 			for (auto& m : mptr->getMeshes()) {
 				std::stringstream ss;
 				ss << "Name: " << m.name << std::endl;
@@ -62,7 +64,7 @@ namespace engn {
 				Logger::instance().logInfo(ss.str());
 			}
 
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixTranslation(0.0f, 0.0f, 30.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.1f, 0.1f, 0.1f) * XMMatrixTranslation(0.0f, 0.0f, 30.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
 		}
 
 		void Graphics::m_initRasterizer()

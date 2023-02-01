@@ -36,7 +36,7 @@ namespace engn {
 			void m_initRasterizer();
 			void m_initDepthStencilState();
 			
-			ConstantBuffer<CB_PS_ShaderToy> m_constantBufferPS;
+			ConstantBuffer<CB_RealTimeData> m_constantBufferVS;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

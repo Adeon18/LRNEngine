@@ -119,6 +119,7 @@ namespace engn {
 				modelMesh.vertices.resize(assimpMesh->mNumVertices);
 				modelMesh.triangles.resize(assimpMesh->mNumFaces);
 
+				// TODO: Beautify
 				for (uint32_t v = 0; v < assimpMesh->mNumVertices; ++v)
 				{
 					Vertex& vertex = modelMesh.vertices[v];

@@ -94,7 +94,7 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
     {
         const float WAVE_XZ_SPEED = 3.0;
         const float WAVE_DISTORTION_SIZE = 0.035;
-        const float WAVE_OSCILLATING_TIME = 4;
+        const float WAVE_OSCILLATING_TIME = 4.0;
 
         float distortionSign = abs(frac(iTime / WAVE_OSCILLATING_TIME) - 0.5) * 4 - 1;
         float2 distortion = sin(pos.xz / WAVE_DISTORTION_SIZE + iTime * WAVE_XZ_SPEED) * WAVE_DISTORTION_SIZE * distortionSign;
@@ -131,38 +131,38 @@ float3 vertexDistortion(float3 pos, float3 normal)
     return offset;
 }
 
-// called in pixel shader
-float3 colorDistortion(float3 pos, float3 normal)
+struct VS_INPUT
 {
-    float blueWave = wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
-    float redWave = wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
+    float3 inPos : POSITION;
+    float3 inNorm : NORMAL;
+    float3 inTangent : TANGENT;
+    float3 inBiTangent : BITANGENT;
+    float3 inTC : TEXCOORD;
+    float4 modelToClip0 : M2CLIP0;
+    float4 modelToClip1 : M2CLIP1;
+    float4 modelToClip2 : M2CLIP2;
+    float4 modelToClip3 : M2CLIP3;
+    float4 color : COLOR;
+};
 
-    float3 toCamera = normalize(iCameraPosition.xyz - pos);
-    float contourGlow = pow(1.0 - abs(dot(normal, toCamera)), 2);
-
-    // when contourInterference is 0, ripple effect contourWave is added to contourGlow, otherwise contourWave is 1
-    float contourWave = wave(pos, 0.1, 0.1, 0.05, false);
-    float contourInterference = periodIntensity(iTime, 4, 1);
-    contourWave = lerp(contourWave, 1.0, contourInterference);
-    // when contourWave is 0.0, contourGlow becomes darker, otherwise contourGlow color is plain, without ripple
-    contourGlow = lerp(contourGlow / 10, contourGlow, contourWave);
-
-    float3 color = float3(0, 1.0, 1.0) * min(1, contourGlow + blueWave * 0.5);
-    float colorNoise = sqrt(noise4d(float4(pos, frac(iTime)) * 100, 1));
-    color *= lerp(colorNoise, 1.0, contourInterference);
-    
-    color = lerp(color, float3(1.0, 0.0, 0.0), redWave * 0.25);
-    return color;
-}
-
-struct PS_INPUT
+struct VS_OUTPUT
 {
     float4 outPos : SV_POSITION;
     float4 outCol : COLOR;
     float3 outNorm : NORMAL;
 };
 
-float4 main(PS_INPUT inp) : SV_TARGET
+VS_OUTPUT main(VS_INPUT input)
 {
-    return float4(colorDistortion(inp.outPos.xyz, inp.outNorm), 1.0f);
+    VS_OUTPUT output;
+    float4x4 modelToClip = float4x4(input.modelToClip0, input.modelToClip1, input.modelToClip2, input.modelToClip3);
+    // Don't know if this is correct
+    float3 norm = mul(float4(input.inNorm, 1.0f), modelToClip).xyz;
+    float3 offset = vertexDistortion(input.inPos, norm);
+    
+    float4 movedPos = mul(float4(input.inPos + offset, 1.0f), modelToClip);
+    output.outPos = movedPos;
+    output.outCol = input.color;
+    output.outNorm = input.inNorm;
+    return output;
 }
