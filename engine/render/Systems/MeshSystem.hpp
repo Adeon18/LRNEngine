@@ -54,20 +54,23 @@ namespace engn {
 
 				m_vertexShader.init(VSpath, layout, ARRAYSIZE(layout));
 				m_pixelShader.init(PSpath);
+				m_meshData.init();
 			}
 
 			void addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
 				// In all the meshes, looks for the first matching material
+				bool isCached = false;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
 						for (auto& perMesh : perModel.perMesh) {
 							for (auto& perMaterial : perMesh) {
 								if (perMaterial.material == mtrl) {
 									perMaterial.instances.push_back(inc);
-									return;
+									if (!isCached) { isCached = true; }
 								}
 							}
 						}
+						if (isCached) { return; }
 					}
 				}
 
@@ -163,7 +166,10 @@ namespace engn {
 						const auto& meshRange = model.model->getRanges()[meshIndex];
 
 						// You have to upload a Mesh-to-Model transformation matrix retrieved from model file via Assimp
-						// meshData.update(mesh.meshToModel); // ... update shader local per-mesh uniform buffer
+						m_meshData.getData().modelToWorld = XMMatrixTranspose(mesh.meshToModel); // ... update shader local per-mesh uniform buffer
+						m_meshData.getData().modelToWorldInv = XMMatrixTranspose(mesh.meshToModelInv);
+						m_meshData.fill();
+						d3d::s_devcon->VSSetConstantBuffers(1, 1, m_meshData.getBufferAddress());
 
 						for (const auto& perMaterial : model.perMesh[meshIndex])
 						{

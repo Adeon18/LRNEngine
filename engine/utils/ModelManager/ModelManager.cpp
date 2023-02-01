@@ -75,8 +75,8 @@ namespace engn {
 				Mesh::Triangle t{ indices[i], indices[i + 1], indices[i + 2] };
 				boxMesh.triangles.push_back(t);
 			}
-			boxMesh.instances.push_back(XMMatrixIdentity());
-			boxMesh.instancesInv.push_back(XMMatrixIdentity());
+			boxMesh.meshToModel = XMMatrixIdentity();
+			boxMesh.meshToModelInv = XMMatrixIdentity();
 
 			Model::MeshRange boxMeshRange{ 0, 0, vertices.size(), indices.size() };
 
@@ -152,12 +152,13 @@ namespace engn {
 				for (uint32_t i = 0; i < node->mNumMeshes; ++i)
 				{
 					uint32_t meshIndex = node->mMeshes[i];
-					modelPtr->getMeshes()[meshIndex].instances.push_back(nodeToParent);
-					modelPtr->getMeshes()[meshIndex].instancesInv.push_back(parentToNode);
+					modelPtr->getMeshes()[meshIndex].meshToModel = nodeToParent;
+					modelPtr->getMeshes()[meshIndex].meshToModelInv = parentToNode;
 				}
 
-				for (uint32_t i = 0; i < node->mNumChildren; ++i)
+				for (uint32_t i = 0; i < node->mNumChildren; ++i) {
 					loadInstances(node->mChildren[i]);
+				}
 			};
 
 			loadInstances(assimpScene->mRootNode);

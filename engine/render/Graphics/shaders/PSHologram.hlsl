@@ -114,25 +114,16 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
 // A local constant inside a function can be marked just with "const".
 // "static" for locals preserves value during current shader thread execution.
 
-static const float BLUE_WAVE_INTERVAL = 0.8;
-static const float BLUE_WAVE_SPEED = 0.25;
-static const float BLUE_WAVE_THICKNESS = 0.05;
+static const float BLUE_WAVE_INTERVAL = 10;
+static const float BLUE_WAVE_SPEED = 10.0;
+static const float BLUE_WAVE_THICKNESS = 1.0;
 
-static const float RED_WAVE_INTERVAL = 10;
-static const float RED_WAVE_SPEED = 2;
-static const float RED_WAVE_THICKNESS = 0.2;
-
-// called in vertex shader
-float3 vertexDistortion(float3 pos, float3 normal)
-{
-    float3 offset = 0.0;
-    offset += normal * 0.025 * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
-    offset += normal * 0.05 * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
-    return offset;
-}
+static const float RED_WAVE_INTERVAL = 100.0;
+static const float RED_WAVE_SPEED = 20.0;
+static const float RED_WAVE_THICKNESS = 5.0;
 
 // called in pixel shader
-float3 colorDistortion(float3 pos, float3 normal)
+float3 colorDistortion(float3 pos, float3 normal, float4 col)
 {
     float blueWave = wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
     float redWave = wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
@@ -147,7 +138,7 @@ float3 colorDistortion(float3 pos, float3 normal)
     // when contourWave is 0.0, contourGlow becomes darker, otherwise contourGlow color is plain, without ripple
     contourGlow = lerp(contourGlow / 10, contourGlow, contourWave);
 
-    float3 color = float3(0, 1.0, 1.0) * min(1, contourGlow + blueWave * 0.5);
+    float3 color = col.xyz * min(1, contourGlow + blueWave * 0.5);
     float colorNoise = sqrt(noise4d(float4(pos, frac(iTime)) * 100, 1));
     color *= lerp(colorNoise, 1.0, contourInterference);
     
@@ -158,11 +149,18 @@ float3 colorDistortion(float3 pos, float3 normal)
 struct PS_INPUT
 {
     float4 outPos : SV_POSITION;
+    float3 worldPos : POS;
     float4 outCol : COLOR;
-    float3 outNorm : NORMAL;
+    float3 outNorm : NORM;
 };
+
+#define DEBUG 0
 
 float4 main(PS_INPUT inp) : SV_TARGET
 {
-    return float4(colorDistortion(inp.outPos.xyz, inp.outNorm), 1.0f);
+#if DEBUG
+    return inp.outCol;
+#else
+    return float4(colorDistortion(inp.worldPos, inp.outNorm, inp.outCol), 1.0f);
+#endif
 }

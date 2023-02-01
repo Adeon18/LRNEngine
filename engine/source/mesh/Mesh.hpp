@@ -62,8 +62,11 @@ namespace engn {
 			BoundingBox box = BoundingBox::empty();
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;
-			std::vector<XMMATRIX> instances;
-			std::vector<XMMATRIX> instancesInv;
+
+			XMMATRIX meshToModel;
+			XMMATRIX meshToModelInv;
+			//std::vector<XMMATRIX> instances;
+			//std::vector<XMMATRIX> instancesInv;
 		private:
 		};
 	} // mdl
