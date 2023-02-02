@@ -24,6 +24,10 @@ namespace engn {
                 XMConvertToRadians(m_fov),
                 static_cast<float>(width) / static_cast<float>(height),
                 1000.0f, 0.1f);
+            m_projectionReversed = XMMatrixPerspectiveFovLH(
+                XMConvertToRadians(m_fov),
+                static_cast<float>(width) / static_cast<float>(height),
+                0.1f, 1000.0f);
         }
 
         void EngineCamera::setPosition(const XMVECTOR& pos) {

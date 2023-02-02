@@ -39,6 +39,7 @@ namespace engn {
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
+            const XMMATRIX& getProjMatrixReversed() { return m_projectionReversed; }
             [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewInv.r[0]; }
             [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewInv.r[1]; }
             [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewInv.r[2]; }
@@ -58,6 +59,8 @@ namespace engn {
             XMMATRIX m_view;
             XMMATRIX m_viewInv;
             XMMATRIX m_projection;
+            // Reversed projection matrix to make ray dragging work
+            XMMATRIX m_projectionReversed;
             //! Rotation data
             XMVECTOR m_rotationQuat{ 0.0f, 0.0f, 0.0f, 1.0f };
         };

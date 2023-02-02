@@ -34,5 +34,14 @@ namespace engn {
 		{
 			m_hologramGroup.addModel(mod, mtrl, inc);
 		}
+
+		std::pair<bool, RenderGroup<Instance, Material>::InstanceToDrag> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		{
+
+			RenderGroup<Instance, Material>::InstanceToDrag i2d{};
+			bool collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
+
+			return std::pair<bool, RenderGroup<Instance, Material>::InstanceToDrag>{collided, i2d};
+		}
 	} // rend
 } // engn

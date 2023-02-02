@@ -67,6 +67,7 @@ namespace engn {
 				3, 6, 7, // back left
 			};
 
+			// TODO: MAKE BETTER
 			Mesh boxMesh;
 			boxMesh.name = "unit_box";
 			boxMesh.box = BoundingBox::unit();
@@ -83,6 +84,10 @@ namespace engn {
 			m_loadedModels["unit_box"]->name = "unit_box";
 			m_loadedModels["unit_box"]->getMeshes().push_back(boxMesh);
 			m_loadedModels["unit_box"]->getRanges().push_back(boxMeshRange);
+
+			util::TriangleOctree boxOcTree;
+			boxOcTree.initialize(m_loadedModels["unit_box"]->getMeshes()[0]);
+			m_loadedModels["unit_box"]->getMeshOcTrees().push_back(std::move(boxOcTree));
 			
 			m_loadedModels["unit_box"]->fillBuffersFromMeshes();
 
@@ -106,6 +111,7 @@ namespace engn {
 			modelPtr->name = filename;
 			//model.box = {};
 			modelPtr->getMeshes().resize(numMeshes);
+			modelPtr->getMeshOcTrees().resize(numMeshes);
 
 			// Load all meshes t
 			for (uint32_t i = 0; i < numMeshes; ++i) {
@@ -140,6 +146,7 @@ namespace engn {
 						modelMesh.triangles[f].indices[j] = face.mIndices[j];
 					}
 				}
+				modelPtr->getMeshOcTrees()[i].initialize(modelMesh);
 			}
 
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)

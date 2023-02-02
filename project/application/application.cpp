@@ -102,7 +102,7 @@ void Application::m_handleRender() {
 	};
 	// Render fucntions
 	m_window->clear(BG_COLOR);
-	m_engine->handlePhysics();
+	m_engine->handlePhysics(renderData);
 	m_engine->render(renderData);
 	m_window->present();
 #else

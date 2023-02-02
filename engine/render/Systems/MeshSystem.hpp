@@ -14,11 +14,20 @@
 
 #include "render/Graphics/Vertex.hpp"
 
+#include "source/math/Ray.hpp"
+
 namespace engn {
 	namespace rend {
 		template<typename I, typename M>
 		class RenderGroup {
 		public:
+			//! Struct that identifies the instance of the material of the model to be dragged
+			struct InstanceToDrag {
+				I instance;
+				M material;
+				std::shared_ptr<mdl::Model> model;
+			};
+
 			struct PerMaterial {
 				M material;
 				std::vector<I> instances;
@@ -38,6 +47,34 @@ namespace engn {
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
 		public:
+			// Find the closest instance that intersects with a ray and fill in the infor struct
+			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceToDrag& i2d) {
+
+				bool hasIntersection = false;
+				for (auto& perModel : m_models) {
+					for (uint32_t meshIdx = 0; meshIdx < perModel.perMesh.size(); ++meshIdx) {
+						for (auto& perMaterial : perModel.perMesh[meshIdx]) {
+							for (auto& instance : perMaterial.instances) {
+								ray.transform(XMMatrixInverse(nullptr, instance.modelToWorld));
+								if (perModel.model->getMeshOcTrees()[meshIdx].intersect(ray, nearest)) {
+									std::cout << "Nearest pos before transform: " << nearest.pos << std::endl;
+
+									nearest.pos = XMVector3Transform(nearest.pos, instance.modelToWorld);
+									i2d.instance = instance;
+									i2d.material = perMaterial.material;
+									i2d.model = perModel.model;
+
+									std::cout << "Nearest pos after transform: " << nearest.pos << std::endl;
+									if (!hasIntersection) { hasIntersection = true; }
+								}
+								ray.transform(instance.modelToWorld);
+							}
+						}
+					}
+				}
+				return hasIntersection;
+			}
+
 			void init(const std::wstring& VSpath, const std::wstring& PSpath) {
 				D3D11_INPUT_ELEMENT_DESC layout[] = {
 					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -214,6 +251,9 @@ namespace engn {
 			
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+
+			void addNormalInstanceOffset(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc, XMVECTOR offset);
+			std::pair<bool, RenderGroup<Instance, Material>::InstanceToDrag> getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
 			RenderGroup<Instance, Material> m_normalGroup;

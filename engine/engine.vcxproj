@@ -54,9 +54,12 @@
     <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
+    <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
+    <ClInclude Include="source\mesh\MeshHelpers.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
+    <ClInclude Include="utils\OcTree\OcTree.hpp" />
     <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
     <ClInclude Include="utils\Timer\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
@@ -82,10 +85,13 @@
     <ClCompile Include="render\RayTracer\mesh\Mesh.cpp" />
     <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
+    <ClCompile Include="source\math\Ray.cpp" />
     <ClCompile Include="source\mesh\Mesh.cpp" />
+    <ClCompile Include="source\mesh\MeshHelpers.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
     <ClCompile Include="utils\ModelManager\ModelManager.cpp" />
+    <ClCompile Include="utils\OcTree\OcTree.cpp" />
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp" />
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>

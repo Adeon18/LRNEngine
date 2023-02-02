@@ -50,26 +50,34 @@ namespace engn {
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 5.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
-			for (auto& m : mptr->getMeshes()) {
-				std::stringstream ss;
-				ss << "Name: " << m.name << std::endl;
-				ss << "Vertice num: " << m.vertices.size() << std::endl;
-				ss << "Trinagles num: " << m.triangles.size() << std::endl;
-				ss << "Instances size:\n" << m.meshToModel << std::endl;
-				ss << "Instances Inverse size:\n" << m.meshToModelInv << std::endl;
-				Logger::instance().logInfo(ss.str());
-			}
+			//mptr.reset();
+			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			//for (auto& m : mptr->getMeshes()) {
+			//	std::stringstream ss;
+			//	ss << "Name: " << m.name << std::endl;
+			//	ss << "Vertice num: " << m.vertices.size() << std::endl;
+			//	ss << "Trinagles num: " << m.triangles.size() << std::endl;
+			//	ss << "Instances size:\n" << m.meshToModel << std::endl;
+			//	ss << "Instances Inverse size:\n" << m.meshToModelInv << std::endl;
+			//	Logger::instance().logInfo(ss.str());
+			//}
 
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
+			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			//mptr.reset();
+			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
 
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+
+			geom::Ray ray{ {0.0f, 0.0f, -2.0f}, {0.0f, 0.0f, 1.0f} };
+			mdl::MeshIntersection m{ {}, {}, 1000.0f, 0 };
+
+			auto collisionRes = MeshSystem::getInstance().getClosestNormalMesh(ray, m);
+			std::cout << "Collision with normal group present: " << collisionRes.first << std::endl;
+			std::cout << "Collision pos: " << m.pos << std::endl;
+			std::cout << "Collision t: " << m.t << std::endl;
 		}
 
 		void Graphics::m_initRasterizer()
