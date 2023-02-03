@@ -12,11 +12,12 @@ namespace engn {
 
 			// Capture the mesh
 			mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
-			auto collisionRes = rend::MeshSystem::getInstance().getClosestNormalMesh(atMouse, closest);
-
+			auto collisionRes = rend::MeshSystem::getInstance().getClosestHologramMesh(atMouse, closest);
+			std::cout << "Collision Happened: " << collisionRes.first << std::endl;
 			if (collisionRes.first) {
 				m_meshCaptured = true;
 				m_capturedMeshData = collisionRes.second;
+				m_capturedMeshIntersection = closest;
 				// The plane points at us
 				m_dragPlane = { -camPtr->getCamForward(), closest.pos };
 			}
@@ -34,9 +35,8 @@ namespace engn {
 					geom::BasicRayIntersection closest{ {}, {}, 1000.0f };
 					atMousePos.intersect(closest, m_dragPlane.normal, m_dragPlane.pos);
 
-					std::cout << "New pos: " << closest.pos << std::endl;
-
-					rend::MeshSystem::getInstance().setNormalInstancePosition(m_capturedMeshData.model, m_capturedMeshData.materialIdx, m_capturedMeshData.instanceIdx, closest.pos);
+					rend::MeshSystem::getInstance().setNormalInstancePosition(m_capturedMeshData.model, m_capturedMeshData.materialIdx, m_capturedMeshData.instanceIdx, closest.pos - m_capturedMeshIntersection.pos);
+					m_capturedMeshIntersection.pos = closest.pos;
 				}
 			}
 		}

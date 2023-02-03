@@ -24,6 +24,8 @@ namespace engn {
 
 			bool intersect(const geom::Ray& ray, mdl::MeshIntersection& nearest) const;
 
+			[[nodiscard]] const mdl::BoundingBox& getBox() const { return m_box; }
+
 		protected:
 			const mdl::Mesh* m_mesh = nullptr;
 			std::vector<uint32_t> m_triangles;

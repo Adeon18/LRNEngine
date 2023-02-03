@@ -103,7 +103,7 @@ namespace engn {
 								if (matIdx == perMtrlIdx) {
 									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
 										if (insIdx == perInsIdx) {
-											perMesh[matIdx].instances[insIdx].modelToWorld = XMMatrixTranslationFromVector(pos);
+											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixTranslationFromVector(pos);
 										}
 									}
 								}

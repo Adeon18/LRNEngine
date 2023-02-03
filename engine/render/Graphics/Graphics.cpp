@@ -41,7 +41,7 @@ namespace engn {
 			m_constantBufferVS.init();
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixRotationRollPitchYaw(0.0f, XM_PIDIV4, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getCubeModel();

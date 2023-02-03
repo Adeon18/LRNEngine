@@ -8,6 +8,8 @@ namespace engn {
 
 		void Ray::transform(const XMMATRIX& transMat) {
 			origin = XMVector3Transform(origin, transMat);
+			direction = XMVectorSetW(direction, 0.0f);
+			direction = XMVector4Transform(direction, transMat);
 		}
 
 		XMVECTOR Ray::getPointAt(float t) const { return origin + t * direction; }
