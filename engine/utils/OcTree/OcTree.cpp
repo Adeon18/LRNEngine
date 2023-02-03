@@ -92,13 +92,16 @@ namespace engn {
 			XMVECTOR elongation = (MAX_STRETCHING_RATIO - 1.f) * m_box.size();
 
 			if (octetIndex % 2 == 0) initBoxMax.x += XMVectorGetX(elongation);
-			else initBoxMax.x -= XMVectorGetX(elongation);
+			else initBoxMin.x -= XMVectorGetX(elongation);
 
 			if (octetIndex % 4 < 2) initBoxMax.y += XMVectorGetY(elongation);
-			else initBoxMax.y -= XMVectorGetY(elongation);
+			else initBoxMin.y -= XMVectorGetY(elongation);
 
 			if (octetIndex < 4) initBoxMax.z += XMVectorGetZ(elongation);
-			else initBoxMax.z -= XMVectorGetZ(elongation);
+			else initBoxMin.z -= XMVectorGetZ(elongation);
+
+			m_box.setMin(initBoxMin);
+			m_box.setMax(initBoxMax);
 		}
 
 		bool TriangleOctree::addTriangle(uint32_t triangleIndex, const XMVECTOR& V1, const XMVECTOR& V2, const XMVECTOR& V3, const XMVECTOR& center)
