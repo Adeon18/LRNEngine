@@ -35,13 +35,24 @@ namespace engn {
 			m_hologramGroup.addModel(mod, mtrl, inc);
 		}
 
-		std::pair<bool, RenderGroup<Instance, Material>::InstanceToDrag> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		void MeshSystem::setNormalInstancePosition(std::shared_ptr<mdl::Model> mod, uint32_t mtrlIdx, uint32_t insIdx, XMVECTOR pos)
 		{
+			m_normalGroup.setModelPosition(mod, mtrlIdx, insIdx, pos);
+		}
 
-			RenderGroup<Instance, Material>::InstanceToDrag i2d{};
+		std::pair<bool, InstanceToDrag> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		{
+			InstanceToDrag i2d{};
 			bool collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
 
-			return std::pair<bool, RenderGroup<Instance, Material>::InstanceToDrag>{collided, i2d};
+			return std::pair<bool, InstanceToDrag>{collided, i2d};
+		}
+		std::pair<bool, InstanceToDrag> MeshSystem::getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		{
+			InstanceToDrag i2d{};
+			bool collided = m_hologramGroup.checkRayIntersection(ray, nearest, i2d);
+
+			return std::pair<bool, InstanceToDrag>{collided, i2d};
 		}
 	} // rend
 } // engn

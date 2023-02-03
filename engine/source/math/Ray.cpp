@@ -129,6 +129,27 @@ namespace engn {
 			return true;
 		}
 
+		bool Ray::intersect(BasicRayIntersection& nearest, XMVECTOR normal, XMVECTOR point)
+		{
+			float res = XMVectorGetX(XMVector3Dot(direction, normal));
+
+			if (res > MIN_ANGLE_DOT || res < -MIN_ANGLE_DOT)
+			{
+				float dist = XMVectorGetX(XMVector3Dot(point - origin, normal)) / res;
+
+				if (dist > 0.0f && dist < nearest.t)
+				{
+					nearest.t = dist;
+					nearest.pos = getPointAt(dist);
+					// I don't have any clue how this normal works but it does and I'm happy
+					nearest.normal = XMVector3Normalize(normal * -res);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 	} // geom
 
 } // engn

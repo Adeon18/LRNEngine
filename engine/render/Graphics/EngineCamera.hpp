@@ -53,10 +53,10 @@ namespace engn {
         private:
             const XMVECTOR m_viewingFrustumNearPlane[4] =
             {
-                {-1.0f, -1.0f, 1.0f, 1.0f},
-                {-1.0f,  1.0f, 1.0f, 1.0f},
-                { 1.0f,  1.0f, 1.0f, 1.0f},
-                { 1.0f, -1.0f, 1.0f, 1.0f},
+                {-1.0f, -1.0f, 0.0f, 1.0f},
+                {-1.0f,  1.0f, 0.0f, 1.0f},
+                { 1.0f,  1.0f, 0.0f, 1.0f},
+                { 1.0f, -1.0f, 0.0f, 1.0f},
             };
             XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
 

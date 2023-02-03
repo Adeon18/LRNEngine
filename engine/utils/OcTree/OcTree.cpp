@@ -1,6 +1,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include "utility/utility.hpp"
+
 #include "OcTree.hpp"
 
 
@@ -40,7 +42,7 @@ namespace engn {
 				bool inserted = addTriangle(i, V1, V2, V3, P);
 			}
 
-			//std::cout << m_mesh->name + ": triangles: " << m_triangles.size() << std::endl;
+			std::cout << m_mesh->name + ": triangles: " << m_triangles.size() << std::endl;
 		}
 
 		void TriangleOctree::initialize(const mdl::Mesh& mesh, const mdl::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex)
@@ -172,8 +174,12 @@ namespace engn {
 		bool TriangleOctree::intersect(const geom::Ray& ray, mdl::MeshIntersection& nearest) const
 		{
 			float boxT = nearest.t;
-			if (!ray.intersect(boxT, m_box))
+			if (!ray.intersect(boxT, m_box)) {
+				/*std::cout << "Box min: " << m_box.getMin() << std::endl;
+				std::cout << "Box max: " << m_box.getMax() << std::endl;
+				std::cout << "Ray T: " << boxT << std::endl;*/
 				return false;
+			}
 
 			return intersectInternal(ray, nearest);
 		}
@@ -182,8 +188,9 @@ namespace engn {
 		{
 			{
 				float boxT = nearest.t;
-				if (!ray.intersect(boxT, m_box))
+				if (!ray.intersect(boxT, m_box)) {
 					return false;
+				}
 			}
 
 			bool found = false;
@@ -193,10 +200,13 @@ namespace engn {
 				const XMVECTOR& V1 = getPos(*m_mesh, m_triangles[i], 0);
 				const XMVECTOR& V2 = getPos(*m_mesh, m_triangles[i], 1);
 				const XMVECTOR& V3 = getPos(*m_mesh, m_triangles[i], 2);
-
 				// I EDITED
 				if (ray.intersect(nearest, V1, V2, V3))
 				{
+					std::cout << "AAAAAAAAAAA" << std::endl;
+					std::cout << "V1: " << V1 << std::endl;
+					std::cout << "V2: " << V2 << std::endl;
+					std::cout << "V3: " << V3 << std::endl;
 					nearest.triangle = i;
 					found = true;
 				}

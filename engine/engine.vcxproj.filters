@@ -180,6 +180,9 @@
     <ClInclude Include="source\mesh\MeshHelpers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\dragger\MeshDragger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -267,6 +270,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\mesh\MeshHelpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\dragger\MeshDragger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

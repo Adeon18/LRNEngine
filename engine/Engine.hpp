@@ -1,5 +1,7 @@
 #pragma once
 
+#include "source/dragger/MeshDragger.hpp"
+
 #include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
 #include "utils/Logger/Logger.hpp"
@@ -85,6 +87,7 @@ namespace engn {
 		// Render
 		std::unique_ptr<rend::EngineCamera> m_camera;
 		rend::Graphics m_graphics;
+		drag::MeshDragger m_dragger;
 
 	private:
 		//! Check for camera movement and if it exists, update it
@@ -135,28 +138,17 @@ namespace engn {
 		}
 
 		void findDraggable(const rend::RenderData& data) {
-			if (m_mouse.isRMBPressed() && !foundDraggable) {
-				auto& mPos = m_mouse.getMoveData();
-
-				geom::Ray atMouse = m_camera->castRay(XMVectorGetX(mPos.mousePos), XMVectorGetY(mPos.mousePos));
-
-				mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
-				auto collisionRes = rend::MeshSystem::getInstance().getClosestNormalMesh(atMouse, closest);
-				std::cout << "Collision Happened: " << collisionRes.first << std::endl;
-				std::cout << "Collision Pos: " << closest.pos << std::endl;
-				std::cout << "Collision T: " << closest.t << std::endl;
-				std::cout << "Collision Trinagle Idx: " << closest.triangle << std::endl;
-				foundDraggable = true;
+			if (m_mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
+				
+				m_dragger.capture(m_camera);
 			}
 			if (!m_mouse.isRMBPressed()) {
-				foundDraggable = false;
+				m_dragger.release();
 			}
 		}
 
 		void moveDraggable() {
-
+			m_dragger.drag(m_camera);
 		}
-
-		bool foundDraggable = false;
 	};
 } // engn

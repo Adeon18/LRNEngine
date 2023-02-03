@@ -40,7 +40,6 @@ namespace engn {
 		{
 			m_constantBufferVS.init();
 
-
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
@@ -52,24 +51,30 @@ namespace engn {
 			mptr = mdl::ModelManager::getInstance().getCubeModel();
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
-			//for (auto& m : mptr->getMeshes()) {
-			//	std::stringstream ss;
-			//	ss << "Name: " << m.name << std::endl;
-			//	ss << "Vertice num: " << m.vertices.size() << std::endl;
-			//	ss << "Trinagles num: " << m.triangles.size() << std::endl;
-			//	ss << "Instances size:\n" << m.meshToModel << std::endl;
-			//	ss << "Instances Inverse size:\n" << m.meshToModelInv << std::endl;
-			//	Logger::instance().logInfo(ss.str());
-			//}
+			for (int i = 0; i < 32; ++i) {
+				for (int j = 0; j < 32; ++j) {
+					mptr.reset();
+					mptr = mdl::ModelManager::getInstance().getCubeModel();
+					MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(i * 2.0f, 0.0f, j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+				}
+			}
 
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
+			/*for (int i = 0; i < 32; ++i) {
+				for (int j = 0; j < 32; ++j) {
+					mptr.reset();
+					mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+					MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(i * 3.0f, 0.0f, j * 3.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+				}
+			}*/
 
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f}});
 
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			
 		}
 
 		void Graphics::m_initRasterizer()

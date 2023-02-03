@@ -54,6 +54,7 @@
     <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
+    <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
     <ClInclude Include="source\mesh\MeshHelpers.hpp" />
@@ -85,6 +86,7 @@
     <ClCompile Include="render\RayTracer\mesh\Mesh.cpp" />
     <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
+    <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
     <ClCompile Include="source\mesh\Mesh.cpp" />
     <ClCompile Include="source\mesh\MeshHelpers.cpp" />

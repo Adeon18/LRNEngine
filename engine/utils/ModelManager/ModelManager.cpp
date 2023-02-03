@@ -145,7 +145,7 @@ namespace engn {
 						modelMesh.triangles[f].indices[j] = face.mIndices[j];
 					}
 				}
-				modelPtr->getMeshOcTrees()[i].initialize(modelMesh);
+				modelPtr->getMeshOcTrees()[i].initialize(modelPtr->getMeshes()[i]);
 			}
 
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)

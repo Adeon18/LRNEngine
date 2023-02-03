@@ -30,9 +30,9 @@ namespace engn {
 		}
 		void Mouse::onMove(MSG* m)
 		{
-			XMVECTOR newMosPos = XMVECTOR{ static_cast<float>(GET_X_LPARAM(m->lParam)), static_cast<float>(GET_Y_LPARAM(m->lParam)) };
+			XMVECTOR newMosPos = XMVECTOR{ static_cast<float>(GET_X_LPARAM(m->lParam)), static_cast<float>((GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYEDGE) * 2) + GET_Y_LPARAM(m->lParam)) };
 			m_moveData.mouseOffset = newMosPos - m_moveData.mousePos;
 			m_moveData.mousePos = newMosPos;
 		}
 	} // inp
-} // engn
+} // engnd
