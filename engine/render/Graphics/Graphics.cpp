@@ -50,7 +50,7 @@ namespace engn {
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 5.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
 			//mptr.reset();
 			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
@@ -70,14 +70,6 @@ namespace engn {
 			//mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
 
 			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-
-			geom::Ray ray{ {0.0f, 0.0f, -2.0f}, {0.0f, 0.0f, 1.0f} };
-			mdl::MeshIntersection m{ {}, {}, 1000.0f, 0 };
-
-			auto collisionRes = MeshSystem::getInstance().getClosestNormalMesh(ray, m);
-			std::cout << "Collision with normal group present: " << collisionRes.first << std::endl;
-			std::cout << "Collision pos: " << m.pos << std::endl;
-			std::cout << "Collision t: " << m.t << std::endl;
 		}
 
 		void Graphics::m_initRasterizer()

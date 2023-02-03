@@ -135,49 +135,28 @@ namespace engn {
 		}
 
 		void findDraggable(const rend::RenderData& data) {
-			if (m_mouse.isRMBPressed()) {
+			if (m_mouse.isRMBPressed() && !foundDraggable) {
+				auto& mPos = m_mouse.getMoveData();
 
-				XMVECTOR viewingFrustumNearPlane[4] =
-				{
-					{-1.0f, -1.0f, 0.0f, 1.0f},
-					{-1.0f,  1.0f, 0.0f, 1.0f},
-					{ 1.0f,  1.0f, 0.0f, 1.0f},
-					{ 1.0f, -1.0f, 0.0f, 1.0f},
-				};
-				XMVECTOR viewingFrustumNearPlaneWorldSpace[4];
+				geom::Ray atMouse = m_camera->castRay(XMVectorGetX(mPos.mousePos), XMVectorGetY(mPos.mousePos));
 
-				XMMATRIX viewProjInv = XMMatrixInverse(nullptr, m_camera->getViewMatrix() * m_camera->getProjMatrixReversed());
-				for (uint32_t i = 0; i < 4; ++i) {
-					viewingFrustumNearPlaneWorldSpace[i] = XMVector3Transform(viewingFrustumNearPlane[i], viewProjInv);
-					viewingFrustumNearPlaneWorldSpace[i] /= XMVectorGetW(viewingFrustumNearPlaneWorldSpace[i]);
-				}
-				XMVECTOR BLPlanePos = viewingFrustumNearPlaneWorldSpace[0];
-				XMVECTOR BLToTL = XMVector3Normalize(viewingFrustumNearPlaneWorldSpace[1] - BLPlanePos);
-				XMVECTOR BLToBR = XMVector3Normalize(viewingFrustumNearPlaneWorldSpace[3] - BLPlanePos);
-				std::cout << "BLPlanePos: " << BLPlanePos << " BLToTL: " << BLToTL << " BLToBR: " << BLToBR << std::endl;
-
-				float nearPlaneWidth = XMVectorGetX(viewingFrustumNearPlaneWorldSpace[3] - viewingFrustumNearPlaneWorldSpace[0]);
-				float nearPlaneHeight = XMVectorGetY(viewingFrustumNearPlaneWorldSpace[2] - viewingFrustumNearPlaneWorldSpace[3]);
-
-				float pixelWidth = nearPlaneWidth / data.iResolutionX;
-				float pixelHeight = nearPlaneHeight / data.iResolutionY;
-
-				std::cout << "ScreenWidth: " << nearPlaneWidth << " ScreenHeight: " << nearPlaneHeight << std::endl;
-				std::cout << "PixelWidth: " << pixelWidth << " PixelHeight: " << pixelHeight << std::endl;
-
-				XMVECTOR rayPos = m_camera->getCamPosition();
-				XMVECTOR rayTo = BLPlanePos +
-					BLToTL * pixelHeight * data.iResolutionY / 4.0f +
-					BLToBR * pixelWidth * data.iResolutionX / 2.0f;
-				XMVECTOR rayDir = XMVector3Normalize(rayTo - rayPos);
-				std::cout << "RayPos: " << rayPos << " RayTo: " << rayTo << " RayDir: " << rayDir << std::endl;
-
-				//geom::Ray ray{m_camera->getCamPosition(), m_get}
+				mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
+				auto collisionRes = rend::MeshSystem::getInstance().getClosestNormalMesh(atMouse, closest);
+				std::cout << "Collision Happened: " << collisionRes.first << std::endl;
+				std::cout << "Collision Pos: " << closest.pos << std::endl;
+				std::cout << "Collision T: " << closest.t << std::endl;
+				std::cout << "Collision Trinagle Idx: " << closest.triangle << std::endl;
+				foundDraggable = true;
+			}
+			if (!m_mouse.isRMBPressed()) {
+				foundDraggable = false;
 			}
 		}
 
 		void moveDraggable() {
 
 		}
+
+		bool foundDraggable = false;
 	};
 } // engn

@@ -67,7 +67,6 @@ namespace engn {
 				3, 6, 7, // back left
 			};
 
-			// TODO: MAKE BETTER
 			Mesh boxMesh;
 			boxMesh.name = "unit_box";
 			boxMesh.box = BoundingBox::unit();

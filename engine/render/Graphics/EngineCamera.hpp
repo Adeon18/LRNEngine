@@ -4,6 +4,8 @@
 
 #include "include/utility/utility.hpp"
 
+#include "source/math/Ray.hpp"
+
 namespace engn {
     namespace rend {
         using namespace DirectX;
@@ -36,6 +38,9 @@ namespace engn {
             //! Set the projection matrix
             void setProjectionMatrix(float fov, int width, int height);
 
+            //! Cast ray in the mouse direction from camera position
+            geom::Ray castRay(float x, float y);
+
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
@@ -46,9 +51,21 @@ namespace engn {
             [[nodiscard]] const XMVECTOR& getCamPosition() { return m_positionVec; }
 
         private:
+            const XMVECTOR m_viewingFrustumNearPlane[4] =
+            {
+                {-1.0f, -1.0f, 1.0f, 1.0f},
+                {-1.0f,  1.0f, 1.0f, 1.0f},
+                { 1.0f,  1.0f, 1.0f, 1.0f},
+                { 1.0f, -1.0f, 1.0f, 1.0f},
+            };
+            XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
+
             const XMVECTOR DEF_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
             const XMVECTOR DEF_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
             const XMVECTOR DEF_RIGHT_VECTOR = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+
+            int m_screenWidth;
+            int m_screenHeight;
 
             //! Position Data
             XMVECTOR m_positionVec;

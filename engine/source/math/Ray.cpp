@@ -1,5 +1,7 @@
 #include "Ray.hpp"
 
+//#define TRIANGLE_CULL 0
+
 namespace engn {
 
 	namespace geom {
@@ -78,21 +80,21 @@ namespace engn {
 
 			float invDet = 1.0f / det;
 
-			glm::vec3 toRayOrigin = r.origin - vertices[0];
+			XMVECTOR toRayOrigin = origin - v0;
 
-			float uParam = glm::dot(toRayOrigin, pv);
+			float uParam = XMVectorGetX(XMVector3Dot(toRayOrigin, pv));
 			if (uParam < 0.0f || uParam > det) {
 				return false;
 			}
 
-			glm::vec3 vParamTestVec = glm::cross(toRayOrigin, edges[0]);
+			XMVECTOR vParamTestVec = XMVector3Cross(toRayOrigin, edge1);
 
-			float vParam = glm::dot(r.direction, vParamTestVec);
+			float vParam = XMVectorGetX(XMVector3Dot(direction, vParamTestVec));
 			if (vParam < 0.0f || uParam + vParam > det) {
 				return false;
 			}
 
-			float t = glm::dot(edges[1], vParamTestVec) * invDet;
+			float t = XMVectorGetX(XMVector3Dot(edge1, vParamTestVec)) * invDet;
 #else
 			// If ray is paralell to the triangle
 			if (det < EPS && det > -EPS) {
