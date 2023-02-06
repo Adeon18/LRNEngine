@@ -139,7 +139,6 @@ namespace engn {
 
 		void findDraggable(const rend::RenderData& data) {
 			if (m_mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
-				
 				m_dragger.capture(m_camera);
 			}
 			if (!m_mouse.isRMBPressed()) {
@@ -148,7 +147,9 @@ namespace engn {
 		}
 
 		void moveDraggable() {
-			m_dragger.drag(m_camera);
+			if (m_dragger.isMeshCaptured()) {
+				m_dragger.drag(m_camera);
+			}
 		}
 	};
 } // engn

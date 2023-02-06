@@ -27,7 +27,7 @@ namespace engn {
 			[[nodiscard]] bool isMeshCaptured() const { return m_meshCaptured; }
 		private:
 			// The data that identifies which mesh was captured
-			rend::InstanceToDrag m_capturedMeshData;
+			rend::InstanceProperties m_capturedMeshData;
 			// The intersection data, aquired on capture, edited during drag to keep track of the offset
 			mdl::MeshIntersection m_capturedMeshIntersection;
 			DragPlane m_dragPlane;

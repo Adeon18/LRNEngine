@@ -7,6 +7,7 @@ namespace engn {
 			std::wstring shaderFolder = util::getExeDirW();
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
+			m_normalGroup.setType(GroupTypes::NORMAL);
 			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", shaderFolder + L"PSVoronoi.cso");
 
 		}
@@ -15,6 +16,7 @@ namespace engn {
 			std::wstring shaderFolder = util::getExeDirW();
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
+			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
 			m_hologramGroup.init(shaderFolder + L"VSHologram.cso", shaderFolder + L"PSHologram.cso");
 		}
 		void MeshSystem::render(const XMMATRIX& worldToClip)
@@ -30,29 +32,53 @@ namespace engn {
 		{
 			m_normalGroup.addModel(mod, mtrl, inc);
 		}
+
+
 		void MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			m_hologramGroup.addModel(mod, mtrl, inc);
 		}
 
-		void MeshSystem::setNormalInstancePosition(std::shared_ptr<mdl::Model> mod, uint32_t mtrlIdx, uint32_t insIdx, XMVECTOR pos)
+		void MeshSystem::addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset)
 		{
-			m_normalGroup.setModelPosition(mod, mtrlIdx, insIdx, pos);
+			switch (instanceData.group) {
+			case GroupTypes::NORMAL:
+			{
+				m_normalGroup.addModelOffset(instanceData, offset);
+			}
+			break;
+			case GroupTypes::HOLOGRAM:
+			{
+				m_hologramGroup.addModelOffset(instanceData, offset);
+			}
+			break;
+			default:
+			{}
+			}
 		}
 
-		std::pair<bool, InstanceToDrag> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest) {
+			InstanceProperties i2d{};
+			bool collided = false;
+			collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
+			if (!collided) { collided = m_hologramGroup.checkRayIntersection(ray, nearest, i2d); }
+
+			return std::pair<bool, InstanceProperties>{collided, i2d};
+		}
+
+		std::pair<bool, InstanceProperties> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
 		{
-			InstanceToDrag i2d{};
+			InstanceProperties i2d{};
 			bool collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
 
-			return std::pair<bool, InstanceToDrag>{collided, i2d};
+			return std::pair<bool, InstanceProperties>{collided, i2d};
 		}
-		std::pair<bool, InstanceToDrag> MeshSystem::getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
+		std::pair<bool, InstanceProperties> MeshSystem::getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
 		{
-			InstanceToDrag i2d{};
+			InstanceProperties i2d{};
 			bool collided = m_hologramGroup.checkRayIntersection(ray, nearest, i2d);
 
-			return std::pair<bool, InstanceToDrag>{collided, i2d};
+			return std::pair<bool, InstanceProperties>{collided, i2d};
 		}
 	} // rend
 } // engn

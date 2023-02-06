@@ -45,7 +45,7 @@ class Application
 	static constexpr int WIN_HEIGHT_DEF = 540;
 	static constexpr int BUFF_DECREASE_TIMES = 2;
 	static constexpr float ROLL_SPEED_DEG = 1.0f;
-	inline static float BG_COLOR[] = { 0.5f, 0.2f, 0.9f, 1.0f };
+	inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 public:
 	struct MouseInputData {
 		glm::vec2 mousePos;

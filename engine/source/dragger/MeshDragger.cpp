@@ -12,7 +12,7 @@ namespace engn {
 
 			// Capture the mesh
 			mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
-			auto collisionRes = rend::MeshSystem::getInstance().getClosestHologramMesh(atMouse, closest);
+			auto collisionRes = rend::MeshSystem::getInstance().getClosestMesh(atMouse, closest);
 			std::cout << "Collision Happened: " << collisionRes.first << std::endl;
 			if (collisionRes.first) {
 				m_meshCaptured = true;
@@ -26,18 +26,16 @@ namespace engn {
 		}
 		void MeshDragger::drag(std::unique_ptr<rend::EngineCamera>& camPtr)
 		{
-			if (m_meshCaptured) {
-				auto& mosPos = inp::Mouse::getInstance().getMoveData();
-				if (!XMVectorGetX(XMVectorEqual(mosPos.mousePos, m_oldMosPos))) {
-					m_oldMosPos = mosPos.mousePos;
-					geom::Ray atMousePos = camPtr->castRay(XMVectorGetX(mosPos.mousePos), XMVectorGetY(mosPos.mousePos));
+			auto& mosPos = inp::Mouse::getInstance().getMoveData();
+			if (!XMVectorGetX(XMVectorEqual(mosPos.mousePos, m_oldMosPos))) {
+				m_oldMosPos = mosPos.mousePos;
+				geom::Ray atMousePos = camPtr->castRay(XMVectorGetX(mosPos.mousePos), XMVectorGetY(mosPos.mousePos));
 
-					geom::BasicRayIntersection closest{ {}, {}, 1000.0f };
-					atMousePos.intersect(closest, m_dragPlane.normal, m_dragPlane.pos);
+				geom::BasicRayIntersection closest{ {}, {}, 1000.0f };
+				atMousePos.intersect(closest, m_dragPlane.normal, m_dragPlane.pos);
 
-					rend::MeshSystem::getInstance().setNormalInstancePosition(m_capturedMeshData.model, m_capturedMeshData.materialIdx, m_capturedMeshData.instanceIdx, closest.pos - m_capturedMeshIntersection.pos);
-					m_capturedMeshIntersection.pos = closest.pos;
-				}
+				rend::MeshSystem::getInstance().addInstanceOffset(m_capturedMeshData, closest.pos - m_capturedMeshIntersection.pos);
+				m_capturedMeshIntersection.pos = closest.pos;
 			}
 		}
 		void MeshDragger::release()

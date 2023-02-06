@@ -18,11 +18,17 @@
 
 namespace engn {
 	namespace rend {
+		enum GroupTypes {
+			NORMAL,
+			HOLOGRAM
+		};
+
 		//! Struct that identifies the instance of the material of the model to be dragged
-		struct InstanceToDrag {
-			uint32_t instanceIdx;
-			uint32_t materialIdx;
+		struct InstanceProperties {
+			GroupTypes group;
 			std::shared_ptr<mdl::Model> model;
+			uint32_t materialIdx;
+			uint32_t instanceIdx;
 		};
 
 		template<typename I, typename M>
@@ -44,11 +50,16 @@ namespace engn {
 			InstanceBuffer<I> m_instanceBuffer;
 			ConstantBuffer<CB_VS_MeshData> m_meshData;
 
+			//! A unique enum identifier that allows to get the group type at dragger collision
+			GroupTypes m_type;
+
 			VertexShader m_vertexShader;
 			PixelShader m_pixelShader;
 		public:
+			void setType(const GroupTypes& t) { m_type = t; }
+
 			// Find the closest instance that intersects with a ray and fill in the infor struct
-			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceToDrag& i2d) {
+			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
 
 				// TODO: Clean Up
 				bool hasIntersection = false;
@@ -61,9 +72,10 @@ namespace engn {
 									std::cout << "Nearest pos before transform: " << nearest.pos << std::endl;
 
 									nearest.pos = XMVector3Transform(nearest.pos, perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld);
-									i2d.instanceIdx = insIdx;
-									i2d.materialIdx = matIdx;
+									i2d.group = m_type;
 									i2d.model = perModel.model;
+									i2d.materialIdx = matIdx;
+									i2d.instanceIdx = insIdx;
 
 									std::cout << "Nearest pos after transform: " << nearest.pos << std::endl;
 									if (!hasIntersection) { hasIntersection = true; }
@@ -95,15 +107,15 @@ namespace engn {
 				m_meshData.init();
 			}
 
-			void setModelPosition(std::shared_ptr<mdl::Model> mod, uint32_t perMtrlIdx, uint32_t perInsIdx, XMVECTOR pos) {
+			void addModelOffset(const InstanceProperties& insProps, const XMVECTOR& offset) {
 				for (auto& perModel : m_models) {
-					if (perModel.model->name == mod->name) {
+					if (perModel.model->name == insProps.model->name) {
 						for (auto& perMesh : perModel.perMesh) {
 							for (uint32_t matIdx = 0; matIdx < perMesh.size(); ++matIdx) {
-								if (matIdx == perMtrlIdx) {
+								if (matIdx == insProps.materialIdx) {
 									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
-										if (insIdx == perInsIdx) {
-											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixTranslationFromVector(pos);
+										if (insIdx == insProps.instanceIdx) {
+											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixTranslationFromVector(offset);
 										}
 									}
 								}
@@ -186,7 +198,7 @@ namespace engn {
 							uint32_t numModelInstances = instances.size();
 							for (uint32_t index = 0; index < numModelInstances; ++index)
 							{
-								// Dangerous!
+								// Dangerous! TODO
 								I ins;
 								ins.modelToWorld = material.instances[index].modelToWorld * worldToView;
 								ins.color = material.instances[index].color;
@@ -271,11 +283,14 @@ namespace engn {
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 
-			void setNormalInstancePosition(std::shared_ptr<mdl::Model> mod, uint32_t mtrlIdx, uint32_t insIdx, XMVECTOR pos);
-			std::pair<bool, InstanceToDrag> getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
-			std::pair<bool, InstanceToDrag> getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
+
+			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			std::pair<bool, InstanceProperties> getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			std::pair<bool, InstanceProperties> getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
+
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
 		};
