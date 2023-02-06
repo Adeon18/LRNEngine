@@ -121,6 +121,10 @@ namespace engn {
 				modelMesh.box.setMin(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMin));
 				modelMesh.box.setMax(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMax));
 
+				std::cout << "Mesh Name: " << modelMesh.name << std::endl;
+				std::cout << "Mesh Min: " << modelMesh.box.getMin() << std::endl;
+				std::cout << "Mesh Max: " << modelMesh.box.getMax() << std::endl;
+
 				modelMesh.vertices.resize(assimpMesh->mNumVertices);
 				modelMesh.triangles.resize(assimpMesh->mNumFaces);
 
@@ -166,6 +170,20 @@ namespace engn {
 					loadInstances(node->mChildren[i]);
 				}
 			};
+
+			/*for (uint32_t i = 0; i < modelPtr->getMeshes().size(); ++i) {
+				auto& mesh = modelPtr->getMeshes()[i];
+				std::cout << "Mesh Name: " << mesh.name << std::endl;
+				std::cout << "Mesh Min Before Transform: " << mesh.box.getMin() << std::endl;
+				std::cout << "Mesh Max Before Transform: " << mesh.box.getMax() << std::endl;
+				mesh.box.setMax(XMVector3Transform(mesh.box.getMin(), mesh.meshToModel));
+				mesh.box.setMin(XMVector3Transform(mesh.box.getMax(), mesh.meshToModel));
+
+				std::cout << "Mesh Min After Transform: " << mesh.box.getMin() << std::endl;
+				std::cout << "Mesh Max After Transform: " << mesh.box.getMax() << std::endl;
+
+				modelPtr->getMeshOcTrees()[i].initialize(mesh);
+			}*/
 
 			loadInstances(assimpScene->mRootNode);
 

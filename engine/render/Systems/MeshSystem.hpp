@@ -67,20 +67,21 @@ namespace engn {
 					for (uint32_t meshIdx = 0; meshIdx < perModel.perMesh.size(); ++meshIdx) {
 						for (uint32_t matIdx = 0; matIdx < perModel.perMesh[meshIdx].size(); ++matIdx) {
 							for (uint32_t insIdx = 0; insIdx < perModel.perMesh[meshIdx][matIdx].instances.size(); ++insIdx) {
-								ray.transform(XMMatrixInverse(nullptr, perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld));
+								XMMATRIX meshtoWorld = perModel.model->getMeshes()[meshIdx].meshToModel * perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld;
+								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
 								if (perModel.model->getMeshOcTrees()[meshIdx].intersect(ray, nearest)) {
-									std::cout << "Nearest pos before transform: " << nearest.pos << std::endl;
+									//std::cout << "Nearest pos before transform: " << nearest.pos << std::endl;
 
-									nearest.pos = XMVector3Transform(nearest.pos, perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld);
+									nearest.pos = XMVector3Transform(nearest.pos, meshtoWorld);
 									i2d.group = m_type;
 									i2d.model = perModel.model;
 									i2d.materialIdx = matIdx;
 									i2d.instanceIdx = insIdx;
 
-									std::cout << "Nearest pos after transform: " << nearest.pos << std::endl;
+									//std::cout << "Nearest pos after transform: " << nearest.pos << std::endl;
 									if (!hasIntersection) { hasIntersection = true; }
 								}
-								ray.transform(perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld);
+								ray.transform(meshtoWorld);
 							}
 						}
 					}

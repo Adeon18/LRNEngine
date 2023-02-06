@@ -10,6 +10,7 @@ namespace engn {
 			origin = XMVector3Transform(origin, transMat);
 			direction = XMVectorSetW(direction, 0.0f);
 			direction = XMVector4Transform(direction, transMat);
+			//direction = XMVector3Normalize(direction);
 		}
 
 		XMVECTOR Ray::getPointAt(float t) const { return origin + t * direction; }

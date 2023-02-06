@@ -55,7 +55,7 @@ namespace engn {
 				for (int j = 0; j < 32; ++j) {
 					mptr.reset();
 					mptr = mdl::ModelManager::getInstance().getCubeModel();
-					MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(i * 2.0f, 0.0f, j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+					MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(i * 2.0f, 0.0f, j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 				}
 			}
 

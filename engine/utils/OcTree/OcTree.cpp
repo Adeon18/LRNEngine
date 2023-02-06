@@ -42,7 +42,7 @@ namespace engn {
 				bool inserted = addTriangle(i, V1, V2, V3, P);
 			}
 
-			std::cout << m_mesh->name + ": triangles: " << m_triangles.size() << std::endl;
+			//std::cout << m_mesh->name + ": triangles: " << m_triangles.size() << std::endl;
 		}
 
 		void TriangleOctree::initialize(const mdl::Mesh& mesh, const mdl::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex)
@@ -203,10 +203,10 @@ namespace engn {
 				// I EDITED
 				if (ray.intersect(nearest, V1, V2, V3))
 				{
-					std::cout << "AAAAAAAAAAA" << std::endl;
+					/*std::cout << "AAAAAAAAAAA" << std::endl;
 					std::cout << "V1: " << V1 << std::endl;
 					std::cout << "V2: " << V2 << std::endl;
-					std::cout << "V3: " << V3 << std::endl;
+					std::cout << "V3: " << V3 << std::endl;*/
 					nearest.triangle = i;
 					found = true;
 				}

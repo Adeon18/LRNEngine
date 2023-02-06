@@ -59,9 +59,16 @@ namespace engn {
 
 		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest) {
 			InstanceProperties i2d{};
+
+			// TODO: Like this for now, haven't found the idea for organizing it in any other way yet
 			bool collided = false;
-			collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
-			if (!collided) { collided = m_hologramGroup.checkRayIntersection(ray, nearest, i2d); }
+			std::vector<bool> collisionResults;
+			collisionResults.push_back(m_normalGroup.checkRayIntersection(ray, nearest, i2d));
+			collisionResults.push_back(m_hologramGroup.checkRayIntersection(ray, nearest, i2d));
+
+			if (std::any_of(collisionResults.begin(), collisionResults.end(), [](bool v) { return v; })) {
+				collided = true;
+			}
 
 			return std::pair<bool, InstanceProperties>{collided, i2d};
 		}
