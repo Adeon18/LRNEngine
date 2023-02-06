@@ -13,9 +13,7 @@ namespace engn {
 			// Capture the mesh
 			mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
 			auto collisionRes = rend::MeshSystem::getInstance().getClosestMesh(atMouse, closest);
-			std::cout << "Collision Happened: " << collisionRes.first << std::endl;
-			std::cout << "Collision Pos: " << closest.pos << std::endl;
-			std::cout << "Collision T: " << closest.t << std::endl;
+
 			// Save the data to the next frame if the collision happened
 			if (collisionRes.first) {
 				m_meshCaptured = true;

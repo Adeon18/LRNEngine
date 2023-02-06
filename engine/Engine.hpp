@@ -51,6 +51,10 @@ namespace engn {
 			m_graphics.init();
 		}
 
+		void setWindowSize(int screenWidth, int screenHeight) {
+			m_camera->setNewScreenSize(screenWidth, screenHeight);
+		}
+
 		void render(const rend::RenderData& data) {
 			m_graphics.renderFrame(m_camera, data);
 		}
@@ -70,20 +74,16 @@ namespace engn {
 			Logger::createFileLogger("Engine", "engine.log");
 			Logger::instance().setDefaultLoggerName("Engine");
 
-			m_d3d.init();
+			rend::D3D::getInstance().init();
 			rend::MeshSystem::getInstance().init();
 		}
 
 		static void deinit()
 		{
 			// deinitilizes engine singletons in reverse order
-			m_d3d.deinit();
+			rend::D3D::getInstance().deinit();
 		}
 	private:
-		// Singletons
-		static inline rend::D3D& m_d3d = rend::D3D::getInstance();
-		static inline inp::Mouse& m_mouse = inp::Mouse::getInstance();
-		static inline inp::Keyboard& m_keyboard = inp::Keyboard::getInstance();
 		// Render
 		std::unique_ptr<rend::EngineCamera> m_camera;
 		rend::Graphics m_graphics;
@@ -96,7 +96,7 @@ namespace engn {
 			
 			XMVECTOR position{0.0f, 0.0f, 0.0f, 0.0f};
 			for (const auto& key : CameraSettings::MOVE_KEYS) {
-				if (m_keyboard.isKeyPressed(key)) {
+				if (inp::Keyboard::getInstance().isKeyPressed(key)) {
 					if (!cameraMoved) { cameraMoved = true; }
 					position += CameraSettings::MOVE_TO_ACTION[key];
 				}
@@ -112,18 +112,19 @@ namespace engn {
 			XMVECTOR rotation{ 0.0f, 0.0f, 0.0f };
 			// Roll
 			for (const auto& key : CameraSettings::ROLL_KEYS) {
-				if (m_keyboard.isKeyPressed(key)) {
+				if (inp::Keyboard::getInstance().isKeyPressed(key)) {
 					if (!cameraRotated) { cameraRotated = true; }
 					rotation += CameraSettings::MOVE_TO_ACTION[key];
 				}
 			}
 			// pitch and yaw
-			XMVECTOR& offset = m_mouse.getMoveData().mouseOffset;
-			if (m_mouse.isLMBPressed() && XMVectorGetX(XMVector2LengthSq(offset)) > 0.0f) {
+			auto& mouse = inp::Mouse::getInstance();
+			XMVECTOR& offset = mouse.getMoveData().mouseOffset;
+			if (mouse.isLMBPressed() && XMVectorGetX(XMVector2LengthSq(offset)) > 0.0f) {
 				if (!cameraRotated) { cameraRotated = true; }
 				rotation = XMVectorSetX(rotation, XMVectorGetY(offset));
 				rotation = XMVectorSetY(rotation, XMVectorGetX(offset));
-				m_mouse.getMoveData().mouseOffset = XMVECTOR{ 0, 0 };
+				mouse.getMoveData().mouseOffset = XMVECTOR{ 0, 0 };
 			}
 
 			if (cameraRotated) {
@@ -138,10 +139,12 @@ namespace engn {
 		}
 
 		void findDraggable(const rend::RenderData& data) {
-			if (m_mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
+			auto& mouse = inp::Mouse::getInstance();
+
+			if (mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
 				m_dragger.capture(m_camera);
 			}
-			if (!m_mouse.isRMBPressed()) {
+			if (!mouse.isRMBPressed()) {
 				m_dragger.release();
 			}
 		}

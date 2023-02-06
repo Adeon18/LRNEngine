@@ -70,7 +70,6 @@ namespace engn {
 								XMMATRIX meshtoWorld = perModel.model->getMeshes()[meshIdx].meshToModel * perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld;
 								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
 								if (perModel.model->getMeshOcTrees()[meshIdx].intersect(ray, nearest)) {
-									//std::cout << "Nearest pos before transform: " << nearest.pos << std::endl;
 
 									nearest.pos = XMVector3Transform(nearest.pos, meshtoWorld);
 									i2d.group = m_type;
@@ -78,7 +77,6 @@ namespace engn {
 									i2d.materialIdx = matIdx;
 									i2d.instanceIdx = insIdx;
 
-									//std::cout << "Nearest pos after transform: " << nearest.pos << std::endl;
 									if (!hasIntersection) { hasIntersection = true; }
 								}
 								ray.transform(meshtoWorld);
@@ -287,11 +285,10 @@ namespace engn {
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 
 			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
-			std::pair<bool, InstanceProperties> getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
-			std::pair<bool, InstanceProperties> getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
-
+			
+			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
 		};

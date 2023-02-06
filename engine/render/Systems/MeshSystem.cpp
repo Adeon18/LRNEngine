@@ -72,20 +72,5 @@ namespace engn {
 
 			return std::pair<bool, InstanceProperties>{collided, i2d};
 		}
-
-		std::pair<bool, InstanceProperties> MeshSystem::getClosestNormalMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
-		{
-			InstanceProperties i2d{};
-			bool collided = m_normalGroup.checkRayIntersection(ray, nearest, i2d);
-
-			return std::pair<bool, InstanceProperties>{collided, i2d};
-		}
-		std::pair<bool, InstanceProperties> MeshSystem::getClosestHologramMesh(geom::Ray& ray, mdl::MeshIntersection& nearest)
-		{
-			InstanceProperties i2d{};
-			bool collided = m_hologramGroup.checkRayIntersection(ray, nearest, i2d);
-
-			return std::pair<bool, InstanceProperties>{collided, i2d};
-		}
 	} // rend
 } // engn

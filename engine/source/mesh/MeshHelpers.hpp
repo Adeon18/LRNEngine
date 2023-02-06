@@ -13,6 +13,7 @@ namespace engn {
 	namespace mdl {
 		using namespace DirectX;
 
+		// TODO: default initialization + remove triang
 		struct MeshIntersection
 		{
 			XMVECTOR pos;

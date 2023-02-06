@@ -40,24 +40,10 @@ int Application::run() {
 		m_processWIN32Queue(&msg);
 
 		if (m_timer->frameElapsed()) {
-#if DX_ENGINE == 1
 			auto debug = m_timer->isDebugFPSShow();
 			if (debug.first) { engn::Logger::instance().logDebug("FPS", debug.second); }
 
 			m_handleRender();
-#else
-			if (m_window->allocateBitmapBuffer()) {
-				setWindowSize(m_window->getWidth(), m_window->getHeight());
-			}
-			// Debug
-			auto debug = m_timer->isDebugFPSShow();
-			if (debug.first) { std::cout << "FPS: " << debug.second << std::endl; }
-
-			m_handleRender();
-			m_handlePhysics();
-
-			m_window->flush();
-#endif
 		}
 		std::this_thread::yield();
 	}
@@ -101,7 +87,9 @@ void Application::m_handleRender() {
 		1.0f / m_window->getHeight(),
 	};
 	// Render fucntions
-	m_window->clear(BG_COLOR);
+	if (m_window->clear(BG_COLOR)) {
+		m_engine->setWindowSize(m_window->getWidth(), m_window->getHeight());
+	}
 	m_engine->handlePhysics(renderData);
 	m_engine->render(renderData);
 	m_window->present();

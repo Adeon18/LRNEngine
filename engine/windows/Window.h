@@ -209,8 +209,9 @@ namespace engn {
 
 
 			//! Set the RTV and clear the window with the specified color
-			void clear(float* color)
+			bool clear(float* color)
 			{
+				bool wasResized = false;
 				// Resize if there was a call
 				if (m_toBeResized)
 				{
@@ -219,12 +220,15 @@ namespace engn {
 					initDepthStensilBuffer();
 					initViewPort();
 					m_toBeResized = false;
+					wasResized = true;
 				}
 				// We set the rendertargetview each frame
 				setRenderTargetView();
 				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+			
+				return wasResized;
 			}
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
