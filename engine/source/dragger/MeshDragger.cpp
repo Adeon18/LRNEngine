@@ -11,7 +11,7 @@ namespace engn {
 			geom::Ray atMouse = camPtr->castRay(XMVectorGetX(mosPos.mousePos), XMVectorGetY(mosPos.mousePos));
 
 			// Capture the mesh
-			mdl::MeshIntersection closest{ {}, {}, 1000.0f, 0 };
+			mdl::MeshIntersection closest = mdl::MeshIntersection::empty();
 			auto collisionRes = rend::MeshSystem::getInstance().getClosestMesh(atMouse, closest);
 
 			// Save the data to the next frame if the collision happened

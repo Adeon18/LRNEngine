@@ -61,14 +61,21 @@ namespace engn {
 			// Find the closest instance that intersects with a ray and fill in the infor struct
 			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
 
-				// TODO: Clean Up
 				bool hasIntersection = false;
 				for (auto& perModel : m_models) {
-					for (uint32_t meshIdx = 0; meshIdx < perModel.perMesh.size(); ++meshIdx) {
-						for (uint32_t matIdx = 0; matIdx < perModel.perMesh[meshIdx].size(); ++matIdx) {
-							for (uint32_t insIdx = 0; insIdx < perModel.perMesh[meshIdx][matIdx].instances.size(); ++insIdx) {
-								XMMATRIX meshtoWorld = perModel.model->getMeshes()[meshIdx].meshToModel * perModel.perMesh[meshIdx][matIdx].instances[insIdx].modelToWorld;
+					uint32_t meshIdx = 0;
+					for (auto& perMesh: perModel.perMesh) {
+						uint32_t matIdx = 0;
+						for (auto& perMaterial: perMesh) {
+							uint32_t insIdx = 0;
+							for (auto& perInstance: perMaterial.instances) {
+								// We find ray intersections in MESH SPACE
+								XMMATRIX meshtoWorld =
+									perModel.model->getMeshes()[meshIdx].meshToModel *
+									perInstance.modelToWorld;
+								// Ray to Mesh Space
 								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
+								// If there is a collision
 								if (perModel.model->getMeshOcTrees()[meshIdx].intersect(ray, nearest)) {
 
 									nearest.pos = XMVector3Transform(nearest.pos, meshtoWorld);
@@ -79,9 +86,14 @@ namespace engn {
 
 									if (!hasIntersection) { hasIntersection = true; }
 								}
+								// Transform ray back to world space
 								ray.transform(meshtoWorld);
+
+								++insIdx;
 							}
+							++matIdx;
 						}
+						++meshIdx;
 					}
 				}
 				return hasIntersection;
@@ -197,7 +209,7 @@ namespace engn {
 							uint32_t numModelInstances = instances.size();
 							for (uint32_t index = 0; index < numModelInstances; ++index)
 							{
-								// Dangerous! TODO
+								// Dangerous! TODO SFINAE
 								I ins;
 								ins.modelToWorld = material.instances[index].modelToWorld * worldToView;
 								ins.color = material.instances[index].color;

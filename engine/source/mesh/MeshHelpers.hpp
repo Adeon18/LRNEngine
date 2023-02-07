@@ -12,14 +12,14 @@
 namespace engn {
 	namespace mdl {
 		using namespace DirectX;
-
-		// TODO: default initialization + remove triang
 		struct MeshIntersection
 		{
+			static constexpr float MAX_LENGTH = 1000.0f;
+			static const MeshIntersection empty() { return { {}, {}, MAX_LENGTH }; }
+
 			XMVECTOR pos;
 			XMVECTOR normal;
 			float t;
-			uint32_t triangle;
 
 			bool valid() const { return std::isfinite(t); }
 		};

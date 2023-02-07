@@ -121,30 +121,26 @@ namespace engn {
 				modelMesh.box.setMin(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMin));
 				modelMesh.box.setMax(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMax));
 
-				std::cout << "Mesh Name: " << modelMesh.name << std::endl;
-				std::cout << "Mesh Min: " << modelMesh.box.getMin() << std::endl;
-				std::cout << "Mesh Max: " << modelMesh.box.getMax() << std::endl;
-
 				modelMesh.vertices.resize(assimpMesh->mNumVertices);
 				modelMesh.triangles.resize(assimpMesh->mNumFaces);
 
-				// TODO: Beautify
 				for (uint32_t v = 0; v < assimpMesh->mNumVertices; ++v)
 				{
 					Vertex& vertex = modelMesh.vertices[v];
 					vertex.pos = util::aiVector3DtoXMFLOAT3(assimpMesh->mVertices[v]);
-					auto tcc = util::aiVector3DtoXMFLOAT3(assimpMesh->mTextureCoords[0][v]);
-					vertex.tc = XMFLOAT2{tcc.x, tcc.y};
+					//! WARNING! IS THIS RIGHT???? WE WILL SEEEE
+					auto tcVec3 = util::aiVector3DtoXMFLOAT3(assimpMesh->mTextureCoords[0][v]);
+					vertex.tc = XMFLOAT2{ tcVec3.x, tcVec3.y };
 					vertex.normal = util::aiVector3DtoXMFLOAT3(assimpMesh->mNormals[v]);
 					vertex.tangent = util::aiVector3DtoXMFLOAT3(assimpMesh->mTangents[v]);
-					auto btanOrig = util::aiVector3DtoXMFLOAT3((assimpMesh->mBitangents[v]));
-					vertex.bitangent = XMFLOAT3{ btanOrig.x * -1.f, btanOrig.y * -1.f, btanOrig.z * -1.f }; // Flip V
+
+					auto bitanOrig = util::aiVector3DtoXMFLOAT3((assimpMesh->mBitangents[v]));
+					vertex.bitangent = XMFLOAT3{ bitanOrig.x * -1.f, bitanOrig.y * -1.f, bitanOrig.z * -1.f }; // Flip V
 				}
 
 				for (uint32_t f = 0; f < assimpMesh->mNumFaces; ++f)
 				{
 					const auto& face = assimpMesh->mFaces[f];
-					// TODO: Check for 3 indices
 					for (uint32_t j = 0; j < face.mNumIndices; ++j) {
 						modelMesh.triangles[f].indices[j] = face.mIndices[j];
 					}

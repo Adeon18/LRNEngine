@@ -44,25 +44,24 @@ namespace engn {
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
-            const XMMATRIX& getProjMatrixReversed() { return m_projectionReversed; }
             [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewInv.r[0]; }
             [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewInv.r[1]; }
             [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewInv.r[2]; }
             [[nodiscard]] const XMVECTOR& getCamPosition() { return m_positionVec; }
 
         private:
-            const XMVECTOR m_viewingFrustumNearPlane[4] =
-            {
-                {-1.0f, -1.0f, 0.0f, 1.0f},
-                {-1.0f,  1.0f, 0.0f, 1.0f},
-                { 1.0f,  1.0f, 0.0f, 1.0f},
-                { 1.0f, -1.0f, 0.0f, 1.0f},
-            };
-            XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
-
             const XMVECTOR DEF_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
             const XMVECTOR DEF_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
             const XMVECTOR DEF_RIGHT_VECTOR = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+            // Near plane of the viewing frustum(near plane is 1.0f because depth reversed)
+            const XMVECTOR m_viewingFrustumNearPlane[4] =
+            {
+                {-1.0f, -1.0f, 1.0f, 1.0f},
+                {-1.0f,  1.0f, 1.0f, 1.0f},
+                { 1.0f,  1.0f, 1.0f, 1.0f},
+                { 1.0f, -1.0f, 1.0f, 1.0f},
+            };
+            XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
 
             int m_screenWidth;
             int m_screenHeight;
@@ -76,8 +75,6 @@ namespace engn {
             XMMATRIX m_view;
             XMMATRIX m_viewInv;
             XMMATRIX m_projection;
-            // Reversed projection matrix to make ray dragging work
-            XMMATRIX m_projectionReversed;
             //! Rotation data
             XMVECTOR m_rotationQuat{ 0.0f, 0.0f, 0.0f, 1.0f };
         };

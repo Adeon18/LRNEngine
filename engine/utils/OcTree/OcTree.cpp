@@ -207,7 +207,6 @@ namespace engn {
 					std::cout << "V1: " << V1 << std::endl;
 					std::cout << "V2: " << V2 << std::endl;
 					std::cout << "V3: " << V3 << std::endl;*/
-					nearest.triangle = i;
 					found = true;
 				}
 			}
