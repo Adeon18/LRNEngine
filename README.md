@@ -26,3 +26,21 @@ Additions:
 - VS and PS both with constant buffers for each of them
 - There is a `#define VORONOI` in the `engine/render/Graphics/shaders/PS.hlsl` that defines what to run: **HelloTrinagle** or **HelloShaderToyTriangle**.
 - The shaders are found always by absolute, no matter the working directory. Can run everywhere!
+
+## HW4: Instanced rendering, Model Loading and more
+How to run:
+1. Get all the submodules(spdlog, assimp)
+2. Make assimp work:
+	- Easy way: `vcpkg install assimp` and add vckkg `installed` directory to `engine` and `project` properties in visual studio
+	- Another way (For me, did not work very stable):
+		- Disable `BUILD_SHARED_LIBS` in `lib/assimp/CMakeLists.txt` and build it, should link and work, but only `x86`.
+
+Additions:
+- Some model assets to play with
+- Added a quaternion camera
+- Added a depth-reversed depth buffer
+- Created a model manager to import models from files using assimp
+- Added a MeshSystem for instenced rendering of meshes
+- Able to render multiple cubes/models with different colors/shaders
+- Added mesh instance dragging
+- Connected hologram shaders that are position independant and applied them to models.
