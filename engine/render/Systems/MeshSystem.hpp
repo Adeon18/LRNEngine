@@ -3,7 +3,7 @@
 #include "RenderStructs.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
-#include "render/Instances/Model.hpp"
+#include "render/Objects/Model.hpp"
 
 #include "render/Graphics/VertexBuffer.hpp"
 #include "render/Graphics/ConstantBuffer.hpp"

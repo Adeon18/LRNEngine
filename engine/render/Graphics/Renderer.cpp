@@ -2,7 +2,7 @@
 #include <sstream>
 #include <vector>
 
-#include "Graphics.hpp"
+#include "Renderer.hpp"
 
 #include "render/Systems/MeshSystem.hpp"
 
@@ -12,13 +12,13 @@
 
 namespace engn {
 	namespace rend {
-		void Graphics::init() {
+		void Renderer::init() {
 			m_initRasterizer();
 			m_initDepthStencilState();
 			m_initScene();
 		}
 
-		void Graphics::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
+		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// Set Input Assembler Data
 			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -30,14 +30,15 @@ namespace engn {
 			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
 		}
 
-		void Graphics::m_initScene()
+		void Renderer::m_initScene()
 		{
 			m_constantBufferVS.init();
 
+			// TODO: Later may move to some map
 #ifdef _WIN64 
-			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
 #else
-			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
 #endif // !_WIN64
 
 
@@ -83,7 +84,7 @@ namespace engn {
 			}*/
 		}
 
-		void Graphics::m_initRasterizer()
+		void Renderer::m_initRasterizer()
 		{
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
@@ -96,7 +97,7 @@ namespace engn {
 			}
 		}
 		//! Initialize the depth stencil state, set only once in window constructor
-		void Graphics::m_initDepthStencilState() {
+		void Renderer::m_initDepthStencilState() {
 			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
 
 			depthStencilStateDesc.DepthEnable = true;
@@ -110,7 +111,7 @@ namespace engn {
 				return;
 			}
 		}
-		void Graphics::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
+		void Renderer::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// General Data constant buffer
 			m_constantBufferVS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };

@@ -111,7 +111,7 @@
     <ClInclude Include="Engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\Graphics.hpp">
+    <ClInclude Include="render\Graphics\Renderer.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="render\Graphics\Vertex.hpp">
@@ -156,7 +156,7 @@
     <ClInclude Include="utils\ModelManager\ModelManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Instances\Model.hpp">
+    <ClInclude Include="render\Objects\Model.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\mesh\Mesh.hpp">
@@ -227,7 +227,7 @@
     <ClCompile Include="render\RayTracer\Scene\Scene.cpp">
       <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\Graphics.cpp">
+    <ClCompile Include="render\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="render\Graphics\PixelShader.cpp">
@@ -273,6 +273,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\dragger\MeshDragger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Objects\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

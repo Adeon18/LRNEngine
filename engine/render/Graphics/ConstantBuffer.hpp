@@ -12,7 +12,7 @@ namespace engn {
 		template<typename T>
 		class ConstantBuffer {
 		public:
-			ConstantBuffer() {}
+			ConstantBuffer() : data{} {}
 
 			void init() {
 				D3D11_BUFFER_DESC desc;

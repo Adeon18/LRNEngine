@@ -32,7 +32,7 @@ namespace engn {
 				m_oldMosPos = mosPos.mousePos;
 				geom::Ray atMousePos = camPtr->castRay(XMVectorGetX(mosPos.mousePos), XMVectorGetY(mosPos.mousePos));
 
-				geom::BasicRayIntersection closest{ {}, {}, 1000.0f };
+				geom::BasicRayIntersection closest = geom::BasicRayIntersection::empty();
 				atMousePos.intersect(closest, m_dragPlane.normal, m_dragPlane.pos);
 
 				rend::MeshSystem::getInstance().addInstanceOffset(m_capturedMeshData, closest.pos - m_capturedMeshIntersection.pos);

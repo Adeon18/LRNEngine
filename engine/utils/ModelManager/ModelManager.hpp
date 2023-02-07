@@ -9,7 +9,7 @@
 #include "utils/Logger/Logger.hpp"
 
 #include "source/mesh/Mesh.hpp"
-#include "render/Instances/Model.hpp"
+#include "render/Objects/Model.hpp"
 
 namespace engn {
 	namespace mdl {

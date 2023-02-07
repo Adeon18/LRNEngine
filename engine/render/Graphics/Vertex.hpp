@@ -10,7 +10,13 @@ namespace engn {
 			const DirectX::XMFLOAT3& norm,
 			const DirectX::XMFLOAT3& tnt,
 			const DirectX::XMFLOAT3& btnt,
-			const DirectX::XMFLOAT2& tcods) : pos{ ps }, normal{ norm }, tangent{ tnt }, bitangent{ btnt }, tc{tcods} {};
+			const DirectX::XMFLOAT2& tcods) : 
+			pos{ ps },
+			normal{ norm },
+			tangent{ tnt },
+			bitangent{ btnt },
+			tc{tcods}
+		{}
 
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 normal;

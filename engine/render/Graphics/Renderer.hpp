@@ -24,7 +24,7 @@ namespace engn {
 		/// <summary>
 		/// This class facilitates everything needed for the rendering pipeline
 		/// </summary>
-		class Graphics {
+		class Renderer {
 		public:
 			void init();
 			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "input/Keyboard.hpp"
+
 #include <DirectXMath.h>
 
 #include "include/utility/utility.hpp"
@@ -10,7 +12,34 @@ namespace engn {
     namespace rend {
         using namespace DirectX;
         class EngineCamera {
-
+        public:
+            struct CameraSettings {
+                static constexpr float CAMERA_SPEED = 0.02f;
+                static constexpr float ROTATION_SPEED = 1.2f;
+                inline static const std::array<int, 6> MOVE_KEYS{
+                                inp::Keyboard::Keys::KEY_A,
+                                inp::Keyboard::Keys::KEY_D,
+                                inp::Keyboard::Keys::KEY_W,
+                                inp::Keyboard::Keys::KEY_S,
+                                inp::Keyboard::Keys::KEY_SPACE,
+                                inp::Keyboard::Keys::KEY_CTRL,
+                };
+                inline static const std::array<int, 2> ROLL_KEYS{
+                    inp::Keyboard::Keys::KEY_Q,
+                    inp::Keyboard::Keys::KEY_E,
+                };
+                inline static std::unordered_map<int, XMVECTOR> MOVE_TO_ACTION{
+                    {inp::Keyboard::Keys::KEY_A, {-1.0f, 0.0f, 0.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_D, {1.0f, 0.0f, 0.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_CTRL, {0.0f, -1.0f, 0.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_SPACE, {0.0f, 1.0f, 0.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_W, {0.0f, 0.0f, 1.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_S, {0.0f, 0.0f, -1.0f, 0.0f}},
+                    // rotation
+                    {inp::Keyboard::Keys::KEY_Q, {0.0f, 0.0f, 1.0f, 0.0f}},
+                    {inp::Keyboard::Keys::KEY_E, {0.0f, 0.0f, -1.0f, 0.0f}},
+                };
+            };
         public:
             EngineCamera(float fov, int screenWidth, int screenHeight, const XMFLOAT3& position);
 

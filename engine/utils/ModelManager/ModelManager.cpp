@@ -84,6 +84,7 @@ namespace engn {
 			m_loadedModels["unit_box"]->getMeshes().push_back(boxMesh);
 			m_loadedModels["unit_box"]->getRanges().push_back(boxMeshRange);
 
+			// Initialize OcTree
 			util::TriangleOctree boxOcTree;
 			boxOcTree.initialize(m_loadedModels["unit_box"]->getMeshes()[0]);
 			m_loadedModels["unit_box"]->getMeshOcTrees().push_back(std::move(boxOcTree));

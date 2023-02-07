@@ -10,68 +10,27 @@
 
 #include "render/D3D/d3d.hpp"
 #include "render/Graphics/EngineCamera.hpp"
-#include "render/Graphics/Graphics.hpp"
+#include "render/Graphics/Renderer.hpp"
 
 namespace engn {
 	using namespace DirectX;
 	class Engine
 	{
 	public:
-		struct CameraSettings {
-			static constexpr float CAMERA_SPEED = 0.02f;
-			static constexpr float ROTATION_SPEED = 1.2f;
-;			inline static const std::array<int, 6> MOVE_KEYS{
-				inp::Keyboard::Keys::KEY_A,
-				inp::Keyboard::Keys::KEY_D,
-				inp::Keyboard::Keys::KEY_W,
-				inp::Keyboard::Keys::KEY_S,
-				inp::Keyboard::Keys::KEY_SPACE,
-				inp::Keyboard::Keys::KEY_CTRL,
-			};
-			inline static const std::array<int, 2> ROLL_KEYS{
-				inp::Keyboard::Keys::KEY_Q,
-				inp::Keyboard::Keys::KEY_E,
-			};
-			inline static std::unordered_map<int, XMVECTOR> MOVE_TO_ACTION {
-				{inp::Keyboard::Keys::KEY_A, {-1.0f, 0.0f, 0.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_D, {1.0f, 0.0f, 0.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_CTRL, {0.0f, -1.0f, 0.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_SPACE, {0.0f, 1.0f, 0.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_W, {0.0f, 0.0f, 1.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_S, {0.0f, 0.0f, -1.0f, 0.0f}},
-				// rotation
-				{inp::Keyboard::Keys::KEY_Q, {0.0f, 0.0f, 1.0f, 0.0f}},
-				{inp::Keyboard::Keys::KEY_E, {0.0f, 0.0f, -1.0f, 0.0f}},
-			};
-		};
-	public:
-		Engine(int screenWidth, int screenHeight):
-			m_camera{ new rend::EngineCamera{45.0f, screenWidth, screenHeight, {0.0f, 0.0f, -2.0f}} }
-		{
-			m_graphics.init();
-		}
-
-		void setWindowSize(int screenWidth, int screenHeight) {
-			m_camera->setNewScreenSize(screenWidth, screenHeight);
-		}
-
-		void render(const rend::RenderData& data) {
-			m_graphics.renderFrame(m_camera, data);
-		}
-
-		void handlePhysics(const rend::RenderData& data) {
-			handleCameraRotation();
-			handleCameraMovement();
-
-			handleDragging(data);
-		}
+		Engine(int screenWidth, int screenHeight);
+		//! Reset engine and camera window size for proper dragging
+		void setWindowSize(int screenWidth, int screenHeight);
+		//! Call the render be the rendere
+		void render(const rend::RenderData& data);
+		//! Handle "physics" like dragging and camera movement
+		void handlePhysics(const rend::RenderData& data);
 
 		// called from main.cpp - Must be called BEFORE engine construction
 		static void init()
 		{
-			// initilizes engine singletons
+			// initilizes engine singletons(Some, like Mouse, Keyboard, ModelManager, don't need initialization and are inited at first call)
 			Logger::initConsoleLogger();
-			Logger::createFileLogger("Engine", "engine.log");
+			Logger::createFileLogger("Engine", "logs/engine.log");
 			Logger::instance().setDefaultLoggerName("Engine");
 
 			rend::D3D::getInstance().init();
@@ -86,73 +45,19 @@ namespace engn {
 	private:
 		// Render
 		std::unique_ptr<rend::EngineCamera> m_camera;
-		rend::Graphics m_graphics;
+		rend::Renderer m_graphics;
 		drag::MeshDragger m_dragger;
 
 	private:
 		//! Check for camera movement and if it exists, update it
-		void handleCameraMovement() {
-			bool cameraMoved = false;
-			
-			XMVECTOR position{0.0f, 0.0f, 0.0f, 0.0f};
-			for (const auto& key : CameraSettings::MOVE_KEYS) {
-				if (inp::Keyboard::getInstance().isKeyPressed(key)) {
-					if (!cameraMoved) { cameraMoved = true; }
-					position += CameraSettings::MOVE_TO_ACTION[key];
-				}
-			}
-			if (cameraMoved) {
-				position = XMVector3Normalize(position);
-				m_camera->addRelativeOffset(position * CameraSettings::CAMERA_SPEED);
-			}
-		}
+		void handleCameraMovement();
 		//! check for camera rotation and update if there was
-		void handleCameraRotation() {
-			bool cameraRotated = false;
-			XMVECTOR rotation{ 0.0f, 0.0f, 0.0f };
-			// Roll
-			for (const auto& key : CameraSettings::ROLL_KEYS) {
-				if (inp::Keyboard::getInstance().isKeyPressed(key)) {
-					if (!cameraRotated) { cameraRotated = true; }
-					rotation += CameraSettings::MOVE_TO_ACTION[key];
-				}
-			}
-			// pitch and yaw
-			auto& mouse = inp::Mouse::getInstance();
-			XMVECTOR& offset = mouse.getMoveData().mouseOffset;
-			if (mouse.isLMBPressed() && XMVectorGetX(XMVector2LengthSq(offset)) > 0.0f) {
-				if (!cameraRotated) { cameraRotated = true; }
-				rotation = XMVectorSetX(rotation, XMVectorGetY(offset));
-				rotation = XMVectorSetY(rotation, XMVectorGetX(offset));
-				mouse.getMoveData().mouseOffset = XMVECTOR{ 0, 0 };
-			}
-
-			if (cameraRotated) {
-				rotation = XMVector3Normalize(rotation);
-				m_camera->addRelativeRotationQuat(rotation * CameraSettings::ROTATION_SPEED);
-			}
-		}
-
-		void handleDragging(const rend::RenderData& data) {
-			findDraggable(data);
-			moveDraggable();
-		}
-
-		void findDraggable(const rend::RenderData& data) {
-			auto& mouse = inp::Mouse::getInstance();
-
-			if (mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
-				m_dragger.capture(m_camera);
-			}
-			if (!mouse.isRMBPressed()) {
-				m_dragger.release();
-			}
-		}
-
-		void moveDraggable() {
-			if (m_dragger.isMeshCaptured()) {
-				m_dragger.drag(m_camera);
-			}
-		}
+		void handleCameraRotation();
+		//! handle the entire dragging process
+		void handleDragging(const rend::RenderData& data);
+		//! Find the object we can capture
+		void findDraggable(const rend::RenderData& data);
+		//! Move the captured object if there is any	
+		void moveDraggable();
 	};
 } // engn

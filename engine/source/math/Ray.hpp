@@ -15,9 +15,13 @@ namespace engn {
 		using namespace DirectX;
 
 		struct BasicRayIntersection {
+			static constexpr float MAX_DIST = 1000.0f;
+
 			XMVECTOR pos;
 			XMVECTOR normal;
 			float t;
+
+			static BasicRayIntersection empty() { return { {}, {}, MAX_DIST }; }
 		};
 
 		struct Ray {
