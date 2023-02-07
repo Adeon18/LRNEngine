@@ -5,10 +5,10 @@ struct VS_INPUT
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
     float3 inTC : TEXCOORD;
-    float4 modelToClip0 : M2CLIP0;
-    float4 modelToClip1 : M2CLIP1;
-    float4 modelToClip2 : M2CLIP2;
-    float4 modelToClip3 : M2CLIP3;
+    float4 worldToClip0 : W2CLIP0;
+    float4 worldToClip1 : W2CLIP1;
+    float4 worldToClip2 : W2CLIP2;
+    float4 worldToClip3 : W2CLIP3;
     float4 color : COLOR;
 };
 
@@ -21,8 +21,8 @@ struct VS_OUTPUT
 VS_OUTPUT main(VS_INPUT input)
 {
 	VS_OUTPUT output;
-    float4x4 modelToClip = float4x4(input.modelToClip0, input.modelToClip1, input.modelToClip2, input.modelToClip3);
-    output.outPos = mul(float4(input.inPos, 1.0f), modelToClip);
+    float4x4 worldToClip = float4x4(input.worldToClip0, input.worldToClip1, input.worldToClip2, input.worldToClip3);
+    output.outPos = mul(float4(input.inPos, 1.0f), worldToClip);
     output.outCol = input.color;
 	return output;
 }
