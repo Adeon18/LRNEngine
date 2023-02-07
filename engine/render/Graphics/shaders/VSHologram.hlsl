@@ -7,8 +7,8 @@ cbuffer perFrame : register(b0)
 
 cbuffer perMesh : register(b1)
 {
-    float4x4 modelToWorld;
-    float4x4 modelToWorldInv;
+    float4x4 meshToModel;
+    float4x4 meshToModelInv;
 };
 
 float distanceIntensity(float value, float target, float fade)
@@ -72,10 +72,10 @@ struct VS_INPUT
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
     float3 inTC : TEXCOORD;
-    float4 worldToClip0 : M2CLIP0;
-    float4 worldToClip1 : M2CLIP1;
-    float4 worldToClip2 : M2CLIP2;
-    float4 worldToClip3 : M2CLIP3;
+    float4 worldToClip0 : W2CLIP0;
+    float4 worldToClip1 : W2CLIP1;
+    float4 worldToClip2 : W2CLIP2;
+    float4 worldToClip3 : W2CLIP3;
     float4 color : COLOR;
 };
 
@@ -91,9 +91,9 @@ VS_OUTPUT main(VS_INPUT input)
 {
     VS_OUTPUT output;
     float4x4 modelToClip = float4x4(input.worldToClip0, input.worldToClip1, input.worldToClip2, input.worldToClip3);
-    float3 modelNorm = normalize(mul(float4(input.inNorm, 0.0f), modelToWorldInv));
+    float3 modelNorm = normalize(mul(float4(input.inNorm, 0.0f), meshToModelInv));
     
-    float4 processedPos = mul(float4(input.inPos, 1.0f), modelToWorld);
+    float4 processedPos = mul(float4(input.inPos, 1.0f), meshToModel);
     float3 offset = vertexDistortion(processedPos.xyz, modelNorm);
     processedPos += float4(offset, 1.0f);
     

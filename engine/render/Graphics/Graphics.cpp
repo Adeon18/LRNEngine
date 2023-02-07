@@ -25,13 +25,7 @@ namespace engn {
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
-			// PS constant Buffer
-			m_constantBufferVS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
-			XMStoreFloat4(&(m_constantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
-			m_constantBufferVS.getData().gTime = renderData.iTime;
-			m_constantBufferVS.fill();
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
-			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+			m_fillPerFrameCBs(camPtr, renderData);
 
 			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
 		}
@@ -44,7 +38,7 @@ namespace engn {
 			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 #else
 			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
-#endif // !_WIN32 
+#endif // !_WIN64
 
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
@@ -115,6 +109,17 @@ namespace engn {
 				Logger::instance().logErr("Window CreateDepthStencilState fail: " + std::system_category().message(hr));
 				return;
 			}
+		}
+		void Graphics::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
+		{
+			// General Data constant buffer
+			m_constantBufferVS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
+			XMStoreFloat4(&(m_constantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
+			m_constantBufferVS.getData().gTime = renderData.iTime;
+			
+			m_constantBufferVS.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
 		}
 	} // rend
 } // engn

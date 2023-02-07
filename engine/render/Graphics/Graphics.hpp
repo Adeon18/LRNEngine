@@ -34,7 +34,10 @@ namespace engn {
 			/// RasterizerState basically tells us HOW to draw triangles
 			///	Cull back, draw only Wireframe, etc.
 			void m_initRasterizer();
+			//! Depth stensil state
 			void m_initDepthStencilState();
+			//! Fill the per frame shader CB, for not the same for each shader
+			void m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 			
 			ConstantBuffer<CB_RealTimeData> m_constantBufferVS;
 
