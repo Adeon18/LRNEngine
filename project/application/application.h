@@ -8,6 +8,10 @@
 
 #include <glm/glm/glm.hpp>
 
+#include "Engine.hpp"
+
+#include "include/config.hpp"
+
 #include "utils/Timer/FPSTimer.h"
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -40,11 +44,13 @@ class Application
 	static constexpr int WIN_HEIGHT_DEF = 540;
 	static constexpr int BUFF_DECREASE_TIMES = 2;
 	static constexpr float ROLL_SPEED_DEG = 1.0f;
+	inline static float BG_COLOR[] = { 0.5f, 0.2f, 0.9f, 1.0f };
 
 	//! FPS which the timer tries to tick at
 	static constexpr float TIMER_FPS = 300.0f;
 	//! Our scene default camera FOV
 	static constexpr float CAMERA_FOV = 45.0f;
+
 public:
 	struct MouseInputData {
 		glm::vec2 mousePos;
@@ -68,12 +74,8 @@ private:
 	void m_captureInput(MSG* mptr);
 
 	//! Mouse Input
-	void m_onMouseLMBPressed(MSG* mptr);
-	void m_onMouseLMBReleased(MSG* mptr);
-	void m_onMouseRMBPressed(MSG* mptr);
-	void m_onMouseRMBReleased(MSG* mptr);
-	glm::vec2 m_processRMBInputs(const glm::vec2& mousePos);
-	void m_onMouseMove(MSG* mptr);
+	glm::vec2 m_processRMBInputs(const DirectX::XMINT2& mousePos);
+
 
 	//! Put objects on the scene
 	void m_createObjects();
@@ -94,6 +96,7 @@ private:
 	glm::vec3 m_getCamRotation();
 	//! Get the normalized camera movement vector
 	glm::vec3 m_getCamMovement();
+
 private:
 	int m_screenWidth;
 	int m_screenHeight;
@@ -110,8 +113,6 @@ private:
 	bool m_isCamMoving = false;
 	bool m_isCamRotating = false;
 
-	// Basically input handling
-	std::unordered_map<int, bool> m_pressedInputs;
 
 	std::vector<int> m_camMoveInputs{ Keys::KEY_A, Keys::KEY_D, Keys::KEY_W, Keys::KEY_S, Keys::KEY_CTRL, Keys::KEY_SPACE };
 	std::unordered_map<int, glm::vec3> m_cameraDirections{
@@ -130,9 +131,12 @@ private:
 	};
 
 	// Application building blocks
+	std::unique_ptr<engn::util::FPSTimer> m_timer;
+	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
+	// Engine
+	std::unique_ptr<engn::Engine> m_engine;
+	// Raytracer
 	std::unique_ptr<engn::Scene> m_scene;
 	std::unique_ptr<engn::Camera> m_camera;
-	std::unique_ptr<engn::util::FPSTimer> m_timer;
 	std::unique_ptr<engn::util::ParallelExecutor> m_executor;
-	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
 };

@@ -1,23 +1,35 @@
 #include <thread>
 
+
+#include "input/Mouse.hpp"
+#include "input/Keyboard.hpp"
+
 #include "application.h"
+
 
 
 Application::Application() :
 	m_isRunning{ true },
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
-	m_scene{ new engn::Scene{} },
 	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
-	m_camera{ new engn::Camera{CAMERA_FOV, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
-	}
+#if DX_ENGINE == 1
+	m_engine{ new engn::Engine{} }
+#else
+	m_scene{ new engn::Scene{} },
+	m_camera{ new engn::Camera{CAMERA_FOV, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
+#endif
 {
+#if DX_ENGINE == 0
 	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
 	uint32_t numThreads = (std::max)(1u, (std::max)(engn::util::ParallelExecutor::MAX_THREADS > 4u ? engn::util::ParallelExecutor::MAX_THREADS - 2u : 1u, engn::util::ParallelExecutor::HALF_THREADS));
 	m_executor = std::unique_ptr<engn::util::ParallelExecutor>(new engn::util::ParallelExecutor{ numThreads });
-
 	m_createObjects();
+#endif
+
+	//engn::inp::Mouse::getInstance().setInputLogging(true);
+	//engn::inp::Keyboard::getInstance().setInputLogging(true);
 }
 
 
@@ -28,6 +40,12 @@ int Application::run() {
 		m_processWIN32Queue(&msg);
 
 		if (m_timer->frameElapsed()) {
+#if DX_ENGINE == 1
+			auto debug = m_timer->isDebugFPSShow();
+			if (debug.first) { engn::Logger::instance().logDebug("FPS", debug.second); }
+
+			m_handleRender();
+#else
 			if (m_window->allocateBitmapBuffer()) {
 				setWindowSize(m_window->getWidth(), m_window->getHeight());
 			}
@@ -39,6 +57,7 @@ int Application::run() {
 			m_handlePhysics();
 
 			m_window->flush();
+#endif
 		}
 		std::this_thread::yield();
 	}
@@ -47,25 +66,48 @@ int Application::run() {
 }
 
 
+void Application::setWindowSize(int width, int height) {
+	m_screenWidth = width;
+	m_screenHeight = height;
+
+	m_camera->setNewScreenSize(width, height);
+}
+
+
 void Application::m_processWIN32Queue(MSG* mptr) {
-	while (const auto peekRes = PeekMessageW(mptr, nullptr, 0, 0, PM_REMOVE)) {
-		if (mptr->message == WM_QUIT) {
-			m_isRunning = false;
-		}
+	while (const auto peekRes = PeekMessageW(mptr, NULL, 0, 0, PM_REMOVE)) {
 		// Translate keystroke message into correct format
 		TranslateMessage(mptr);
 		// Capture input into application
 		this->m_captureInput(mptr);
 		// Send the message to WindowProc
 		DispatchMessageW(mptr);
+
+		if (mptr->message == WM_QUIT) {
+			m_isRunning = false;
+		}
 	}
 }
 
 
 void Application::m_handleRender() {
+#if DX_ENGINE == 1
+	// Get the render data for the shader
+	engn::rend::RenderData renderData{
+		m_timer->getSecondsSinceStart(),
+		m_window->getWidth(),
+		m_window->getHeight(),
+		1.0f / m_window->getWidth(),
+		1.0f / m_window->getHeight(),
+	};
+	// Render fucntions
+	m_window->clear(BG_COLOR);
+	m_engine->render(renderData);
+	m_window->present();
+#else
 	m_scene->render(m_window->getWindowData(), m_camera, m_executor);
+#endif
 }
-
 
 void Application::m_handlePhysics() {
 	m_moveCamera();
@@ -131,108 +173,64 @@ void Application::m_createObjects() {
 	);
 }
 
-
-void Application::setWindowSize(int width, int height) {
-	m_screenWidth = width;
-	m_screenHeight = height;
-
-	m_camera->setNewScreenSize(width, height);
-}
-
-
 void Application::m_captureInput(MSG* mptr)
 {
-
-	// Capture and release LMB
 	switch (mptr->message) {
 	case WM_LBUTTONDOWN:
-		m_onMouseLMBPressed(mptr);
+		engn::inp::Mouse::getInstance().onLMBPressed(mptr);
 		break;
 	case WM_LBUTTONUP:
-		m_onMouseLMBReleased(mptr);
+		engn::inp::Mouse::getInstance().onLMBReleased(mptr);
 		break;
 	case WM_RBUTTONDOWN:
-		m_onMouseRMBPressed(mptr);
+		engn::inp::Mouse::getInstance().onRMBPressed(mptr);
 		break;
 	case WM_RBUTTONUP:
-		m_onMouseRMBReleased(mptr);
+		engn::inp::Mouse::getInstance().onRMBReleased(mptr);
 		break;
 	case WM_MOUSEMOVE:
-		m_onMouseMove(mptr);
+		engn::inp::Mouse::getInstance().onMove(mptr);
 		break;
 	case WM_KEYDOWN:
-		m_pressedInputs[mptr->wParam] = true;
+		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
 		break;
 	case WM_KEYUP:
-		m_pressedInputs[mptr->wParam] = false;
+		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
 		break;
 	}
+
 }
 
-
-void Application::m_onMouseLMBPressed(MSG* mptr) {
-	m_pressedInputs[Keys::LMB] = true;
-	m_camMoveData.mousePos.x = GET_X_LPARAM(mptr->lParam);
-	m_camMoveData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
-}
-
-
-void Application::m_onMouseLMBReleased(MSG* mptr) {
-	m_pressedInputs[Keys::LMB] = false;
-}
-
-void Application::m_onMouseRMBPressed(MSG* mptr) {
-	m_pressedInputs[Keys::RMB] = true;
-	m_objDragData.mousePos.x = GET_X_LPARAM(mptr->lParam);
-	m_objDragData.mousePos.y = GET_Y_LPARAM(mptr->lParam);
-}
-
-glm::vec2 Application::m_processRMBInputs(const glm::vec2& mousePos) {
-	glm::vec2 newPos;
+glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
+	DirectX::XMINT2 newPos;
 	newPos = mousePos;
 	newPos.y = m_window->getHeight() - mousePos.y;
-	newPos /= static_cast<float>(BUFF_DECREASE_TIMES);
-	return newPos;
-}
-
-void Application::m_onMouseRMBReleased(MSG* mptr) {
-	m_pressedInputs[Keys::RMB] = false;
-}
-
-void Application::m_onMouseMove(MSG* mptr) {
-	glm::vec2 newMosPos = glm::vec2(GET_X_LPARAM(mptr->lParam), GET_Y_LPARAM(mptr->lParam));
-	if (m_pressedInputs[Keys::LMB]) {
-		m_camMoveData.mouseOffset = newMosPos - m_camMoveData.mousePos;
-		m_camMoveData.mousePos = newMosPos;
-		// std::cout << "LMB Move" << std::endl;
-	}
-	if (m_pressedInputs[Keys::RMB]) {
-		m_objDragData.mouseOffset = newMosPos - m_objDragData.mousePos;
-		m_objDragData.mousePos = newMosPos;
-		// std::cout << "RMB Move" << std::endl;
-	}
+	newPos.x /= static_cast<float>(BUFF_DECREASE_TIMES);
+	newPos.y /= static_cast<float>(BUFF_DECREASE_TIMES);
+	return glm::vec2{ newPos.x, newPos.y };
 }
 
 void Application::m_findObject() {
-	if (!m_objectBinded && (m_pressedInputs[Keys::RMB])) {
-		if (m_scene->findDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera)) {
+	if (!m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
+		if (m_scene->findDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera)) {
 			m_objectBinded = true;
 		}
 	}
 }
 
 void Application::m_moveObject() {
-	if (m_objectBinded && (m_pressedInputs[Keys::RMB])) {
+	if (m_objectBinded && (engn::inp::Mouse::getInstance().isRMBPressed())) {
 		// second operation expensive
-		if (m_camStateChanged || glm::length(m_objDragData.mouseOffset) > 0) {
-			m_scene->moveDraggable(m_processRMBInputs(m_objDragData.mousePos), m_camera);
+		DirectX::XMINT2 offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
+		if (m_camStateChanged || (offset.x * offset.x + offset.y * offset.y) > 0) {
+			m_scene->moveDraggable(m_processRMBInputs(engn::inp::Mouse::getInstance().getMoveData().mousePos), m_camera);
 			m_camStateChanged = false;
 		}
 	}
 }
 
 void Application::m_releaseObject() {
-	if (!m_pressedInputs[Keys::RMB]) {
+	if (!engn::inp::Mouse::getInstance().isRMBPressed()) {
 		m_objectBinded = false;
 	}
 }
@@ -271,7 +269,7 @@ glm::vec3 Application::m_getCamMovement() {
 	m_isCamMoving = false;
 	for (const auto& key : m_camMoveInputs)
 	{
-		if (m_pressedInputs[key])
+		if (engn::inp::Keyboard::getInstance().isKeyPressed(key))
 		{
 			direction += m_cameraDirections[key];
 			m_isCamMoving = true;
@@ -288,7 +286,7 @@ glm::vec3 Application::m_getCamRotation() {
 	m_isCamRotating = false;
 	// Roll
 	for (const auto& key : m_camRotateInputs) {
-		if (m_pressedInputs[key])
+		if (engn::inp::Keyboard::getInstance().isKeyPressed(key))
 		{
 			rotation += m_cameraRotations[key];
 			if (!m_isCamRotating) { m_isCamRotating = true; }
@@ -296,13 +294,14 @@ glm::vec3 Application::m_getCamRotation() {
 	}
 
 	// pitch and yaw
-	if (m_pressedInputs[Keys::LMB] && glm::length(m_camMoveData.mouseOffset) > 0) {
+	DirectX::XMINT2& offset = engn::inp::Mouse::getInstance().getMoveData().mouseOffset;
+	if (engn::inp::Mouse::getInstance().isLMBPressed() && (offset.x * offset.x + offset.y * offset.y) > 0) {
 		if (!m_isCamRotating) { m_isCamRotating = true; }
 		float lastFPSCount = m_timer->getFPSCurrent();
 		// hardcoded for now
-		rotation.y += m_camMoveData.mouseOffset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
-		rotation.x += m_camMoveData.mouseOffset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
-		m_camMoveData.mouseOffset = glm::vec2{ 0.0f };
+		rotation.y += offset.x / (m_screenWidth / 2.0f) * -180.0f / 10.0f;
+		rotation.x += offset.y / (m_screenHeight / 2.0f) * -180.0f / 10.0f;
+		engn::inp::Mouse::getInstance().getMoveData().mouseOffset = DirectX::XMINT2{ 0, 0 };
 	}
 
 	return rotation;

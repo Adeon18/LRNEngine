@@ -88,7 +88,6 @@ namespace engn {
 		m_material = other.m_material;
 		m_mesh = other.m_mesh;
 		m_init();
-
 		return *this;
 	}
 

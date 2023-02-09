@@ -16,3 +16,13 @@ Additions:
 - Material support with some predefined materials
 - Object dragging parallel to camera via `RMB` on object and mouse move
 - Render is now done concurrently via a ParallelExecutor
+
+## HW3: HelloTringle/HelloShaderToyTringle
+Additions:
+- Made a config file that allows to choose between the DX engine and the RayTracer by setting a `#define DX_ENGINE` in `engine/include/config`.
+- Initialized DX Context
+- Window Resizing Works
+- Initialized the Rendering Pipeline
+- VS and PS both with constant buffers for each of them
+- There is a `#define VORONOI` in the `engine/render/Graphics/shaders/PS.hlsl` that defines what to run: **HelloTrinagle** or **HelloShaderToyTriangle**.
+- The shaders are found always by absolute, no matter the working directory. Can run everywhere!

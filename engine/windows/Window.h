@@ -5,6 +5,12 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <d3d11_4.h>
+
+//#include "include/DxRes.hpp"
+#include "render/D3D/d3d.hpp"
+#include "utils/paralell_executor/parallel_executor.h"
+
 
 namespace engn {
 	namespace win {
@@ -32,7 +38,7 @@ namespace engn {
 		template<int W, int H, int BDS>
 		class Window {
 		public:
-			const wchar_t* WINDOW_NAME = L"EngineClass";
+			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
 			const wchar_t* WINDOW_TITLE = L"Engine";
 
 			//! Window Top Left position when it is firts generated
@@ -46,16 +52,25 @@ namespace engn {
 				// Register window class
 				RegisterClassExW(&m_windowClassData.windowClass);
 
-				// Gets the size of the actual window and stores it in the rect
-				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
-
+				// Adjust rect
+				m_initWindowRect();
+				
 				m_createWindow();
 
 				ShowWindow(m_windowClassData.handleWnd, SW_SHOW);
+
+				// Initialize DX stuff for render
+				initSwapchain();
+				initBackBuffer();
+				initRenderTargetView();
+				initViewPort();
 			}
 
 
-			~Window() { UnregisterClassW(WINDOW_NAME, m_windowClassData.hInstance); }
+			~Window() {
+				UnregisterClassW(WINDOW_NAME, m_windowClassData.hInstance);
+				DestroyWindow(m_windowClassData.handleWnd);
+			}
 
 
 			//! Callback message handler
@@ -65,16 +80,112 @@ namespace engn {
 				case WM_DESTROY:
 				{
 					m_destroyWindow();
+					return 0;
 				} break;
 				case WM_SIZE:
 				{
 					m_updateWindowSize(hWnd);
+					return 0;
 				} break;
 				}
 				// Handle what the switch didn't
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 
+			//! Fill the swapchain description and initialize it
+			void initSwapchain()
+			{
+				DXGI_SWAP_CHAIN_DESC1 desc;
+
+				// clear out the struct for use
+				memset(&desc, 0, sizeof(DXGI_SWAP_CHAIN_DESC1));
+
+				// fill the swap chain description struct
+				// If width and height are unspecified, they will be pulled from the output window
+				desc.AlphaMode = DXGI_ALPHA_MODE::DXGI_ALPHA_MODE_UNSPECIFIED;
+				desc.BufferCount = 2;
+				desc.BufferUsage = DXGI_USAGE_BACK_BUFFER | DXGI_USAGE_RENDER_TARGET_OUTPUT; // CPU access options for back buffer
+				desc.Flags = 0;
+				desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+				desc.SampleDesc.Count = 1;                               // how many multisamples
+				desc.SampleDesc.Quality = 0;                             // ???
+				desc.Scaling = DXGI_SCALING_NONE; // Identifies scaling behaviour if the size of the back buffer is not equal to the output target
+				desc.Stereo = false;
+				desc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+
+				HRESULT res = d3d::s_factory->CreateSwapChainForHwnd(
+					d3d::s_device,
+					m_windowClassData.handleWnd,
+					&desc,
+					nullptr, nullptr,
+					m_swapChain.GetAddressOf()
+				);
+
+				if (FAILED(res)) { std::cout << "CreateSwapChainForHwnd fail" << std::endl; }
+			}
+
+			//! Called at resize. Free the backBuffer and resize it to a new one
+			void initBackBuffer() {
+				// Release the RTV before resizing
+				m_renderTargetView.Reset();
+				// Release the backBuffer before resize
+				m_backBuffer.Reset();
+				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+
+				HRESULT result = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
+				if (FAILED(result)) { std::cout << "onResize GetBuffer fail" << std::endl; }
+
+				ID3D11Texture2D* pTextureInterface = 0;
+				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
+				pTextureInterface->GetDesc(&m_backBufferDesc);
+				pTextureInterface->Release();
+			}
+
+			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
+			void initRenderTargetView()
+			{
+				HRESULT res = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
+				if (FAILED(res)) { std::cout << "onResize CreateRenderTargetView fail" << std::endl; }
+				setRenderTargetView();
+			}
+
+			void setRenderTargetView() {
+				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
+			}
+
+			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
+			void initViewPort() {
+				D3D11_VIEWPORT viewPort;
+				memset(&viewPort, 0, sizeof(D3D11_VIEWPORT));
+					
+				viewPort.TopLeftX = m_windowRect.left;
+				viewPort.TopLeftY = m_windowRect.top;
+				viewPort.Width = m_windowRect.right - m_windowRect.left;
+				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+
+				d3d::s_devcon->RSSetViewports(1, &viewPort);
+			} 
+
+			//! Set the RTV and clear the window with the specified color
+			void clear(float* color)
+			{
+				// Resize if there was a call
+				if (m_toBeResized)
+				{
+					initBackBuffer();
+					initRenderTargetView();
+					initViewPort();
+					m_toBeResized = false;
+				}
+				// We set the rendertargetview each frame
+				setRenderTargetView();
+				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+			}
+			//! Present the swapchain. Called after clear and Engine::render
+			void present() {
+				m_swapChain->Present(0, NULL);
+			}
 
 			//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer, return true if allocation happened
 			bool allocateBitmapBuffer()
@@ -98,7 +209,6 @@ namespace engn {
 				}
 				return false;
 			}
-
 
 			//! Calls stretchDIBits which in turn copies all data from the bitmap buffer to screen
 			void flush() const
@@ -145,11 +255,17 @@ namespace engn {
 
 			inline static bool m_toBeResized = true;
 
-			WindowClassData m_windowClassData;
+			inline static WindowClassData m_windowClassData;
+
+			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
+			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+			D3D11_TEXTURE2D_DESC m_backBufferDesc;
 
 			// Bitmap information struct
 			BITMAPINFO m_bitmapInfo;
 
+		private:
 			//! Initialize window class and basic window data
 			void m_initWindowClass() {
 				m_windowClassData.hInstance = GetModuleHandle(nullptr);
@@ -164,6 +280,15 @@ namespace engn {
 				m_windowClassData.windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);	// load the cursor
 				m_windowClassData.windowClass.hbrBackground = (HBRUSH)COLOR_WINDOW;			// define the brush that will color window
 				m_windowClassData.windowClass.lpszClassName = WINDOW_NAME;					// Name of the class, L because 16 bit Unicode
+			}
+			
+			//! Sets the window location and gets the actual client size
+			void m_initWindowRect() {
+				m_windowRect.left = 300;
+				m_windowRect.top = 300;
+				m_windowRect.right = m_windowRect.left + m_windowRenderData.screenWidth;
+				m_windowRect.bottom = m_windowRect.top + m_windowRenderData.screenHeight;
+				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 			}
 
 			//! Create the window and initialize additional window class data
