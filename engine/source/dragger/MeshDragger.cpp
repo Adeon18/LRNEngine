@@ -14,9 +14,9 @@ namespace engn {
 			mdl::MeshIntersection closest = mdl::MeshIntersection::empty();
 			auto collisionRes = rend::MeshSystem::getInstance().getClosestMesh(atMouse, closest);
 
-			std::cout << "Collision: " << collisionRes.first << std::endl;
+			/*std::cout << "Collision: " << collisionRes.first << std::endl;
 			std::cout << "Closest t: " << closest.t << std::endl;
-			std::cout << "Closest pos: " << closest.pos << std::endl;
+			std::cout << "Closest pos: " << closest.pos << std::endl;*/
 
 			// Save the data to the next frame if the collision happened
 			if (collisionRes.first) {

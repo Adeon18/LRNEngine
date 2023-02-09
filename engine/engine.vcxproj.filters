@@ -291,5 +291,6 @@
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\PSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\VSHologram.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\PSBasicColor.hlsl" />
   </ItemGroup>
 </Project>

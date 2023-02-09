@@ -94,9 +94,6 @@ namespace engn {
 								XMMATRIX meshtoWorld =
 									perModel.model->getMeshes()[meshIdx].meshToModel *
 									perInstance.modelToWorld;
-								
-								std::cout << perModel.model->getMeshes()[meshIdx].meshToModel << std::endl;
-								std::cout << perInstance.modelToWorld << std::endl;
 								// Ray to Mesh Space
 								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
 								// If there is a collision
@@ -255,8 +252,8 @@ namespace engn {
 						const auto& meshRange = model.model->getRanges()[meshIndex];
 
 						// You have to upload a Mesh-to-Model transformation matrix retrieved from model file via Assimp
-						m_meshData.getData().modelToWorld = XMMatrixTranspose(mesh.meshToModel); // ... update shader local per-mesh uniform buffer
-						m_meshData.getData().modelToWorldInv = XMMatrixTranspose(mesh.meshToModelInv);
+						m_meshData.getData().meshToModel = XMMatrixTranspose(mesh.meshToModel); // ... update shader local per-mesh uniform buffer
+						m_meshData.getData().meshToModelInv = XMMatrixTranspose(mesh.meshToModelInv);
 						m_meshData.fill();
 						d3d::s_devcon->VSSetConstantBuffers(1, 1, m_meshData.getBufferAddress());
 

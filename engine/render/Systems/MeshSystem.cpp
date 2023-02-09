@@ -8,7 +8,7 @@ namespace engn {
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_normalGroup.setType(GroupTypes::NORMAL);
-			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", shaderFolder + L"PSVoronoi.cso");
+			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", shaderFolder + L"PSBasicColor.cso");
 
 		}
 		void MeshSystem::initHologramGroup()

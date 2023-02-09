@@ -159,7 +159,7 @@ struct PS_INPUT
 float4 main(PS_INPUT inp) : SV_TARGET
 {
 #if DEBUG
-    return inp.outCol;
+    return float4(inp.outNorm, 1.0f);
 #else
     return float4(colorDistortion(inp.worldPos, inp.outNorm, inp.outCol), 1.0f);
 #endif

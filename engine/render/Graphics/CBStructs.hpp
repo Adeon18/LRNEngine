@@ -6,8 +6,8 @@ namespace engn {
 	namespace rend {
 		//! This struct is for moving the vertices in the VS by some offset
 		struct CB_VS_MeshData {
-			DirectX::XMMATRIX modelToWorld;
-			DirectX::XMMATRIX modelToWorldInv;
+			DirectX::XMMATRIX meshToModel;
+			DirectX::XMMATRIX meshToModelInv;
 		};
 		//! This struct contains basic data that ShaderToy has out of the box
 		struct CB_RealTimeData {
