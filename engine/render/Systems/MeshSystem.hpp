@@ -94,6 +94,9 @@ namespace engn {
 								XMMATRIX meshtoWorld =
 									perModel.model->getMeshes()[meshIdx].meshToModel *
 									perInstance.modelToWorld;
+								
+								std::cout << perModel.model->getMeshes()[meshIdx].meshToModel << std::endl;
+								std::cout << perInstance.modelToWorld << std::endl;
 								// Ray to Mesh Space
 								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
 								// If there is a collision

@@ -36,42 +36,46 @@ namespace engn {
 
 			// TODO: Later may move to some map
 #ifdef _WIN64 
-			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
 #else
-			const std::string SAMURAI_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
+			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
 #endif // !_WIN64
 
+			const std::string EXE_DIR = util::getExeDir();
 
-			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
+
+			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 
-			// Fill the field with cubes
-			for (int i = -32; i < 32; ++i) {
-				for (int j = 0; j < 32; ++j) {
-					mptr.reset();
-					mptr = mdl::ModelManager::getInstance().getCubeModel();
-					MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(i * 2.0f, 0.0f, 12.0f + j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-				}
-			}
+			//// Fill the field with cubes
+			//for (int i = -32; i < 32; ++i) {
+			//	for (int j = 0; j < 32; ++j) {
+			//		mptr.reset();
+			//		mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			//		MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(i * 2.0f, 0.0f, 12.0f + j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			//	}
+			//}
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + SAMURAI_MODEL_PATH);
+			mptr.reset(); 
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + SAMURAI_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 10.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + SAMURAI_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 			
 			// Fill the field with samurai
