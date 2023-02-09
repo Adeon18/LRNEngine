@@ -39,8 +39,6 @@ public:
     void setProjectionMatrix(float fov, int width, int height);
     //! Set the raycastdata based on which the rays are being casted
     void setRayCastData(const RayCastData& castData);
-    //! Same but move setter
-    void setRayCastData(RayCastData&& castData);
 
     //! Getters for the near plane vectors
     [[nodiscard]] glm::vec3& getBRVec() { return m_BRNearClipInWorld; }
