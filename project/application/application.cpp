@@ -12,13 +12,13 @@ Application::Application() :
 	m_isRunning{ true },
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
-	m_timer{ new engn::util::FPSTimer{300} },
+	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 #if DX_ENGINE == 1
 	m_engine{ new engn::Engine{} }
 #else
 	m_scene{ new engn::Scene{} },
-	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
+	m_camera{ new engn::Camera{CAMERA_FOV, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}}}
 #endif
 {
 #if DX_ENGINE == 0
@@ -175,34 +175,30 @@ void Application::m_createObjects() {
 
 void Application::m_captureInput(MSG* mptr)
 {
-
-	// Capture and release LMB
-	if (mptr->message == WM_LBUTTONDOWN) {
+	switch (mptr->message) {
+	case WM_LBUTTONDOWN:
 		engn::inp::Mouse::getInstance().onLMBPressed(mptr);
-	}
-	else if (mptr->message == WM_LBUTTONUP) {
+		break;
+	case WM_LBUTTONUP:
 		engn::inp::Mouse::getInstance().onLMBReleased(mptr);
-	}
-	if (mptr->message == WM_RBUTTONDOWN) {
+		break;
+	case WM_RBUTTONDOWN:
 		engn::inp::Mouse::getInstance().onRMBPressed(mptr);
-	}
-	else if (mptr->message == WM_RBUTTONUP) {
+		break;
+	case WM_RBUTTONUP:
 		engn::inp::Mouse::getInstance().onRMBReleased(mptr);
-	}
-
-	if (mptr->message == WM_MOUSEMOVE) {
+		break;
+	case WM_MOUSEMOVE:
 		engn::inp::Mouse::getInstance().onMove(mptr);
+		break;
+	case WM_KEYDOWN:
+		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
+		break;
+	case WM_KEYUP:
+		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
+		break;
 	}
 
-	// Capture press and release of keys
-	if (mptr->message == WM_KEYDOWN)
-	{
-		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
-	}
-	else if (mptr->message == WM_KEYUP)
-	{
-		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
-	}
 }
 
 glm::vec2 Application::m_processRMBInputs(const DirectX::XMINT2& mousePos) {
