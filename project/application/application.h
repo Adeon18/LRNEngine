@@ -40,6 +40,11 @@ class Application
 	static constexpr int WIN_HEIGHT_DEF = 540;
 	static constexpr int BUFF_DECREASE_TIMES = 2;
 	static constexpr float ROLL_SPEED_DEG = 1.0f;
+
+	//! FPS which the timer tries to tick at
+	static constexpr float TIMER_FPS = 300.0f;
+	//! Our scene default camera FOV
+	static constexpr float CAMERA_FOV = 45.0f;
 public:
 	struct MouseInputData {
 		glm::vec2 mousePos;

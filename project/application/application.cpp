@@ -8,9 +8,9 @@ Application::Application() :
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
 	m_scene{ new engn::Scene{} },
-	m_timer{ new engn::util::FPSTimer{300} },
+	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
-	m_camera{ new engn::Camera{45.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
+	m_camera{ new engn::Camera{CAMERA_FOV, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, glm::vec3{0.0f, 0.0f, 2.0f}},
 	}
 {
 	// Initialize the executor with half the threads if max_threads < 4 else with MAX_THREADS - 2
@@ -144,37 +144,28 @@ void Application::m_captureInput(MSG* mptr)
 {
 
 	// Capture and release LMB
-	if (mptr->message == WM_LBUTTONDOWN) {
+	switch (mptr->message) {
+	case WM_LBUTTONDOWN:
 		m_onMouseLMBPressed(mptr);
-		// std::cout << "LMB Down" << std::endl;
-		// std::cout << "LMB Logged: " << m_pressedInputs[Keys::LMB] << std::endl;
-	}
-	else if (mptr->message == WM_LBUTTONUP) {
+		break;
+	case WM_LBUTTONUP:
 		m_onMouseLMBReleased(mptr);
-		// std::cout << "LMB Up" << std::endl;
-	}
-	if (mptr->message == WM_RBUTTONDOWN) {
+		break;
+	case WM_RBUTTONDOWN:
 		m_onMouseRMBPressed(mptr);
-		// std::cout << "RMB Down" << std::endl;
-		// std::cout << "RMB Logged: " << m_pressedInputs[Keys::RMB] << std::endl;
-	}
-	else if (mptr->message == WM_RBUTTONUP) {
+		break;
+	case WM_RBUTTONUP:
 		m_onMouseRMBReleased(mptr);
-		// std::cout << "RMB Up" << std::endl;
-	}
-
-	if (mptr->message == WM_MOUSEMOVE) {
+		break;
+	case WM_MOUSEMOVE:
 		m_onMouseMove(mptr);
-	}
-
-	// Capture press and release of keys
-	if (mptr->message == WM_KEYDOWN)
-	{
+		break;
+	case WM_KEYDOWN:
 		m_pressedInputs[mptr->wParam] = true;
-	}
-	else if (mptr->message == WM_KEYUP)
-	{
+		break;
+	case WM_KEYUP:
 		m_pressedInputs[mptr->wParam] = false;
+		break;
 	}
 }
 

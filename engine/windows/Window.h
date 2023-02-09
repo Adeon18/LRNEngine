@@ -34,6 +34,10 @@ namespace engn {
 		public:
 			const wchar_t* WINDOW_NAME = L"EngineClass";
 			const wchar_t* WINDOW_TITLE = L"Engine";
+
+			//! Window Top Left position when it is firts generated
+			static constexpr int WINDOW_TL_SCREEN_POS_X = 300;
+			static constexpr int WINDOW_TL_SCREEN_POS_Y = 300;
 		public:
 			Window()
 			{
@@ -169,8 +173,8 @@ namespace engn {
 					WINDOW_NAME,						//�name�of�the�window�class
 					WINDOW_TITLE,						//�title�of�the�window
 					WS_OVERLAPPEDWINDOW,				//�window�style
-					300,								//�x-position�of�the�window
-					300,								//�y-position�of�the�window
+					WINDOW_TL_SCREEN_POS_X,				//�x-position�of�the�window
+					WINDOW_TL_SCREEN_POS_Y,				//�y-position�of�the�window
 					m_windowRect.right - m_windowRect.left,	//�width�of�the�window
 					m_windowRect.bottom - m_windowRect.top, //�height�of�the�window
 					nullptr,							//�we�have�no�parent�window,�NULL

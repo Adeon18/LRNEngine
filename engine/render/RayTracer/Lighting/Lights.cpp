@@ -60,17 +60,17 @@ namespace engn {
 		glm::vec3 calculateDirLight(DirectionalLight* lightPtr, mtrl::Material* matPtr, const glm::vec3& norm, const glm::vec3& viewDir) {
 			glm::vec3 lightDir = glm::normalize(-lightPtr->direction);
 			// Diffuse shading
-			float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+			float diff = (std::max)(glm::dot(norm, lightDir), MIN_DOT);
 
 			// specular shading bling vs phong
 			float spec = 0.0f;
 			if (MODEL_BLING_PHONG) {
 				glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
-				spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(norm, halfWayDir), MIN_DOT), matPtr->shininess);
 			}
 			else {
 				glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
-				spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(viewDir, reflectDir), MIN_DOT), matPtr->shininess);
 			}
 
 			// combine results
@@ -88,17 +88,17 @@ namespace engn {
 			glm::vec3 lightDir = glm::normalize(lightPtr->position - fragPos);
 
 			// Diffuse shading
-			float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+			float diff = (std::max)(glm::dot(norm, lightDir), MIN_DOT);
 
 			// specular shading bling vs phong
 			float spec = 0.0f;
 			if (MODEL_BLING_PHONG) {
 				glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
-				spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(norm, halfWayDir), MIN_DOT), matPtr->shininess);
 			}
 			else {
 				glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
-				spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(viewDir, reflectDir), MIN_DOT), matPtr->shininess);
 			}
 
 			float dist = glm::length(lightPtr->position - fragPos);
@@ -121,17 +121,17 @@ namespace engn {
 
 			glm::vec3 res{};
 
-			float diff = (std::max)(glm::dot(norm, lightDir), 0.0f);
+			float diff = (std::max)(glm::dot(norm, lightDir), MIN_DOT);
 
 			// specular shading bling vs phong
 			float spec = 0.0f;
 			if (MODEL_BLING_PHONG) {
 				glm::vec3 halfWayDir = glm::normalize(lightDir + viewDir);
-				spec = pow((std::max)(glm::dot(norm, halfWayDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(norm, halfWayDir), MIN_DOT), matPtr->shininess);
 			}
 			else {
 				glm::vec3 reflectDir = glm::reflect(-lightDir, norm);
-				spec = pow((std::max)(glm::dot(viewDir, reflectDir), 0.0f), matPtr->shininess);
+				spec = pow((std::max)(glm::dot(viewDir, reflectDir), MIN_DOT), matPtr->shininess);
 			}
 
 			glm::vec3 ambient = lightPtr->properties.ambient * matPtr->ambient;
@@ -140,7 +140,7 @@ namespace engn {
 
 			// Soft edges
 			float epsilon = (lightPtr->cutOffInner - lightPtr->cutOffOuter);
-			float intensity = glm::clamp((theta - lightPtr->cutOffOuter) / epsilon, 0.0f, 1.0f);
+			float intensity = glm::clamp((theta - lightPtr->cutOffOuter) / epsilon, MIN_DOT, 1.0f);
 
 			diffuse *= intensity;
 			specular *= intensity;
