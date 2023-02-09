@@ -5,6 +5,8 @@
 
 #include "render/d3d/d3d.hpp"
 
+#include "include/utility/utility.hpp"
+
 #include "CBStructs.hpp"
 
 namespace engn {
@@ -20,7 +22,7 @@ namespace engn {
 				desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 				desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 				desc.MiscFlags = 0;
-				desc.ByteWidth = static_cast<UINT>(sizeof(T) + 16 - (sizeof(T) % 16)); // 16 byte aligned, maybe edit later style
+				desc.ByteWidth = static_cast<UINT>(util::alignUp(sizeof(T), 16));
 				desc.StructureByteStride = 0;
 
 				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());

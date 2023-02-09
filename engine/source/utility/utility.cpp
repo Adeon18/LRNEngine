@@ -39,5 +39,9 @@ namespace engn {
 			delete[] exePathDyn;
 			return dir;
 		}
+		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo)
+		{
+			return (typeSize + 16) - (typeSize % 16);
+		}
 	} // util
 } // engn
