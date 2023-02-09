@@ -8,7 +8,7 @@ Application::Application() :
 	m_isRunning{ true },
 	m_screenWidth{ WIN_WIDTH_DEF },
 	m_screenHeight{ WIN_HEIGHT_DEF },
-	m_timer{ new engn::util::FPSTimer{300} },
+	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
 	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
 	m_engine{ new engn::Engine{WIN_WIDTH_DEF, WIN_HEIGHT_DEF} }
 {}
@@ -70,32 +70,28 @@ void Application::m_handleRender() {
 
 void Application::m_captureInput(MSG* mptr)
 {
-
-	// Capture and release LMB
-	if (mptr->message == WM_LBUTTONDOWN) {
+	switch (mptr->message) {
+	case WM_LBUTTONDOWN:
 		engn::inp::Mouse::getInstance().onLMBPressed(mptr);
-	}
-	else if (mptr->message == WM_LBUTTONUP) {
+		break;
+	case WM_LBUTTONUP:
 		engn::inp::Mouse::getInstance().onLMBReleased(mptr);
-	}
-	if (mptr->message == WM_RBUTTONDOWN) {
+		break;
+	case WM_RBUTTONDOWN:
 		engn::inp::Mouse::getInstance().onRMBPressed(mptr);
-	}
-	else if (mptr->message == WM_RBUTTONUP) {
+		break;
+	case WM_RBUTTONUP:
 		engn::inp::Mouse::getInstance().onRMBReleased(mptr);
-	}
-
-	if (mptr->message == WM_MOUSEMOVE) {
+		break;
+	case WM_MOUSEMOVE:
 		engn::inp::Mouse::getInstance().onMove(mptr);
+		break;
+	case WM_KEYDOWN:
+		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
+		break;
+	case WM_KEYUP:
+		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
+		break;
 	}
 
-	// Capture press and release of keys
-	if (mptr->message == WM_KEYDOWN)
-	{
-		engn::inp::Keyboard::getInstance().onKeyPressed(mptr);
-	}
-	else if (mptr->message == WM_KEYUP)
-	{
-		engn::inp::Keyboard::getInstance().onKeyReleased(mptr);
-	}
 }

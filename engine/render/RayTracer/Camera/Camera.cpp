@@ -27,10 +27,6 @@ namespace engn {
         m_rayCastData = castData;
     }
 
-    void Camera::setRayCastData(RayCastData&& castData) {
-        m_rayCastData = std::move(castData);
-    }
-
 
     void Camera::addWorldOffset(const glm::vec3& offset) {
         m_position += offset;
