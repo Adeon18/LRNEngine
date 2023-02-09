@@ -57,6 +57,10 @@ namespace engn {
 		{
 			return { vec.x, vec.y, vec.z };
 		}
+		uint32_t util::alignUp(uint32_t typeSize, uint32_t alignTo)
+		{
+			return (typeSize + 16) - (typeSize % 16);
+		}
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec) {

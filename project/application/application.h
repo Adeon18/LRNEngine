@@ -17,6 +17,8 @@ class Application
 	static constexpr int WIN_HEIGHT_DEF = 540;
 	static constexpr int BUFF_DECREASE_TIMES = 2;
 	inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+	//! FPS which the timer tries to tick at
+	static constexpr float TIMER_FPS = 300.0f;
 public:
 	Application();
 	//! Run and render the application

@@ -23,8 +23,12 @@ namespace engn {
 		std::wstring getExeDirW();
 		//! Convert the assimp library vector3 type to XMVECTOR
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
+		//! Convert the assimp library aiMatrix4x4 type to XMMATRIX
 		XMMATRIX aiMatrix4x4toXMMATRIX(const aiMatrix4x4& mat);
+		//! Convert the assimp library vector3 type to XMFLOAT3
 		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec);
+		//! Align type to a specified size, return the aligned size value
+		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo);
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec);
