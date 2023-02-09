@@ -250,7 +250,7 @@ namespace engn {
             static_cast<float>(winData.screenHeight) / static_cast<float>(winData.bufferHeight)
         };
 
-        camPtr->setRayCastData(std::move(rayCastData));
+        camPtr->setRayCastData(rayCastData);
         m_setCameraPos(camPtr->getCamPosition());
 
         auto* pixel = static_cast<COLORREF*>(winData.screenBuffer);

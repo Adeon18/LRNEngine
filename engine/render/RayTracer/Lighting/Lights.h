@@ -11,6 +11,9 @@
 namespace engn {
 
 namespace light {
+	//! The minimum of a dot product during ligting computations
+	static constexpr float MIN_DOT = 0.0001f;
+
 	constexpr bool MODEL_BLING_PHONG = true;
 
 	//! Basic constant attenuation configs for
