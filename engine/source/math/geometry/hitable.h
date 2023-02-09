@@ -1,25 +1,32 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
 
-#include <windows.h>
-#include <windowsx.h>
+#include "source/math/ray.h"
 
-#include "../ray.h"
 
-struct HitEntry
-{
-	bool isHit;
-	float rayT;
-	glm::vec3 hitPoint;
-	glm::vec3 hitNormal;
-};
+namespace engn {
 
-//! An abstract class for thr hitable object
-class hitable
-{
-public:
-	[[nodiscard]] virtual HitEntry hit(const ray& r) const = 0;
+	namespace math {
 
-	COLORREF m_color = RGB(0, 0, 0);
-};
+		//! An abstract class for thr hitable object
+		class hitable
+		{
+		public:
+			static constexpr float MAX_DIST = 1000.0f;
+		};
+
+		struct HitEntry
+		{
+			HitEntry() {
+				rayT = hitable::MAX_DIST;
+			}
+
+			float rayT;
+			glm::vec3 hitPoint;
+			glm::vec3 hitNormal;
+		};
+
+	} // math
+
+} // engn

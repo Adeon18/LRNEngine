@@ -1,17 +1,27 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtx/string_cast.hpp>
 
-class ray {
-public:
-	ray() {}
-	ray(const glm::vec3& origin, const glm::vec3& direction) : m_A{ origin }, m_B{ direction } {}
+namespace engn {
 
-	glm::vec3 getOrigin() const { return m_A; }
-	glm::vec3 getDirection() const { return m_B; }
+	namespace math {
 
-	glm::vec3 cast(float t) const { return m_A + t * m_B; }
-private:
-	glm::vec3 m_A;
-	glm::vec3 m_B;
-};
+		class ray {
+		public:
+			ray() : origin{}, direction{} {}
+			ray(const glm::vec3& o, const glm::vec3& d) : origin{ o }, direction{ d } {}
+
+			//! Transform a ray by specified matrix
+			void transform(const glm::mat4& transMat);
+
+			//! Cast a ray in the direction by t
+			glm::vec3 getPointAt(float t) const;
+
+			glm::vec3 origin;
+			glm::vec3 direction;
+		};
+
+	} // math
+
+} // engn
