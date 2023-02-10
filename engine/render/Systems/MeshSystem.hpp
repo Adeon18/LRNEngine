@@ -9,8 +9,8 @@
 #include "render/Graphics/ConstantBuffer.hpp"
 #include "render/Graphics/InstanceBuffer.hpp"
 
-#include "render/Graphics/VertexShader.hpp"
-#include "render/Graphics/PixelShader.hpp"
+#include "render/Graphics/DXShaders/VertexShader.hpp"
+#include "render/Graphics/DXShaders/PixelShader.hpp"
 
 #include "render/Graphics/Vertex.hpp"
 

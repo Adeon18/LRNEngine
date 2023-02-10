@@ -117,10 +117,10 @@
     <ClInclude Include="render\Graphics\Vertex.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\VertexShader.hpp">
+    <ClInclude Include="render\Graphics\DXShaders\VertexShader.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\PixelShader.hpp">
+    <ClInclude Include="render\Graphics\DXShaders\PixelShader.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="include\utility\utility.hpp">
@@ -183,6 +183,9 @@
     <ClInclude Include="source\dragger\MeshDragger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -230,13 +233,13 @@
     <ClCompile Include="render\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\PixelShader.cpp">
+    <ClCompile Include="render\Graphics\DXShaders\PixelShader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="source\utility\utility.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\VertexShader.cpp">
+    <ClCompile Include="render\Graphics\DXShaders\VertexShader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="render\Graphics\IndexBuffer.cpp">
@@ -279,6 +282,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

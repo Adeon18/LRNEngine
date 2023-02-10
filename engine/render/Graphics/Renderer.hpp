@@ -5,8 +5,8 @@
 #include "ConstantBuffer.hpp"
 #include "InstanceBuffer.hpp"
 
-#include "VertexShader.hpp"
-#include "PixelShader.hpp"
+#include "DXShaders/VertexShader.hpp"
+#include "DXShaders/PixelShader.hpp"
 
 #include "Vertex.hpp"
 

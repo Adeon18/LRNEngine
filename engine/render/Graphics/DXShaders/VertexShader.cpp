@@ -8,16 +8,19 @@
 namespace engn {
 	namespace rend {
 		void VertexShader::init(const std::wstring& shaderPath, D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem) {
-			// Read vertex Shader
-			HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("Failed to load Vertex Shader " +
-					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
-				return;
-			}
+			if (!readShaderFile(shaderPath)) { return; }
+			if (!createShader(shaderPath)) { return; }
+			if (!createInputLayout(layoutDesc, numElem)) { return; }
+		}
 
-			// CreateVertexShader
-			hr = d3d::s_device->CreateVertexShader(
+		void VertexShader::bind()
+		{
+			d3d::s_devcon->VSSetShader(m_shader.Get(), NULL, 0);
+		}
+
+		bool VertexShader::createShader(const std::wstring& shaderPath)
+		{
+			HRESULT hr = d3d::s_device->CreateVertexShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				NULL, // The pointer to class linkage
@@ -26,36 +29,28 @@ namespace engn {
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to create Vertex Shader " +
 					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
-				return;
+				return false;
 			}
 
-			// InputLayout
-			hr = d3d::s_device->CreateInputLayout(
+			return true;
+		}
+
+		bool VertexShader::createInputLayout(D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem)
+		{
+			HRESULT hr = d3d::s_device->CreateInputLayout(
 				layoutDesc,
 				numElem,
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				m_inputLayout.GetAddressOf()
 			);
+
 			if (FAILED(hr)) {
 				Logger::instance().logErr("Failed to create Input Layout: " + std::system_category().message(hr));
-				return;
+				return false;
 			}
-		}
 
-		void VertexShader::bind()
-		{
-			d3d::s_devcon->VSSetShader(m_shader.Get(), NULL, 0);
-		}
-
-		[[nodiscard]] ID3D11VertexShader* VertexShader::getShader() const {
-			return m_shader.Get();
-		}
-		[[nodiscard]] ID3D10Blob* VertexShader::getBuffer() const {
-			return m_shaderBuffer.Get();
-		}
-		ID3D11InputLayout* VertexShader::getInputLayout() const {
-			return m_inputLayout.Get();
+			return true;
 		}
 	} // rend
 } // engn
