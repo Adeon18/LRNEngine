@@ -149,9 +149,9 @@ float3 colorDistortion(float3 pos, float3 normal, float4 col)
 struct PS_INPUT
 {
     float4 outPos : SV_POSITION;
-    float3 worldPos : POS;
+    float3 modelPos : POS;
     float4 outCol : COLOR;
-    float3 outNorm : NORM;
+    float3 modelNorm : NORM;
 };
 
 #define DEBUG 0
@@ -161,6 +161,6 @@ float4 main(PS_INPUT inp) : SV_TARGET
 #if DEBUG
     return float4(inp.outNorm, 1.0f);
 #else
-    return float4(colorDistortion(inp.worldPos, inp.outNorm, inp.outCol), 1.0f);
+    return float4(colorDistortion(inp.modelPos, inp.modelNorm, inp.outCol), 1.0f);
 #endif
 }

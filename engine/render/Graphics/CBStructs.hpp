@@ -9,9 +9,10 @@ namespace engn {
 			XMMATRIX meshToModel;
 			XMMATRIX meshToModelInv;
 		};
-		//! Basic struct for real-time per-frame data for the vertex shader - has the worldToClip matrix 
+		//! Basic struct for real-time per-frame data for the vertex shader - has the worldToClip matrix and inverse(for normal in world space calc)
 		struct CB_VS_RealTimeData {
 			XMMATRIX worldToClip;
+			XMMATRIX worldToClipInv;
 			XMFLOAT4 gResolution;
 			XMFLOAT4 gCameraPosition;
 			float gTime;
