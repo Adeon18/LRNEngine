@@ -1,7 +1,5 @@
 #pragma once
 
-#include <DirectXMath.h>
-
 #include "source/mesh/MeshHelpers.hpp"
 
 namespace engn {

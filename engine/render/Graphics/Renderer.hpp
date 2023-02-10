@@ -41,7 +41,7 @@ namespace engn {
 			
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
-			ConstantBuffer<CB_PS_RealTimeData> m_globalConstantBufferPS;
+			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

@@ -1,5 +1,7 @@
 cbuffer perFrame : register(b0)
 {
+    float4x4 worldToClip;
+    float4x4 worldToClipInv;
     float4 iResolution;
     float4 iCameraPosition;
     float iTime;
@@ -146,21 +148,11 @@ float3 colorDistortion(float3 pos, float3 normal, float4 col)
     return color;
 }
 
-struct PS_INPUT
+// called in vertex shader
+float3 vertexDistortion(float3 pos, float3 normal)
 {
-    float4 outPos : SV_POSITION;
-    float3 modelPos : POS;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORM;
-};
-
-#define DEBUG 0
-
-float4 main(PS_INPUT inp) : SV_TARGET
-{
-#if DEBUG
-    return float4(inp.outNorm, 1.0f);
-#else
-    return float4(colorDistortion(inp.modelPos, inp.modelNorm, inp.outCol), 1.0f);
-#endif
+    float3 offset = 0.0;
+    offset += normal * 0.75 * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
+    offset += normal * 2.0 * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
+    return offset;
 }

@@ -10,11 +10,10 @@
 #include "render/Graphics/InstanceBuffer.hpp"
 
 #include "render/Graphics/DXShaders/VertexShader.hpp"
+#include "render/Graphics/DXShaders/GeometryShader.hpp"
 #include "render/Graphics/DXShaders/PixelShader.hpp"
 
 #include "render/Graphics/Vertex.hpp"
-
-#include "source/math/Ray.hpp"
 
 namespace engn {
 	namespace rend {
@@ -54,13 +53,14 @@ namespace engn {
 			GroupTypes m_type;
 
 			VertexShader m_vertexShader;
+			GeometryShader m_geometryShader;
 			PixelShader m_pixelShader;
 		public:
 			//! Make the groups definable my type
 			void setType(const GroupTypes& t) { m_type = t; }
 
 			//! Init the input layout(for now the same for all)
-			void init(const std::wstring& VSpath, const std::wstring& PSpath) {
+			void init(const std::wstring& VSpath, const std::wstring& GSpath, const std::wstring& PSpath) {
 				D3D11_INPUT_ELEMENT_DESC layout[] = {
 					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 					{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -75,6 +75,7 @@ namespace engn {
 				};
 
 				m_vertexShader.init(VSpath, layout, ARRAYSIZE(layout));
+				m_geometryShader.init(GSpath);
 				m_pixelShader.init(PSpath);
 				m_meshData.init();
 			}
@@ -235,6 +236,7 @@ namespace engn {
 
 				d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
 				m_vertexShader.bind();
+				m_geometryShader.bind();
 				m_pixelShader.bind();
 				m_instanceBuffer.bind();
 

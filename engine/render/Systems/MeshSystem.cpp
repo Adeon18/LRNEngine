@@ -8,7 +8,7 @@ namespace engn {
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_normalGroup.setType(GroupTypes::NORMAL);
-			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", shaderFolder + L"PSBasicColor.cso");
+			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", L"", shaderFolder + L"PSBasicColor.cso");
 
 		}
 		void MeshSystem::initHologramGroup()
@@ -17,7 +17,7 @@ namespace engn {
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
-			m_hologramGroup.init(shaderFolder + L"VSHologram.cso", shaderFolder + L"PSHologram.cso");
+			m_hologramGroup.init(shaderFolder + L"VSHologram.cso", shaderFolder + L"GSHologram.cso", shaderFolder + L"PSHologram.cso");
 		}
 		void MeshSystem::render(const XMMATRIX& worldToClip)
 		{

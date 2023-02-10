@@ -3,8 +3,6 @@
 #include <memory>
 #include <array>
 
-#include <DirectXMath.h>
-
 #include "source/mesh/Mesh.hpp"
 #include "source/math/Ray.hpp"
 
