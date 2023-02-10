@@ -116,13 +116,13 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
 // A local constant inside a function can be marked just with "const".
 // "static" for locals preserves value during current shader thread execution.
 
-static const float BLUE_WAVE_INTERVAL = 10;
+static const float BLUE_WAVE_INTERVAL = 100;
 static const float BLUE_WAVE_SPEED = 10.0;
-static const float BLUE_WAVE_THICKNESS = 1.0;
+static const float BLUE_WAVE_THICKNESS = 5.0;
 
-static const float RED_WAVE_INTERVAL = 100.0;
+static const float RED_WAVE_INTERVAL = 200.0;
 static const float RED_WAVE_SPEED = 20.0;
-static const float RED_WAVE_THICKNESS = 5.0;
+static const float RED_WAVE_THICKNESS = 10.0;
 
 // called in pixel shader
 float3 colorDistortion(float3 pos, float3 normal, float4 col)
@@ -152,7 +152,7 @@ float3 colorDistortion(float3 pos, float3 normal, float4 col)
 float3 vertexDistortion(float3 pos, float3 normal)
 {
     float3 offset = 0.0;
-    offset += normal * 0.75 * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
-    offset += normal * 2.0 * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
+    offset += normal * 3.0f * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
+    offset += normal * 7.0f * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
     return offset;
 }
