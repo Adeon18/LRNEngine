@@ -32,7 +32,8 @@ namespace engn {
 
 		void Renderer::m_initScene()
 		{
-			m_constantBufferVS.init();
+			m_globalConstantBufferVS.init();
+			m_globalConstantBufferPS.init();
 
 			// TODO: Later may move to some map
 #ifdef _WIN64 
@@ -118,13 +119,23 @@ namespace engn {
 		void Renderer::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// General Data constant buffer
-			m_constantBufferVS.getData().gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
-			XMStoreFloat4(&(m_constantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
-			m_constantBufferVS.getData().gTime = renderData.iTime;
+			const XMFLOAT4 gResolution = { renderData.iResolutionX, renderData.iResolutionY, renderData.invResolutionX, renderData.invResolutionY };
+
+			//! Fill global constant VS CB
+			m_globalConstantBufferVS.getData().worldToClip = XMMatrixTranspose( camPtr->getViewMatrix() * camPtr->getProjMatrix() );
+			m_globalConstantBufferVS.getData().gResolution = gResolution;
+			XMStoreFloat4(&(m_globalConstantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
+			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
+
+			//! Fill global constant PS CB
+			m_globalConstantBufferPS.getData().gResolution = gResolution;
+			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
+			m_globalConstantBufferPS.getData().gTime = renderData.iTime;
 			
-			m_constantBufferVS.fill();
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
-			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_constantBufferVS.getBufferAddress());
+			m_globalConstantBufferVS.fill();
+			m_globalConstantBufferPS.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
+			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_globalConstantBufferPS.getBufferAddress());
 		}
 	} // rend
 } // engn

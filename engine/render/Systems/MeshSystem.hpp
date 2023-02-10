@@ -218,7 +218,7 @@ namespace engn {
 							{
 								// Dangerous! TODO SFINAE
 								I ins;
-								ins.modelToWorld = material.instances[index].modelToWorld * worldToView;
+								ins.modelToWorld = material.instances[index].modelToWorld;
 								ins.color = material.instances[index].color;
 								dst[copiedNum++] = ins;
 							}

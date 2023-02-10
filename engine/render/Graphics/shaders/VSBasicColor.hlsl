@@ -1,5 +1,6 @@
 cbuffer perFrame : register(b0)
 {
+    float4x4 worldToClip;
     float4 iResolution;
     float4 iCameraPosition;
     float iTime;
@@ -18,10 +19,10 @@ struct VS_INPUT
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
     float3 inTC : TEXCOORD;
-    float4 worldToClip0 : W2CLIP0;
-    float4 worldToClip1 : W2CLIP1;
-    float4 worldToClip2 : W2CLIP2;
-    float4 worldToClip3 : W2CLIP3;
+    float4 modelToWorld0 : W2CLIP0;
+    float4 modelToWorld1 : W2CLIP1;
+    float4 modelToWorld2 : W2CLIP2;
+    float4 modelToWorld3 : W2CLIP3;
     float4 color : COLOR;
 };
 
@@ -39,8 +40,11 @@ VS_OUTPUT main(VS_INPUT input)
     float3 modelNorm = normalize(mul(float4(input.inNorm, 0.0f), meshToModelInv));
     float4 modelPos = mul(float4(input.inPos, 1.0f), meshToModel);
     
-    float4x4 worldToClip = float4x4(input.worldToClip0, input.worldToClip1, input.worldToClip2, input.worldToClip3);
-    output.outPos = mul(modelPos, worldToClip);
+    float4x4 modelToWorld = float4x4(input.modelToWorld0, input.modelToWorld1, input.modelToWorld2, input.modelToWorld3);
+    
+    float4 worldPos = mul(modelPos, modelToWorld);
+    
+    output.outPos = mul(worldPos, worldToClip);
     output.modelPos = modelPos.xyz;
     output.outCol = input.color;
     output.outNorm = modelNorm;
