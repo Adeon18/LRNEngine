@@ -117,8 +117,8 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
 // "static" for locals preserves value during current shader thread execution.
 
 static const float BLUE_WAVE_INTERVAL = 10;
-static const float BLUE_WAVE_SPEED = 0.5;
-static const float BLUE_WAVE_THICKNESS = 1.0;
+static const float BLUE_WAVE_SPEED = 1.5;
+static const float BLUE_WAVE_THICKNESS = 2.0;
 
 static const float RED_WAVE_INTERVAL = 200.0;
 static const float RED_WAVE_SPEED = 20.0;
@@ -152,7 +152,7 @@ float3 colorDistortion(float3 pos, float3 normal, float4 col)
 float3 vertexDistortion(float3 pos, float3 normal)
 {
     float3 offset = 0.0;
-    offset += normal * 3.0f * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
-    offset += normal * 7.0f * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
+    offset += normal * 1.5f * wave(pos, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
+    offset += normal * 4.0f * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
     return offset;
 }

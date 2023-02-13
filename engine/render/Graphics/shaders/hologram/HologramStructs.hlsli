@@ -16,6 +16,8 @@ struct VS_OUTPUT
 {
     float4x4 modelToWorld : M2W;
     float3 modelPos : POSITION;
+    // Used just in HS to get the tesselation factors
+    float3 worldPos : WORLD_POSITION;
     float4 outCol : COLOR;
     float3 modelNorm : NORMAL;
 };

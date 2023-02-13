@@ -19,21 +19,23 @@ PATCH_OUTPUT mainPatch(InputPatch<VS_OUTPUT, 3> input, uint patchId : SV_Primiti
 {
     PATCH_OUTPUT output;
    
-    float3 worldPosV0 = mul(float4(input[0].modelPos, 1.0f), input[0].modelToWorld).xyz;
-    float3 worldPosV1 = mul(float4(input[1].modelPos, 1.0f), input[1].modelToWorld).xyz;
-    float3 worldPosV2 = mul(float4(input[2].modelPos, 1.0f), input[2].modelToWorld).xyz;
+    float e0Length = length(input[0].worldPos - input[1].worldPos);
+    float e1Length = length(input[1].worldPos - input[2].worldPos);
+    float e2Length = length(input[2].worldPos - input[0].worldPos);
     
-    int innerFactor = 10 * (length(worldPosV0 - worldPosV1) + length(worldPosV1 - worldPosV2) + length(worldPosV0 - worldPosV2)) / 3.0f;
+    float avgEdgeLen = (e0Length + e1Length + e2Length) / 3.0f;
+    
+    int innerFactor = avgEdgeLen * 10;
     
 #if WORLD_SPACE_TESSELATION_OFF
-    output.EdgeFactors[0] = 5;
-    output.EdgeFactors[1] = 5;
-    output.EdgeFactors[2] = 5;
-    output.InsideFactor = 5;
+    output.EdgeFactors[0] = 1;
+    output.EdgeFactors[1] = 1;
+    output.EdgeFactors[2] = 1;
+    output.InsideFactor = 1;
 #else 
-    output.EdgeFactors[0] = max(int(length(worldPosV0 - worldPosV1) * 10), 1);
-    output.EdgeFactors[1] = max(int(length(worldPosV1 - worldPosV2) * 10), 1);
-    output.EdgeFactors[2] = max(int(length(worldPosV0 - worldPosV2) * 10), 1);
+    output.EdgeFactors[0] = max(e0Length * 10, 1);
+    output.EdgeFactors[1] = max(e1Length * 10, 1);
+    output.EdgeFactors[2] = max(e2Length * 10, 1);
     output.InsideFactor = max(innerFactor, 1);
 #endif
     return output;
