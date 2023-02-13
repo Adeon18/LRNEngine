@@ -1,4 +1,5 @@
 #include "HologramInclude.hlsli"
+#include "HologramStructs.hlsli"
 
 cbuffer perMesh : register(b1)
 {
@@ -6,27 +7,6 @@ cbuffer perMesh : register(b1)
     float4x4 meshToModelInv;
 };
 
-struct VS_INPUT
-{
-    float3 inPos : POSITION;
-    float3 inNorm : NORMAL;
-    float3 inTangent : TANGENT;
-    float3 inBiTangent : BITANGENT;
-    float3 inTC : TEXCOORD;
-    float4 modelToWorld0 : MODEL2WORLD0;
-    float4 modelToWorld1 : MODEL2WORLD1;
-    float4 modelToWorld2 : MODEL2WORLD2;
-    float4 modelToWorld3 : MODEL2WORLD3;
-    float4 color : COLOR;
-};
-
-struct VS_OUTPUT
-{
-    float4x4 modelToWorld : M2W;
-    float3 modelPos : POSITION;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORMAL;
-};
 
 VS_OUTPUT main(VS_INPUT input)
 {

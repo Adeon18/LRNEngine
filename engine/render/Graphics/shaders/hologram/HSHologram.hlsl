@@ -1,16 +1,4 @@
-struct VS_OUTPUT
-{
-    float4x4 modelToWorld : M2W;
-    float3 modelPos : POSITION;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORMAL;
-};
-
-struct PatchOut // 3 outer factors and 1 inner factor specifically for “tri” domain
-{
-    float EdgeFactors[3] : SV_TessFactor;
-    float InsideFactor : SV_InsideTessFactor;
-};
+#include "HologramStructs.hlsli"
 
 [outputcontrolpoints(3)] // doesn’t have to match InputPatch argument size (3)
 [domain("tri")]
@@ -24,13 +12,29 @@ VS_OUTPUT main(InputPatch<VS_OUTPUT, 3> input,
     return input[pointId]; // input size matches the number specified in the set PATCHLIST Topology
 }
 
+#define WORLD_SPACE_TESSELATION 0
 
-PatchOut mainPatch(InputPatch<VS_OUTPUT, 3> input, uint patchId : SV_PrimitiveID)
+
+PATCH_OUTPUT mainPatch(InputPatch<VS_OUTPUT, 3> input, uint patchId : SV_PrimitiveID)
 {
-    PatchOut output;
-    output.EdgeFactors[0] = 2;
-    output.EdgeFactors[1] = 2;
-    output.EdgeFactors[2] = 2;
-    output.InsideFactor = 2;
+    PATCH_OUTPUT output;
+   
+    float3 worldPosV0 = mul(float4(input[0].modelPos, 1.0f), input[0].modelToWorld).xyz;
+    float3 worldPosV1 = mul(float4(input[1].modelPos, 1.0f), input[1].modelToWorld).xyz;
+    float3 worldPosV2 = mul(float4(input[2].modelPos, 1.0f), input[2].modelToWorld).xyz;
+    
+    int innerFactor = 10 * (length(worldPosV0 - worldPosV1) + length(worldPosV1 - worldPosV2) + length(worldPosV0 - worldPosV2)) / 3.0f;
+    
+#if WORLD_SPACE_TESSELATION
+    output.EdgeFactors[0] = 1;
+    output.EdgeFactors[1] = 1;
+    output.EdgeFactors[2] = 1;
+    output.InsideFactor = 1;
+#else 
+    output.EdgeFactors[0] = max(int(length(worldPosV0 - worldPosV1) * 10), 1);
+    output.EdgeFactors[1] = max(int(length(worldPosV1 - worldPosV2) * 10), 1);
+    output.EdgeFactors[2] = max(int(length(worldPosV0 - worldPosV2) * 10), 1);
+    output.InsideFactor = max(innerFactor, 1);
+#endif
     return output;
 }

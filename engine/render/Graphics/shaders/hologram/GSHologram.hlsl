@@ -1,21 +1,5 @@
 #include "HologramInclude.hlsli"
-
-
-struct VS_OUTPUT
-{
-    float4x4 modelToWorld : M2W;
-    float3 modelPos : POSITION;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORMAL;
-};
-
-struct GS_OUTPUT
-{
-    float4 outPos : SV_POSITION;
-    float3 modelPos : POS;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORM;
-};
+#include "HologramStructs.hlsli"
 
 
 [maxvertexcount(3)]

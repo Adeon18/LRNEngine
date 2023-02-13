@@ -219,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
+    <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

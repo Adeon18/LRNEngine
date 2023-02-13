@@ -322,5 +322,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
+    <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
   </ItemGroup>
 </Project>

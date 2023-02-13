@@ -1,16 +1,10 @@
 #include "HologramInclude.hlsli"
+#include "HologramStructs.hlsli"
 
-struct PS_INPUT
-{
-    float4 outPos : SV_POSITION;
-    float3 modelPos : POS;
-    float4 outCol : COLOR;
-    float3 modelNorm : NORM;
-};
 
 #define DEBUG 0
 
-float4 main(PS_INPUT inp) : SV_TARGET
+float4 main(GS_OUTPUT inp) : SV_TARGET
 {
 #if DEBUG
     return float4(inp.outNorm, 1.0f);
