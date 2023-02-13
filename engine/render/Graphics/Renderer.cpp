@@ -21,7 +21,10 @@ namespace engn {
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
 			// Set Input Assembler Data
-			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			// TODO: NEED TO BE REBINDED BY EACH GROUP
+			//d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
@@ -37,11 +40,13 @@ namespace engn {
 
 			// TODO: Later may move to some map
 #ifdef _WIN64 
-			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
+			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
@@ -68,15 +73,15 @@ namespace engn {
 			//}
 
 			mptr.reset(); 
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 10.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 			
 			// Fill the field with samurai

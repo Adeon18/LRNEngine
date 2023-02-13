@@ -189,6 +189,12 @@
     <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -293,6 +299,12 @@
     <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\VSBasicColor.hlsl">
@@ -305,6 +317,8 @@
     <FxCompile Include="render\Graphics\shaders\hologram\VSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\PSBasicColor.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
