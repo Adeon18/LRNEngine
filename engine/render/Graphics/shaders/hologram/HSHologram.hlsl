@@ -12,7 +12,7 @@ VS_OUTPUT main(InputPatch<VS_OUTPUT, 3> input,
     return input[pointId]; // input size matches the number specified in the set PATCHLIST Topology
 }
 
-#define WORLD_SPACE_TESSELATION 0
+#define WORLD_SPACE_TESSELATION_OFF 0
 
 
 PATCH_OUTPUT mainPatch(InputPatch<VS_OUTPUT, 3> input, uint patchId : SV_PrimitiveID)
@@ -25,11 +25,11 @@ PATCH_OUTPUT mainPatch(InputPatch<VS_OUTPUT, 3> input, uint patchId : SV_Primiti
     
     int innerFactor = 10 * (length(worldPosV0 - worldPosV1) + length(worldPosV1 - worldPosV2) + length(worldPosV0 - worldPosV2)) / 3.0f;
     
-#if WORLD_SPACE_TESSELATION
-    output.EdgeFactors[0] = 1;
-    output.EdgeFactors[1] = 1;
-    output.EdgeFactors[2] = 1;
-    output.InsideFactor = 1;
+#if WORLD_SPACE_TESSELATION_OFF
+    output.EdgeFactors[0] = 5;
+    output.EdgeFactors[1] = 5;
+    output.EdgeFactors[2] = 5;
+    output.InsideFactor = 5;
 #else 
     output.EdgeFactors[0] = max(int(length(worldPosV0 - worldPosV1) * 10), 1);
     output.EdgeFactors[1] = max(int(length(worldPosV1 - worldPosV2) * 10), 1);

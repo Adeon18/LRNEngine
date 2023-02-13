@@ -7,7 +7,7 @@
 float4 main(GS_OUTPUT inp) : SV_TARGET
 {
 #if DEBUG
-    return float4(inp.outNorm, 1.0f);
+    return float4(inp.modelNorm, 1.0f);
 #else
     return float4(colorDistortion(inp.modelPos, inp.modelNorm, inp.outCol), 1.0f);
 #endif

@@ -116,9 +116,9 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
 // A local constant inside a function can be marked just with "const".
 // "static" for locals preserves value during current shader thread execution.
 
-static const float BLUE_WAVE_INTERVAL = 100;
-static const float BLUE_WAVE_SPEED = 10.0;
-static const float BLUE_WAVE_THICKNESS = 5.0;
+static const float BLUE_WAVE_INTERVAL = 10;
+static const float BLUE_WAVE_SPEED = 0.5;
+static const float BLUE_WAVE_THICKNESS = 1.0;
 
 static const float RED_WAVE_INTERVAL = 200.0;
 static const float RED_WAVE_SPEED = 20.0;

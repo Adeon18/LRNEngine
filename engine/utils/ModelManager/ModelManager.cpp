@@ -36,15 +36,15 @@ namespace engn {
 			m_loadedModels.insert({ "unit_box", std::make_shared<mdl::Model>() });
 			std::vector vertices =
 			{
-				Vertex{{0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-front
-				Vertex{{-0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-front
-				Vertex{{0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-front
-				Vertex{{-0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-front
+				Vertex{{0.5f, 0.5f, -0.5f}, {0.33f, 0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-front
+				Vertex{{-0.5f, 0.5f, -0.5f}, {-0.33f, 0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-front
+				Vertex{{0.5f, -0.5f, -0.5f}, {0.33f, -0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-front
+				Vertex{{-0.5f, -0.5f, -0.5f}, {-0.33f, -0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-front
 
-				Vertex{{0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-back
-				Vertex{{-0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-back
-				Vertex{{0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-back
-				Vertex{{-0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-back
+				Vertex{{0.5f, 0.5f, 0.5f}, {0.33f, 0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-back
+				Vertex{{-0.5f, 0.5f, 0.5f}, {-0.33f, 0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-back
+				Vertex{{0.5f, -0.5f, 0.5f}, {0.33f, -0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-back
+				Vertex{{-0.5f, -0.5f, 0.5f}, {-0.33f, -0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-back
 			};
 			std::vector<DWORD> indices =
 			{
