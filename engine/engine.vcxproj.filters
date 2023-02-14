@@ -319,9 +319,13 @@
     <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\VSVisNormal.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\GSVisNormal.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\PSVisNormal.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
+    <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
   </ItemGroup>
 </Project>

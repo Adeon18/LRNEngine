@@ -20,17 +20,13 @@ namespace engn {
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{
-			// Set Input Assembler Data
-			// TODO: NEED TO BE REBINDED BY EACH GROUP
-			//d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			//d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-
+			// Set render states and DepthStencil state, everything else is set by the systems
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
 			m_fillPerFrameCBs(camPtr, renderData);
 
-			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
+			MeshSystem::getInstance().render();
 		}
 
 		void Renderer::m_initScene()
@@ -70,6 +66,10 @@ namespace engn {
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getCubeModel();
 			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-10.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-15.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
 
 			//// Fill the field with cubes

@@ -191,7 +191,7 @@ namespace engn {
 			}
 
 			//! Fill the data to be passed by instance
-			void fillInstanceBuffer(const XMMATRIX& worldToView) {
+			void fillInstanceBuffer() {
 				// Count total instances
 				uint32_t totalInstances = 0;
 				for (auto& model : m_models)
@@ -303,21 +303,24 @@ namespace engn {
 			MeshSystem(const MeshSystem& other) = delete;
 			MeshSystem& operator=(const MeshSystem& other) = delete;
 
+			//! Init the ENTIRE Meshsystem singleton, should be called right after d3d init
 			void init() {
 				initNormalGroup();
 				initHologramGroup();
 			}
 
+			//! Init render gruups and set respective parameters
 			void initNormalGroup();
 			void initHologramGroup();
-
-			void render(const XMMATRIX& worldToClip);
+			//! Call render on each group
+			void render();
 			
+			//! Add a new instance to groups, by filling the respective rendergroup structs
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-
+			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
-
+			//! Get closest mesh data that was hit by a ray, used for dragging
 			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};

@@ -9,7 +9,7 @@ namespace engn {
 
 			m_normalGroup.setType(GroupTypes::NORMAL);
 			m_normalGroup.setTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", L"", L"", L"", shaderFolder + L"PSBasicColor.cso");
+			m_normalGroup.init(shaderFolder + L"VSVisNormal.cso", L"", L"", shaderFolder + L"GSVisNormal.cso", shaderFolder + L"PSVisNormal.cso");
 
 		}
 		void MeshSystem::initHologramGroup()
@@ -27,12 +27,12 @@ namespace engn {
 				shaderFolder + L"PSHologram.cso"
 			);
 		}
-		void MeshSystem::render(const XMMATRIX& worldToClip)
+		void MeshSystem::render()
 		{
-			m_normalGroup.fillInstanceBuffer(worldToClip);
+			m_normalGroup.fillInstanceBuffer();
 			m_normalGroup.render();
 
-			m_hologramGroup.fillInstanceBuffer(worldToClip);
+			m_hologramGroup.fillInstanceBuffer();
 			m_hologramGroup.render();
 		}
 
@@ -59,9 +59,6 @@ namespace engn {
 			{
 				m_hologramGroup.addModelOffset(instanceData, offset);
 			}
-			break;
-			default:
-			{}
 			}
 		}
 
