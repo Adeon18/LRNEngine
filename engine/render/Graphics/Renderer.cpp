@@ -23,7 +23,7 @@ namespace engn {
 			// Set Input Assembler Data
 			// TODO: NEED TO BE REBINDED BY EACH GROUP
 			//d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+			//d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
@@ -55,13 +55,22 @@ namespace engn {
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
 			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			//MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(10.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-10.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
 
 			//// Fill the field with cubes
 			//for (int i = -32; i < 32; ++i) {
@@ -74,15 +83,15 @@ namespace engn {
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-8.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 10.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(8.0f, 0.0f, 15.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 			
 			// Fill the field with samurai
 			/*for (int i = 0; i < 32; ++i) {

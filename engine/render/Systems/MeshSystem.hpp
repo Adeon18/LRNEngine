@@ -51,8 +51,10 @@ namespace engn {
 			InstanceBuffer<I> m_instanceBuffer;
 			ConstantBuffer<CB_VS_MeshData> m_meshData;
 
-			//! A unique enum identifier that allows to get the group type at dragger collision
-			GroupTypes m_type;
+			//! A unique enum identifier that allows to get the group type at dragger collision - Normal by default
+			GroupTypes m_type = GroupTypes::NORMAL;
+			//! Group input assembler topology - triangleList by default
+			D3D11_PRIMITIVE_TOPOLOGY m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 			VertexShader m_vertexShader;
 			HullShader m_hullShader;
@@ -62,6 +64,8 @@ namespace engn {
 		public:
 			//! Make the groups definable my type
 			void setType(const GroupTypes& t) { m_type = t; }
+			//! Set the IA topology for the group
+			void setTopology(const D3D11_PRIMITIVE_TOPOLOGY& t) { m_topology = t; }
 
 			//! Init the input layout(for now the same for all)
 			void init(const std::wstring& VSpath, const std::wstring& HSpath, const std::wstring& DSpath, const std::wstring& GSpath, const std::wstring& PSpath) {
@@ -241,6 +245,7 @@ namespace engn {
 					return;
 
 				d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
+				d3d::s_devcon->IASetPrimitiveTopology(m_topology);
 				m_vertexShader.bind();
 				m_hullShader.bind();
 				m_domainShader.bind();

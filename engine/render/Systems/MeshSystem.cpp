@@ -8,6 +8,7 @@ namespace engn {
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_normalGroup.setType(GroupTypes::NORMAL);
+			m_normalGroup.setTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", L"", L"", L"", shaderFolder + L"PSBasicColor.cso");
 
 		}
@@ -17,6 +18,7 @@ namespace engn {
 			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
 
 			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
+			m_hologramGroup.setTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 			m_hologramGroup.init(
 				shaderFolder + L"VSHologram.cso",
 				shaderFolder + L"HSHologram.cso",
