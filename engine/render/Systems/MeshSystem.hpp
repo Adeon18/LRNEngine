@@ -391,6 +391,19 @@ namespace engn {
 						SHADER_FOLDER + L"PSVisNormal.cso"
 					}
 				},
+				{
+					PipelineTypes::WIREFRAME_DEBUG,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSVisWireframe.cso",
+						L"",
+						L"",
+						SHADER_FOLDER + L"GSVisWireframe.cso",
+						SHADER_FOLDER + L"PSVisWireframe.cso"
+					}
+				},
 			};
 		};
 	} // rend

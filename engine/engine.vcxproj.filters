@@ -328,10 +328,14 @@
     <FxCompile Include="render\Graphics\shaders\normal_visualization\VSVisNormal.hlsl" />
     <FxCompile Include="render\Graphics\shaders\normal_visualization\GSVisNormal.hlsl" />
     <FxCompile Include="render\Graphics\shaders\normal_visualization\PSVisNormal.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
+    <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
   </ItemGroup>
 </Project>

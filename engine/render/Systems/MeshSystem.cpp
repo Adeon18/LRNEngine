@@ -36,12 +36,20 @@ namespace engn {
 				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
 				m_normalGroup.render();
 			}
+			if (flags.renderWireframes) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_normalGroup.render();
+			}
 
 			m_hologramGroup.fillInstanceBuffer();
-			this->bindPipelineViaType((flags.renderFaceNormals) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
+			this->bindPipelineViaType((flags.renderFaceNormals || flags.renderWireframes) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();
 			if (flags.renderFaceNormals) {
 				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_hologramGroup.render();
+			}
+			if (flags.renderWireframes) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_hologramGroup.render();
 			}
 		}
