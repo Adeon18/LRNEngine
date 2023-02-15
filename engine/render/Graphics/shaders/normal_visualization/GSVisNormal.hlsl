@@ -11,10 +11,12 @@ static const float4 VERTEX_NORMAL_COLOR = float4(1.f, 1.f, 1.f, 1.f);
 
 // For now do only triangle normal
 void main(triangle VS_OUTPUT input[3], inout LineStream<GS_OUTPUT> output)
-{
-    float3 triangleNorm = (input[0].worldNorm + input[1].worldNorm + input[2].worldNorm) / 3.0f;
+{   
+    //float3 triangleNorm = (input[0].worldNorm + input[1].worldNorm + input[2].worldNorm) / 3.0f;
+    float3 triangleNorm = normalize(cross(input[1].worldPos - input[0].worldPos, input[2].worldPos - input[0].worldPos));
     
     float3 triangleCenterWorld = (input[0].worldPos + input[1].worldPos + input[2].worldPos) / 3.0f;
+    
     
     // Triangle Normal
     GS_OUTPUT normOrigin;

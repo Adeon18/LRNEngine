@@ -10,7 +10,7 @@ namespace engn {
 		class HullShader : public BaseShader {
 		public:
 			void init(const std::wstring& shaderPath);
-			void bind();
+			void bind() const;
 
 			[[nodiscard]] ID3D11HullShader* getShader() const { return m_shader.Get(); };
 		private:

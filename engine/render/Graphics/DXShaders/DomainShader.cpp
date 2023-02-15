@@ -12,7 +12,7 @@ namespace engn {
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void DomainShader::bind()
+		void DomainShader::bind() const
 		{
 			d3d::s_devcon->DSSetShader(m_shader.Get(), NULL, 0);
 		}

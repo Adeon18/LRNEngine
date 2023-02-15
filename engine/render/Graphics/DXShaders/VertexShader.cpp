@@ -13,7 +13,7 @@ namespace engn {
 			if (!createInputLayout(layoutDesc, numElem)) { return; }
 		}
 
-		void VertexShader::bind()
+		void VertexShader::bind() const
 		{
 			d3d::s_devcon->VSSetShader(m_shader.Get(), NULL, 0);
 		}

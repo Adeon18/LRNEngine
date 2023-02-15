@@ -30,9 +30,13 @@ namespace engn {
 		void MeshSystem::render()
 		{
 			m_normalGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
+			m_normalGroup.render();
+			this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
 			m_normalGroup.render();
 
 			m_hologramGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();
 		}
 
@@ -76,6 +80,16 @@ namespace engn {
 			}
 
 			return std::pair<bool, InstanceProperties>{collided, i2d};
+		}
+		void MeshSystem::initPipelines()
+		{
+			for (auto& [type, data] : PIPELINE_TYPE_DATA) {
+				initPipeline(m_pipelines[type], data);
+			}
+		}
+		void MeshSystem::bindPipelineViaType(PipelineTypes pipelineType)
+		{
+			bindPipeline(m_pipelines[pipelineType]);
 		}
 	} // rend
 } // engn

@@ -12,7 +12,7 @@ namespace engn {
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void HullShader::bind()
+		void HullShader::bind() const
 		{
 			d3d::s_devcon->HSSetShader(m_shader.Get(), NULL, 0);
 		}

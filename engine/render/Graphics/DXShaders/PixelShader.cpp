@@ -12,7 +12,7 @@ namespace engn {
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void PixelShader::bind()
+		void PixelShader::bind() const
 		{
 			d3d::s_devcon->PSSetShader(m_shader.Get(), NULL, 0);
 		}

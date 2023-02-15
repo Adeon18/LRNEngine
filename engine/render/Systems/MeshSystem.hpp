@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "RenderStructs.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
@@ -9,11 +11,7 @@
 #include "render/Graphics/ConstantBuffer.hpp"
 #include "render/Graphics/InstanceBuffer.hpp"
 
-#include "render/Graphics/DXShaders/VertexShader.hpp"
-#include "render/Graphics/DXShaders/HullShader.hpp"
-#include "render/Graphics/DXShaders/DomainShader.hpp"
-#include "render/Graphics/DXShaders/GeometryShader.hpp"
-#include "render/Graphics/DXShaders/PixelShader.hpp"
+#include "render/Systems/Pipeline.hpp"
 
 #include "render/Graphics/Vertex.hpp"
 
@@ -241,16 +239,17 @@ namespace engn {
 			}
 
 			void render() {
+				// TODO: DON'T BIND SJADERS IF EMPTY
 				if (m_instanceBuffer.getSize() == 0)
 					return;
 
-				d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
+				/*d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
 				d3d::s_devcon->IASetPrimitiveTopology(m_topology);
 				m_vertexShader.bind();
 				m_hullShader.bind();
 				m_domainShader.bind();
 				m_geometryShader.bind();
-				m_pixelShader.bind();
+				m_pixelShader.bind();*/
 				m_instanceBuffer.bind();
 
 				uint32_t renderedInstances = 0;
@@ -305,6 +304,7 @@ namespace engn {
 
 			//! Init the ENTIRE Meshsystem singleton, should be called right after d3d init
 			void init() {
+				initPipelines();
 				initNormalGroup();
 				initHologramGroup();
 			}
@@ -324,10 +324,72 @@ namespace engn {
 			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
+
+			void initPipelines();
+			void bindPipelineViaType(PipelineTypes pipelineType);
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
+
+			std::unordered_map<PipelineTypes, Pipeline> m_pipelines;
+
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT[10] = {
+					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			};
+
+			const std::wstring SHADER_FOLDER = util::getExeDirW();
+
+			const std::unordered_map<PipelineTypes, PipelineData> PIPELINE_TYPE_DATA{
+				{
+					PipelineTypes::NORMAL_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSBasicColor.cso",
+						L"",
+						L"",
+						L"",
+						SHADER_FOLDER + L"PSBasicColor.cso"
+					}
+				},
+				{
+					PipelineTypes::HOLOGRAM_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST,
+						SHADER_FOLDER + L"VSHologram.cso",
+						SHADER_FOLDER + L"HSHologram.cso",
+						SHADER_FOLDER + L"DSHologram.cso",
+						SHADER_FOLDER + L"GSHologram.cso",
+						SHADER_FOLDER + L"PSHologram.cso"
+					}
+				},
+				{
+					PipelineTypes::FACE_NORMAL_DEBUG,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSVisNormal.cso",
+						L"",
+						L"",
+						SHADER_FOLDER + L"GSVisNormal.cso",
+						SHADER_FOLDER + L"PSVisNormal.cso"
+					}
+				},
+			};
 		};
 	} // rend
 } // engn

@@ -12,7 +12,7 @@ namespace engn {
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void GeometryShader::bind()
+		void GeometryShader::bind() const
 		{
 			d3d::s_devcon->GSSetShader(m_shader.Get(), NULL, 0);
 		}

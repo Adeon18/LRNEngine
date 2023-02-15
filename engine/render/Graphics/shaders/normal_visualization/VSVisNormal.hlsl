@@ -17,7 +17,7 @@ VS_OUTPUT main(VS_INPUT input)
     float4 modelPos = mul(float4(input.inPos, 1.0f), meshToModel);
     
     float4 worldPos = mul(modelPos, modelToWorld);
-    float3 worldNorm = normalize(mul(float4(worldNorm, 0.0f), transpose(worldToClipInv))).xyz;
+    float3 worldNorm = normalize(mul(float4(modelNorm, 0.0f), modelToWorld)).xyz;
     
     output.worldPos = worldPos.xyz;
     output.worldNorm = modelNorm;

@@ -15,7 +15,10 @@ namespace engn {
 			bool readShaderFile(const std::wstring& shaderPath);
 
 			[[nodiscard]] ID3D10Blob* getBuffer() const { m_shaderBuffer.Get(); }
+			[[nodiscard]] bool isLoaded() const { return active; }
 		protected:
+			// The shader is active if shader path != ""
+			bool active = false;
 			Microsoft::WRL::ComPtr<ID3D10Blob> m_shaderBuffer;
 		};
 	} // rend
