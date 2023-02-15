@@ -4,12 +4,11 @@
 static const float4 WIREFRAME_COLOR = float4(1.f, 1.f, 1.f, 1.f);
 
 
-[maxvertexcount(8)]
-
+[maxvertexcount(6)]
 // For now do only triangle normal
 void main(triangle VS_OUTPUT input[3], inout LineStream<GS_OUTPUT> output)
 {   
-    // Vertex Normals
+    // Draw 3 lines that construct a triangle
     for (int i = 0; i < 3; ++i)
     {
         GS_OUTPUT normOrigin;

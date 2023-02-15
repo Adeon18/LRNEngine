@@ -53,39 +53,13 @@ namespace engn {
 			//! A unique enum identifier that allows to get the group type at dragger collision - Normal by default
 			GroupTypes m_type = GroupTypes::NORMAL;
 			//! Group input assembler topology - triangleList by default
-			D3D11_PRIMITIVE_TOPOLOGY m_topology = D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-			VertexShader m_vertexShader;
-			HullShader m_hullShader;
-			DomainShader m_domainShader;
-			GeometryShader m_geometryShader;
-			PixelShader m_pixelShader;
 		public:
 			//! Make the groups definable my type
 			void setType(const GroupTypes& t) { m_type = t; }
-			//! Set the IA topology for the group
-			void setTopology(const D3D11_PRIMITIVE_TOPOLOGY& t) { m_topology = t; }
+
 
 			//! Init the input layout(for now the same for all)
-			void init(const std::wstring& VSpath, const std::wstring& HSpath, const std::wstring& DSpath, const std::wstring& GSpath, const std::wstring& PSpath) {
-				D3D11_INPUT_ELEMENT_DESC layout[] = {
-					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				};
-
-				m_vertexShader.init(VSpath, layout, ARRAYSIZE(layout));
-				m_hullShader.init(HSpath);
-				m_domainShader.init(DSpath);
-				m_geometryShader.init(GSpath);
-				m_pixelShader.init(PSpath);
+			void init() {
 				m_meshData.init();
 			}
 
@@ -239,18 +213,12 @@ namespace engn {
 				m_instanceBuffer.unmap();
 			}
 
+			// Render all the group meshes, can be called multiple times per frame with different shaders
 			void render() {
 				// TODO: DON'T BIND SJADERS IF EMPTY
 				if (m_instanceBuffer.getSize() == 0)
 					return;
 
-				/*d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
-				d3d::s_devcon->IASetPrimitiveTopology(m_topology);
-				m_vertexShader.bind();
-				m_hullShader.bind();
-				m_domainShader.bind();
-				m_geometryShader.bind();
-				m_pixelShader.bind();*/
 				m_instanceBuffer.bind();
 
 				uint32_t renderedInstances = 0;
@@ -310,7 +278,7 @@ namespace engn {
 				initHologramGroup();
 			}
 
-			//! Call render on each group
+			//! Do all the mesh rendering, called every frame on each group
 			void render(const RenderModeFlags& flags);
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
@@ -326,8 +294,9 @@ namespace engn {
 			//! Init render groups and set respective parameters
 			void initNormalGroup();
 			void initHologramGroup();
-
+			//! Initialize all the pipelines
 			void initPipelines();
+			//! Bind a certain pipeline by type - must be called before group render
 			void bindPipelineViaType(PipelineTypes pipelineType);
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(

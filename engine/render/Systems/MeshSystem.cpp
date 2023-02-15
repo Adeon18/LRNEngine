@@ -4,31 +4,19 @@ namespace engn {
 	namespace rend {
 		void MeshSystem::initNormalGroup()
 		{
-			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
-
 			m_normalGroup.setType(GroupTypes::NORMAL);
-			m_normalGroup.setTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			m_normalGroup.init(shaderFolder + L"VSVisNormal.cso", L"", L"", shaderFolder + L"GSVisNormal.cso", shaderFolder + L"PSVisNormal.cso");
+			m_normalGroup.init();
 
 		}
 		void MeshSystem::initHologramGroup()
 		{
-			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
-
 			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
-			m_hologramGroup.setTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-			m_hologramGroup.init(
-				shaderFolder + L"VSHologram.cso",
-				shaderFolder + L"HSHologram.cso",
-				shaderFolder + L"DSHologram.cso",
-				shaderFolder + L"GSHologram.cso",
-				shaderFolder + L"PSHologram.cso"
-			);
+			m_hologramGroup.init();
 		}
+		
 		void MeshSystem::render(const RenderModeFlags& flags)
 		{
+			// Normal group 
 			m_normalGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
 			m_normalGroup.render();
@@ -41,6 +29,7 @@ namespace engn {
 				m_normalGroup.render();
 			}
 
+			// Hologram group
 			m_hologramGroup.fillInstanceBuffer();
 			this->bindPipelineViaType((flags.renderFaceNormals || flags.renderWireframes) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();

@@ -8,13 +8,14 @@
 
 namespace engn {
 	namespace rend {
+		//! The enum that defines all the types of pipelines with shaders - basically a search key for a pipeline
 		enum PipelineTypes {
 			NORMAL_RENDER,
 			HOLOGRAM_RENDER,
 			FACE_NORMAL_DEBUG,
 			WIREFRAME_DEBUG
 		};
-
+		//! A definition of a pipeline, binding/rebinding this struct means changing the pipeline
 		struct Pipeline {
 			D3D11_PRIMITIVE_TOPOLOGY topology;
 			VertexShader vertexShader;
@@ -23,7 +24,7 @@ namespace engn {
 			GeometryShader geometryShader;
 			PixelShader pixelShader;
 		};
-
+		//! The data from which the pipeline is initialized
 		struct PipelineData {
 			D3D11_INPUT_ELEMENT_DESC *layout;
 			uint32_t layoutSize;
@@ -34,7 +35,7 @@ namespace engn {
 			std::wstring GSpath;
 			std::wstring PSpath;
 		};
-
+		//! Initialize the Pipeline struct from the pipeline data
 		inline void initPipeline(Pipeline& pipeline, const PipelineData& data) {
 			pipeline.topology = data.topology;
 			pipeline.vertexShader.init(data.VSpath, data.layout, data.layoutSize);
@@ -43,7 +44,7 @@ namespace engn {
 			pipeline.geometryShader.init(data.GSpath);
 			pipeline.pixelShader.init(data.PSpath);
 		}
-
+		//! Bind the respective pipeline
 		inline void bindPipeline(const Pipeline& pipeline) {
 			d3d::s_devcon->IASetInputLayout(pipeline.vertexShader.getInputLayout());
 			d3d::s_devcon->IASetPrimitiveTopology(pipeline.topology);
