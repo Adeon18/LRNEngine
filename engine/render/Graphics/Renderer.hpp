@@ -1,5 +1,7 @@
 #pragma once
 
+#include "HelperStructs.hpp"
+
 #include "IndexBuffer.hpp"
 #include "VertexBuffer.hpp"
 #include "ConstantBuffer.hpp"
@@ -21,13 +23,14 @@ namespace engn {
 			float invResolutionX;
 			float invResolutionY;
 		};
+
 		/// <summary>
 		/// This class facilitates everything needed for the rendering pipeline
 		/// </summary>
 		class Renderer {
 		public:
 			void init();
-			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
+			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
 			void m_initScene();
 			//! Initialize the RasterizerState

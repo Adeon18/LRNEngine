@@ -12,5 +12,11 @@ namespace engn {
 			m_pressedKeys[m->wParam] = false;
 			if (m_logInput) { Logger::instance().logDebug("Keyboard: Key Released", m->wParam); }
 		}
+		void Keyboard::fillPrevFrameKeys()
+		{
+			for (auto& [key, pressed] : m_pressedKeys) {
+				m_pressedKeysPrevFrame[key] = pressed;
+			}
+		}
 	} // inp
 } // engn

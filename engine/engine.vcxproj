@@ -31,6 +31,7 @@
     <ClInclude Include="render\Graphics\EngineCamera.hpp" />
     <ClInclude Include="render\Graphics\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
+    <ClInclude Include="render\Graphics\HelperStructs.hpp" />
     <ClInclude Include="render\Graphics\Renderer.hpp" />
     <ClInclude Include="include\win_def.hpp" />
     <ClInclude Include="include\win_undef.hpp" />

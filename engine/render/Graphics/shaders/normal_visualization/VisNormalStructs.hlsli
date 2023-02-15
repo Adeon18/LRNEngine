@@ -24,7 +24,6 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float3 worldPos : POS;
-    float3 worldNorm : NORM;
 };
 
 struct GS_OUTPUT

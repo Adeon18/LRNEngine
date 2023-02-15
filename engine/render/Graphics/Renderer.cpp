@@ -18,7 +18,7 @@ namespace engn {
 			m_initScene();
 		}
 
-		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
+		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
 			// Set render states and DepthStencil state, everything else is set by the systems
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
@@ -26,7 +26,7 @@ namespace engn {
 
 			m_fillPerFrameCBs(camPtr, renderData);
 
-			MeshSystem::getInstance().render();
+			MeshSystem::getInstance().render(flags);
 		}
 
 		void Renderer::m_initScene()

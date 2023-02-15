@@ -27,17 +27,23 @@ namespace engn {
 				shaderFolder + L"PSHologram.cso"
 			);
 		}
-		void MeshSystem::render()
+		void MeshSystem::render(const RenderModeFlags& flags)
 		{
 			m_normalGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
 			m_normalGroup.render();
-			this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
-			m_normalGroup.render();
+			if (flags.renderFaceNormals) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_normalGroup.render();
+			}
 
 			m_hologramGroup.fillInstanceBuffer();
-			this->bindPipelineViaType(PipelineTypes::HOLOGRAM_RENDER);
+			this->bindPipelineViaType((flags.renderFaceNormals) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();
+			if (flags.renderFaceNormals) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_hologramGroup.render();
+			}
 		}
 
 		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)

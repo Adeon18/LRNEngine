@@ -25,6 +25,7 @@ int Application::run() {
 			if (debug.first) { engn::Logger::instance().logDebug("FPS", debug.second); }
 
 			m_handleRender();
+			engn::inp::Keyboard::getInstance().fillPrevFrameKeys();
 		}
 		std::this_thread::yield();
 	}

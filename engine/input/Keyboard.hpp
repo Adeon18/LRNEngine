@@ -20,6 +20,9 @@ namespace engn {
 				static constexpr int KEY_H = 0x48;
 				static constexpr int KEY_J = 0x4A;
 				static constexpr int KEY_K = 0x4B;
+				static constexpr int KEY_F = 0x57;
+				static constexpr int KEY_N = 0x4E;
+				static constexpr int KEY_V = 0x56;
 				static constexpr int KEY_CTRL = VK_CONTROL;
 				static constexpr int KEY_SPACE = VK_SPACE;
 			};
@@ -38,12 +41,16 @@ namespace engn {
 			//! Actions on key press and release
 			void onKeyPressed(MSG* m);
 			void onKeyReleased(MSG* m);
-			//! Check if key is pressed
+			//! Check if key is pressed and just pressed
 			[[nodiscard]] bool isKeyPressed(int key) { return m_pressedKeys[key]; }
+			[[nodiscard]] bool isKeyJustPressed(int key) { return !m_pressedKeysPrevFrame[key] && m_pressedKeys[key]; }
+			//! Fills the keys pressed on previous frame to facilitate the JustPressed functionality
+			void fillPrevFrameKeys();
 		private:
 			Keyboard() {}
 
 			std::unordered_map<int, bool> m_pressedKeys;
+			std::unordered_map<int, bool> m_pressedKeysPrevFrame;
 			bool m_logInput = false;
 		};
 	} // inp

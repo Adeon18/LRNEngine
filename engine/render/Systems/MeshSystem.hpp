@@ -14,6 +14,7 @@
 #include "render/Systems/Pipeline.hpp"
 
 #include "render/Graphics/Vertex.hpp"
+#include "render/Graphics/HelperStructs.hpp"
 
 namespace engn {
 	namespace rend {
@@ -309,11 +310,8 @@ namespace engn {
 				initHologramGroup();
 			}
 
-			//! Init render gruups and set respective parameters
-			void initNormalGroup();
-			void initHologramGroup();
 			//! Call render on each group
-			void render();
+			void render(const RenderModeFlags& flags);
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
@@ -324,6 +322,10 @@ namespace engn {
 			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
+
+			//! Init render groups and set respective parameters
+			void initNormalGroup();
+			void initHologramGroup();
 
 			void initPipelines();
 			void bindPipelineViaType(PipelineTypes pipelineType);
