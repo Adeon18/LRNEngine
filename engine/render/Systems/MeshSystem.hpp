@@ -7,9 +7,9 @@
 #include "utils/ModelManager/ModelManager.hpp"
 #include "render/Objects/Model.hpp"
 
-#include "render/Graphics/VertexBuffer.hpp"
-#include "render/Graphics/ConstantBuffer.hpp"
-#include "render/Graphics/InstanceBuffer.hpp"
+#include "render/Graphics/DXBuffers/VertexBuffer.hpp"
+#include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
+#include "render/Graphics/DXBuffers/InstanceBuffer.hpp"
 
 #include "render/Systems/Pipeline.hpp"
 

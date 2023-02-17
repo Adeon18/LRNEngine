@@ -2,10 +2,10 @@
 
 #include "HelperStructs.hpp"
 
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
-#include "ConstantBuffer.hpp"
-#include "InstanceBuffer.hpp"
+#include "DXBuffers/IndexBuffer.hpp"
+#include "DXBuffers/VertexBuffer.hpp"
+#include "DXBuffers/ConstantBuffer.hpp"
+#include "DXBuffers/InstanceBuffer.hpp"
 
 #include "DXShaders/VertexShader.hpp"
 #include "DXShaders/PixelShader.hpp"

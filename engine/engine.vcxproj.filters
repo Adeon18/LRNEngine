@@ -126,13 +126,13 @@
     <ClInclude Include="include\utility\utility.hpp">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\VertexBuffer.hpp">
+    <ClInclude Include="render\Graphics\DXBuffers\VertexBuffer.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\ConstantBuffer.hpp">
+    <ClInclude Include="render\Graphics\DXBuffers\ConstantBuffer.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\CBStructs.hpp">
+    <ClInclude Include="render\Graphics\DXBuffers\CBStructs.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="include\config.hpp">
@@ -141,7 +141,7 @@
     <ClInclude Include="utils\Logger\Logger.hpp">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\IndexBuffer.hpp">
+    <ClInclude Include="render\Graphics\DXBuffers\IndexBuffer.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="input\Keyboard.hpp">
@@ -165,7 +165,7 @@
     <ClInclude Include="render\Systems\MeshSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\InstanceBuffer.hpp">
+    <ClInclude Include="render\Graphics\DXBuffers\InstanceBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render\Systems\RenderStructs.hpp">
@@ -257,7 +257,7 @@
     <ClCompile Include="render\Graphics\DXShaders\VertexShader.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\IndexBuffer.cpp">
+    <ClCompile Include="render\Graphics\DXBuffers\IndexBuffer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="utils\Logger\Logger.cpp">

@@ -1,8 +1,6 @@
 #pragma once
 #include <iostream>
 
-#include "Vertex.hpp"
-
 #include "utils/Logger/Logger.hpp"
 
 #include "render/d3d/d3d.hpp"
