@@ -13,8 +13,8 @@ namespace engn {
 		bool TextureManager::loadTexture(const std::string& path)
 		{
 			// Accept only bbs
-			if (std::filesystem::path(path).extension() != ".bbs") {
-				Logger::instance().logInfo("The specified path: " + path + " is not of .bbs format");
+			if (std::filesystem::path(path).extension() != ".dds") {
+				Logger::instance().logWarn("The specified path: " + path + " is not of .dds format");
 				return false;
 			}
 			// Read the texture
@@ -27,7 +27,7 @@ namespace engn {
 			);
 			// Failed to load
 			if (FAILED(hr)) {
-				Logger::instance().logInfo("Failed to load texture at " + path);
+				Logger::instance().logWarn("Failed to load texture at " + path);
 				return false;
 			}
 			// Put in map

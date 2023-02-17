@@ -8,6 +8,7 @@
 
 #include "include/utility/utility.hpp"
 
+#include "utils/TextureManager/TextureManager.hpp"
 #include "utils/ModelManager/ModelManager.hpp"
 
 namespace engn {
@@ -16,6 +17,8 @@ namespace engn {
 			m_initRasterizer();
 			m_initDepthStencilState();
 			m_initScene();
+
+			std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_18-128x128.dds") << std::endl;
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
