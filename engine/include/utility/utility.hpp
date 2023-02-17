@@ -29,6 +29,8 @@ namespace engn {
 		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec);
 		//! Align type to a specified size, return the aligned size value
 		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo);
+		//! Convert string to wstring
+		std::wstring stringToWstring(const std::string& str);
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec);

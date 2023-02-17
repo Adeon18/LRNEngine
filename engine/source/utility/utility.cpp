@@ -4,6 +4,7 @@
 #include <Shlwapi.h>
 
 #include "include/utility/utility.hpp"
+#include "utility.hpp"
 
 
 namespace engn {
@@ -60,6 +61,10 @@ namespace engn {
 		uint32_t util::alignUp(uint32_t typeSize, uint32_t alignTo)
 		{
 			return (typeSize + 16) - (typeSize % 16);
+		}
+		std::wstring util::stringToWstring(const std::string& str)
+		{
+			return std::wstring(str.begin(), str.end());
 		}
 	} // util
 
