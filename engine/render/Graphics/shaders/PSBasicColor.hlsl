@@ -20,7 +20,7 @@ struct PS_INPUT
 Texture2D g_texture0 : TEXTURE : register(t0);
 
 #define DEBUG 0
-#define MODE 2
+#define MODE 1
 
 float4 main(PS_INPUT inp) : SV_TARGET
 {
