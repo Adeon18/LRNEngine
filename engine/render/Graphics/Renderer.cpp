@@ -20,7 +20,7 @@ namespace engn {
 			m_initSamplers();
 			m_initScene();
 
-			std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") << std::endl;
+			//std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") << std::endl;
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -29,9 +29,9 @@ namespace engn {
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
-			std::shared_ptr<tex::Texture> tPtr = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds");
+			//std::shared_ptr<tex::Texture> tPtr = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds");
 
-			d3d::s_devcon->PSSetShaderResources(0, 1, tPtr->textureView.GetAddressOf());
+			//d3d::s_devcon->PSSetShaderResources(0, 1, tPtr->textureView.GetAddressOf());
 
 			m_fillPerFrameCBs(camPtr, renderData);
 
@@ -57,7 +57,19 @@ namespace engn {
 
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") },
+				{ XMMatrixTranslation(5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Crate\\crate.dds") },
+				{ XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
 
 			//// Fill the field with cubes
 			//for (int i = -32; i < 32; ++i) {

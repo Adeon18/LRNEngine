@@ -1,6 +1,8 @@
 #pragma once
+
 #include <DirectXMath.h>
 
+#include "render/Objects/Texture.hpp"
 
 namespace engn {
 
@@ -13,8 +15,10 @@ namespace engn {
 		};
 
 		struct Material {
+			std::shared_ptr<tex::Texture> texPtr;
+
 			bool operator==(const Material& other) {
-				return true;
+				return texPtr == other.texPtr;
 			}
 		};
 	} // rend

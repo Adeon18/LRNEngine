@@ -129,18 +129,36 @@ namespace engn {
 					Logger::instance().logErr("addModel: The model pointer is null");
 				}
 
+				struct ModelIsAdded {
+					bool addedAsInstance = false;
+					bool addedAsMaterial = false;
+
+					bool wasAdded() { return addedAsInstance || addedAsMaterial; }
+				};
+
+				ModelIsAdded modelIsAdded;
+
 				bool isCached = false;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
 						for (auto& perMesh : perModel.perMesh) {
 							for (auto& perMaterial : perMesh) {
+								// Push new instance to old material if it is the same
 								if (perMaterial.material == mtrl) {
 									perMaterial.instances.push_back(inc);
-									if (!isCached) { isCached = true; }
+									modelIsAdded.addedAsInstance = true;
+									break;
 								}
 							}
+							if (!modelIsAdded.addedAsInstance) {
+								PerMaterial perMat;
+								perMat.material = mtrl;
+								perMat.instances.push_back(inc);
+								perMesh.push_back(perMat);
+								modelIsAdded.addedAsMaterial = true;
+							}
 						}
-						if (isCached) { return; }
+						if (modelIsAdded.wasAdded()) { return; }
 					}
 				}
 
@@ -250,6 +268,7 @@ namespace engn {
 							// materialData.update(...); // we don't have it in HW4
 
 							// ... bind each material texture, we don't have it in HW4
+							d3d::s_devcon->PSSetShaderResources(0, 1, material.texPtr->textureView.GetAddressOf());
 
 							uint32_t numInstances = uint32_t(perMaterial.instances.size());
 							d3d::s_devcon->DrawIndexedInstanced(meshRange.indexNum, numInstances, meshRange.indexOffset, meshRange.vertexOffset, renderedInstances);
