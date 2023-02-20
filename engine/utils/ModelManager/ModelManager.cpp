@@ -130,8 +130,10 @@ namespace engn {
 					Vertex& vertex = modelMesh.vertices[v];
 					vertex.pos = util::aiVector3DtoXMFLOAT3(assimpMesh->mVertices[v]);
 					//! WARNING! IS THIS RIGHT???? WE WILL SEEEE
+					//std::cout << assimpMesh->mTextureCoords[0][v].x << " " << assimpMesh->mTextureCoords[0][v].y << " " << assimpMesh->mTextureCoords[0][v].z << std::endl;
 					auto tcVec3 = util::aiVector3DtoXMFLOAT3(assimpMesh->mTextureCoords[0][v]);
 					vertex.tc = XMFLOAT2{ tcVec3.x, tcVec3.y };
+					std::cout << vertex.tc.x << " " << vertex.tc.y << std::endl;
 					vertex.normal = util::aiVector3DtoXMFLOAT3(assimpMesh->mNormals[v]);
 					vertex.tangent = util::aiVector3DtoXMFLOAT3(assimpMesh->mTangents[v]);
 

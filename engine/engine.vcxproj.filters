@@ -210,6 +210,9 @@
     <ClInclude Include="utils\TextureManager\DDSTextureLoader11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DXTextures\Sampler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -326,6 +329,9 @@
     <ClCompile Include="utils\TextureManager\DDSTextureLoader11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Graphics\DXTextures\Sampler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\VSBasicColor.hlsl">
@@ -352,5 +358,6 @@
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
+    <None Include="render\Graphics\shaders\globals.hlsli" />
   </ItemGroup>
 </Project>

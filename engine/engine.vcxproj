@@ -28,6 +28,7 @@
     <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp" />
+    <ClInclude Include="render\Graphics\DXTextures\Sampler.hpp" />
     <ClInclude Include="render\Graphics\EngineCamera.hpp" />
     <ClInclude Include="render\Graphics\DXBuffers\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\DXBuffers\ConstantBuffer.hpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp" />
+    <ClCompile Include="render\Graphics\DXTextures\Sampler.cpp" />
     <ClCompile Include="render\Graphics\EngineCamera.cpp" />
     <ClCompile Include="render\Graphics\DXBuffers\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\PixelShader.cpp" />
@@ -309,6 +311,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="render\Graphics\shaders\globals.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />

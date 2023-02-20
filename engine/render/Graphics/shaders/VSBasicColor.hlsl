@@ -19,7 +19,7 @@ struct VS_INPUT
 	float3 inNorm : NORMAL;
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
-    float3 inTC : TEXCOORD;
+    float2 inTC : TEXCOORD;
     float4 modelToWorld0 : MODEL2WORLD0;
     float4 modelToWorld1 : MODEL2WORLD1;
     float4 modelToWorld2 : MODEL2WORLD2;
@@ -32,7 +32,8 @@ struct VS_OUTPUT
 	float4 outPos: SV_POSITION;
     float3 worldPos : POS;
     float4 outCol : COLOR;
-    float3 worldNorm : NORM;
+    float3 modelNorm : NORM;
+    float2 outTexCoord : TEXCOORD;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -45,11 +46,11 @@ VS_OUTPUT main(VS_INPUT input)
     float4 modelPos = mul(float4(input.inPos, 1.0f), meshToModel);
     
     float4 worldPos = mul(modelPos, modelToWorld);
-    float3 worldNorm = normalize(mul(float4(worldNorm, 0.0f), transpose(worldToClipInv))).xyz;
     
     output.outPos = mul(worldPos, worldToClip);
     output.worldPos = worldPos.xyz;
     output.outCol = input.color;
-    output.worldNorm = modelNorm;
+    output.modelNorm = modelNorm;
+    output.outTexCoord = input.inTC;
 	return output;
 }

@@ -15,7 +15,7 @@ namespace engn {
 			normal{ norm },
 			tangent{ tnt },
 			bitangent{ btnt },
-			tc{tcods}
+			tc{ tcods }
 		{}
 
 		DirectX::XMFLOAT3 pos;

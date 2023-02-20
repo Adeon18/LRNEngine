@@ -16,9 +16,11 @@ namespace engn {
 		void Renderer::init() {
 			m_initRasterizer();
 			m_initDepthStencilState();
+			m_initBuffers();
+			m_initSamplers();
 			m_initScene();
 
-			std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_18-128x128.dds") << std::endl;
+			std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") << std::endl;
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -27,16 +29,19 @@ namespace engn {
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
+			std::shared_ptr<tex::Texture> tPtr = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds");
+
+			d3d::s_devcon->PSSetShaderResources(0, 1, tPtr->textureView.GetAddressOf());
+
 			m_fillPerFrameCBs(camPtr, renderData);
+
+			m_bindSamplers();
 
 			MeshSystem::getInstance().render(flags);
 		}
 
 		void Renderer::m_initScene()
 		{
-			m_globalConstantBufferVS.init();
-			m_globalConstantBufferPS.init();
-
 			// TODO: Later may move to some map
 #ifdef _WIN64 
 			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
@@ -51,29 +56,8 @@ namespace engn {
 			const std::string EXE_DIR = util::getExeDir();
 
 
-			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(10.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getCubeModel();
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-10.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-15.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-
+			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
 			//// Fill the field with cubes
 			//for (int i = -32; i < 32; ++i) {
@@ -84,17 +68,17 @@ namespace engn {
 			//	}
 			//}
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-8.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
+			//mptr.reset();
+			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-8.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+			//mptr.reset();
+			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(8.0f, 0.0f, 15.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			//mptr.reset();
+			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(8.0f, 0.0f, 15.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 			
 			// Fill the field with samurai
 			/*for (int i = 0; i < 32; ++i) {
@@ -132,6 +116,23 @@ namespace engn {
 				Logger::instance().logErr("Window CreateDepthStencilState fail: " + std::system_category().message(hr));
 				return;
 			}
+		}
+		void Renderer::m_initBuffers()
+		{
+			m_globalConstantBufferVS.init();
+			m_globalConstantBufferPS.init();
+		}
+		void Renderer::m_initSamplers()
+		{
+			m_samplerPointWrap.init(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP);
+			m_samplerLinearWrap.init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP);
+			m_samplerAnisotropicWrap.init(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP);
+		}
+		void Renderer::m_bindSamplers()
+		{
+			m_samplerPointWrap.bind(0);
+			m_samplerLinearWrap.bind(1);
+			m_samplerAnisotropicWrap.bind(2);
 		}
 		void Renderer::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{

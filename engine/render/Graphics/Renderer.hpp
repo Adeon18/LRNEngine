@@ -10,6 +10,8 @@
 #include "DXShaders/VertexShader.hpp"
 #include "DXShaders/PixelShader.hpp"
 
+#include "DXTextures/Sampler.hpp"
+
 #include "Vertex.hpp"
 
 #include "EngineCamera.hpp"
@@ -39,12 +41,22 @@ namespace engn {
 			void m_initRasterizer();
 			//! Depth stensil state
 			void m_initDepthStencilState();
+			//! Initialize all the per Frame constant buffers
+			void m_initBuffers();
+			//! Initialize all the global samplers
+			void m_initSamplers();
+			//! Bind samplers per frame: TODO: Can they be binded just at initialization?
+			void m_bindSamplers();
 			//! Fill the per frame shader CB, for not the same for each shader
 			void m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 			
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
+
+			Sampler m_samplerPointWrap;
+			Sampler m_samplerLinearWrap;
+			Sampler m_samplerAnisotropicWrap;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
