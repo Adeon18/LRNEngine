@@ -31,6 +31,7 @@ namespace engn {
 		/// </summary>
 		class Renderer {
 		public:
+			float m_yaw = 0.0f;
 			void init();
 			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:

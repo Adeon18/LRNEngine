@@ -124,6 +124,25 @@ namespace engn {
 				}
 			}
 
+			//! Add offset to module by multiplying it by the transformation matrix
+			void addModelRotation(const InstanceProperties& insProps, const XMVECTOR& rotation) {
+				for (auto& perModel : m_models) {
+					if (perModel.model->name == insProps.model->name) {
+						for (auto& perMesh : perModel.perMesh) {
+							for (uint32_t matIdx = 0; matIdx < perMesh.size(); ++matIdx) {
+								if (matIdx == insProps.materialIdx) {
+									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
+										if (insIdx == insProps.instanceIdx) {
+											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
 			// Add the model by filling in the respective structs
 			void addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
 				if (!mod) {
@@ -317,6 +336,7 @@ namespace engn {
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
+			void addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation);
 			//! Get closest mesh data that was hit by a ray, used for dragging
 			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
 		private:

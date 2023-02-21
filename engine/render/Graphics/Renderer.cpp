@@ -48,11 +48,13 @@ namespace engn {
 			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../../assets/Models/EastTower/EastTower.fbx";
+			const std::string MAXWELL_MODEL_PATH = "../../assets/Models/Maxwell/source/Maxwell.fbx";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../assets/Models/EastTower/EastTower.fbx";
+			const std::string MAXWELL_MODEL_PATH = "../assets/Models/Maxwell/maxwell.fbx";
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
@@ -62,7 +64,15 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
-				{ XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PIDIV2, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixScaling(0.03f, 0.03f, 0.03f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PIDIV2, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") },
+				{ XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -70,7 +80,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Crate\\crate.dds") },
-				{ XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			//// Fill the field with cubes

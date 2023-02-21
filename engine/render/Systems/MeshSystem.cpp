@@ -69,6 +69,21 @@ namespace engn {
 			}
 		}
 
+		void MeshSystem::addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation)
+		{
+			switch (instanceData.group) {
+			case GroupTypes::NORMAL:
+			{
+				m_normalGroup.addModelRotation(instanceData, rotation);
+			}
+			break;
+			case GroupTypes::HOLOGRAM:
+			{
+				m_hologramGroup.addModelRotation(instanceData, rotation);
+			}
+			}
+		}
+
 		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest) {
 			InstanceProperties i2d{};
 
