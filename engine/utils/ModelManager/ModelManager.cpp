@@ -1,5 +1,7 @@
 #include "ModelManager.hpp"
 
+#include "utils/TextureManager/TextureManager.hpp"
+
 #include "utility/utility.hpp"
 
 namespace engn {
@@ -125,6 +127,7 @@ namespace engn {
 				modelMesh.vertices.resize(assimpMesh->mNumVertices);
 				modelMesh.triangles.resize(assimpMesh->mNumFaces);
 
+				// Triangle vertices
 				for (uint32_t v = 0; v < assimpMesh->mNumVertices; ++v)
 				{
 					Vertex& vertex = modelMesh.vertices[v];
@@ -138,7 +141,7 @@ namespace engn {
 					auto bitanOrig = util::aiVector3DtoXMFLOAT3((assimpMesh->mBitangents[v]));
 					vertex.bitangent = XMFLOAT3{ bitanOrig.x * -1.f, bitanOrig.y * -1.f, bitanOrig.z * -1.f }; // Flip V
 				}
-
+				// Triangle faces
 				for (uint32_t f = 0; f < assimpMesh->mNumFaces; ++f)
 				{
 					const auto& face = assimpMesh->mFaces[f];
@@ -146,8 +149,13 @@ namespace engn {
 						modelMesh.triangles[f].indices[j] = face.mIndices[j];
 					}
 				}
+
+				// Initialize ocTree
 				modelPtr->getMeshOcTrees()[i].initialize(modelPtr->getMeshes()[i]);
 			}
+
+			// Load the textures
+			loadTextures(assimpScene, modelPtr, aiTextureType_DIFFUSE, filename);
 
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)
 			{
@@ -168,26 +176,52 @@ namespace engn {
 				}
 			};
 
-			/*for (uint32_t i = 0; i < modelPtr->getMeshes().size(); ++i) {
-				auto& mesh = modelPtr->getMeshes()[i];
-				std::cout << "Mesh Name: " << mesh.name << std::endl;
-				std::cout << "Mesh Min Before Transform: " << mesh.box.getMin() << std::endl;
-				std::cout << "Mesh Max Before Transform: " << mesh.box.getMax() << std::endl;
-				mesh.box.setMax(XMVector3Transform(mesh.box.getMin(), mesh.meshToModel));
-				mesh.box.setMin(XMVector3Transform(mesh.box.getMax(), mesh.meshToModel));
-
-				std::cout << "Mesh Min After Transform: " << mesh.box.getMin() << std::endl;
-				std::cout << "Mesh Max After Transform: " << mesh.box.getMax() << std::endl;
-
-				modelPtr->getMeshOcTrees()[i].initialize(mesh);
-			}*/
-
 			loadInstances(assimpScene->mRootNode);
 
 			modelPtr->fillBuffersFromMeshes();
 
 			m_loadedModels[filename] = modelPtr;
 			return true;
+		}
+		void ModelManager::loadTextures(const aiScene* pScene, std::shared_ptr<mdl::Model> modelPtr, aiTextureType textureType, const std::string& filename)
+		{
+			uint32_t numMeshes = pScene->mNumMeshes;
+
+			// Load all meshes textures
+			for (uint32_t i = 0; i < numMeshes; ++i) {
+				auto& assimpMesh = pScene->mMeshes[i];
+				auto& modelMesh = modelPtr->getMeshes()[i];
+				// Load textures
+				aiMaterial* material = pScene->mMaterials[assimpMesh->mMaterialIndex];
+				uint32_t textureCount = material->GetTextureCount(textureType);
+
+				for (uint32_t t = 0; t < textureCount; ++t) {
+					aiString path;
+					material->GetTexture(textureType, t, &path, NULL, NULL, NULL, NULL, NULL);
+					std::string fullTexturePath = util::getDirectoryFromPath(filename) + util::changeFileExt(path.C_Str(), ".dds");
+					std::cout << "full path: " << fullTexturePath << std::endl;
+					tex::TextureManager::getInstance().loadTexture(fullTexturePath);
+					modelMesh.texturePaths.push_back(fullTexturePath);
+				}
+			}
+		}
+		void ModelManager::printAllTexturesPath(const aiScene* pScene)
+		{
+			uint32_t numMeshes = pScene->mNumMeshes;
+
+			for (uint32_t i = 0; i < numMeshes; ++i) {
+				auto& pMesh = pScene->mMeshes[i];
+				aiMaterial* material = pScene->mMaterials[pMesh->mMaterialIndex];
+				for (auto texType : TEXTURE_TYPES) {
+					uint32_t textureCount = material->GetTextureCount(texType);
+					std::cout << "Type: " << aiTextureTypeToString(texType) << std::endl;
+					for (uint32_t t = 0; t < textureCount; ++t) {
+						aiString path;
+						material->GetTexture(texType, t, &path, NULL, NULL, NULL, NULL, NULL);
+						std::cout << "path: " << path.C_Str() << std::endl;
+					}
+				}
+			}
 		}
 	} // mdl
 } // engn

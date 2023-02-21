@@ -22,6 +22,7 @@ namespace engn {
 			};
 			std::string name;
 			BoundingBox box = BoundingBox::empty();
+			std::vector<std::string> texturePaths;
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;
 

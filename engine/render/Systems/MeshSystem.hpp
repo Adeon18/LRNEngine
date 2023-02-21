@@ -5,6 +5,7 @@
 #include "RenderStructs.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
+#include "utils/TextureManager/TextureManager.hpp"
 #include "render/Objects/Model.hpp"
 
 #include "render/Graphics/DXBuffers/VertexBuffer.hpp"
@@ -129,6 +130,7 @@ namespace engn {
 					Logger::instance().logErr("addModel: The model pointer is null");
 				}
 
+				//! Struct to check where exectly the data is added to stop at the right time
 				struct ModelIsAdded {
 					bool addedAsInstance = false;
 					bool addedAsMaterial = false;
@@ -170,11 +172,21 @@ namespace engn {
 				for (auto& mesh : newModel.model->getMeshes()) {
 					PerMesh perMesh;
 
-					PerMaterial perMat;
-					perMat.material = mtrl;
-					perMat.instances.push_back(inc);
-
-					perMesh.push_back(perMat);
+					if (!mtrl.texPtr.get()) {
+						// TODO: Has a bug that puts only last texture as acrive in case of multiple textures per mesh
+						for (auto& texPath : mesh.texturePaths) {
+							PerMaterial perMat;
+							perMat.material = { tex::TextureManager::getInstance().getTexture(texPath) };
+							perMat.instances.push_back(inc);
+							perMesh.push_back(perMat);
+						}
+					}
+					else {
+						PerMaterial perMat;
+						perMat.material = mtrl;
+						perMat.instances.push_back(inc);
+						perMesh.push_back(perMat);
+					}
 					newModel.perMesh.push_back(perMesh);
 				}
 

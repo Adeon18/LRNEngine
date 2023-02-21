@@ -21,6 +21,11 @@ namespace engn {
 		std::string getExeDir();
 		//! Get the absolute path to the directory that contains the executable(wstring). PATH ends with "\"
 		std::wstring getExeDirW();
+		//! Get the directory from the specified path to file. PATH ends with "\"
+		std::string getDirectoryFromPath(const std::string& path);
+		//! Change the file extension from current to the specified in the second argument and return
+		//! Extension should be specified as .ext
+		std::string changeFileExt(const std::string& path, const std::string& ext);
 		//! Convert the assimp library vector3 type to XMVECTOR
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
 		//! Convert the assimp library aiMatrix4x4 type to XMMATRIX

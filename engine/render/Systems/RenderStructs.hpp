@@ -15,7 +15,7 @@ namespace engn {
 		};
 
 		struct Material {
-			std::shared_ptr<tex::Texture> texPtr;
+			std::shared_ptr<tex::Texture> texPtr = nullptr;
 
 			bool operator==(const Material& other) {
 				return texPtr == other.texPtr;

@@ -3,6 +3,8 @@
 #pragma comment(lib, "Shlwapi.lib")
 #include <Shlwapi.h>
 
+#include <filesystem>
+
 #include "include/utility/utility.hpp"
 
 
@@ -38,6 +40,16 @@ namespace engn {
 			std::wstring dir = std::wstring(exePathDyn) + L"\\";
 			delete[] exePathDyn;
 			return dir;
+		}
+
+		std::string getDirectoryFromPath(const std::string& path)
+		{
+			return std::filesystem::path{ path }.parent_path().string() + "\\";
+		}
+		
+		std::string changeFileExt(const std::string& path, const std::string& ext)
+		{
+			return path.substr(0, path.find_last_of('.')) + ext;
 		}
 
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec)
