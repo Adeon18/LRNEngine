@@ -20,7 +20,13 @@ namespace engn {
 			m_initSamplers();
 			m_initScene();
 
-			//std::cout << tex::TextureManager::getInstance().loadTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") << std::endl;
+#ifdef _WIN64 
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\sky_cubemap1.dds";
+#else
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap1.dds";
+#endif // !_WIN64
+
+			m_skyBox.init(SKYBOX_TEXTURE_PATH);
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -38,6 +44,8 @@ namespace engn {
 			m_bindSamplers();
 
 			MeshSystem::getInstance().render(flags);
+
+			m_skyBox.render();
 		}
 
 		void Renderer::m_initScene()

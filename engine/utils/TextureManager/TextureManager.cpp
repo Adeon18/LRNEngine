@@ -10,7 +10,7 @@
 
 namespace engn {
 	namespace tex {
-		bool TextureManager::loadTexture(const std::string& path)
+		bool TextureManager::loadTexture2D(const std::string& path)
 		{
 			// Accept only bbs
 			if (std::filesystem::path(path).extension() != ".dds") {
@@ -35,6 +35,10 @@ namespace engn {
 
 			return true;
 		}
+		bool TextureManager::loadTextureCube(const std::string& path)
+		{
+			return false;
+		}
 		std::shared_ptr<Texture> TextureManager::getTexture(const std::string& path)
 		{
 			try {
@@ -48,7 +52,7 @@ namespace engn {
 				return nullptr;
 			}
 
-			if (!loadTexture(path)) {
+			if (!loadTexture2D(path)) {
 				return nullptr;
 			}
 

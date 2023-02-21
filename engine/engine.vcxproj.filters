@@ -213,6 +213,9 @@
     <ClInclude Include="render\Graphics\DXTextures\Sampler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -332,17 +335,20 @@
     <ClCompile Include="render\Graphics\DXTextures\Sampler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="render\Graphics\shaders\VSBasicColor.hlsl">
+    <FxCompile Include="render\Graphics\shaders\normal\VSBasicColor.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\PSVoronoi.hlsl">
+    <FxCompile Include="render\Graphics\shaders\normal\PSVoronoi.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\hologram\PSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\VSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\PSBasicColor.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\normal\PSBasicColor.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl" />
     <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl" />
@@ -352,6 +358,8 @@
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl" />
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl" />
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\sky\PSSky.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\sky\VSSky.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />

@@ -16,6 +16,8 @@
 
 #include "EngineCamera.hpp"
 
+#include "render/Objects/SkyBox/SkyBox.hpp"
+
 namespace engn {
 	namespace rend {
 		struct RenderData {
@@ -57,6 +59,8 @@ namespace engn {
 			Sampler m_samplerPointWrap;
 			Sampler m_samplerLinearWrap;
 			Sampler m_samplerAnisotropicWrap;
+
+			SkyBox m_skyBox;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

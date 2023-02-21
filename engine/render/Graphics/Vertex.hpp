@@ -24,4 +24,9 @@ namespace engn {
 		DirectX::XMFLOAT3 bitangent;
 		DirectX::XMFLOAT2 tc;
 	};
+	//! A vertex only with float3 position
+	struct VertexPos {
+		VertexPos(const DirectX::XMFLOAT3& ps) : pos{ps} {}
+		DirectX::XMFLOAT3 pos;
+	};
 } // engn
