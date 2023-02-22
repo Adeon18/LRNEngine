@@ -26,7 +26,14 @@ namespace engn {
 			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
 #endif // !_WIN64
 
-			m_skyBox.init(SKYBOX_TEXTURE_PATH);
+		
+			PipelineData skyPipeline{
+				nullptr, 0, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST, util::getExeDirW() + L"VSSkyFullscreen.cso", L"", L"", L"", util::getExeDirW() + L"PSSkyFullscreen.cso"
+			};
+
+			initPipeline(m_skyPipeline, skyPipeline);
+
+			m_skyBuffer.init();
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -45,9 +52,26 @@ namespace engn {
 
 			MeshSystem::getInstance().render(flags);
 
-			m_skyBox.render();
+			// Sky render
 
-			d3d::s_devcon->OMSetDepthStencilState(NULL, 0);
+			d3d::s_devcon->IASetInputLayout(NULL);
+
+			std::vector<XMVECTOR> frustumFarPlaneCoords;
+			camPtr->getCamFarPlaneDirForFullScreenTriangle(frustumFarPlaneCoords);
+
+			m_skyBuffer.getData().BLFarPlane = frustumFarPlaneCoords[0];
+			m_skyBuffer.getData().BRFarPlane = frustumFarPlaneCoords[3];
+			m_skyBuffer.getData().TLFarPlane = frustumFarPlaneCoords[1];
+
+			m_skyBuffer.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_skyBuffer.getBufferAddress());
+
+			std::shared_ptr<tex::Texture> textureSkyBox = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds");
+			d3d::s_devcon->PSSetShaderResources(0, 1, textureSkyBox->textureView.GetAddressOf());
+
+			bindPipeline(m_skyPipeline);
+
+			d3d::s_devcon->Draw(3, 0);
 		}
 
 		void Renderer::m_initScene()

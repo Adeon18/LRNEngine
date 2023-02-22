@@ -2,7 +2,7 @@
 
 namespace engn {
 	Engine::Engine(int screenWidth, int screenHeight) :
-		m_camera{ new rend::EngineCamera{45.0f, screenWidth, screenHeight, {0.0f, 0.0f, -2.0f}} }
+		m_camera{ new rend::EngineCamera{60.0f, screenWidth, screenHeight, {0.0f, 0.0f, -2.0f}} }
 	{
 		m_graphics.init();
 	}

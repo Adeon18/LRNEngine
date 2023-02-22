@@ -70,6 +70,9 @@ namespace engn {
             //! Cast ray in the mouse direction from camera position
             geom::Ray castRay(float x, float y);
 
+            //! 
+            void getCamFarPlaneDirForFullScreenTriangle(std::vector<XMVECTOR>& outDirs);
+
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
@@ -90,7 +93,15 @@ namespace engn {
                 { 1.0f,  1.0f, 1.0f, 1.0f},
                 { 1.0f, -1.0f, 1.0f, 1.0f},
             };
+            const XMVECTOR m_viewingFrustumFarPlaneX2[4] =
+            {
+                {-1.0f, -1.0f, 1.0f, 1.0f},
+                {-1.0f,  3.0f, 1.0f, 1.0f},
+                { 1.0f,  1.0f, 1.0f, 1.0f},
+                { 3.0f, -1.0f, 1.0f, 1.0f},
+            };
             XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
+            XMVECTOR m_viewingFrustumFarPlaneWorldSpaceX2[4];
 
             int m_screenWidth;
             int m_screenHeight;

@@ -61,6 +61,8 @@ namespace engn {
 			Sampler m_samplerAnisotropicWrap;
 
 			SkyBox m_skyBox;
+			Pipeline m_skyPipeline;
+			ConstantBuffer<CB_VS_SkyFullscreen> m_skyBuffer;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

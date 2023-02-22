@@ -107,5 +107,15 @@ namespace engn {
 
             return geom::Ray{ rayPos, rayDir };
         }
+        void EngineCamera::getCamFarPlaneDirForFullScreenTriangle(std::vector<XMVECTOR>& outDirs)
+        {
+            XMMATRIX viewProjInv = XMMatrixInverse(nullptr, m_view * m_projection);
+            for (uint32_t i = 0; i < 4; ++i) {
+                m_viewingFrustumFarPlaneWorldSpaceX2[i] = XMVector4Transform(m_viewingFrustumFarPlaneX2[i], viewProjInv);
+                m_viewingFrustumFarPlaneWorldSpaceX2[i] /= XMVectorGetW(m_viewingFrustumFarPlaneWorldSpaceX2[i]);
+
+                outDirs.push_back(m_viewingFrustumFarPlaneWorldSpaceX2[i] - m_positionVec);
+            }
+        }
     } // rend
 } // engn

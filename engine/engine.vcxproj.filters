@@ -358,8 +358,10 @@
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl" />
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl" />
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\sky\PSSky.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\sky\VSSky.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\skybox\PSSky.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\skybox\VSSky.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\VSSkyFullscreen.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\PSSkyFullscreen.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />

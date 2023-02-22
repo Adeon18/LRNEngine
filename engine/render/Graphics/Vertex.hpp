@@ -3,6 +3,10 @@
 #include <DirectXMath.h>
 
 namespace engn {
+	struct EmptyVertex {
+
+	};
+
 	struct Vertex {
 		Vertex() {}
 		Vertex(
