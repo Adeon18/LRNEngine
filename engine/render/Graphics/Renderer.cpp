@@ -23,7 +23,7 @@ namespace engn {
 #ifdef _WIN64 
 			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\sky_cubemap1.dds";
 #else
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap1.dds";
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
 #endif // !_WIN64
 
 			m_skyBox.init(SKYBOX_TEXTURE_PATH);
@@ -46,6 +46,8 @@ namespace engn {
 			MeshSystem::getInstance().render(flags);
 
 			m_skyBox.render();
+
+			d3d::s_devcon->OMSetDepthStencilState(NULL, 0);
 		}
 
 		void Renderer::m_initScene()

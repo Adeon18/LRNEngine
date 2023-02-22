@@ -1,13 +1,4 @@
-#include "globals.hlsli"
-
-cbuffer perFrame : register(b0)
-{
-    float4x4 worldToClip;
-    float4x4 worldToClipInv;
-    float4 iResolution;
-    float4 iCameraPosition;
-    float iTime;
-};
+#include "../globals.hlsli"
 
 struct VS_OUTPUT
 {
@@ -19,5 +10,5 @@ TextureCube textureCube;
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
 {
-    return textureCube.Sample(g_linearWrap, inp.modelPos);
+    return textureCube.Sample(g_anisotropicWrap, inp.modelPos);
 }

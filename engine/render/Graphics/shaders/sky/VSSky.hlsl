@@ -16,6 +16,7 @@ struct VS_OUTPUT
 VS_OUTPUT main(inout float3 pos : POSITION)
 {
     VS_OUTPUT output;
+    // We don;t make the skybox
     float4 clipPos = mul(float4(pos, 0.0f), worldToClip);
     output.clipPos = float4(clipPos.x, clipPos.y, 0.0f, clipPos.w);
     output.modelPos = pos;

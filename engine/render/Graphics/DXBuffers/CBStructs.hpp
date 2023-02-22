@@ -17,6 +17,11 @@ namespace engn {
 			XMFLOAT4 gCameraPosition;
 			float gTime;
 		};
+		//! Skybox data
+		struct CB_VS_SkyBoxData {
+			XMMATRIX worldToView;
+			XMMATRIX viewToClip;
+		};
 		// CB struct for the pixelshader realtime data, does not have worldToClip matrix
 		struct CB_PS_RealTimeData {
 			XMFLOAT4 gResolution;
