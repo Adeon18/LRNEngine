@@ -15,7 +15,7 @@ namespace engn {
         public:
             struct CameraSettings {
                 static constexpr float CAMERA_SPEED = 0.02f;
-                static constexpr float ROTATION_SPEED = 1.2f;
+                static constexpr float ROTATION_SPEED = 0.03f;
                 inline static const std::array<int, 6> MOVE_KEYS{
                                 inp::Keyboard::Keys::KEY_A,
                                 inp::Keyboard::Keys::KEY_D,
@@ -47,19 +47,19 @@ namespace engn {
             void addWorldOffset(const XMVECTOR& offset);
             //! Add offset but with rotations in mind
             void addRelativeOffset(const XMVECTOR& offset);
-            //! Add basic quaternion rotation
-            void addWorldRotationQuat(const XMVECTOR& angles);
-            //void addWorldRotationMat(const XMVECTOR& angles);
-            //! Relative quaternions rotation
-            void addRelativeRotationQuat(const XMVECTOR& angles);
+            ////! Add basic quaternion rotation
+            //void addWorldRotationQuat(const XMVECTOR& angles);
+            ////void addWorldRotationMat(const XMVECTOR& angles);
+            ////! Relative quaternions rotation
+            //void addRelativeRotationQuat(const XMVECTOR& angles);
 
             // Set the camera position
             void setPosition(const XMVECTOR& pos);
 
             //! Update the entire view matrix, recalc inverse
             void updateViewMatrix();
-            //! Update only the position part of the view matrix, recalc inverse, CAN BE OPTIMIZED
-            void updateViewMatrixPos();
+            
+            void addWorldRotationMat(const XMVECTOR& angles);
 
             //! Called wen the window is resized
             void setNewScreenSize(int width, int height);
@@ -73,9 +73,9 @@ namespace engn {
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
-            [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewInv.r[0]; }
-            [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewInv.r[1]; }
-            [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewInv.r[2]; }
+            [[nodiscard]] const XMVECTOR& getCamRight() { return m_viewT.r[0]; }
+            [[nodiscard]] const XMVECTOR& getCamUp() { return m_viewT.r[1]; }
+            [[nodiscard]] const XMVECTOR& getCamForward() { return m_viewT.r[2]; }
             [[nodiscard]] const XMVECTOR& getCamPosition() { return m_positionVec; }
 
         private:
@@ -103,9 +103,14 @@ namespace engn {
             //! Projection data
             XMMATRIX m_view;
             XMMATRIX m_viewInv;
+            XMMATRIX m_viewT;
             XMMATRIX m_projection;
+            XMVECTOR m_upVec;
+
             //! Rotation data
-            XMVECTOR m_rotationQuat{ 0.0f, 0.0f, 0.0f, 1.0f };
+            XMVECTOR m_rotationVec;
+            XMFLOAT3 m_rotation;
+
         };
     } // rend
 } // engn
