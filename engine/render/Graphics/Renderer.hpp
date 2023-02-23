@@ -16,7 +16,7 @@
 
 #include "EngineCamera.hpp"
 
-#include "render/Objects/SkyBox/SkyBox.hpp"
+#include "render/Objects/SkyTriangle/SkyTriangle.hpp"
 
 namespace engn {
 	namespace rend {
@@ -51,7 +51,8 @@ namespace engn {
 			void m_bindSamplers();
 			//! Fill the per frame shader CB, for not the same for each shader
 			void m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
-			
+			//! Initialize the skyTriangle
+			void m_initializeSky();
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
@@ -60,9 +61,7 @@ namespace engn {
 			Sampler m_samplerLinearWrap;
 			Sampler m_samplerAnisotropicWrap;
 
-			SkyBox m_skyBox;
-			Pipeline m_skyPipeline;
-			ConstantBuffer<CB_VS_SkyFullscreen> m_skyBuffer;
+			SkyTriangle m_skyTriangle;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

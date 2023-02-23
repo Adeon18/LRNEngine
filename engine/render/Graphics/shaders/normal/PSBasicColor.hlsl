@@ -1,4 +1,4 @@
-#include "globals.hlsli"
+#include "../globals.hlsli"
 
 cbuffer perFrame : register(b0)
 {

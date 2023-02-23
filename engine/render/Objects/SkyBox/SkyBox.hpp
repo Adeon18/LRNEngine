@@ -11,6 +11,9 @@
 
 namespace engn {
 	namespace rend {
+		/// <summary>
+		/// SkyBox class - legacy because fullscreen triangle technique is used
+		/// </summary>
 		class SkyBox {
 		public:
 			//! Initialize the entire skybox: load textures, create cube, create pipeline

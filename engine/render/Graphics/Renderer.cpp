@@ -19,21 +19,7 @@ namespace engn {
 			m_initBuffers();
 			m_initSamplers();
 			m_initScene();
-
-#ifdef _WIN64 
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\sky_cubemap1.dds";
-#else
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
-#endif // !_WIN64
-
-		
-			PipelineData skyPipeline{
-				nullptr, 0, D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST, util::getExeDirW() + L"VSSkyFullscreen.cso", L"", L"", L"", util::getExeDirW() + L"PSSkyFullscreen.cso"
-			};
-
-			initPipeline(m_skyPipeline, skyPipeline);
-
-			m_skyBuffer.init();
+			m_initializeSky();
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -42,36 +28,13 @@ namespace engn {
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
-			//std::shared_ptr<tex::Texture> tPtr = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds");
-
-			//d3d::s_devcon->PSSetShaderResources(0, 1, tPtr->textureView.GetAddressOf());
-
 			m_fillPerFrameCBs(camPtr, renderData);
 
 			m_bindSamplers();
 
 			MeshSystem::getInstance().render(flags);
-
-			// Sky render
-
-			d3d::s_devcon->IASetInputLayout(NULL);
-
-			std::vector<XMVECTOR> frustumFarPlaneCoords;
-			camPtr->getCamFarPlaneDirForFullScreenTriangle(frustumFarPlaneCoords);
-
-			m_skyBuffer.getData().BLFarPlane = frustumFarPlaneCoords[0];
-			m_skyBuffer.getData().BRFarPlane = frustumFarPlaneCoords[3];
-			m_skyBuffer.getData().TLFarPlane = frustumFarPlaneCoords[1];
-
-			m_skyBuffer.fill();
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_skyBuffer.getBufferAddress());
-
-			std::shared_ptr<tex::Texture> textureSkyBox = tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds");
-			d3d::s_devcon->PSSetShaderResources(0, 1, textureSkyBox->textureView.GetAddressOf());
-
-			bindPipeline(m_skyPipeline);
-
-			d3d::s_devcon->Draw(3, 0);
+			// Render the sky after we are done
+			m_skyTriangle.render(camPtr);
 		}
 
 		void Renderer::m_initScene()
@@ -83,12 +46,18 @@ namespace engn {
 			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../../assets/Models/EastTower/EastTower.fbx";
 			const std::string MAXWELL_MODEL_PATH = "../../assets/Models/Maxwell/source/Maxwell.fbx";
+
+			const std::string BRICK_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds";
+			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../assets/Models/EastTower/EastTower.fbx";
 			const std::string MAXWELL_MODEL_PATH = "../assets/Models/Maxwell/maxwell.fbx";
+
+			const std::string BRICK_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds";
+			const std::string CRATE_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Crate\\crate.dds";
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
@@ -105,7 +74,7 @@ namespace engn {
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
-				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds") },
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH) },
 				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
@@ -129,7 +98,7 @@ namespace engn {
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
-				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + "..\\assets\\Textures\\128x128\\Crate\\crate.dds") },
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
@@ -231,6 +200,16 @@ namespace engn {
 			// For now it is like this
 			d3d::s_devcon->GSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_globalConstantBufferPS.getBufferAddress());
+		}
+		void Renderer::m_initializeSky()
+		{
+#ifdef _WIN64 
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
+#else
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
+#endif // !_WIN64
+
+			m_skyTriangle.init(SKYBOX_TEXTURE_PATH);
 		}
 	} // rend
 } // engn

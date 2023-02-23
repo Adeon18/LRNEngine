@@ -45,6 +45,7 @@
     <ClInclude Include="render\Graphics\DXShaders\VertexShader.hpp" />
     <ClInclude Include="render\Objects\Model.hpp" />
     <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp" />
+    <ClInclude Include="render\Objects\SkyTriangle\SkyTriangle.hpp" />
     <ClInclude Include="render\Objects\Texture.hpp" />
     <ClInclude Include="render\RayTracer\Camera\Camera.h" />
     <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
@@ -92,6 +93,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="render\Objects\Model.cpp" />
     <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp" />
+    <ClCompile Include="render\Objects\SkyTriangle\SkyTriangle.cpp" />
     <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
     <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
     <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />

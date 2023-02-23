@@ -16,16 +16,10 @@ struct VS_OUTPUT
     float3 direction : DIR;
 };
 
-float4 cornerPositions[3] =
-{
-    float4(-1.0f, -1.0f, 0.0f, 1.0f),
-    float4(3.0f, -1.0f, 0.0f, 1.0f),
-    float4(-1.0f, 3.0f, 0.0f, 1.0f),
-};
-
 VS_OUTPUT main(VS_IN input)
 {
     VS_OUTPUT output;
+    // Fill each vertex separately depending on vertex ID => CLOCKVISE
     if (input.vertexId == 0)
     {
         output.clipPos = float4(-1.0f, -1.0f, 0.0f, 1.0f);
