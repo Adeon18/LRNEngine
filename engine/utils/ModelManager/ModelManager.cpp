@@ -199,9 +199,8 @@ namespace engn {
 					aiString path;
 					material->GetTexture(textureType, t, &path, NULL, NULL, NULL, NULL, NULL);
 					std::string fullTexturePath = util::getDirectoryFromPath(filename) + util::changeFileExt(path.C_Str(), ".dds");
-					std::cout << "Path: " << fullTexturePath << std::endl;
 					// Load texture by full path and save the full path
-					tex::TextureManager::getInstance().loadTexture2D(fullTexturePath);
+					tex::TextureManager::getInstance().loadTextureDDS(fullTexturePath);
 					modelMesh.texturePaths.push_back(fullTexturePath);
 				}
 			}

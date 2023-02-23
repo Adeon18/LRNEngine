@@ -95,6 +95,14 @@ namespace engn {
 			);
 
 			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{ },
+				{ XMMatrixTranslation(-3.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
+
+			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,

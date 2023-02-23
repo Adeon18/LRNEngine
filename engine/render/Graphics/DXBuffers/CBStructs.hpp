@@ -23,7 +23,7 @@ namespace engn {
 			XMMATRIX viewToClip;
 		};
 
-		//! Skybox data
+		//! Skybox for a fullscreen triangle method
 		struct CB_VS_SkyFullscreen {
 			XMVECTOR BLFarPlane;
 			XMVECTOR BRFarPlane;

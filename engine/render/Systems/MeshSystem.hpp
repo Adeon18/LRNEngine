@@ -64,7 +64,7 @@ namespace engn {
 				m_meshData.init();
 			}
 
-			// Find the closest instance that intersects with a ray and fill in the infor struct
+			// Find the closest instance that intersects with a ray and fill in the info struct
 			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
 
 				bool hasIntersection = false;
@@ -165,7 +165,7 @@ namespace engn {
 						for (auto& perMesh : perModel.perMesh) {
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
-								if (perMaterial.material == mtrl) {
+								if (perMaterial.material == mtrl || !mtrl.texPtr.get()) {
 									perMaterial.instances.push_back(inc);
 									modelIsAdded.addedAsInstance = true;
 									break;
@@ -179,7 +179,10 @@ namespace engn {
 								modelIsAdded.addedAsMaterial = true;
 							}
 						}
-						if (modelIsAdded.wasAdded()) { return; }
+						if (modelIsAdded.wasAdded()) {
+							Logger::instance().logInfo("Model " + mod->name + " instance already exists, filled the needed info in perModel");
+							return;
+						}
 					}
 				}
 

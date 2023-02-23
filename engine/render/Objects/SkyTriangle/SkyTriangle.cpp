@@ -12,16 +12,16 @@ namespace engn {
 				nullptr,
 				0,
 				D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-				exeDirW + L"VSSkyFullscreen.cso",
+				exeDirW + VS_NAME,
 				L"", L"", L"",
-				exeDirW + L"PSSkyFullscreen.cso"
+				exeDirW + PS_NAME
 			};
 			initPipeline(m_skyPipeline, skyPipelineData);
 			// Init constant buffers
 			m_skyBuffer.init();
 			
 			// Load texture
-			if (!tex::TextureManager::getInstance().loadTexture2D(texturePath)) {
+			if (!tex::TextureManager::getInstance().loadTextureDDS(texturePath)) {
 				return;
 			}
 			m_skyBoxTexture = tex::TextureManager::getInstance().getTexture(texturePath);

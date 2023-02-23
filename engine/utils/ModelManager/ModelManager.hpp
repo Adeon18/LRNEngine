@@ -40,7 +40,7 @@ namespace engn {
 
 			//! Load and cache the model into a map
 			bool loadModel(const std::string& filename);
-			//! Load the textures via TextureManager and store their math in meshes, to later get them
+			//! Load the textures via TextureManager and store their path in meshes, to later get them
 			//! From TextureManager via getTexture
 			//! Also, we load ONLY .DDS TEXTURES!
 			void loadTextures(const aiScene* pScene, std::shared_ptr<mdl::Model> modelPtr, aiTextureType textureType, const std::string& filename);

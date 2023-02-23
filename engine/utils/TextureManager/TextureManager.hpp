@@ -16,9 +16,7 @@ namespace engn {
 			TextureManager(const TextureManager& t) = delete;
 			TextureManager& operator=(const TextureManager& t) = delete;
 			//! Load the texture that is in the path
-			bool loadTexture2D(const std::string& path);
-			//! Load the texture cube that is in the Path
-			bool loadTextureCube(const std::string& path);
+			bool loadTextureDDS(const std::string& path);
 			std::shared_ptr<Texture> getTexture(const std::string& path);
 		private:
 			TextureManager() {}

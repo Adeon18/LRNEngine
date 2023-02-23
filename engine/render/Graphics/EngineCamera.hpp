@@ -70,7 +70,8 @@ namespace engn {
             //! Cast ray in the mouse direction from camera position
             geom::Ray castRay(float x, float y);
 
-            //! 
+            //! Fill a vertor with UNNORMALIZED far plane corner directions in world space. Called in sky triangle for render
+            //! TODO: is called every frame which may hit performance
             void getCamFarPlaneDirForFullScreenTriangle(std::vector<XMVECTOR>& outDirs);
 
             //! Getters
@@ -93,11 +94,12 @@ namespace engn {
                 { 1.0f,  1.0f, 1.0f, 1.0f},
                 { 1.0f, -1.0f, 1.0f, 1.0f},
             };
+            // This frustum is 2x bigger, due to using it for sky rendering as a fullscreen triangle
             const XMVECTOR m_viewingFrustumFarPlaneX2[4] =
             {
                 {-1.0f, -1.0f, 1.0f, 1.0f},
                 {-1.0f,  3.0f, 1.0f, 1.0f},
-                { 1.0f,  1.0f, 1.0f, 1.0f},
+                { 3.0f,  3.0f, 1.0f, 1.0f},
                 { 3.0f, -1.0f, 1.0f, 1.0f},
             };
             XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
