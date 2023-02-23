@@ -2,6 +2,11 @@
 
 namespace engn {
 	namespace rend {
+		void MeshSystem::init() {
+			initNormalGroup();
+			initHologramGroup();
+		}
+
 		void MeshSystem::initNormalGroup()
 		{
 			std::wstring shaderFolder = util::getExeDirW();
