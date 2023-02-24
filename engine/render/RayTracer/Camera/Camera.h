@@ -5,7 +5,7 @@
 #include <glm/glm/gtc/type_ptr.hpp>
 
 #include "windows/Window.h"
-#include "source/math/ray.h"
+#include "render/RayTracer/math/ray.h"
 #include "render/RayTracer/RenderData/RenderData.h"
 
 

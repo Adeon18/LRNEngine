@@ -1,12 +1,12 @@
 #pragma once
 
-#include "source/math/ray.h"
-#include "source/math/geometry/plane.h"
-#include "source/math/geometry/sphere.h"
-#include "source/math/geometry/hitable.h"
+#include "render/RayTracer/math/ray.h"
+#include "render/RayTracer/math/geometry/plane.h"
+#include "render/RayTracer/math/geometry/sphere.h"
+#include "render/RayTracer/math/geometry/hitable.h"
 
-#include "source/mesh/Mesh.h"
-#include "source/mesh/TriangleOcTree.h"
+#include "render/RayTracer/mesh/Mesh.h"
+#include "render/RayTracer/mesh/TriangleOcTree.h"
 
 #include "render/RayTracer/Lighting/Lights.h"
 #include "render/RayTracer/Materials/Material.h"

@@ -5,12 +5,22 @@
 namespace engn {
 	namespace rend {
 		//! This struct is for moving the vertices in the VS by some offset
-		struct CB_VS_MoveBuffer {
-			DirectX::XMFLOAT2 offset;
+		struct CB_VS_MeshData {
+			XMMATRIX meshToModel;
+			XMMATRIX meshToModelInv;
 		};
-		//! This struct contains basic data that ShaderToy has out of the box
-		struct CB_PS_ShaderToy {
-			DirectX::XMFLOAT4 gResolution;
+		//! Basic struct for real-time per-frame data for the vertex shader - has the worldToClip matrix and inverse(for normal in world space calc)
+		struct CB_VS_RealTimeData {
+			XMMATRIX worldToClip;
+			XMMATRIX worldToClipInv;
+			XMFLOAT4 gResolution;
+			XMFLOAT4 gCameraPosition;
+			float gTime;
+		};
+		// CB struct for the pixelshader realtime data, does not have worldToClip matrix
+		struct CB_PS_RealTimeData {
+			XMFLOAT4 gResolution;
+			XMFLOAT4 gCameraPosition;
 			float gTime;
 		};
 	} // rend

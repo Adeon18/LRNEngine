@@ -14,7 +14,7 @@ namespace engn {
 		template<typename T>
 		class ConstantBuffer {
 		public:
-			ConstantBuffer() {}
+			ConstantBuffer() : data{} {}
 
 			void init() {
 				D3D11_BUFFER_DESC desc;
@@ -25,7 +25,7 @@ namespace engn {
 				desc.ByteWidth = static_cast<UINT>(util::alignUp(sizeof(T), 16));
 				desc.StructureByteStride = 0;
 
-				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.GetAddressOf());
+				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.ReleaseAndGetAddressOf());
 				if (FAILED(hr)) {
 					Logger::instance().logErr("ConstantBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));
 					return;

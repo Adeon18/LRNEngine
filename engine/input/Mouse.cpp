@@ -30,10 +30,9 @@ namespace engn {
 		}
 		void Mouse::onMove(MSG* m)
 		{
-			DirectX::XMINT2 newMosPos = DirectX::XMINT2{ GET_X_LPARAM(m->lParam), GET_Y_LPARAM(m->lParam) };
-			m_moveData.mouseOffset.x = newMosPos.x - m_moveData.mousePos.x;
-			m_moveData.mouseOffset.y = newMosPos.y - m_moveData.mousePos.y;
+			XMVECTOR newMosPos = XMVECTOR{ static_cast<float>(GET_X_LPARAM(m->lParam)), static_cast<float>((GetSystemMetrics(SM_CYSIZEFRAME) + GetSystemMetrics(SM_CYEDGE) * 2) + GET_Y_LPARAM(m->lParam)) };
+			m_moveData.mouseOffset = newMosPos - m_moveData.mousePos;
 			m_moveData.mousePos = newMosPos;
 		}
 	} // inp
-} // engn
+} // engnd

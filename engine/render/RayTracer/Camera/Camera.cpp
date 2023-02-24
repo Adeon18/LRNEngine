@@ -37,7 +37,6 @@ namespace engn {
 
     void Camera::addRelativeOffset(const glm::vec3& offset) {
         m_matricesUpdated = false;
-        // TODO: May be slow
         m_position += offset[0] * glm::vec3(getCamRight()) +
             offset[1] * glm::vec3(getCamUp()) +
             offset[2] * glm::vec3(getCamForward());
