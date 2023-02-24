@@ -2,9 +2,6 @@
 
 #include <memory>
 
-#include "source/mesh/Mesh.hpp"
-
-#include "render/Graphics/Vertex.hpp"
 #include "render/Graphics/DXBuffers/VertexBuffer.hpp"
 #include "render/Graphics/DXBuffers/IndexBuffer.hpp"
 

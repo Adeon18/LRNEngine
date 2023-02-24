@@ -10,8 +10,6 @@
 #include "DXShaders/VertexShader.hpp"
 #include "DXShaders/PixelShader.hpp"
 
-#include "Vertex.hpp"
-
 #include "EngineCamera.hpp"
 
 namespace engn {

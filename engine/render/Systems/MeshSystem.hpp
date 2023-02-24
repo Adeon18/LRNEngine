@@ -5,7 +5,6 @@
 #include "RenderStructs.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
-#include "render/Objects/Model.hpp"
 
 #include "render/Graphics/DXBuffers/VertexBuffer.hpp"
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
@@ -13,7 +12,6 @@
 
 #include "render/Systems/Pipeline.hpp"
 
-#include "render/Graphics/Vertex.hpp"
 #include "render/Graphics/HelperStructs.hpp"
 
 namespace engn {
@@ -64,7 +62,7 @@ namespace engn {
 			}
 
 			// Find the closest instance that intersects with a ray and fill in the infor struct
-			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
+			bool checkRayIntersection(geom::Ray& ray, geom::MeshIntersection& nearest, InstanceProperties& i2d) {
 
 				bool hasIntersection = false;
 				for (auto& perModel : m_models) {
@@ -287,7 +285,7 @@ namespace engn {
 			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 			//! Get closest mesh data that was hit by a ray, used for dragging
-			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, geom::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
 

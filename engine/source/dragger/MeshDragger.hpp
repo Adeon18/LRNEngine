@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include <DirectXMath.h>
-
 #include "render/Systems/MeshSystem.hpp"
 #include "input/Mouse.hpp"
 #include "render/Graphics/EngineCamera.hpp"
@@ -29,7 +27,7 @@ namespace engn {
 			// The data that identifies which mesh was captured
 			rend::InstanceProperties m_capturedMeshData;
 			// The intersection data, aquired on capture, edited during drag to keep track of the offset
-			mdl::MeshIntersection m_capturedMeshIntersection;
+			geom::MeshIntersection m_capturedMeshIntersection;
 			DragPlane m_dragPlane;
 			// The mouse pos to check if we moved from previous frame MAYBE TODO: MOVE LOGIC TO MOUSE
 			XMVECTOR m_oldMosPos;

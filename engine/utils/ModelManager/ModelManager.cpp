@@ -69,7 +69,7 @@ namespace engn {
 
 			Mesh boxMesh;
 			boxMesh.name = "unit_box";
-			boxMesh.box = BoundingBox::unit();
+			boxMesh.box = geom::BoundingBox::unit();
 			boxMesh.vertices = vertices;
 			for (size_t i = 0; i < indices.size(); i += 3) {
 				Mesh::Triangle t{ indices[i], indices[i + 1], indices[i + 2] };

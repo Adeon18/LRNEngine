@@ -2,8 +2,6 @@
 
 #include "input/Keyboard.hpp"
 
-#include <DirectXMath.h>
-
 #include "include/utility/utility.hpp"
 
 #include "source/math/Ray.hpp"
