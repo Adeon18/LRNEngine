@@ -270,11 +270,7 @@ namespace engn {
 			MeshSystem& operator=(const MeshSystem& other) = delete;
 
 			//! Init the ENTIRE Meshsystem singleton, should be called right after d3d init
-			void init() {
-				initPipelines();
-				initNormalGroup();
-				initHologramGroup();
-			}
+			void init();
 
 			//! Do all the mesh rendering, called every frame on each group
 			void render(const RenderModeFlags& flags);

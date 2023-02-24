@@ -9,13 +9,15 @@ namespace engn {
     namespace rend {
         EngineCamera::EngineCamera(float fov, int screenWidth, int screenHeight, const XMFLOAT3& position) :
             m_position{ position },
+            m_rotation{ 0.0f, 0.0f, 0.0f },
             m_screenWidth{ screenWidth },
             m_screenHeight{ screenHeight }
         {
             m_positionVec = XMLoadFloat3(&m_position);
-            m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
+            m_rotationVec = XMLoadFloat3(&m_rotation);
             setProjectionMatrix(fov, screenWidth, screenHeight);
             updateViewMatrix();
+
         }
 
         void EngineCamera::setNewScreenSize(int width, int height) {
@@ -35,14 +37,14 @@ namespace engn {
         void EngineCamera::setPosition(const XMVECTOR& pos) {
             XMStoreFloat3(&m_position, pos);
             m_positionVec = pos;
-            updateViewMatrixPos();
+            updateViewMatrix();
         }
 
         void EngineCamera::addWorldOffset(const XMVECTOR& offset) {
             m_positionVec += offset;
             m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
             XMStoreFloat3(&m_position, m_positionVec);
-            updateViewMatrixPos();
+            updateViewMatrix();
         }
 
         void EngineCamera::addRelativeOffset(const XMVECTOR& offset) {
@@ -52,34 +54,32 @@ namespace engn {
                 XMVectorGetZ(offset) * getCamForward();
             m_positionVec = XMVectorSetW(m_positionVec, 1.0f);
             XMStoreFloat3(&m_position, m_positionVec);
-            updateViewMatrixPos();
-        }
-
-        void EngineCamera::addWorldRotationQuat(const XMVECTOR& angles) {
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_UP_VECTOR, XMConvertToRadians(XMVectorGetY(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_RIGHT_VECTOR, XMConvertToRadians(XMVectorGetX(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_FORWARD_VECTOR, XMConvertToRadians(XMVectorGetZ(angles))));
-            m_rotationQuat = XMQuaternionNormalize(m_rotationQuat);
             updateViewMatrix();
         }
 
-        void EngineCamera::addRelativeRotationQuat(const XMVECTOR& angles) {
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamUp(), XMConvertToRadians(XMVectorGetY(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamRight(), XMConvertToRadians(XMVectorGetX(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamForward(), XMConvertToRadians(XMVectorGetZ(angles))));
-            m_rotationQuat = XMQuaternionNormalize(m_rotationQuat);
+        void EngineCamera::addWorldRotationMat(const XMVECTOR& angles) {
+            m_rotationVec += angles;
+            if (XMVectorGetX(m_rotationVec) > XM_PIDIV2) {
+                m_rotationVec = XMVectorSetX(m_rotationVec, XM_PIDIV2);
+            } else if (XMVectorGetX(m_rotationVec) < -XM_PIDIV2) {
+                m_rotationVec = XMVectorSetX(m_rotationVec, -XM_PIDIV2);
+            }
+
+            XMStoreFloat3(&m_rotation, m_rotationVec);
             updateViewMatrix();
         }
 
         void EngineCamera::updateViewMatrix() {
-            m_viewInv = XMMatrixRotationQuaternion(m_rotationQuat);
-            m_viewInv.r[3] = m_positionVec;
-            m_view = XMMatrixInverse(nullptr, m_viewInv);
-        }
+            // Get the simple rotation matrix NOT via quaternion
+            XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y, m_rotation.z);
+            // Get the transformed forward vector by position and rotation
+            XMVECTOR forwardVec = XMVector3Transform(DEF_FORWARD_VECTOR, rotMatrix);
+            forwardVec += m_positionVec;
 
-        void EngineCamera::updateViewMatrixPos() {
-            m_viewInv.r[3] = m_positionVec;
-            m_view = XMMatrixInverse(nullptr, m_viewInv);
+            m_upVec = XMVector3Transform(DEF_UP_VECTOR, rotMatrix);
+
+            m_view = XMMatrixLookAtLH(m_positionVec, forwardVec, m_upVec);
+            m_viewT = XMMatrixTranspose(m_view);
         }
 
         geom::Ray EngineCamera::castRay(float x, float y) {

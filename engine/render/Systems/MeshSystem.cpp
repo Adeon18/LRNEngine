@@ -2,6 +2,12 @@
 
 namespace engn {
 	namespace rend {
+		void MeshSystem::init() {
+			initPipelines();
+			initNormalGroup();
+			initHologramGroup();
+		}
+
 		void MeshSystem::initNormalGroup()
 		{
 			m_normalGroup.setType(GroupTypes::NORMAL);
