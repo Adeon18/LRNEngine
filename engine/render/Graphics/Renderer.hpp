@@ -1,14 +1,14 @@
 #pragma once
 
-#include "IndexBuffer.hpp"
-#include "VertexBuffer.hpp"
-#include "ConstantBuffer.hpp"
-#include "InstanceBuffer.hpp"
+#include "HelperStructs.hpp"
+
+#include "DXBuffers/IndexBuffer.hpp"
+#include "DXBuffers/VertexBuffer.hpp"
+#include "DXBuffers/ConstantBuffer.hpp"
+#include "DXBuffers/InstanceBuffer.hpp"
 
 #include "DXShaders/VertexShader.hpp"
 #include "DXShaders/PixelShader.hpp"
-
-#include "Vertex.hpp"
 
 #include "EngineCamera.hpp"
 
@@ -21,13 +21,14 @@ namespace engn {
 			float invResolutionX;
 			float invResolutionY;
 		};
+
 		/// <summary>
 		/// This class facilitates everything needed for the rendering pipeline
 		/// </summary>
 		class Renderer {
 		public:
 			void init();
-			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
+			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
 			void m_initScene();
 			//! Initialize the RasterizerState
@@ -41,7 +42,7 @@ namespace engn {
 			
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
-			ConstantBuffer<CB_PS_RealTimeData> m_globalConstantBufferPS;
+			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

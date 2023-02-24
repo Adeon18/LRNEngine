@@ -2,24 +2,24 @@
 
 #include "utils/Logger/Logger.hpp"
 
-#include "PixelShader.hpp"
+#include "GeometryShader.hpp"
 
 
 namespace engn {
 	namespace rend {
-		void PixelShader::init(const std::wstring& shaderPath) {
+		void GeometryShader::init(const std::wstring& shaderPath) {
 			if (!readShaderFile(shaderPath)) { return; }
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void PixelShader::bind() const
+		void GeometryShader::bind() const
 		{
-			d3d::s_devcon->PSSetShader(m_shader.Get(), NULL, 0);
+			d3d::s_devcon->GSSetShader(m_shader.Get(), NULL, 0);
 		}
 
-		bool PixelShader::createShader(const std::wstring& shaderPath)
+		bool GeometryShader::createShader(const std::wstring& shaderPath)
 		{
-			HRESULT hr = d3d::s_device->CreatePixelShader(
+			HRESULT hr = d3d::s_device->CreateGeometryShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				NULL, // The pointer to class linkage

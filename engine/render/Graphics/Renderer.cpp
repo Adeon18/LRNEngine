@@ -18,16 +18,15 @@ namespace engn {
 			m_initScene();
 		}
 
-		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
+		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
-			// Set Input Assembler Data
-			d3d::s_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			// Set render states and DepthStencil state, everything else is set by the systems
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 
 			m_fillPerFrameCBs(camPtr, renderData);
 
-			MeshSystem::getInstance().render(camPtr->getViewMatrix() * camPtr->getProjMatrix());
+			MeshSystem::getInstance().render(flags);
 		}
 
 		void Renderer::m_initScene()
@@ -37,26 +36,41 @@ namespace engn {
 
 			// TODO: Later may move to some map
 #ifdef _WIN64 
-			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
+			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
+			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
 
 
-			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(-5.0f, 0.0f, 8.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(0.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixTranslation(5.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(10.0f, 0.0f, 8.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getCubeModel();
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixTranslation(-10.0f, 0.0f, 8.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-15.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
+
 
 			//// Fill the field with cubes
 			//for (int i = -32; i < 32; ++i) {
@@ -67,17 +81,17 @@ namespace engn {
 			//	}
 			//}
 
-			mptr.reset(); 
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-8.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 10.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(5.0f, 0.0f, 10.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(8.0f, 0.0f, 15.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
 			
 			// Fill the field with samurai
 			/*for (int i = 0; i < 32; ++i) {
@@ -128,6 +142,7 @@ namespace engn {
 			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
 
 			//! Fill global constant PS CB
+			m_globalConstantBufferPS.getData().worldToClip = XMMatrixTranspose( camPtr->getViewMatrix() * camPtr->getProjMatrix() );
 			m_globalConstantBufferPS.getData().gResolution = gResolution;
 			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
 			m_globalConstantBufferPS.getData().gTime = renderData.iTime;
@@ -135,6 +150,8 @@ namespace engn {
 			m_globalConstantBufferVS.fill();
 			m_globalConstantBufferPS.fill();
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
+			// For now it is like this
+			d3d::s_devcon->GSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_globalConstantBufferPS.getBufferAddress());
 		}
 	} // rend

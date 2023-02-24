@@ -30,15 +30,15 @@ namespace engn {
 			m_loadedModels.insert({ "unit_box", std::make_shared<mdl::Model>() });
 			std::vector vertices =
 			{
-				Vertex{{0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-front
-				Vertex{{-0.5f, 0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-front
-				Vertex{{0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-front
-				Vertex{{-0.5f, -0.5f, -0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-front
+				Vertex{{1.0f, 1.0f, -1.0f}, {0.33f, 0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-front
+				Vertex{{-1.0f, 1.0f, -1.0f}, {-0.33f, 0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-front
+				Vertex{{1.0f, -1.0f, -1.0f}, {0.33f, -0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-front
+				Vertex{{-1.0f, -1.0f, -1.0f}, {-0.33f, -0.33f, -0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-front
 
-				Vertex{{0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-back
-				Vertex{{-0.5f, 0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-back
-				Vertex{{0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-back
-				Vertex{{-0.5f, -0.5f, 0.5f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-back
+				Vertex{{1.0f, 1.0f, 1.0f}, {0.33f, 0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-right-back
+				Vertex{{-1.0f, 1.0f, 1.0f}, {-0.33f, 0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // top-left-back
+				Vertex{{1.0f, -1.0f, 1.0f}, {0.33f, -0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-right-back
+				Vertex{{-1.0f, -1.0f, 1.0f}, {-0.33f, -0.33f, 0.33f}, {0.f, 0.f, 0.f}, {0.f, 0.f, 0.f}, {0.f, 0.f}}, // bottom-left-back
 			};
 			std::vector<DWORD> indices =
 			{
@@ -63,7 +63,7 @@ namespace engn {
 
 			Mesh boxMesh;
 			boxMesh.name = "unit_box";
-			boxMesh.box = BoundingBox::unit();
+			boxMesh.box = geom::BoundingBox::unit();
 			boxMesh.vertices = vertices;
 			for (size_t i = 0; i < indices.size(); i += 3) {
 				Mesh::Triangle t{ indices[i], indices[i + 1], indices[i + 2] };

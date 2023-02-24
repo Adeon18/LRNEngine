@@ -44,3 +44,14 @@ Additions:
 - Able to render multiple cubes/models with different colors/shaders
 - Added mesh instance dragging
 - Connected hologram shaders that are position independant and applied them to models.
+
+## HW5: Tesselation, Hull/Domain/Geometry shaders, Degug Shaders
+How to run:
+- Same as HW4
+
+Additions:
+- Connected 3 more shaders to pipeline: Hull, Domain and Geometry.
+- Added tesselation
+- Added debug face normal visualization, press `N`
+- Added wireframe visualization, press `F`
+- Rewrote the pipeline system

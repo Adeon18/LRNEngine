@@ -4,6 +4,13 @@ namespace engn {
 	namespace rend {
 		bool BaseShader::readShaderFile(const std::wstring& shaderPath)
 		{
+			if (shaderPath.empty()) {
+				active = false;
+				return false;
+			}
+
+			active = true;
+
 			// Read vertex Shader
 			HRESULT hr = D3DReadFileToBlob(shaderPath.c_str(), m_shaderBuffer.GetAddressOf());
 			if (FAILED(hr)) {

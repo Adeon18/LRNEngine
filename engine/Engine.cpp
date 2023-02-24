@@ -12,7 +12,7 @@ namespace engn {
 	}
 
 	void Engine::render(const rend::RenderData& data) {
-		m_graphics.renderFrame(m_camera, data);
+		m_graphics.renderFrame(m_camera, data, m_renderFlags);
 	}
 
 	void Engine::handlePhysics(const rend::RenderData& data) {
@@ -20,6 +20,8 @@ namespace engn {
 		handleCameraMovement();
 
 		handleDragging(data);
+
+		fillRenderModeFlagsFromInput();
 	}
 
 	void Engine::handleCameraMovement() {
@@ -77,6 +79,16 @@ namespace engn {
 	void Engine::moveDraggable() {
 		if (m_dragger.isMeshCaptured()) {
 			m_dragger.drag(m_camera);
+		}
+	}
+	void Engine::fillRenderModeFlagsFromInput()
+	{
+		if (inp::Keyboard::getInstance().isKeyJustPressed(inp::Keyboard::Keys::KEY_N)) {
+			m_renderFlags.renderFaceNormals = !m_renderFlags.renderFaceNormals;
+		}
+
+		if (inp::Keyboard::getInstance().isKeyJustPressed(inp::Keyboard::Keys::KEY_F)) {
+			m_renderFlags.renderWireframes = !m_renderFlags.renderWireframes;
 		}
 	}
 } // engn

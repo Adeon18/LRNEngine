@@ -8,6 +8,8 @@
 
 #include "render/Systems/MeshSystem.hpp"
 
+#include "render/Graphics/HelperStructs.hpp"
+
 #include "render/D3D/d3d.hpp"
 #include "render/Graphics/EngineCamera.hpp"
 #include "render/Graphics/Renderer.hpp"
@@ -48,6 +50,8 @@ namespace engn {
 		rend::Renderer m_graphics;
 		drag::MeshDragger m_dragger;
 
+		rend::RenderModeFlags m_renderFlags;
+
 	private:
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement();
@@ -59,5 +63,7 @@ namespace engn {
 		void findDraggable(const rend::RenderData& data);
 		//! Move the captured object if there is any	
 		void moveDraggable();
+		//! Based on the keyboard inputs, fill the struct that has info what mode of rendering is used(debug/normls/wireframs, etc.)
+		void fillRenderModeFlagsFromInput();
 	};
 } // engn

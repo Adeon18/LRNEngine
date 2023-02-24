@@ -1,20 +1,18 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "RenderStructs.hpp"
 
 #include "utils/ModelManager/ModelManager.hpp"
-#include "render/Objects/Model.hpp"
 
-#include "render/Graphics/VertexBuffer.hpp"
-#include "render/Graphics/ConstantBuffer.hpp"
-#include "render/Graphics/InstanceBuffer.hpp"
+#include "render/Graphics/DXBuffers/VertexBuffer.hpp"
+#include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
+#include "render/Graphics/DXBuffers/InstanceBuffer.hpp"
 
-#include "render/Graphics/DXShaders/VertexShader.hpp"
-#include "render/Graphics/DXShaders/PixelShader.hpp"
+#include "render/Systems/Pipeline.hpp"
 
-#include "render/Graphics/Vertex.hpp"
-
-#include "source/math/Ray.hpp"
+#include "render/Graphics/HelperStructs.hpp"
 
 namespace engn {
 	namespace rend {
@@ -50,37 +48,21 @@ namespace engn {
 			InstanceBuffer<I> m_instanceBuffer;
 			ConstantBuffer<CB_VS_MeshData> m_meshData;
 
-			//! A unique enum identifier that allows to get the group type at dragger collision
-			GroupTypes m_type;
-
-			VertexShader m_vertexShader;
-			PixelShader m_pixelShader;
+			//! A unique enum identifier that allows to get the group type at dragger collision - Normal by default
+			GroupTypes m_type = GroupTypes::NORMAL;
+			//! Group input assembler topology - triangleList by default
 		public:
 			//! Make the groups definable my type
 			void setType(const GroupTypes& t) { m_type = t; }
 
-			//! Init the input layout(for now the same for all)
-			void init(const std::wstring& VSpath, const std::wstring& PSpath) {
-				D3D11_INPUT_ELEMENT_DESC layout[] = {
-					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
-					{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-					{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				};
 
-				m_vertexShader.init(VSpath, layout, ARRAYSIZE(layout));
-				m_pixelShader.init(PSpath);
+			//! Init the input layout(for now the same for all)
+			void init() {
 				m_meshData.init();
 			}
 
 			// Find the closest instance that intersects with a ray and fill in the infor struct
-			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
+			bool checkRayIntersection(geom::Ray& ray, geom::MeshIntersection& nearest, InstanceProperties& i2d) {
 
 				bool hasIntersection = false;
 				for (auto& perModel : m_models) {
@@ -180,7 +162,7 @@ namespace engn {
 			}
 
 			//! Fill the data to be passed by instance
-			void fillInstanceBuffer(const XMMATRIX& worldToView) {
+			void fillInstanceBuffer() {
 				// Count total instances
 				uint32_t totalInstances = 0;
 				for (auto& model : m_models)
@@ -229,13 +211,12 @@ namespace engn {
 				m_instanceBuffer.unmap();
 			}
 
+			// Render all the group meshes, can be called multiple times per frame with different shaders
 			void render() {
+				// TODO: DON'T BIND SJADERS IF EMPTY
 				if (m_instanceBuffer.getSize() == 0)
 					return;
 
-				d3d::s_devcon->IASetInputLayout(m_vertexShader.getInputLayout());
-				m_vertexShader.bind();
-				m_pixelShader.bind();
 				m_instanceBuffer.bind();
 
 				uint32_t renderedInstances = 0;
@@ -288,25 +269,105 @@ namespace engn {
 			MeshSystem(const MeshSystem& other) = delete;
 			MeshSystem& operator=(const MeshSystem& other) = delete;
 
+			//! Init the ENTIRE Meshsystem singleton, should be called right after d3d init
 			void init();
 
-			void initNormalGroup();
-			void initHologramGroup();
-
-			void render(const XMMATRIX& worldToClip);
+			//! Do all the mesh rendering, called every frame on each group
+			void render(const RenderModeFlags& flags);
 			
+			//! Add a new instance to groups, by filling the respective rendergroup structs
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-
+			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
-
-			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			//! Get closest mesh data that was hit by a ray, used for dragging
+			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, geom::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
+
+			//! Init render groups and set respective parameters
+			void initNormalGroup();
+			void initHologramGroup();
+			//! Initialize all the pipelines
+			void initPipelines();
+			//! Bind a certain pipeline by type - must be called before group render
+			void bindPipelineViaType(PipelineTypes pipelineType);
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
+
+			std::unordered_map<PipelineTypes, Pipeline> m_pipelines;
+
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT[10] = {
+					{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 44, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+					{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+					{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			};
+
+			const std::wstring SHADER_FOLDER = util::getExeDirW();
+
+			const std::unordered_map<PipelineTypes, PipelineData> PIPELINE_TYPE_DATA{
+				{
+					PipelineTypes::NORMAL_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSBasicColor.cso",
+						L"",
+						L"",
+						L"",
+						SHADER_FOLDER + L"PSBasicColor.cso"
+					}
+				},
+				{
+					PipelineTypes::HOLOGRAM_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST,
+						SHADER_FOLDER + L"VSHologram.cso",
+						SHADER_FOLDER + L"HSHologram.cso",
+						SHADER_FOLDER + L"DSHologram.cso",
+						SHADER_FOLDER + L"GSHologram.cso",
+						SHADER_FOLDER + L"PSHologram.cso"
+					}
+				},
+				{
+					PipelineTypes::FACE_NORMAL_DEBUG,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSVisNormal.cso",
+						L"",
+						L"",
+						SHADER_FOLDER + L"GSVisNormal.cso",
+						SHADER_FOLDER + L"PSVisNormal.cso"
+					}
+				},
+				{
+					PipelineTypes::WIREFRAME_DEBUG,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSVisWireframe.cso",
+						L"",
+						L"",
+						SHADER_FOLDER + L"GSVisWireframe.cso",
+						SHADER_FOLDER + L"PSVisWireframe.cso"
+					}
+				},
+			};
 		};
 	} // rend
 } // engn

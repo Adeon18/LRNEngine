@@ -2,24 +2,24 @@
 
 #include "utils/Logger/Logger.hpp"
 
-#include "PixelShader.hpp"
+#include "DomainShader.hpp"
 
 
 namespace engn {
 	namespace rend {
-		void PixelShader::init(const std::wstring& shaderPath) {
+		void DomainShader::init(const std::wstring& shaderPath) {
 			if (!readShaderFile(shaderPath)) { return; }
 			if (!createShader(shaderPath)) { return; }
 		}
 
-		void PixelShader::bind() const
+		void DomainShader::bind() const
 		{
-			d3d::s_devcon->PSSetShader(m_shader.Get(), NULL, 0);
+			d3d::s_devcon->DSSetShader(m_shader.Get(), NULL, 0);
 		}
 
-		bool PixelShader::createShader(const std::wstring& shaderPath)
+		bool DomainShader::createShader(const std::wstring& shaderPath)
 		{
-			HRESULT hr = d3d::s_device->CreatePixelShader(
+			HRESULT hr = d3d::s_device->CreateDomainShader(
 				m_shaderBuffer->GetBufferPointer(),
 				m_shaderBuffer->GetBufferSize(),
 				NULL, // The pointer to class linkage
@@ -27,7 +27,7 @@ namespace engn {
 			);
 
 			if (FAILED(hr)) {
-				Logger::instance().logErr("Failed to create Pixel Shader " +
+				Logger::instance().logErr("Failed to create Domain Shader " +
 					std::string(shaderPath.begin(), shaderPath.end()) + ": " + std::system_category().message(hr));
 				return false;
 			}

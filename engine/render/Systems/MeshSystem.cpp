@@ -3,34 +3,50 @@
 namespace engn {
 	namespace rend {
 		void MeshSystem::init() {
+			initPipelines();
 			initNormalGroup();
 			initHologramGroup();
 		}
 
 		void MeshSystem::initNormalGroup()
 		{
-			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
-
 			m_normalGroup.setType(GroupTypes::NORMAL);
-			m_normalGroup.init(shaderFolder + L"VSBasicColor.cso", shaderFolder + L"PSBasicColor.cso");
+			m_normalGroup.init();
 
 		}
 		void MeshSystem::initHologramGroup()
 		{
-			std::wstring shaderFolder = util::getExeDirW();
-			Logger::instance().logInfo(L"Shader Folder found: " + shaderFolder);
-
 			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
-			m_hologramGroup.init(shaderFolder + L"VSHologram.cso", shaderFolder + L"PSHologram.cso");
+			m_hologramGroup.init();
 		}
-		void MeshSystem::render(const XMMATRIX& worldToClip)
+		
+		void MeshSystem::render(const RenderModeFlags& flags)
 		{
-			m_normalGroup.fillInstanceBuffer(worldToClip);
+			// Normal group 
+			m_normalGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
 			m_normalGroup.render();
+			if (flags.renderFaceNormals) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_normalGroup.render();
+			}
+			if (flags.renderWireframes) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_normalGroup.render();
+			}
 
-			m_hologramGroup.fillInstanceBuffer(worldToClip);
+			// Hologram group
+			m_hologramGroup.fillInstanceBuffer();
+			this->bindPipelineViaType((flags.renderFaceNormals || flags.renderWireframes) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();
+			if (flags.renderFaceNormals) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_hologramGroup.render();
+			}
+			if (flags.renderWireframes) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_hologramGroup.render();
+			}
 		}
 
 		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
@@ -56,13 +72,10 @@ namespace engn {
 			{
 				m_hologramGroup.addModelOffset(instanceData, offset);
 			}
-			break;
-			default:
-			{}
 			}
 		}
 
-		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest) {
+		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, geom::MeshIntersection& nearest) {
 			InstanceProperties i2d{};
 
 			// TODO: Like this for now, haven't found the idea for organizing it in any other way yet
@@ -76,6 +89,16 @@ namespace engn {
 			}
 
 			return std::pair<bool, InstanceProperties>{collided, i2d};
+		}
+		void MeshSystem::initPipelines()
+		{
+			for (auto& [type, data] : PIPELINE_TYPE_DATA) {
+				initPipeline(m_pipelines[type], data);
+			}
+		}
+		void MeshSystem::bindPipelineViaType(PipelineTypes pipelineType)
+		{
+			bindPipeline(m_pipelines[pipelineType]);
 		}
 	} // rend
 } // engn

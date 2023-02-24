@@ -25,40 +25,30 @@
     <ClInclude Include="input\Keyboard.hpp" />
     <ClInclude Include="input\Mouse.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp" />
+    <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp" />
+    <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp" />
+    <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp" />
     <ClInclude Include="render\Graphics\EngineCamera.hpp" />
-    <ClInclude Include="render\Graphics\CBStructs.hpp" />
-    <ClInclude Include="render\Graphics\ConstantBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\CBStructs.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\ConstantBuffer.hpp" />
+    <ClInclude Include="render\Graphics\HelperStructs.hpp" />
     <ClInclude Include="render\Graphics\Renderer.hpp" />
     <ClInclude Include="include\win_def.hpp" />
     <ClInclude Include="include\win_undef.hpp" />
     <ClInclude Include="render\D3D\d3d.hpp" />
-    <ClInclude Include="render\Graphics\IndexBuffer.hpp" />
-    <ClInclude Include="render\Graphics\InstanceBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\IndexBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\InstanceBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\PixelShader.hpp" />
     <ClInclude Include="render\Graphics\Vertex.hpp" />
-    <ClInclude Include="render\Graphics\VertexBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\VertexBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\VertexShader.hpp" />
     <ClInclude Include="render\Objects\Model.hpp" />
-    <ClInclude Include="render\RayTracer\Camera\Camera.h" />
-    <ClInclude Include="render\RayTracer\Lighting\Lights.h" />
-    <ClInclude Include="render\RayTracer\Materials\Material.h" />
-    <ClInclude Include="render\RayTracer\RenderData\RenderData.h" />
-    <ClInclude Include="render\RayTracer\RenderObject\RenderObject.h" />
-    <ClInclude Include="render\RayTracer\Scene\Scene.h" />
-    <ClInclude Include="render\RayTracer\draggers\dragger.h" />
-    <ClInclude Include="render\RayTracer\math\geometry\hitable.h" />
-    <ClInclude Include="render\RayTracer\math\geometry\plane.h" />
-    <ClInclude Include="render\RayTracer\math\geometry\sphere.h" />
-    <ClInclude Include="render\RayTracer\math\geometry\triangle.h" />
-    <ClInclude Include="render\RayTracer\math\ray.h" />
-    <ClInclude Include="render\RayTracer\mesh\Mesh.h" />
-    <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
+    <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
-    <ClInclude Include="source\mesh\MeshHelpers.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\OcTree\OcTree.hpp" />
@@ -71,29 +61,19 @@
     <ClCompile Include="input\Mouse.cpp" />
     <ClCompile Include="render\D3D\d3d.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp" />
+    <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp" />
+    <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp" />
+    <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp" />
     <ClCompile Include="render\Graphics\EngineCamera.cpp" />
-    <ClCompile Include="render\Graphics\IndexBuffer.cpp" />
+    <ClCompile Include="render\Graphics\DXBuffers\IndexBuffer.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\PixelShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\VertexShader.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="render\Objects\Model.cpp" />
-    <ClCompile Include="render\RayTracer\Camera\Camera.cpp" />
-    <ClCompile Include="render\RayTracer\Lighting\Lights.cpp" />
-    <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp" />
-    <ClCompile Include="render\RayTracer\Scene\Scene.cpp" />
     <ClCompile Include="render\Graphics\Renderer.cpp" />
-    <ClCompile Include="render\RayTracer\draggers\dragger.cpp" />
-    <ClCompile Include="render\RayTracer\math\geometry\plane.cpp" />
-    <ClCompile Include="render\RayTracer\math\geometry\sphere.cpp" />
-    <ClCompile Include="render\RayTracer\math\geometry\triangle.cpp" />
-    <ClCompile Include="render\RayTracer\math\ray.cpp" />
-    <ClCompile Include="render\RayTracer\mesh\Mesh.cpp" />
-    <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
-    <ClCompile Include="source\mesh\Mesh.cpp" />
-    <ClCompile Include="source\mesh\MeshHelpers.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
     <ClCompile Include="utils\ModelManager\ModelManager.cpp" />
@@ -102,6 +82,132 @@
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Domain</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Hull</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Hull</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Hull</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\GSVisNormal.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\PSVisNormal.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\VSVisNormal.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="render\Graphics\shaders\PSBasicColor.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -112,7 +218,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\PSHologram.hlsl">
+    <FxCompile Include="render\Graphics\shaders\hologram\PSHologram.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
@@ -154,7 +260,7 @@
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\VSHologram.hlsl">
+    <FxCompile Include="render\Graphics\shaders\hologram\VSHologram.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
@@ -168,6 +274,12 @@
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
+    <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
+    <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
+    <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

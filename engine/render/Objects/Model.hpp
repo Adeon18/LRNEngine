@@ -2,11 +2,8 @@
 
 #include <memory>
 
-#include "source/mesh/Mesh.hpp"
-
-#include "render/Graphics/Vertex.hpp"
-#include "render/Graphics/VertexBuffer.hpp"
-#include "render/Graphics/IndexBuffer.hpp"
+#include "render/Graphics/DXBuffers/VertexBuffer.hpp"
+#include "render/Graphics/DXBuffers/IndexBuffer.hpp"
 
 #include "utils/OcTree/OcTree.hpp"
 

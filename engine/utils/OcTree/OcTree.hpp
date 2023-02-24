@@ -3,10 +3,7 @@
 #include <memory>
 #include <array>
 
-#include <DirectXMath.h>
-
 #include "source/mesh/Mesh.hpp"
-#include "source/math/Ray.hpp"
 
 namespace engn {
 	namespace util {
@@ -22,24 +19,24 @@ namespace engn {
 
 			void initialize(const mdl::Mesh& mesh);
 
-			bool intersect(const geom::Ray& ray, mdl::MeshIntersection& nearest) const;
+			bool intersect(const geom::Ray& ray, geom::MeshIntersection& nearest) const;
 
-			[[nodiscard]] const mdl::BoundingBox& getBox() const { return m_box; }
+			[[nodiscard]] const geom::BoundingBox& getBox() const { return m_box; }
 
 		protected:
 			const mdl::Mesh* m_mesh = nullptr;
 			std::vector<uint32_t> m_triangles;
 
-			mdl::BoundingBox m_box;
-			mdl::BoundingBox m_initialBox;
+			geom::BoundingBox m_box;
+			geom::BoundingBox m_initialBox;
 
 			std::unique_ptr<std::array<TriangleOctree, 8>> m_children;
 
-			void initialize(const mdl::Mesh& mesh, const mdl::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex);
+			void initialize(const mdl::Mesh& mesh, const geom::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex);
 
 			bool addTriangle(uint32_t triangleIndex, const XMVECTOR& V1, const XMVECTOR& V2, const XMVECTOR& V3, const XMVECTOR& center);
 
-			bool intersectInternal(const geom::Ray& ray, mdl::MeshIntersection& nearest) const;
+			bool intersectInternal(const geom::Ray& ray, geom::MeshIntersection& nearest) const;
 		};
 	} // util
 } // engn
