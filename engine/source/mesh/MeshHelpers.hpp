@@ -5,8 +5,6 @@
 #include <string>
 #include <memory>
 
-#include <DirectXMath.h>
-
 #include "render/Graphics/Vertex.hpp"
 
 namespace engn {

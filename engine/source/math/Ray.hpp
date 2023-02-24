@@ -4,11 +4,6 @@
 
 namespace engn {
 
-	namespace mdl {
-		struct MeshIntersection;
-		struct BoundingBox;
-	}
-
 	namespace geom {
 		using namespace DirectX;
 
