@@ -13,7 +13,6 @@ void main(triangle VS_OUTPUT input[3], inout TriangleStream<GS_OUTPUT> output)
         float3 vetriceOffset = vertexDistortion(input[i].modelPos, triangleNorm);
         
         float3 newModelPos = input[i].modelPos + vetriceOffset;
-        //newModelPos.z +=
         
         float4 worldPos = mul(float4(newModelPos, 1.0f), input[i].modelToWorld);
         
@@ -23,6 +22,5 @@ void main(triangle VS_OUTPUT input[3], inout TriangleStream<GS_OUTPUT> output)
         vertex.outCol = input[i].outCol;
         vertex.modelNorm = input[i].modelNorm;
         output.Append(vertex);
-
     }
 }

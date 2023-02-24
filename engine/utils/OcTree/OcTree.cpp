@@ -1,8 +1,6 @@
 #include <iostream>
 #include <algorithm>
 
-#include "utility/utility.hpp"
-
 #include "OcTree.hpp"
 
 
@@ -45,7 +43,7 @@ namespace engn {
 			//std::cout << m_mesh->name + ": triangles: " << m_triangles.size() << std::endl;
 		}
 
-		void TriangleOctree::initialize(const mdl::Mesh& mesh, const mdl::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex)
+		void TriangleOctree::initialize(const mdl::Mesh& mesh, const geom::BoundingBox& parentBox, const XMVECTOR& parentCenter, int octetIndex)
 		{
 			m_mesh = &mesh;
 			m_children = nullptr;
@@ -171,7 +169,7 @@ namespace engn {
 			return true;
 		}
 
-		bool TriangleOctree::intersect(const geom::Ray& ray, mdl::MeshIntersection& nearest) const
+		bool TriangleOctree::intersect(const geom::Ray& ray, geom::MeshIntersection& nearest) const
 		{
 			float boxT = nearest.t;
 			if (!ray.intersect(boxT, m_box)) {
@@ -184,7 +182,7 @@ namespace engn {
 			return intersectInternal(ray, nearest);
 		}
 
-		bool TriangleOctree::intersectInternal(const geom::Ray& ray, mdl::MeshIntersection& nearest) const
+		bool TriangleOctree::intersectInternal(const geom::Ray& ray, geom::MeshIntersection& nearest) const
 		{
 			{
 				float boxT = nearest.t;

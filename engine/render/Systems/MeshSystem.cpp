@@ -2,6 +2,12 @@
 
 namespace engn {
 	namespace rend {
+		void MeshSystem::init() {
+			initPipelines();
+			initNormalGroup();
+			initHologramGroup();
+		}
+
 		void MeshSystem::initNormalGroup()
 		{
 			m_normalGroup.setType(GroupTypes::NORMAL);
@@ -84,7 +90,7 @@ namespace engn {
 			}
 		}
 
-		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest) {
+		std::pair<bool, InstanceProperties> MeshSystem::getClosestMesh(geom::Ray& ray, geom::MeshIntersection& nearest) {
 			InstanceProperties i2d{};
 
 			// TODO: Like this for now, haven't found the idea for organizing it in any other way yet

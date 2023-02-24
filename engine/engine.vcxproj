@@ -53,7 +53,6 @@
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
-    <ClInclude Include="source\mesh\MeshHelpers.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\OcTree\OcTree.hpp" />
@@ -84,8 +83,6 @@
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
-    <ClCompile Include="source\mesh\Mesh.cpp" />
-    <ClCompile Include="source\mesh\MeshHelpers.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
     <ClCompile Include="utils\ModelManager\ModelManager.cpp" />

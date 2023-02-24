@@ -10,13 +10,10 @@
 #include "DXShaders/VertexShader.hpp"
 #include "DXShaders/PixelShader.hpp"
 
-#include "DXTextures/Sampler.hpp"
-
-#include "Vertex.hpp"
-
 #include "EngineCamera.hpp"
 
 #include "render/Objects/SkyTriangle/SkyTriangle.hpp"
+#include "DXTextures/Sampler.hpp"
 
 namespace engn {
 	namespace rend {

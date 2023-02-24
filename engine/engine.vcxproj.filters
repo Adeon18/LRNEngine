@@ -135,9 +135,6 @@
     <ClInclude Include="utils\OcTree\OcTree.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\mesh\MeshHelpers.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\dragger\MeshDragger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -218,9 +215,6 @@
     <ClCompile Include="utils\ModelManager\ModelManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\mesh\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="render\Systems\MeshSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -228,9 +222,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\OcTree\OcTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\mesh\MeshHelpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\dragger\MeshDragger.cpp">

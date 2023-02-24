@@ -8,32 +8,26 @@ namespace engn {
 	namespace mdl {
 		std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
 		{
-			try {
-				return m_loadedModels.at(filename);
+			if (m_loadedModels.find(filename) != m_loadedModels.end()) {
+				Logger::instance().logInfo("ModelManager: Model is already cached. Location: " + filename);
+				return m_loadedModels[filename];
 			}
-			catch (std::out_of_range& e) {
-				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: " + filename);
-			}
-			catch (...) {
-				Logger::instance().logInfo("ModelManager::Unknown exception at model load. Location: " + filename);
-				return nullptr;
-			}
+
+			Logger::instance().logInfo("ModelManager: Model is not cached, will perform load. Location: " + filename);
 
 			if (!loadModel(filename)) {
 				return nullptr;
 			}
 			
-			return m_loadedModels.at(filename);
+			return m_loadedModels[filename];
 		}
 
 		std::shared_ptr<Model> ModelManager::getCubeModel()
 		{
-			try {
-				return m_loadedModels.at("unit_box");
+			if (m_loadedModels.find("unit_box") != m_loadedModels.end()) {
+				return m_loadedModels["unit_box"];
 			}
-			catch (const std::out_of_range& e) {
-				Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: unit_box");
-			}
+			Logger::instance().logInfo("ModelManager::Model is not cached, will perform load. Location: unit_box");
 
 			m_loadedModels.insert({ "unit_box", std::make_shared<mdl::Model>() });
 			std::vector vertices =
@@ -71,7 +65,7 @@ namespace engn {
 
 			Mesh boxMesh;
 			boxMesh.name = "unit_box";
-			boxMesh.box = BoundingBox::unit();
+			boxMesh.box = geom::BoundingBox::unit();
 			boxMesh.vertices = vertices;
 			for (size_t i = 0; i < indices.size(); i += 3) {
 				Mesh::Triangle t{ indices[i], indices[i + 1], indices[i + 2] };

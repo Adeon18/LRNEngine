@@ -6,7 +6,6 @@
 
 #include "utils/ModelManager/ModelManager.hpp"
 #include "utils/TextureManager/TextureManager.hpp"
-#include "render/Objects/Model.hpp"
 
 #include "render/Graphics/DXBuffers/VertexBuffer.hpp"
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
@@ -14,7 +13,6 @@
 
 #include "render/Systems/Pipeline.hpp"
 
-#include "render/Graphics/Vertex.hpp"
 #include "render/Graphics/HelperStructs.hpp"
 
 namespace engn {
@@ -64,8 +62,8 @@ namespace engn {
 				m_meshData.init();
 			}
 
-			// Find the closest instance that intersects with a ray and fill in the info struct
-			bool checkRayIntersection(geom::Ray& ray, mdl::MeshIntersection& nearest, InstanceProperties& i2d) {
+			// Find the closest instance that intersects with a ray and fill in the infor struct
+			bool checkRayIntersection(geom::Ray& ray, geom::MeshIntersection& nearest, InstanceProperties& i2d) {
 
 				bool hasIntersection = false;
 				for (auto& perModel : m_models) {
@@ -325,11 +323,7 @@ namespace engn {
 			MeshSystem& operator=(const MeshSystem& other) = delete;
 
 			//! Init the ENTIRE Meshsystem singleton, should be called right after d3d init
-			void init() {
-				initPipelines();
-				initNormalGroup();
-				initHologramGroup();
-			}
+			void init();
 
 			//! Do all the mesh rendering, called every frame on each group
 			void render(const RenderModeFlags& flags);
@@ -341,7 +335,7 @@ namespace engn {
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 			void addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation);
 			//! Get closest mesh data that was hit by a ray, used for dragging
-			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, mdl::MeshIntersection& nearest);
+			std::pair<bool, InstanceProperties> getClosestMesh(geom::Ray& ray, geom::MeshIntersection& nearest);
 		private:
 			MeshSystem() {};
 

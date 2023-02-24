@@ -5,11 +5,8 @@
 #include <string>
 #include <memory>
 
-#include <DirectXMath.h>
+#include "source/math/Ray.hpp"
 
-#include "MeshHelpers.hpp"
-
-#include "render/Graphics/Vertex.hpp"
 
 namespace engn {
 	namespace mdl {
@@ -21,7 +18,7 @@ namespace engn {
 				uint32_t indices[3];
 			};
 			std::string name;
-			BoundingBox box = BoundingBox::empty();
+			geom::BoundingBox box = geom::BoundingBox::empty();
 			std::vector<std::string> texturePaths;
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;

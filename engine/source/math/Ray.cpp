@@ -1,10 +1,62 @@
 #include "Ray.hpp"
 
+#include <cmath>
+#include <algorithm>
+
 //#define TRIANGLE_CULL 0
 
 namespace engn {
 
 	namespace geom {
+
+		XMVECTOR BoundingBox::size() const { return max - min; }
+		XMVECTOR BoundingBox::center() const { return (min + max) / 2.f; }
+		float BoundingBox::radius() const { return XMVectorGetX(XMVector3Length(size())) / 2.f; }
+
+		void BoundingBox::expand(const BoundingBox& other) {
+			min = other.min;
+			max = other.max;
+		}
+
+		bool BoundingBox::contains(const XMVECTOR& P) {
+			XMFLOAT3 pF3;
+			XMStoreFloat3(&pF3, P);
+			return
+				minF3.x <= pF3.x && pF3.x <= maxF3.x &&
+				minF3.y <= pF3.y && pF3.y <= maxF3.y &&
+				minF3.z <= pF3.z && pF3.z <= maxF3.z;
+		}
+
+		bool BoundingBox::contains(const XMFLOAT3& P) {
+			return
+				minF3.x <= P.x && P.x <= maxF3.x &&
+				minF3.y <= P.y && P.y <= maxF3.y &&
+				minF3.z <= P.z && P.z <= maxF3.z;
+		}
+
+		void BoundingBox::setMin(const XMVECTOR& min)
+		{
+			this->min = min;
+			XMStoreFloat3(&minF3, this->min);
+		}
+
+		void BoundingBox::setMin(const XMFLOAT3& min)
+		{
+			this->minF3 = min;
+			this->min = XMLoadFloat3(&min);
+		}
+
+		void BoundingBox::setMax(const XMVECTOR& max)
+		{
+			this->max = max;
+			XMStoreFloat3(&maxF3, this->max);
+		}
+
+		void BoundingBox::setMax(const XMFLOAT3& max)
+		{
+			this->maxF3 = max;
+			this->max = XMLoadFloat3(&max);
+		}
 
 		void Ray::transform(const XMMATRIX& transMat) {
 			origin = XMVector3Transform(origin, transMat);
@@ -13,7 +65,7 @@ namespace engn {
 
 		XMVECTOR Ray::getPointAt(float t) const { return origin + t * direction; }
 
-		bool Ray::intersect(float nearest, const mdl::BoundingBox& box) const
+		bool Ray::intersect(float nearest, const geom::BoundingBox& box) const
 		{
 			XMFLOAT3 min = box.getMinF3();
 			XMFLOAT3 max = box.getMaxF3();
@@ -62,7 +114,7 @@ namespace engn {
 			return true;
 		}
 
-		bool Ray::intersect(mdl::MeshIntersection& nearest, const XMVECTOR& v0, const XMVECTOR& v1, const XMVECTOR& v2) const
+		bool Ray::intersect(geom::MeshIntersection& nearest, const XMVECTOR& v0, const XMVECTOR& v1, const XMVECTOR& v2) const
 		{
 
 			XMVECTOR edge1 = v1 - v0;
