@@ -57,36 +57,6 @@
     <ClInclude Include="include\win_undef.hpp">
       <Filter>Header Files\DX</Filter>
     </ClInclude>
-    <ClInclude Include="render\RayTracer\draggers\dragger.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\math\geometry\hitable.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\math\geometry\plane.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\math\ray.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\RenderData\RenderData.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\RenderObject\RenderObject.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\math\geometry\sphere.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\math\geometry\triangle.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\Lighting\Lights.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\Materials\Material.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
     <ClInclude Include="utils\paralell_executor\parallel_executor.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
@@ -95,18 +65,6 @@
     </ClInclude>
     <ClInclude Include="windows\Window.h">
       <Filter>Header Files\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\Scene\Scene.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\Camera\Camera.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\mesh\Mesh.h">
-      <Filter>Header Files\RayTracer</Filter>
-    </ClInclude>
-    <ClInclude Include="render\RayTracer\mesh\TriangleOcTree.h">
-      <Filter>Header Files\RayTracer</Filter>
     </ClInclude>
     <ClInclude Include="Engine.hpp">
       <Filter>Header Files</Filter>
@@ -224,44 +182,11 @@
     <ClCompile Include="render\D3D\d3d.cpp">
       <Filter>Source Files\DX</Filter>
     </ClCompile>
-    <ClCompile Include="render\RayTracer\draggers\dragger.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\Lighting\Lights.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\math\geometry\plane.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\math\ray.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\RenderObject\RenderObject.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\math\geometry\sphere.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\math\geometry\triangle.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
     <ClCompile Include="utils\paralell_executor\parallel_executor.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
     <ClCompile Include="utils\Timer\FPSTimer.cpp">
       <Filter>Source Files\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\mesh\TriangleOcTree.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\Camera\Camera.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\mesh\Mesh.cpp">
-      <Filter>Source Files\RayTracer</Filter>
-    </ClCompile>
-    <ClCompile Include="render\RayTracer\Scene\Scene.cpp">
-      <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
     <ClCompile Include="render\Graphics\Renderer.cpp">
       <Filter>Source Files\Graphics</Filter>
