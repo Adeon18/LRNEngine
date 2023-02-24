@@ -21,13 +21,10 @@ namespace engn {
                                 inp::Keyboard::Keys::KEY_D,
                                 inp::Keyboard::Keys::KEY_W,
                                 inp::Keyboard::Keys::KEY_S,
-                                inp::Keyboard::Keys::KEY_SPACE,
                                 inp::Keyboard::Keys::KEY_CTRL,
+                                inp::Keyboard::Keys::KEY_SPACE,
                 };
-                inline static const std::array<int, 2> ROLL_KEYS{
-                    inp::Keyboard::Keys::KEY_Q,
-                    inp::Keyboard::Keys::KEY_E,
-                };
+
                 inline static std::unordered_map<int, XMVECTOR> MOVE_TO_ACTION{
                     {inp::Keyboard::Keys::KEY_A, {-1.0f, 0.0f, 0.0f, 0.0f}},
                     {inp::Keyboard::Keys::KEY_D, {1.0f, 0.0f, 0.0f, 0.0f}},
@@ -35,9 +32,6 @@ namespace engn {
                     {inp::Keyboard::Keys::KEY_SPACE, {0.0f, 1.0f, 0.0f, 0.0f}},
                     {inp::Keyboard::Keys::KEY_W, {0.0f, 0.0f, 1.0f, 0.0f}},
                     {inp::Keyboard::Keys::KEY_S, {0.0f, 0.0f, -1.0f, 0.0f}},
-                    // rotation
-                    {inp::Keyboard::Keys::KEY_Q, {0.0f, 0.0f, 1.0f, 0.0f}},
-                    {inp::Keyboard::Keys::KEY_E, {0.0f, 0.0f, -1.0f, 0.0f}},
                 };
             };
         public:
@@ -47,11 +41,6 @@ namespace engn {
             void addWorldOffset(const XMVECTOR& offset);
             //! Add offset but with rotations in mind
             void addRelativeOffset(const XMVECTOR& offset);
-            ////! Add basic quaternion rotation
-            //void addWorldRotationQuat(const XMVECTOR& angles);
-            ////void addWorldRotationMat(const XMVECTOR& angles);
-            ////! Relative quaternions rotation
-            //void addRelativeRotationQuat(const XMVECTOR& angles);
 
             // Set the camera position
             void setPosition(const XMVECTOR& pos);

@@ -59,18 +59,15 @@ namespace engn {
 
         void EngineCamera::addWorldRotationMat(const XMVECTOR& angles) {
             m_rotationVec += angles;
+            if (XMVectorGetX(m_rotationVec) > XM_PIDIV2) {
+                m_rotationVec = XMVectorSetX(m_rotationVec, XM_PIDIV2);
+            } else if (XMVectorGetX(m_rotationVec) < -XM_PIDIV2) {
+                m_rotationVec = XMVectorSetX(m_rotationVec, -XM_PIDIV2);
+            }
+
             XMStoreFloat3(&m_rotation, m_rotationVec);
             updateViewMatrix();
         }
-
-        /* void EngineCamera::addWorldRotationQuat(const XMVECTOR& angles) {
-             m_rotationVec +=
-                 XMVectorGetX(angles) * DEF_FORWARD_VECTOR +
-                 XMVectorGetY(angles) * getCamUp() +
-                 XMVectorGetZ(angles) * getCamForward();
-             XMStoreFloat3(&m_rotation, m_rotationVec);
-             updateViewMatrix();
-         }*/
 
         void EngineCamera::updateViewMatrix() {
             // Get the simple rotation matrix NOT via quaternion
@@ -78,45 +75,12 @@ namespace engn {
             // Get the transformed forward vector by position and rotation
             XMVECTOR forwardVec = XMVector3Transform(DEF_FORWARD_VECTOR, rotMatrix);
             forwardVec += m_positionVec;
-            std::cout << forwardVec << std::endl;
-            std::cout << rotMatrix << std::endl;
 
             m_upVec = XMVector3Transform(DEF_UP_VECTOR, rotMatrix);
 
             m_view = XMMatrixLookAtLH(m_positionVec, forwardVec, m_upVec);
             m_viewT = XMMatrixTranspose(m_view);
-
-            std::cout << m_view << std::endl;
-            std::cout << m_viewT << std::endl;
         }
-
-
-        /*void EngineCamera::addWorldRotationQuat(const XMVECTOR& angles) {
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_UP_VECTOR, XMConvertToRadians(XMVectorGetY(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_RIGHT_VECTOR, XMConvertToRadians(XMVectorGetX(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationNormal(DEF_FORWARD_VECTOR, XMConvertToRadians(XMVectorGetZ(angles))));
-            m_rotationQuat = XMQuaternionNormalize(m_rotationQuat);
-            updateViewMatrix();
-        }
-
-        void EngineCamera::addRelativeRotationQuat(const XMVECTOR& angles) {
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamUp(), XMConvertToRadians(XMVectorGetY(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamRight(), XMConvertToRadians(XMVectorGetX(angles))));
-            m_rotationQuat = XMQuaternionMultiply(m_rotationQuat, XMQuaternionRotationAxis(getCamForward(), XMConvertToRadians(XMVectorGetZ(angles))));
-            m_rotationQuat = XMQuaternionNormalize(m_rotationQuat);
-            updateViewMatrix();
-        }
-
-        void EngineCamera::updateViewMatrix() {
-            m_viewInv = XMMatrixRotationQuaternion(m_rotationQuat);
-            m_viewInv.r[3] = m_positionVec;
-            m_view = XMMatrixInverse(nullptr, m_viewInv);
-        }
-
-        void EngineCamera::updateViewMatrixPos() {
-            m_viewInv.r[3] = m_positionVec;
-            m_view = XMMatrixInverse(nullptr, m_viewInv);
-        }*/
 
         geom::Ray EngineCamera::castRay(float x, float y) {
 

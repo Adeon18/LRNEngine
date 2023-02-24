@@ -73,7 +73,7 @@ struct VS_INPUT
     float3 inNorm : NORMAL;
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
-    float3 inTC : TEXCOORD;
+    float2 inTC : TEXCOORD;
     float4 modelToWorld0 : MODEL2WORLD0;
     float4 modelToWorld1 : MODEL2WORLD1;
     float4 modelToWorld2 : MODEL2WORLD2;

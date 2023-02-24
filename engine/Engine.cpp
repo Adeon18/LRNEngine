@@ -41,13 +41,7 @@ namespace engn {
 	void Engine::handleCameraRotation() {
 		bool cameraRotated = false;
 		XMVECTOR rotation{ 0.0f, 0.0f, 0.0f };
-		//// Roll
-		//for (const auto& key : rend::EngineCamera::CameraSettings::ROLL_KEYS) {
-		//	if (inp::Keyboard::getInstance().isKeyPressed(key)) {
-		//		if (!cameraRotated) { cameraRotated = true; }
-		//		rotation += rend::EngineCamera::CameraSettings::MOVE_TO_ACTION[key];
-		//	}
-		//}
+
 		// pitch and yaw
 		auto& mouse = inp::Mouse::getInstance();
 		XMVECTOR& offset = mouse.getMoveData().mouseOffset;
