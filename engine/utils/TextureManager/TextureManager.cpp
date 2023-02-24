@@ -37,16 +37,12 @@ namespace engn {
 		}
 		std::shared_ptr<Texture> TextureManager::getTexture(const std::string& path)
 		{
-			try {
-				return m_loadedTextures.at(path);
+			if (m_loadedTextures.find(path) != m_loadedTextures.end()) {
+				Logger::instance().logInfo("TextureManager: Texture is already cached. Location: " + path);
+				return m_loadedTextures[path];
 			}
-			catch (std::out_of_range& e) {
-				Logger::instance().logInfo("TextureManager: Texture is not cached, will perform load. Location: " + path);
-			}
-			catch (...) {
-				Logger::instance().logInfo("TextureManager: Unknown exception at texture load.Location : " + path);
-				return nullptr;
-			}
+
+			Logger::instance().logInfo("TextureManager: Texture is not cached, will perform load. Location: " + path);
 
 			if (!loadTextureDDS(path)) {
 				return nullptr;
