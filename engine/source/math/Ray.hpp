@@ -4,6 +4,10 @@
 #include <limits>
 #include <cmath>
 
+/// <summary>
+/// This header contains most of the geometry for the engine
+/// </summary>
+
 namespace engn {
 
 	namespace geom {
@@ -31,6 +35,9 @@ namespace engn {
 			bool valid() const { return std::isfinite(t); }
 		};
 
+		/// <summary>
+		/// Bounding box geometry
+		/// </summary>
 		struct BoundingBox {
 		public:
 			BoundingBox() {
