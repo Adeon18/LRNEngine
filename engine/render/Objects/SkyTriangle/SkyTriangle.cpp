@@ -26,6 +26,9 @@ namespace engn {
 			}
 			m_skyBoxTexture = tex::TextureManager::getInstance().getTexture(texturePath);
 			m_initialized = true;
+
+			// Initialize Depth Stensil state
+			initDepthStensil();
 		}
 		void SkyTriangle::render(std::unique_ptr<EngineCamera>& camPtr)
 		{
@@ -45,6 +48,9 @@ namespace engn {
 			m_skyBuffer.getData().TLFarPlane = frustumFarPlaneCoords[1];
 
 			m_skyBuffer.fill();
+			// Set depth buffer write to 0
+			d3d::s_devcon->OMSetDepthStencilState(m_skyDepthStensilState.Get(), 0);
+
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_skyBuffer.getBufferAddress());
 			// Bind a texture
 			d3d::s_devcon->PSSetShaderResources(0, 1, m_skyBoxTexture->textureView.GetAddressOf());
@@ -52,6 +58,21 @@ namespace engn {
 			bindPipeline(m_skyPipeline);
 			// Draw call
 			d3d::s_devcon->Draw(3, 0);
+		}
+		void SkyTriangle::initDepthStensil()
+		{
+			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
+
+			depthStencilStateDesc.DepthEnable = true;
+			// Zero here becaus ewe disable depth writing for skybox
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+
+			HRESULT hr = d3d::s_device->CreateDepthStencilState(&depthStencilStateDesc, m_skyDepthStensilState.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("SkyTriangle CreateDepthStencilState fail: " + std::system_category().message(hr));
+				return;
+			}
 		}
 	} // rend
 } // engn
