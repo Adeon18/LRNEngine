@@ -1,4 +1,5 @@
 #include "../globals.hlsli"
+#include "../lighting.hlsli"
 
 cbuffer perFrame : register(b0)
 {
@@ -28,10 +29,13 @@ float4 main(PS_INPUT inp) : SV_TARGET
     return float4(inp.modelNorm / 2.0f + 0.5f, 1.0f);
 #else
     
+    float3 camDir = normalize(iCameraPosition.xyz - inp.worldPos);
+    
+    
 #if MODE == 0
     return g_texture0.Sample(g_pointWrap, inp.outTexCoord);
 #elif MODE == 1
-    return g_texture0.Sample(g_linearWrap, inp.outTexCoord);
+    return float4(calculateDirectionalLight(directLight, inp.modelNorm, camDir, g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz), 1.0f);
 #elif MODE == 2
     return g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord);
 #endif

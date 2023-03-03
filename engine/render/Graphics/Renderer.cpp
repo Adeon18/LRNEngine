@@ -5,6 +5,7 @@
 #include "Renderer.hpp"
 
 #include "render/Systems/MeshSystem.hpp"
+#include "render/Systems/LightSystem.hpp"
 
 #include "include/utility/utility.hpp"
 
@@ -31,6 +32,8 @@ namespace engn {
 			m_fillPerFrameCBs(camPtr, renderData);
 
 			m_bindSamplers();
+
+			LightSystem::getInstance().bindLighting();
 
 			MeshSystem::getInstance().render(flags);
 			// Render the sky after we are done
@@ -61,6 +64,8 @@ namespace engn {
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
+
+			LightSystem::getInstance().setDirLight({0.0f, -1.0f, 0.0f});
 
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);

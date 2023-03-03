@@ -2,8 +2,13 @@
 
 #include <DirectXMath.h>
 
+#include "render/Systems/LightStructs.hpp"
+
 namespace engn {
 	namespace rend {
+
+		static constexpr int MAX_POINTLIGHT_COUNT = 10;
+
 		//! This struct is for moving the vertices in the VS by some offset
 		struct CB_VS_MeshData {
 			XMMATRIX meshToModel;
@@ -35,6 +40,10 @@ namespace engn {
 			XMFLOAT4 gResolution;
 			XMFLOAT4 gCameraPosition;
 			float gTime;
+		};
+
+		struct CB_PS_LightEmitters {
+			light::DirectionalLight dirLight;
 		};
 	} // rend
 } // engn

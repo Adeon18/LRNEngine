@@ -7,6 +7,7 @@
 #include "utils/Logger/Logger.hpp"
 
 #include "render/Systems/MeshSystem.hpp"
+#include "render/Systems/LightSystem.hpp"
 
 #include "render/Graphics/HelperStructs.hpp"
 
@@ -37,6 +38,7 @@ namespace engn {
 
 			rend::D3D::getInstance().init();
 			rend::MeshSystem::getInstance().init();
+			rend::LightSystem::getInstance().init();
 		}
 
 		static void deinit()

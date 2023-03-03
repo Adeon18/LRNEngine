@@ -47,6 +47,8 @@
     <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp" />
     <ClInclude Include="render\Objects\SkyTriangle\SkyTriangle.hpp" />
     <ClInclude Include="render\Objects\Texture.hpp" />
+    <ClInclude Include="render\Systems\LightStructs.hpp" />
+    <ClInclude Include="render\Systems\LightSystem.hpp" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
@@ -80,6 +82,7 @@
     <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp" />
     <ClCompile Include="render\Objects\SkyTriangle\SkyTriangle.cpp" />
     <ClCompile Include="render\Graphics\Renderer.cpp" />
+    <ClCompile Include="render\Systems\LightSystem.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
@@ -386,6 +389,7 @@
     <None Include="render\Graphics\shaders\globals.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
+    <None Include="render\Graphics\shaders\lighting.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
   </ItemGroup>
