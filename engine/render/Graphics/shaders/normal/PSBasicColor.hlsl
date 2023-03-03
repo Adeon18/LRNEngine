@@ -14,7 +14,7 @@ struct PS_INPUT
     float4 outPos : SV_POSITION;
     float3 worldPos : POS;
     float4 outCol : COLOR;
-    float3 modelNorm : NORM;
+    float3 worldNorm : NORM;
     float2 outTexCoord : TEXCOORD;
 };
 
@@ -35,7 +35,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
 #if MODE == 0
     return g_texture0.Sample(g_pointWrap, inp.outTexCoord);
 #elif MODE == 1
-    return float4(calculateDirectionalLight(directLight, inp.modelNorm, camDir, g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz), 1.0f);
+    return float4(calculateDirectionalLight(directLight, inp.worldNorm, camDir, g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz), 1.0f);
 #elif MODE == 2
     return g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord);
 #endif

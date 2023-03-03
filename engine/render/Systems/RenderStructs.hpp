@@ -11,6 +11,7 @@ namespace engn {
 
 		struct Instance {
 			XMMATRIX modelToWorld;
+			XMMATRIX modelToWorldInv;
 			XMFLOAT4 color;
 		};
 

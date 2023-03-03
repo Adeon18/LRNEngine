@@ -65,14 +65,14 @@ namespace engn {
 
 			const std::string EXE_DIR = util::getExeDir();
 
-			LightSystem::getInstance().setDirLight({0.0f, -1.0f, 0.0f});
+			LightSystem::getInstance().setDirLight({0.0f, -0.8f, 0.6f});
 
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
-				{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {},  {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -80,7 +80,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH) },
-				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -88,7 +88,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
-				{ XMMatrixTranslation(5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -96,7 +96,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
-				{ XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -104,7 +104,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
-				{ XMMatrixTranslation(-3.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(-3.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
@@ -112,7 +112,7 @@ namespace engn {
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
-				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {1.0f, 0.0f, 0.0f, 1.0f} }
+				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			//// Fill the field with cubes
