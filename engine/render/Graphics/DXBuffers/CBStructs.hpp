@@ -43,7 +43,9 @@ namespace engn {
 		};
 
 		struct CB_PS_LightEmitters {
+			XMINT4 pointLightCount;
 			light::DirectionalLight dirLight;
+			light::PointLight pointLights[MAX_POINTLIGHT_COUNT];
 		};
 	} // rend
 } // engn

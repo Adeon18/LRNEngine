@@ -31,14 +31,22 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     float3 camDir = normalize(iCameraPosition.xyz - inp.worldPos);
     
-    
 #if MODE == 0
-    return g_texture0.Sample(g_pointWrap, inp.outTexCoord);
+    float3 colFromTex = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
 #elif MODE == 1
-    return float4(calculateDirectionalLight(directLight, inp.worldNorm, camDir, g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz), 1.0f);
+    float3 colFromTex = g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz;
 #elif MODE == 2
-    return g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord);
+    float3 colFromTex = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
 #endif
+   
     
+    float3 outCol = calculateDirectionalLight(directLight, inp.worldNorm, camDir, colFromTex);
+    
+    for (int i = 0; i < pointLightCount.x; ++i)
+    {
+        outCol += calculatePointLight(pointLights[i], inp.worldNorm, inp.worldPos, camDir, colFromTex);
+    }
+    
+    return float4(outCol, 1.0f);
 #endif
 }
