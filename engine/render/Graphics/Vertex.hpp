@@ -8,7 +8,7 @@ namespace engn {
 	};
 
 	struct Vertex {
-		Vertex() {}
+		Vertex() : pos{}, normal{}, tangent{}, bitangent{}, tc{} {}
 		Vertex(
 			const DirectX::XMFLOAT3& ps,
 			const DirectX::XMFLOAT3& norm,

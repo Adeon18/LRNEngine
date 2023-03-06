@@ -45,6 +45,7 @@ namespace engn {
 			// TODO: Later may move to some map
 #ifdef _WIN64 
 			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
+			const std::string SPHERE_MODEL_PATH = "../../assets/Models/Sphere/sphere.fbx";
 			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../../assets/Models/EastTower/EastTower.fbx";
@@ -54,6 +55,7 @@ namespace engn {
 			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
+			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
 			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
 			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
 			const std::string TOWER_MODEL_PATH = "../assets/Models/EastTower/EastTower.fbx";
@@ -116,6 +118,14 @@ namespace engn {
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
+
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH);
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
+				{ XMMatrixTranslation(0.0f, 0.0f, 5.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			//// Fill the field with cubes

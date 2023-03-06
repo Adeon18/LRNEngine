@@ -35,6 +35,8 @@ namespace engn {
 			std::shared_ptr<Model> getModel(const std::string& filename);
 			//! Get the prebuilt cube model, if there is no availible, build it and cache it
 			std::shared_ptr<Model> getCubeModel();
+			//! Build the unit sphere model and cache it: DOES NOT WORK!!!!!!!!!!
+			std::shared_ptr<Model> getUnitSphereModel();
 		private:
 			ModelManager() {}
 
