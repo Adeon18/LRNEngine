@@ -7,6 +7,7 @@ namespace engn {
 		struct RenderModeFlags {
 			bool renderFaceNormals = false;
 			bool renderWireframes = false;
+			bool bindFlashlight = true;
 		};
 	}
 } // engn

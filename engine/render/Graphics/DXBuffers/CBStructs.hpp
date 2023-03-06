@@ -46,6 +46,7 @@ namespace engn {
 			XMINT4 pointLightCount;
 			light::DirectionalLight dirLight;
 			light::PointLight pointLights[MAX_POINTLIGHT_COUNT];
+			light::SpotLight spotLight;
 		};
 	} // rend
 } // engn

@@ -47,6 +47,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outCol += calculatePointLight(pointLights[i], inp.worldNorm, inp.worldPos, camDir, colFromTex);
     }
     
+    outCol += calculateSpotLight(spotLight, inp.worldNorm, inp.worldPos, camDir, colFromTex);
+    
     return float4(outCol, 1.0f);
 #endif
 }

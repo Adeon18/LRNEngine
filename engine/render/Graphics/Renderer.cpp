@@ -33,7 +33,7 @@ namespace engn {
 
 			m_bindSamplers();
 
-			LightSystem::getInstance().bindLighting();
+			LightSystem::getInstance().bindLighting(camPtr, flags);
 
 			MeshSystem::getInstance().render(flags);
 			// Render the sky after we are done
@@ -68,6 +68,8 @@ namespace engn {
 			LightSystem::getInstance().setDirLight({ 0.0f, -0.8f, 0.6f });
 			LightSystem::getInstance().addPointLight({ 0.0f, 5.0f, 7.0f }, light::PLIGHT_DIST_7);
 			LightSystem::getInstance().addPointLight({ -4.0f, 3.0f, 9.0f }, light::PLIGHT_DIST_50);
+
+			LightSystem::getInstance().setSpotLightSettings(12.5f, light::PLIGHT_DIST_50);
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
