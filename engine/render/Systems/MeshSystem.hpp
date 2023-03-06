@@ -11,6 +11,8 @@
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
 #include "render/Graphics/DXBuffers/InstanceBuffer.hpp"
 
+#include "render/Systems/TransformSystem.hpp"
+
 #include "render/Systems/Pipeline.hpp"
 
 #include "render/Graphics/HelperStructs.hpp"
@@ -31,12 +33,18 @@ namespace engn {
 			uint32_t instanceIdx;
 		};
 
+		//! The instance data struct that is in each group, stores color and index
+		struct GroupInstance {
+			XMFLOAT4 color;
+			uint32_t matrixIndex;
+		};
+
 		template<typename I, typename M>
 		class RenderGroup {
 		public:
 			struct PerMaterial {
 				M material;
-				std::vector<I> instances;
+				std::vector<GroupInstance> instances;
 			};
 
 			using PerMesh = std::vector<PerMaterial>;
@@ -57,7 +65,6 @@ namespace engn {
 			//! Make the groups definable my type
 			void setType(const GroupTypes& t) { m_type = t; }
 
-
 			//! Init the input layout(for now the same for all)
 			void init() {
 				m_meshData.init();
@@ -77,7 +84,7 @@ namespace engn {
 								// We find ray intersections in MESH SPACE
 								XMMATRIX meshtoWorld =
 									perModel.model->getMeshes()[meshIdx].meshToModel *
-									perInstance.modelToWorld;
+									TransformSystem::getInstance().getMatrixById(perInstance.matrixIndex);
 								// Ray to Mesh Space
 								ray.transform(XMMatrixInverse(nullptr, meshtoWorld));
 								// If there is a collision
@@ -113,7 +120,8 @@ namespace engn {
 								if (matIdx == insProps.materialIdx) {
 									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
 										if (insIdx == insProps.instanceIdx) {
-											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixTranslationFromVector(offset);
+											TransformSystem::getInstance().getMatrixById(perMesh[matIdx].instances[insIdx].matrixIndex) *= XMMatrixTranslationFromVector(offset);
+											return;
 										}
 									}
 								}
@@ -132,7 +140,7 @@ namespace engn {
 								if (matIdx == insProps.materialIdx) {
 									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
 										if (insIdx == insProps.instanceIdx) {
-											perMesh[matIdx].instances[insIdx].modelToWorld *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
+											TransformSystem::getInstance().getMatrixById(perMesh[matIdx].instances[insIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
 										}
 									}
 								}
@@ -143,7 +151,7 @@ namespace engn {
 			}
 
 			// Add the model by filling in the respective structs
-			void addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
+			void addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc, uint32_t insMatIdx) {
 				if (!mod) {
 					Logger::instance().logErr("addModel: The model pointer is null");
 				}
@@ -165,7 +173,8 @@ namespace engn {
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
 								if (perMaterial.material == mtrl || !mtrl.texPtr.get()) {
-									perMaterial.instances.push_back(inc);
+									perMaterial.instances.push_back({ inc.color, insMatIdx });
+									TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
 									modelIsAdded.addedAsInstance = true;
 									break;
 								}
@@ -173,7 +182,8 @@ namespace engn {
 							if (!modelIsAdded.addedAsInstance) {
 								PerMaterial perMat;
 								perMat.material = mtrl;
-								perMat.instances.push_back(inc);
+								perMat.instances.push_back({ inc.color, insMatIdx });
+								TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
 								perMesh.push_back(perMat);
 								modelIsAdded.addedAsMaterial = true;
 							}
@@ -198,16 +208,17 @@ namespace engn {
 						// TODO: Has a bug that puts only last texture as acrive in case of multiple textures per mesh
 						for (auto& texPath : mesh.texturePaths) {
 							PerMaterial perMat;
-							Logger::instance().logWarn(texPath);
 							perMat.material = { tex::TextureManager::getInstance().getTexture(texPath) };
-							perMat.instances.push_back(inc);
+							perMat.instances.push_back({ inc.color, insMatIdx });
+							TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
 							perMesh.push_back(perMat);
 						}
 					}
 					else {
 						PerMaterial perMat;
 						perMat.material = mtrl;
-						perMat.instances.push_back(inc);
+						perMat.instances.push_back({inc.color, insMatIdx});
+						TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
 						perMesh.push_back(perMat);
 					}
 					newModel.perMesh.push_back(perMesh);
@@ -255,8 +266,9 @@ namespace engn {
 							{
 								// Dangerous! TODO SFINAE
 								I ins;
-								ins.modelToWorld = material.instances[index].modelToWorld;
-								ins.modelToWorldInv = XMMatrixInverse(nullptr, material.instances[index].modelToWorld);
+								ins.modelToWorld = TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex);
+								// TODO: VERY MUSH UNOPTIMIZED
+								ins.modelToWorldInv = XMMatrixInverse(nullptr, TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex));
 								ins.color = material.instances[index].color;
 								dst[copiedNum++] = ins;
 							}
@@ -352,6 +364,9 @@ namespace engn {
 			void initPipelines();
 			//! Bind a certain pipeline by type - must be called before group render
 			void bindPipelineViaType(PipelineTypes pipelineType);
+
+			//! This number is incremented at each instance model to worl matrix addition
+			uint32_t instanceMatrixIndex = 0;
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;

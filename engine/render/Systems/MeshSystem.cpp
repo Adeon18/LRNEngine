@@ -71,18 +71,21 @@ namespace engn {
 
 		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
-			m_normalGroup.addModel(mod, mtrl, inc);
+			m_normalGroup.addModel(mod, mtrl, inc, instanceMatrixIndex);
+			instanceMatrixIndex++;
 		}
 
 
 		void MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
-			m_hologramGroup.addModel(mod, mtrl, inc);
+			m_hologramGroup.addModel(mod, mtrl, inc, instanceMatrixIndex);
+			instanceMatrixIndex++;
 		}
 
 		void MeshSystem::addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
-			m_emissionOnlyGroup.addModel(mod, mtrl, inc);
+			m_emissionOnlyGroup.addModel(mod, mtrl, inc, instanceMatrixIndex);
+			instanceMatrixIndex++;
 		}
 
 		void MeshSystem::addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset)

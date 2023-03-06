@@ -52,6 +52,7 @@
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
+    <ClInclude Include="render\Systems\TransformSystem.hpp" />
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="render\Graphics\Renderer.cpp" />
     <ClCompile Include="render\Systems\LightSystem.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
+    <ClCompile Include="render\Systems\TransformSystem.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
