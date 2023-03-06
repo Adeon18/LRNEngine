@@ -12,6 +12,7 @@ namespace engn {
 		enum PipelineTypes {
 			NORMAL_RENDER,
 			HOLOGRAM_RENDER,
+			EMISSION_ONLY_RENDER,
 			FACE_NORMAL_DEBUG,
 			WIREFRAME_DEBUG
 		};

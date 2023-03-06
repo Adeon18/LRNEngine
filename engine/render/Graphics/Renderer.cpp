@@ -122,7 +122,7 @@ namespace engn {
 
 			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH);
-			MeshSystem::getInstance().addNormalInstance(
+			MeshSystem::getInstance().addEmissionInstance(
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
 				{ XMMatrixTranslation(0.0f, 0.0f, 5.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }

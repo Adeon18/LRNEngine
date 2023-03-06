@@ -19,7 +19,8 @@ namespace engn {
 	namespace rend {
 		enum GroupTypes {
 			NORMAL,
-			HOLOGRAM
+			HOLOGRAM,
+			EMISSION_ONLY
 		};
 
 		//! Struct that identifies the instance of the material of the model to be dragged
@@ -192,10 +193,12 @@ namespace engn {
 				for (auto& mesh : newModel.model->getMeshes()) {
 					PerMesh perMesh;
 
-					if (!mtrl.texPtr.get()) {
+					//! If we have textures in model and texture is not explicitly specified, use model textures
+					if (mesh.texturePaths.size() > 0) {
 						// TODO: Has a bug that puts only last texture as acrive in case of multiple textures per mesh
 						for (auto& texPath : mesh.texturePaths) {
 							PerMaterial perMat;
+							Logger::instance().logWarn(texPath);
 							perMat.material = { tex::TextureManager::getInstance().getTexture(texPath) };
 							perMat.instances.push_back(inc);
 							perMesh.push_back(perMat);
@@ -332,6 +335,7 @@ namespace engn {
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			void addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 			void addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation);
@@ -343,6 +347,7 @@ namespace engn {
 			//! Init render groups and set respective parameters
 			void initNormalGroup();
 			void initHologramGroup();
+			void initEmissionGroup();
 			//! Initialize all the pipelines
 			void initPipelines();
 			//! Bind a certain pipeline by type - must be called before group render
@@ -351,6 +356,7 @@ namespace engn {
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
+			RenderGroup<Instance, Material> m_emissionOnlyGroup;
 
 			std::unordered_map<PipelineTypes, Pipeline> m_pipelines;
 
@@ -385,6 +391,19 @@ namespace engn {
 						L"",
 						L"",
 						SHADER_FOLDER + L"PSBasicColor.cso"
+					}
+				},
+				{
+					PipelineTypes::EMISSION_ONLY_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSEmission.cso",
+						L"",
+						L"",
+						L"",
+						SHADER_FOLDER + L"PSEmission.cso"
 					}
 				},
 				{

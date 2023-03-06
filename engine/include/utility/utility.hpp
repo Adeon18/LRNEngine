@@ -32,6 +32,10 @@ namespace engn {
 		XMMATRIX aiMatrix4x4toXMMATRIX(const aiMatrix4x4& mat);
 		//! Convert the assimp library vector3 type to XMFLOAT3
 		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec);
+		//! Test if all components of an XMVector are 0.0f - WARNING: is VERY SLOW!
+		bool isXMVectorEmpty(const XMVECTOR& vec);
+		//! Empty test for XMFloat4
+		bool isXMVectorEmpty(const XMFLOAT4& vec);
 		//! Align type to a specified size, return the aligned size value
 		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo);
 		//! Convert string to wstring

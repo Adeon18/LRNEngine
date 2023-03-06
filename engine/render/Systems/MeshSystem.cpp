@@ -6,6 +6,7 @@ namespace engn {
 			initPipelines();
 			initNormalGroup();
 			initHologramGroup();
+			initEmissionGroup();
 		}
 
 		void MeshSystem::initNormalGroup()
@@ -18,6 +19,12 @@ namespace engn {
 		{
 			m_hologramGroup.setType(GroupTypes::HOLOGRAM);
 			m_hologramGroup.init();
+		}
+
+		void MeshSystem::initEmissionGroup()
+		{
+			m_emissionOnlyGroup.setType(GroupTypes::EMISSION_ONLY);
+			m_emissionOnlyGroup.init();
 		}
 		
 		void MeshSystem::render(const RenderModeFlags& flags)
@@ -47,6 +54,19 @@ namespace engn {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_hologramGroup.render();
 			}
+
+			// Emission Only group
+			m_emissionOnlyGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::EMISSION_ONLY_RENDER);
+			m_emissionOnlyGroup.render();
+			if (flags.renderFaceNormals) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_emissionOnlyGroup.render();
+			}
+			if (flags.renderWireframes) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_emissionOnlyGroup.render();
+			}
 		}
 
 		void MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
@@ -60,6 +80,11 @@ namespace engn {
 			m_hologramGroup.addModel(mod, mtrl, inc);
 		}
 
+		void MeshSystem::addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		{
+			m_emissionOnlyGroup.addModel(mod, mtrl, inc);
+		}
+
 		void MeshSystem::addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset)
 		{
 			switch (instanceData.group) {
@@ -71,6 +96,10 @@ namespace engn {
 			case GroupTypes::HOLOGRAM:
 			{
 				m_hologramGroup.addModelOffset(instanceData, offset);
+			}
+			break;
+			case GroupTypes::EMISSION_ONLY: {
+				m_emissionOnlyGroup.addModelOffset(instanceData, offset);
 			}
 			}
 		}
@@ -98,6 +127,7 @@ namespace engn {
 			std::vector<bool> collisionResults;
 			collisionResults.push_back(m_normalGroup.checkRayIntersection(ray, nearest, i2d));
 			collisionResults.push_back(m_hologramGroup.checkRayIntersection(ray, nearest, i2d));
+			collisionResults.push_back(m_emissionOnlyGroup.checkRayIntersection(ray, nearest, i2d));
 
 			if (std::any_of(collisionResults.begin(), collisionResults.end(), [](bool v) { return v; })) {
 				collided = true;

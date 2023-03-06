@@ -293,6 +293,8 @@
     <FxCompile Include="render\Graphics\shaders\skybox\VSSky.hlsl" />
     <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\VSSkyFullscreen.hlsl" />
     <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\PSSkyFullscreen.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\emission_only\VSEmission.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\emission_only\PSEmission.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />

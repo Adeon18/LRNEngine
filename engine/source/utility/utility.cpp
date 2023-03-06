@@ -7,7 +7,6 @@
 
 #include "include/utility/utility.hpp"
 
-
 namespace engn {
 	namespace util {
 		std::string getExePath() {
@@ -68,6 +67,14 @@ namespace engn {
 		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec)
 		{
 			return { vec.x, vec.y, vec.z };
+		}
+		bool isXMVectorEmpty(const XMVECTOR& vec)
+		{
+			return XMVectorGetX(vec) == 0.0f && XMVectorGetY(vec) == 0.0f && XMVectorGetZ(vec) == 0.0f && XMVectorGetW(vec) == 0.0f;
+		}
+		bool isXMVectorEmpty(const XMFLOAT4& vec)
+		{
+			return vec.x == 0.0f && vec.y == 0.0f && vec.z == 0.0f && vec.w == 0.0f;
 		}
 		uint32_t util::alignUp(uint32_t typeSize, uint32_t alignTo)
 		{
