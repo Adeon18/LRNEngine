@@ -29,7 +29,7 @@ namespace engn {
 			//! Add the pointLight by position and distance characteristics
 			void addPointLight(const XMFLOAT3& position, const XMFLOAT3& distParams);
 			//! Set the lighting settings for a spotlight like attenuation and angles
-			void setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& distParams);
+			void setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& distParams);
 			//! Bind the lighting CB, TODO: FOR NOW IS BOUND EVERY FRAME
 			void bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags);
 		private:

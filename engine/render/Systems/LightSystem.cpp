@@ -18,9 +18,10 @@ namespace engn {
 
 			m_pointLights.push_back(std::move(pLight));
 		}
-		void LightSystem::setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& distParams)
+		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& distParams)
 		{
-			m_spotLight.cutoffAngle = { XMScalarCos(XMConvertToRadians(cutoffAngleDeg)) };
+			m_spotLight.cutoffAngleInner = { XMScalarCos(XMConvertToRadians(cutoffAngles.x)) };
+			m_spotLight.cutoffAngleOuter = { XMScalarCos(XMConvertToRadians(cutoffAngles.y)) };
 			m_spotLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
