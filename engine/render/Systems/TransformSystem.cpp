@@ -6,10 +6,9 @@ namespace engn {
 		{
 			return m_transformMatrices[Id];
 		}
-		void TransformSystem::addMatrixById(const XMMATRIX& mat, uint32_t Id)
+		uint32_t TransformSystem::addMatrixById(const XMMATRIX& mat)
 		{
-			if (m_transformMatrices.find(Id) != m_transformMatrices.end()) { return; }
-			m_transformMatrices[Id] = mat;
+			return m_transformMatrices.insert(mat);
 		}
 	} // rend
 } // engn

@@ -132,8 +132,8 @@ namespace engn {
 				}
 			}
 
-			// Add the model by filling in the respective structs
-			void addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc, uint32_t insMatIdx) {
+			// Add the model by filling in the respective structs and return the instance matrix ID
+			uint32_t addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
 				if (!mod) {
 					Logger::instance().logErr("addModel: The model pointer is null");
 				}
@@ -148,6 +148,9 @@ namespace engn {
 
 				ModelIsAdded modelIsAdded;
 
+				// Add the new instance world matrix to transform system and get the index fo later usage
+				uint32_t newInstanceIdx = TransformSystem::getInstance().addMatrixById(inc.modelToWorld);
+
 				bool isCached = false;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
@@ -155,23 +158,21 @@ namespace engn {
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
 								if (perMaterial.material == mtrl || !mtrl.texPtr.get()) {
-									perMaterial.instances.push_back({ inc.color, insMatIdx });
-									TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
+									perMaterial.instances.push_back({ inc.color, newInstanceIdx });
 									modelIsAdded.addedAsInstance = true;
 								}
 							}
 							if (!modelIsAdded.addedAsInstance) {
 								PerMaterial perMat;
 								perMat.material = mtrl;
-								perMat.instances.push_back({ inc.color, insMatIdx });
-								TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
+								perMat.instances.push_back({ inc.color, newInstanceIdx });
 								perMesh.push_back(perMat);
 								modelIsAdded.addedAsMaterial = true;
 							}
 						}
 						if (modelIsAdded.wasAdded()) {
 							Logger::instance().logInfo("Model " + mod->name + " instance already exists, filled the needed info in perModel");
-							return;
+							return newInstanceIdx;
 						}
 					}
 				}
@@ -190,22 +191,22 @@ namespace engn {
 						for (auto& texPath : mesh.texturePaths) {
 							PerMaterial perMat;
 							perMat.material = { tex::TextureManager::getInstance().getTexture(texPath) };
-							perMat.instances.push_back({ inc.color, insMatIdx });
-							TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
+							perMat.instances.push_back({ inc.color, newInstanceIdx });
 							perMesh.push_back(perMat);
 						}
 					}
 					else {
 						PerMaterial perMat;
 						perMat.material = mtrl;
-						perMat.instances.push_back({inc.color, insMatIdx});
-						TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
+						perMat.instances.push_back({inc.color, newInstanceIdx});
 						perMesh.push_back(perMat);
 					}
 					newModel.perMesh.push_back(perMesh);
 				}
 
 				m_models.push_back(newModel);
+
+				return newInstanceIdx;
 			}
 
 			//! Fill the data to be passed by instance
@@ -345,9 +346,6 @@ namespace engn {
 			void initPipelines();
 			//! Bind a certain pipeline by type - must be called before group render
 			void bindPipelineViaType(PipelineTypes pipelineType);
-
-			//! This number is incremented at each instance model to worl matrix addition
-			uint32_t instanceMatrixIndex = 0;
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;

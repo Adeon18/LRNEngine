@@ -60,6 +60,7 @@
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\OcTree\OcTree.hpp" />
     <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
+    <ClInclude Include="utils\SolidVector\SolidVector.hpp" />
     <ClInclude Include="utils\TextureManager\DDSTextureLoader11.h" />
     <ClInclude Include="utils\TextureManager\TextureManager.hpp" />
     <ClInclude Include="utils\Timer\FPSTimer.h" />
