@@ -32,7 +32,7 @@ namespace engn {
 			//! Initialize the LightSystem, should be called in Engine::init()
 			void init();
 			//! Set the directional light parameters
-			void setDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color);
+			void addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color);
 			//! Set the pointlight via parameters
 			void addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color);
 			//! Set the lighting settings for a spotlight
@@ -46,7 +46,7 @@ namespace engn {
 			//! Bind spotlight direction and position to the camera
 			void bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction);
 			
-			light::DirectionalLight m_directionalLight;
+			std::vector <light::DirectionalLight> m_directionalLights;
 			std::vector<light::PointLight> m_pointLights;
 			// The indices at which the pointlights have their transform matrices in TransformSystem
 			std::vector<uint32_t> m_pointLightMatrixIndices;

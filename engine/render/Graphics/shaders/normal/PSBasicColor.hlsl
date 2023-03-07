@@ -40,7 +40,13 @@ float4 main(PS_INPUT inp) : SV_TARGET
 #endif
    
     
-    float3 outCol = calculateDirectionalLight(directLight, inp.worldNorm, camDir, colFromTex);
+    float3 outCol = float3(0.0f, 0.0f, 0.0f);
+    
+    for (int i = 0; i < dirLightCount.x; ++i)
+    {
+        outCol += calculateDirectionalLight(directLights[i], inp.worldNorm, camDir, colFromTex);
+    }
+    
     
     for (int i = 0; i < pointLightCount.x; ++i)
     {

@@ -7,6 +7,7 @@
 namespace engn {
 	namespace rend {
 
+		static constexpr int MAX_DIRLIGHT_COUNT = 1;
 		static constexpr int MAX_POINTLIGHT_COUNT = 10;
 
 		//! This struct is for moving the vertices in the VS by some offset
@@ -43,8 +44,9 @@ namespace engn {
 		};
 
 		struct CB_PS_LightEmitters {
+			XMINT4 dirLightCount;
 			XMINT4 pointLightCount;
-			light::DirectionalLight dirLight;
+			light::DirectionalLight dirLights[MAX_DIRLIGHT_COUNT];
 			light::PointLight pointLights[MAX_POINTLIGHT_COUNT];
 			light::SpotLight spotLight;
 		};

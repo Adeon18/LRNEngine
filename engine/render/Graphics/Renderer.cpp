@@ -67,7 +67,7 @@ namespace engn {
 
 			const std::string EXE_DIR = util::getExeDir();
 
-			LightSystem::getInstance().setDirLight(
+			LightSystem::getInstance().addDirLight(
 				{ 0.0f, -0.8f, 0.6f }, light::AMBIENT0D05, light::DIFFUSE0D1, light::SPEC0D1, light::WHITE
 			);
 			LightSystem::getInstance().addPointLight(

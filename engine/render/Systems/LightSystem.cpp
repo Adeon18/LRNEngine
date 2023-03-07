@@ -9,13 +9,16 @@ namespace engn {
 		{
 			m_lightBuffer.init();
 		}
-		void LightSystem::setDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color)
+		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color)
 		{
-			m_directionalLight.direction = { direction.x, direction.y, direction.z };
-			m_directionalLight.ambient = { ambient.x, ambient.y, ambient.z };
-			m_directionalLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
-			m_directionalLight.specular = { specular.x, specular.y, specular.z };
-			m_directionalLight.color = color;
+			light::DirectionalLight dLight;
+			dLight.direction = { direction.x, direction.y, direction.z };
+			dLight.ambient = { ambient.x, ambient.y, ambient.z };
+			dLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
+			dLight.specular = { specular.x, specular.y, specular.z };
+			dLight.color = color;
+
+			m_directionalLights.push_back(std::move(dLight));
 		}
 		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color)
 		{
@@ -52,7 +55,11 @@ namespace engn {
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{
-			m_lightBuffer.getData().dirLight = m_directionalLight;
+			int32_t dirLightCount = m_directionalLights.size();
+			m_lightBuffer.getData().dirLightCount = { dirLightCount , dirLightCount , dirLightCount , dirLightCount };
+			for (int i = 0; i < m_directionalLights.size(); ++i) {
+				m_lightBuffer.getData().dirLights[i] = m_directionalLights[i];
+			}
 
 			int32_t pointLightCount = m_pointLights.size();
 			m_lightBuffer.getData().pointLightCount = { pointLightCount , pointLightCount , pointLightCount , pointLightCount };

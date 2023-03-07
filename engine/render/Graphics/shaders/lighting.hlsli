@@ -1,4 +1,5 @@
 #define MAX_POINTLIGHT_COUNT 10
+#define MAX_DIRLIGHT_COUNT 1
 
 struct DirectionalLight
 {
@@ -44,8 +45,9 @@ struct SpotLight
 cbuffer perFrameLight : register(b1)
 {
     // Has 4 ints that describe point light count
+    int4 dirLightCount;
     int4 pointLightCount;
-    DirectionalLight directLight;
+    DirectionalLight directLights[MAX_DIRLIGHT_COUNT];
     PointLight pointLights[MAX_POINTLIGHT_COUNT];
     SpotLight spotLight;
 };
