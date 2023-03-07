@@ -8,6 +8,8 @@
 #include "render/Graphics/DXBuffers/CBStructs.hpp"
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
 
+#include "render/Systems/MeshSystem.hpp"
+
 #include "render/Systems/LightStructs.hpp"
 
 namespace engn {
@@ -39,6 +41,8 @@ namespace engn {
 			
 			light::DirectionalLight m_directionalLight;
 			std::vector<light::PointLight> m_pointLights;
+			// The indices at which the pointlights have their transform matrices in TransformSystem
+			std::vector<uint32_t> m_pointLightMatrixIndices;
 			// This light can be bound to player camera
 			light::SpotLight m_spotLight;
 

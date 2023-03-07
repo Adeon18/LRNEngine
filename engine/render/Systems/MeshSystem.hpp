@@ -72,7 +72,6 @@ namespace engn {
 
 			// Find the closest instance that intersects with a ray and fill in the infor struct
 			bool checkRayIntersection(geom::Ray& ray, geom::MeshIntersection& nearest, InstanceProperties& i2d) {
-
 				bool hasIntersection = false;
 				for (auto& perModel : m_models) {
 					uint32_t meshIdx = 0;
@@ -115,18 +114,9 @@ namespace engn {
 			void addModelOffset(const InstanceProperties& insProps, const XMVECTOR& offset) {
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == insProps.model->name) {
-						for (auto& perMesh : perModel.perMesh) {
-							for (uint32_t matIdx = 0; matIdx < perMesh.size(); ++matIdx) {
-								if (matIdx == insProps.materialIdx) {
-									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
-										if (insIdx == insProps.instanceIdx) {
-											TransformSystem::getInstance().getMatrixById(perMesh[matIdx].instances[insIdx].matrixIndex) *= XMMatrixTranslationFromVector(offset);
-											return;
-										}
-									}
-								}
-							}
-						}
+						// Only move the first mesh instnace as the matrices are all shared
+						TransformSystem::getInstance().getMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixTranslationFromVector(offset);
+						return;
 					}
 				}
 			}
@@ -135,17 +125,9 @@ namespace engn {
 			void addModelRotation(const InstanceProperties& insProps, const XMVECTOR& rotation) {
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == insProps.model->name) {
-						for (auto& perMesh : perModel.perMesh) {
-							for (uint32_t matIdx = 0; matIdx < perMesh.size(); ++matIdx) {
-								if (matIdx == insProps.materialIdx) {
-									for (uint32_t insIdx = 0; insIdx < perMesh[matIdx].instances.size(); ++insIdx) {
-										if (insIdx == insProps.instanceIdx) {
-											TransformSystem::getInstance().getMatrixById(perMesh[matIdx].instances[insIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
-										}
-									}
-								}
-							}
-						}
+						// Only rotate the first mesh instnace as the matrices are all shared
+						TransformSystem::getInstance().getMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
+						return;
 					}
 				}
 			}
@@ -176,7 +158,6 @@ namespace engn {
 									perMaterial.instances.push_back({ inc.color, insMatIdx });
 									TransformSystem::getInstance().addMatrixById(inc.modelToWorld, insMatIdx);
 									modelIsAdded.addedAsInstance = true;
-									break;
 								}
 							}
 							if (!modelIsAdded.addedAsInstance) {
@@ -267,7 +248,7 @@ namespace engn {
 								// Dangerous! TODO SFINAE
 								I ins;
 								ins.modelToWorld = TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex);
-								// TODO: VERY MUSH UNOPTIMIZED
+								// TODO: VERY MUSH UNOPTIMIZED - can try to save the matrix with the help of Id+1, etc.
 								ins.modelToWorldInv = XMMatrixInverse(nullptr, TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex));
 								ins.color = material.instances[index].color;
 								dst[copiedNum++] = ins;
@@ -345,9 +326,9 @@ namespace engn {
 			void render(const RenderModeFlags& flags);
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
-			void addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			void addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			void addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			uint32_t addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			uint32_t addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			uint32_t addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 			void addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation);
