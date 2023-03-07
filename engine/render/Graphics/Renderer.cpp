@@ -233,9 +233,9 @@ namespace engn {
 		void Renderer::m_initializeSky()
 		{
 #ifdef _WIN64 
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\night_street.dds";
 #else
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\sky_cubemap3.dds";
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\night_street.dds";
 #endif // !_WIN64
 
 			m_skyTriangle.init(SKYBOX_TEXTURE_PATH);
