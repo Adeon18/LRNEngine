@@ -67,13 +67,22 @@ namespace engn {
 
 			const std::string EXE_DIR = util::getExeDir();
 
-			LightSystem::getInstance().setDirLight({ 0.0f, -0.8f, 0.6f });
-			//LightSystem::getInstance().addPointLight({ 0.0f, 5.0f, 7.0f }, light::LIGHT_DIST_7);
-			LightSystem::getInstance().addPointLight(XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::WHITE);
-			LightSystem::getInstance().addPointLight(XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::RED);
-			LightSystem::getInstance().addPointLight(XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::GREEN);
+			LightSystem::getInstance().setDirLight(
+				{ 0.0f, -0.8f, 0.6f }, light::AMBIENT0D05, light::DIFFUSE0D1, light::SPEC0D1, light::WHITE
+			);
+			LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE
+			);
+			LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::RED
+			);
+			LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::GREEN
+			);
 
-			LightSystem::getInstance().setSpotLightSettings(light::SLIGHT_ANG_12H_17H, light::LIGHT_DIST_50);
+			LightSystem::getInstance().setSpotLightSettings(
+				light::SLIGHT_ANG_12H_17H, light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE
+			);
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(

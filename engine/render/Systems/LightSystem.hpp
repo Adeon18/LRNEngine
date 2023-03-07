@@ -31,19 +31,19 @@ namespace engn {
 
 			//! Initialize the LightSystem, should be called in Engine::init()
 			void init();
-			//! Set the direction of the directional light
-			void setDirLight(const XMFLOAT3& direction);
-			//! Add the pointLight, give it the modelToWorld matrix and the distance parameters
-			void addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& distParams, const XMVECTOR& color);
-			//! Add the poinlight to pointlight array - this function is here in order to simplify pointLight addition
-			void addPointLight(light::PointLight&& pLight, const XMMATRIX& modelToWorld);
-			//! Set the lighting settings for a spotlight like attenuation and angles
-			void setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& distParams);
+			//! Set the directional light parameters
+			void setDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color);
+			//! Set the pointlight via parameters
+			void addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color);
+			//! Set the lighting settings for a spotlight
+			void setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color);
 			//! Bind the lighting CB, TODO: FOR NOW IS BOUND EVERY FRAME
 			void bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags);
 		private:
 			LightSystem() {}
-
+			//! Add the pointlight and sync it with the sphere visualization
+			void addPointLight(light::PointLight&& pLight, const XMMATRIX& modelToWorld);
+			//! Bind spotlight direction and position to the camera
 			void bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction);
 			
 			light::DirectionalLight m_directionalLight;

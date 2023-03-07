@@ -14,6 +14,25 @@ namespace engn {
 		static constexpr XMVECTOR BLUE{ 0.0f, 0.0f, 1.0f, 1.0f };
 		static constexpr XMVECTOR BLACK{ 0.0f, 0.0f, 0.0f, 1.0f };
 
+		//! Ambient - Read as XDX is read as X DOT X as in X.X
+		static constexpr XMFLOAT3 AMBIENT0D05{ 0.05f, 0.05f, 0.05f };
+
+		//! Diffuse - Read as XDX is read as X DOT X as in X.X
+		static constexpr XMFLOAT3 DIFFUSE0D1{ 0.1f, 0.1f, 0.1f };
+		static constexpr XMFLOAT3 DIFFUSE0D2{ 0.2f, 0.2f, 0.2f };
+		static constexpr XMFLOAT3 DIFFUSE0D4{ 0.4f, 0.4f, 0.4f };
+		static constexpr XMFLOAT3 DIFFUSE0D6{ 0.6f, 0.6f, 0.6f };
+		static constexpr XMFLOAT3 DIFFUSE0D8{ 0.8f, 0.8f, 0.8f };
+		static constexpr XMFLOAT3 DIFFUSE1{ 1.0f, 1.0f, 1.0f };
+
+		//! Specular - Read as XDX is read as X DOT X as in X.X
+		static constexpr XMFLOAT3 SPEC0D1{ 0.1f, 0.1f, 0.1f };
+		static constexpr XMFLOAT3 SPEC0D2{ 0.2f, 0.2f, 0.2f };
+		static constexpr XMFLOAT3 SPEC0D4{ 0.4f, 0.4f, 0.4f };
+		static constexpr XMFLOAT3 SPEC0D6{ 0.6f, 0.6f, 0.6f };
+		static constexpr XMFLOAT3 SPEC0D8{ 0.8f, 0.8f, 0.8f };
+		static constexpr XMFLOAT3 SPEC1{ 1.0f, 1.0f, 1.0f };
+
 		//! Basic constant attenuation configs for PointLight
 		static constexpr XMFLOAT3 LIGHT_DIST_7{ 1.0f, 0.7f, 1.8f };
 		static constexpr XMFLOAT3 LIGHT_DIST_20{ 1.0f, 0.22f, 0.2f };
