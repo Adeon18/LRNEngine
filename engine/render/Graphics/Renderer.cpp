@@ -69,7 +69,9 @@ namespace engn {
 
 			LightSystem::getInstance().setDirLight({ 0.0f, -0.8f, 0.6f });
 			//LightSystem::getInstance().addPointLight({ 0.0f, 5.0f, 7.0f }, light::LIGHT_DIST_7);
-			//LightSystem::getInstance().addPointLight({ -4.0f, 3.0f, 9.0f }, light::LIGHT_DIST_50);
+			LightSystem::getInstance().addPointLight(XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::WHITE);
+			LightSystem::getInstance().addPointLight(XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::RED);
+			LightSystem::getInstance().addPointLight(XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::LIGHT_DIST_50, light::GREEN);
 
 			LightSystem::getInstance().setSpotLightSettings(light::SLIGHT_ANG_12H_17H, light::LIGHT_DIST_50);
 
@@ -118,14 +120,6 @@ namespace engn {
 				mptr,
 				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH);
-			MeshSystem::getInstance().addEmissionInstance(
-				mptr,
-				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
-				{ XMMatrixTranslation(0.0f, 0.0f, 5.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			//// Fill the field with cubes

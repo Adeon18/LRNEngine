@@ -6,6 +6,8 @@ struct DirectionalLight
     float4 ambient;
     float4 diffuse;
     float4 specular;
+    
+    float4 color;
 };
 
 struct PointLight
@@ -17,6 +19,8 @@ struct PointLight
     
     // X - constant, Y - linear, Z - quadratic
     float4 distProperties;
+    
+    float4 color;
 };
 
 struct SpotLight
@@ -32,6 +36,8 @@ struct SpotLight
     
     // X - constant, Y - linear, Z - quadratic
     float4 distProperties;
+    
+    float4 color;
 };
 
 
@@ -46,9 +52,9 @@ cbuffer perFrameLight : register(b1)
 
 #define BLINN 1
 
-float3 calculateDirectionalLight(DirectionalLight dirLight, float3 norm, float3 toCam, float3 inFragTexCol)
+float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 toCam, float3 inFragTexCol)
 {
-    float3 lightDir = normalize(-dirLight.direction.xyz);
+    float3 lightDir = normalize(-light.direction.xyz);
     // diffuse shading
     float diff = max(dot(norm, lightDir), 0.0001);
     // specular shading
@@ -61,10 +67,11 @@ float3 calculateDirectionalLight(DirectionalLight dirLight, float3 norm, float3 
     #endif
     
     // combine results
-    float3 ambient = dirLight.ambient.xyz * inFragTexCol;
-    float3 diffuse = dirLight.diffuse.xyz * diff * inFragTexCol;
-    float3 specular = dirLight.specular.xyz * spec * inFragTexCol;
-    return (ambient + diffuse + specular);
+    float3 ambient = light.ambient.xyz * inFragTexCol;
+    float3 diffuse = light.diffuse.xyz * diff * inFragTexCol;
+    float3 specular = light.specular.xyz * spec * inFragTexCol;
+    // Apply color
+    return light.color.xyz * (ambient + diffuse + specular);
 }
 
 // calculates the color when using a point light.
@@ -96,7 +103,8 @@ float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, f
     ambient *= attenuation;
     diffuse *= attenuation;
     specular *= attenuation;
-    return (ambient + diffuse + specular);
+    // Apply color
+    return light.color.xyz * (ambient + diffuse + specular);
 }
 
 float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
@@ -133,5 +141,6 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
     ambient *= attenuation;
     diffuse *= attenuation * borderIntensity;
     specular *= attenuation * borderIntensity;
-    return (ambient + diffuse + specular);
+    // Apply color
+    return light.color.xyz * (ambient + diffuse + specular);
 }

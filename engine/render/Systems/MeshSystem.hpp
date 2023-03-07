@@ -35,7 +35,7 @@ namespace engn {
 
 		//! The instance data struct that is in each group, stores color and index
 		struct GroupInstance {
-			XMFLOAT4 color;
+			XMVECTOR color;
 			uint32_t matrixIndex;
 		};
 
@@ -297,7 +297,7 @@ namespace engn {
 							// materialData.update(...); // we don't have it in HW4
 
 							// ... bind each material texture, we don't have it in HW4
-							d3d::s_devcon->PSSetShaderResources(0, 1, material.texPtr->textureView.GetAddressOf());
+							if (material.texPtr) d3d::s_devcon->PSSetShaderResources(0, 1, material.texPtr->textureView.GetAddressOf());
 
 							uint32_t numInstances = uint32_t(perMaterial.instances.size());
 							d3d::s_devcon->DrawIndexedInstanced(meshRange.indexNum, numInstances, meshRange.indexOffset, meshRange.vertexOffset, renderedInstances);

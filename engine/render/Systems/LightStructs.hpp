@@ -7,6 +7,13 @@ namespace engn {
 	namespace light {
 		using namespace DirectX;
 
+		//! Colors
+		static constexpr XMVECTOR WHITE{ 1.0f, 1.0f, 1.0f, 1.0f };
+		static constexpr XMVECTOR RED{ 1.0f, 0.0f, 0.0f, 1.0f };
+		static constexpr XMVECTOR GREEN{ 0.0f, 1.0f, 0.0f, 1.0f };
+		static constexpr XMVECTOR BLUE{ 0.0f, 0.0f, 1.0f, 1.0f };
+		static constexpr XMVECTOR BLACK{ 0.0f, 0.0f, 0.0f, 1.0f };
+
 		//! Basic constant attenuation configs for PointLight
 		static constexpr XMFLOAT3 LIGHT_DIST_7{ 1.0f, 0.7f, 1.8f };
 		static constexpr XMFLOAT3 LIGHT_DIST_20{ 1.0f, 0.22f, 0.2f };
@@ -26,17 +33,21 @@ namespace engn {
 			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
 			XMVECTOR diffuse{ 0.1f, 0.1f, 0.1f };
 			XMVECTOR specular{ 0.1f, 0.1f, 0.1f };
+
+			XMVECTOR color;
 		};
 
 		// Pointlight structs(again, for now, partically constant)
 		struct PointLight {
-			XMVECTOR position;
+			XMVECTOR position{ 0.0f, 0.0f, 0.0f, 1.0f };
 			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
 			XMVECTOR diffuse{ 0.8f, 0.8f, 0.8f };
 			XMVECTOR specular{ 1.0f, 1.0f, 1.0f };
 
 			// Constant, linear, quadratic and padding
 			XMVECTOR distanceCharacteristics;
+
+			XMVECTOR color;
 		};
 
 		struct SpotLight {
@@ -52,6 +63,8 @@ namespace engn {
 
 			// Constant, linear, quadratic and padding
 			XMVECTOR distanceCharacteristics;
+
+			XMVECTOR color;
 		};
 
 	} // light

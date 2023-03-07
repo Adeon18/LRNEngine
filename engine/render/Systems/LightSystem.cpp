@@ -1,5 +1,8 @@
 #include "LightSystem.hpp"
 
+#include "render/Systems/MeshSystem.hpp"
+#include "utils/ModelManager/ModelManager.hpp"
+
 namespace engn {
 	namespace rend {
 		void LightSystem::init()
@@ -10,13 +13,25 @@ namespace engn {
 		{
 			m_directionalLight.direction = { direction.x, direction.y, direction.z };
 		}
-		void LightSystem::addPointLight(const XMFLOAT3& position, const XMFLOAT3& distParams)
+		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& distParams, const XMVECTOR& color)
 		{
 			light::PointLight pLight;
-			pLight.position = { position.x, position.y, position.z };
+			pLight.color = color;
 			pLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
 
-			m_pointLights.push_back(std::move(pLight));
+			addPointLight(std::move(pLight), modelToWorld);
+		}
+		void LightSystem::addPointLight(light::PointLight&& pLight, const XMMATRIX& modelToWorld)
+		{
+			m_pointLightMatrixIndices.push_back(
+				MeshSystem::getInstance().addEmissionInstance(
+					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
+					{},
+					// We decrease the sphere 5 times to visualize pointlight
+					{ XMMatrixScaling(0.2f, 0.2f, 0.2f) * modelToWorld, {}, pLight.color }
+				)
+			);
+			m_pointLights.push_back(pLight);
 		}
 		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& distParams)
 		{
@@ -32,6 +47,7 @@ namespace engn {
 			m_lightBuffer.getData().pointLightCount = { pointLightCount , pointLightCount , pointLightCount , pointLightCount };
 
 			for (int i = 0; i < m_pointLights.size(); ++i) {
+				m_pointLights[i].position = XMVector3Transform({0.0f, 0.0f, 0.0f}, TransformSystem::getInstance().getMatrixById(m_pointLightMatrixIndices[i]));
 				m_lightBuffer.getData().pointLights[i] = m_pointLights[i];
 			}
 
