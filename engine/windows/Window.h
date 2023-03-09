@@ -10,6 +10,9 @@
 #include "utils/Logger/Logger.hpp"
 
 #include "render/D3D/d3d.hpp"
+
+#include "render/Graphics/DXRTVs/LDRRenderTarget.hpp"
+
 #include "utils/paralell_executor/parallel_executor.h"
 
 
@@ -134,12 +137,14 @@ namespace engn {
 			//! Called at resize. Free the backBuffer and resize it to a new one
 			void initBackBuffer() {
 				// Release the RTV before resizing
-				m_renderTargetView.Reset();
+				//m_renderTargetView.Reset();
 				// Release the backBuffer before resize
-				m_backBuffer.Reset();
+				//m_backBuffer.Reset();
+				m_finalRTV.releaseAll();
+
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
+				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_finalRTV.getTexturePtrAddress()));
 				if (FAILED(hr)) {
 					m_logger.logErr("Window GetBuffer on BackBuffer fail: " + std::system_category().message(hr));
 					return;
@@ -154,15 +159,17 @@ namespace engn {
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
 			void initRenderTargetView()
 			{
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
+				/*HRESULT hr = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
 				if (FAILED(hr)) {
 					m_logger.logErr("Window CreateRenderTargetView fail: " + std::system_category().message(hr));
 					return;
-				}
+				}*/
+				m_finalRTV.init();
 			}
 
 			void setRenderTargetView() {
-				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStensilView.Get());
+				//d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStensilView.Get());
+				m_finalRTV.OMSetCurrent(m_depthStensilView.Get());
 			}
 			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
 			void initDepthStensilBuffer() {
@@ -228,7 +235,8 @@ namespace engn {
 				}
 				// We set the rendertargetview each frame
 				setRenderTargetView();
-				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+				//d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+				m_finalRTV.clear(color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			
@@ -272,9 +280,11 @@ namespace engn {
 
 			inline static WindowClassData m_windowClassData;
 
+			rend::LDRRenderTarget m_finalRTV;
+
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
-			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+			//Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
+			//Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStensilView;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStensilBuffer;
 			D3D11_TEXTURE2D_DESC m_backBufferDesc;
