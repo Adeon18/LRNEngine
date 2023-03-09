@@ -47,6 +47,10 @@ namespace engn {
 		{
 			d3d::s_devcon->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
 		}
+		void HDRRenderTarget::clear(const FLOAT* color)
+		{
+			d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+		}
 		void HDRRenderTarget::releaseAll()
 		{
 			m_texture.Reset();

@@ -1,8 +1,9 @@
 #include "Engine.hpp"
 
 namespace engn {
-	Engine::Engine(int screenWidth, int screenHeight) :
-		m_camera{ new rend::EngineCamera{60.0f, screenWidth, screenHeight, {0.0f, 0.0f, -2.0f}} }
+	Engine::Engine() :
+		m_camera{ new rend::EngineCamera{60.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, {0.0f, 0.0f, -2.0f}} },
+		m_window{ new win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() }
 	{
 		m_graphics.init();
 	}
@@ -11,15 +12,28 @@ namespace engn {
 		m_camera->setNewScreenSize(screenWidth, screenHeight);
 	}
 
-	void Engine::render(const rend::RenderData& data) {
-		m_graphics.renderFrame(m_camera, data, m_renderFlags);
+	void Engine::setEngineData(const rend::RenderData& data)
+	{
+		m_renderData.iTime = data.iTime;
+		m_renderData.iResolutionX = m_window->getWidth();
+		m_renderData.iResolutionY = m_window->getHeight();
+		m_renderData.invResolutionX = 1.0f / m_window->getWidth();
+		m_renderData.invResolutionY = 1.0f / m_window->getHeight();
 	}
 
-	void Engine::handlePhysics(const rend::RenderData& data) {
+	void Engine::render() {
+		if (m_window->clear(BG_COLOR)) {
+			setWindowSize(m_window->getWidth(), m_window->getHeight());
+		}
+		m_graphics.renderFrame(m_camera, m_renderData, m_renderFlags);
+		m_window->present();
+	}
+
+	void Engine::handlePhysics() {
 		handleCameraRotation();
 		handleCameraMovement();
 
-		handleDragging(data);
+		handleDragging();
 
 		fillRenderModeFlagsFromInput();
 	}
@@ -60,12 +74,12 @@ namespace engn {
 		}
 	}
 
-	void Engine::handleDragging(const rend::RenderData& data) {
-		findDraggable(data);
+	void Engine::handleDragging() {
+		findDraggable();
 		moveDraggable();
 	}
 
-	void Engine::findDraggable(const rend::RenderData& data) {
+	void Engine::findDraggable() {
 		auto& mouse = inp::Mouse::getInstance();
 
 		if (mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {

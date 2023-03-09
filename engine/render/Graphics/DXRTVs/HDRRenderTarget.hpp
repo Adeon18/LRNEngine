@@ -19,8 +19,16 @@ namespace engn {
 			//! Bind the SRV as texture to the current shader with the specified slot
 			void bindSRV(int slot);
 
+			//! Clear the RTV with the specified color
+			void clear(const FLOAT* color);
+
 			//! Release all the resourses, called at window resize
 			void releaseAll();
+
+			[[nodiscard]] ID3D11Texture2D* getTexturePtr() { return m_texture.Get(); }
+			[[nodiscard]] ID3D11Texture2D** getTexturePtrAddress() { return m_texture.GetAddressOf(); }
+			[[nodiscard]] ID3D11RenderTargetView* getRTVPtr() { return m_renderTargetView.Get(); }
+			[[nodiscard]] ID3D11RenderTargetView** getRTVPtrAddress() { return m_renderTargetView.GetAddressOf(); }
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;

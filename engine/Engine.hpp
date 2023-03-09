@@ -13,20 +13,28 @@
 
 #include "render/D3D/d3d.hpp"
 #include "render/Graphics/EngineCamera.hpp"
+#include "windows/Window.h"
 #include "render/Graphics/Renderer.hpp"
 
 namespace engn {
 	using namespace DirectX;
 	class Engine
 	{
+		static constexpr int WIN_WIDTH_DEF = 960;
+		static constexpr int WIN_HEIGHT_DEF = 540;
+		inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	public:
-		Engine(int screenWidth, int screenHeight);
+		Engine();
 		//! Reset engine and camera window size for proper dragging
 		void setWindowSize(int screenWidth, int screenHeight);
+
+		//! Set the needed engine data to the renderdata struct
+		void setEngineData(const rend::RenderData& data);
+
 		//! Call the render be the rendere
-		void render(const rend::RenderData& data);
+		void render();
 		//! Handle "physics" like dragging and camera movement
-		void handlePhysics(const rend::RenderData& data);
+		void handlePhysics();
 
 		// called from main.cpp - Must be called BEFORE engine construction
 		static void init()
@@ -49,9 +57,11 @@ namespace engn {
 	private:
 		// Render
 		std::unique_ptr<rend::EngineCamera> m_camera;
+		std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
 		rend::Renderer m_graphics;
 		drag::MeshDragger m_dragger;
 
+		rend::RenderData m_renderData;
 		rend::RenderModeFlags m_renderFlags;
 
 	private:
@@ -60,9 +70,9 @@ namespace engn {
 		//! check for camera rotation and update if there was
 		void handleCameraRotation();
 		//! handle the entire dragging process
-		void handleDragging(const rend::RenderData& data);
+		void handleDragging();
 		//! Find the object we can capture
-		void findDraggable(const rend::RenderData& data);
+		void findDraggable();
 		//! Move the captured object if there is any	
 		void moveDraggable();
 		//! Based on the keyboard inputs, fill the struct that has info what mode of rendering is used(debug/normls/wireframs, etc.)

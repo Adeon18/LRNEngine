@@ -35,11 +35,9 @@ namespace engn {
 			void* screenBuffer = nullptr;
 			int screenWidth{};
 			int screenHeight{};
-			int bufferWidth{};
-			int bufferHeight{};
 		};
 
-		template<int W, int H, int BDS>
+		template<int W, int H>
 		class Window {
 		public:
 			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
@@ -159,16 +157,10 @@ namespace engn {
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
 			void initRenderTargetView()
 			{
-				/*HRESULT hr = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-				if (FAILED(hr)) {
-					m_logger.logErr("Window CreateRenderTargetView fail: " + std::system_category().message(hr));
-					return;
-				}*/
 				m_finalRTV.init();
 			}
 
 			void setRenderTargetView() {
-				//d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStensilView.Get());
 				m_finalRTV.OMSetCurrent(m_depthStensilView.Get());
 			}
 			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
@@ -220,6 +212,7 @@ namespace engn {
 
 
 			//! Set the RTV and clear the window with the specified color
+			//! Basically prepares our RTV(that should be HDR for rendering into it)
 			bool clear(float* color)
 			{
 				bool wasResized = false;
@@ -235,7 +228,6 @@ namespace engn {
 				}
 				// We set the rendertargetview each frame
 				setRenderTargetView();
-				//d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
 				m_finalRTV.clear(color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
@@ -271,7 +263,6 @@ namespace engn {
 			inline static WindowRenderData m_windowRenderData{
 				nullptr,
 				W, H,
-				W / BDS, H / BDS
 			};
 
 			inline static RECT m_windowRect{ 0, 0, W, H };
@@ -283,8 +274,6 @@ namespace engn {
 			rend::LDRRenderTarget m_finalRTV;
 
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-			//Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
-			//Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStensilView;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStensilBuffer;
 			D3D11_TEXTURE2D_DESC m_backBufferDesc;
@@ -353,9 +342,6 @@ namespace engn {
 
 				m_windowRenderData.screenWidth = newClientRect.right - newClientRect.left;
 				m_windowRenderData.screenHeight = newClientRect.bottom - newClientRect.top;
-
-				m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / BDS;
-				m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / BDS;
 
 				m_windowRect = newClientRect;
 				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
