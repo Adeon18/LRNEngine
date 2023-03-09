@@ -145,10 +145,10 @@ namespace engn {
 					return;
 				}
 
-				ID3D11Texture2D* pTextureInterface = 0;
+				/*ID3D11Texture2D* pTextureInterface = 0;
 				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
 				pTextureInterface->GetDesc(&m_backBufferDesc);
-				pTextureInterface->Release();
+				pTextureInterface->Release();*/
 			}
 
 			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
@@ -237,45 +237,6 @@ namespace engn {
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
 				m_swapChain->Present(0, NULL);
-			}
-
-			//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer, return true if allocation happened
-			bool allocateBitmapBuffer()
-			{
-				// Free old memory if screen was resized
-				if (m_windowRenderData.screenBuffer && m_toBeResized)
-				{
-					VirtualFree(m_windowRenderData.screenBuffer, 0, MEM_RELEASE);
-					m_windowRenderData.screenBuffer = nullptr;
-				}
-
-				// Allocate memory for bits - reallocate if screnn was resized
-				if (!m_windowRenderData.screenBuffer && m_toBeResized)
-				{
-					const size_t bitmapMemorySize = m_windowRenderData.bufferWidth * m_windowRenderData.bufferHeight * 4;
-					m_fillBitmapInfo();
-
-					m_windowRenderData.screenBuffer = VirtualAlloc(nullptr, bitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-					m_toBeResized = false;
-					return true;
-				}
-				return false;
-			}
-
-			//! Calls stretchDIBits which in turn copies all data from the bitmap buffer to screen
-			void flush() const
-			{
-				StretchDIBits(
-					m_windowClassData.handleDC,
-					0, 0,
-					m_windowRenderData.screenWidth, m_windowRenderData.screenHeight,
-					0, 0,
-					m_windowRenderData.bufferWidth, m_windowRenderData.bufferHeight,
-					m_windowRenderData.screenBuffer,
-					&m_bitmapInfo,
-					DIB_RGB_COLORS,		// The color are RGB, can also be a pallet of you need to have limited colors
-					SRCCOPY				// We just want to copy to buffer and not do any operations to it
-				);
 			}
 
 			[[nodiscard]] HWND getHandler() const { return m_windowClassData.handleWnd; }
@@ -390,21 +351,6 @@ namespace engn {
 				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
 				m_toBeResized = true;
-			}
-
-			//! Fill in the bitmapinfo at screen buffer allocation
-			void m_fillBitmapInfo() {
-				m_bitmapInfo.bmiHeader.biSize = sizeof(m_bitmapInfo.bmiHeader);	// Why?....
-				m_bitmapInfo.bmiHeader.biWidth = m_windowRenderData.bufferWidth;
-				m_bitmapInfo.bmiHeader.biHeight = m_windowRenderData.bufferHeight;	// Top down render
-				m_bitmapInfo.bmiHeader.biPlanes = 1;							// Legacy
-				m_bitmapInfo.bmiHeader.biBitCount = sizeof(COLORREF) * 8;		// We allocate for COLORREF
-				m_bitmapInfo.bmiHeader.biCompression = BI_RGB;					// If you need compression, we don't because RGB
-				m_bitmapInfo.bmiHeader.biSizeImage = 0;							// Unused if no compression
-				m_bitmapInfo.bmiHeader.biXPelsPerMeter = 0;						// We don't need to know about pixels per meter
-				m_bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
-				m_bitmapInfo.bmiHeader.biClrUsed = 0;							// Last 2 are for pallets
-				m_bitmapInfo.bmiHeader.biClrImportant = 0;
 			}
 		};
 	} // win
