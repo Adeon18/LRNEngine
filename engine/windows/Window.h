@@ -162,8 +162,7 @@ namespace engn {
 
 			//! Bind the backBuffer
 			void bindBackBuffer() {
-				// TODO: Change to nullptr
-				m_renderTargetLDRFinal.OMSetCurrent(m_depthStensilView.Get());
+				m_renderTargetLDRFinal.OMSetCurrent(nullptr);
 			}
 
 			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
@@ -247,8 +246,6 @@ namespace engn {
 				bindBackBuffer();
 				bindViewport();
 				m_renderTargetLDRFinal.clear(color);
-				// TODO: Remove depth stencil
-				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			}
 
 			//! Present the swapchain. Called after clear and Engine::render
