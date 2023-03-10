@@ -12,6 +12,7 @@
 #include "render/D3D/d3d.hpp"
 
 #include "render/Graphics/DXRTVs/LDRRenderTarget.hpp"
+#include "render/Graphics/DXRTVs/HDRRenderTarget.hpp"
 
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -65,9 +66,10 @@ namespace engn {
 				initSwapchain();
 
 				initBackBuffer();
-				initRenderTargetView();
+				initRenderTargetViews();
 				initDepthStensilBuffer();
 				initViewPort();
+				bindViewport();
 			}
 
 
@@ -132,37 +134,38 @@ namespace engn {
 				}
 			}
 
-			//! Called at resize. Free the backBuffer and resize it to a new one
+			//! Called at resize. Free the LDR backbuffer and HDR RTV and resize it to a new one
 			void initBackBuffer() {
-				// Release the RTV before resizing
-				//m_renderTargetView.Reset();
-				// Release the backBuffer before resize
-				//m_backBuffer.Reset();
-				m_finalRTV.releaseAll();
+				m_renderTargetHDR.releaseAll();
+				m_renderTargetLDRFinal.releaseAll();
 
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_finalRTV.getTexturePtrAddress()));
+				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_renderTargetLDRFinal.getTexturePtrAddress()));
 				if (FAILED(hr)) {
 					m_logger.logErr("Window GetBuffer on BackBuffer fail: " + std::system_category().message(hr));
 					return;
 				}
-
-				/*ID3D11Texture2D* pTextureInterface = 0;
-				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
-				pTextureInterface->GetDesc(&m_backBufferDesc);
-				pTextureInterface->Release();*/
 			}
 
-			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
-			void initRenderTargetView()
+			//! Called at resize AFTER initBackBuffer.
+			//! Initialize the renderTargetViews(HDR and LDR)
+			void initRenderTargetViews()
 			{
-				m_finalRTV.init();
+				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight);
+				m_renderTargetLDRFinal.init();
+			}
+			//! Bind the initial HDR rtv
+			void bindInitialRTV() {
+				m_renderTargetHDR.OMSetCurrent(m_depthStensilView.Get());
 			}
 
-			void setRenderTargetView() {
-				m_finalRTV.OMSetCurrent(m_depthStensilView.Get());
+			//! Bind the backBuffer
+			void bindBackBuffer() {
+				// TODO: Change to nullptr
+				m_renderTargetLDRFinal.OMSetCurrent(m_depthStensilView.Get());
 			}
+
 			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
 			void initDepthStensilBuffer() {
 				m_depthStensilView.Reset();
@@ -196,44 +199,58 @@ namespace engn {
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
 			void initViewPort() {
-				D3D11_VIEWPORT viewPort;
-				memset(&viewPort, 0, sizeof(D3D11_VIEWPORT));
-					
-				viewPort.TopLeftX = m_windowRect.left;
-				viewPort.TopLeftY = m_windowRect.top;
-				viewPort.Width = m_windowRect.right - m_windowRect.left;
-				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+				m_viewPort.TopLeftX = m_windowRect.left;
+				m_viewPort.TopLeftY = m_windowRect.top;
+				m_viewPort.Width = m_windowRect.right - m_windowRect.left;
+				m_viewPort.Height = m_windowRect.bottom - m_windowRect.top;
 				// It is set this way, despite the reversed depth matrix
-				viewPort.MinDepth = 0.0f;
-				viewPort.MaxDepth = 1.0f;
-
-				d3d::s_devcon->RSSetViewports(1, &viewPort);
+				m_viewPort.MinDepth = 0.0f;
+				m_viewPort.MaxDepth = 1.0f;
 			}
 
+			//! Bind the viwport to the rasterizer
+			void bindViewport() { d3d::s_devcon->RSSetViewports(1, &m_viewPort); }
 
-			//! Set the RTV and clear the window with the specified color
-			//! Basically prepares our RTV(that should be HDR for rendering into it)
-			bool clear(float* color)
-			{
+			//! Poll window for resize, MUST BE CALLED at the start of every frame to support resizing
+			bool pollResize() {
 				bool wasResized = false;
 				// Resize if there was a call
 				if (m_toBeResized)
 				{
 					initBackBuffer();
-					initRenderTargetView();
+					initRenderTargetViews();
 					initDepthStensilBuffer();
 					initViewPort();
 					m_toBeResized = false;
 					wasResized = true;
 				}
+				return true;
+			}
+
+			//! Clears the RTV that we write to initially(HDR in out case), clear the DSV too
+			void bindAndClearInitialRTV(float* color)
+			{
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
 				// We set the rendertargetview each frame
-				setRenderTargetView();
-				m_finalRTV.clear(color);
+				bindInitialRTV();
+				bindViewport();
+				// TODO: Change to HDR
+				m_renderTargetLDRFinal.clear(color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
-			
-				return wasResized;
 			}
+
+			void bindAndClearBackbuffer(float* color) {
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				bindBackBuffer();
+				bindViewport();
+				m_renderTargetLDRFinal.clear(color);
+				// TODO: Remove depth stencil
+				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+			}
+
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
 				m_swapChain->Present(0, NULL);
@@ -271,12 +288,14 @@ namespace engn {
 
 			inline static WindowClassData m_windowClassData;
 
-			rend::LDRRenderTarget m_finalRTV;
+			rend::LDRRenderTarget m_renderTargetLDRFinal;
+			rend::HDRRenderTarget m_renderTargetHDR;
+
+			D3D11_VIEWPORT m_viewPort;
 
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStensilView;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStensilBuffer;
-			D3D11_TEXTURE2D_DESC m_backBufferDesc;
 
 			// Bitmap information struct
 			BITMAPINFO m_bitmapInfo;

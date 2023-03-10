@@ -22,9 +22,10 @@ namespace engn {
 	}
 
 	void Engine::render() {
-		if (m_window->clear(BG_COLOR)) {
+		if (m_window->pollResize()) {
 			setWindowSize(m_window->getWidth(), m_window->getHeight());
 		}
+		m_window->bindAndClearBackbuffer(BG_COLOR);
 		m_graphics.renderFrame(m_camera, m_renderData, m_renderFlags);
 		m_window->present();
 	}
