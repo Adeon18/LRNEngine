@@ -76,14 +76,14 @@ namespace engn {
 				{ 0.0f, -0.8f, 0.6f }, light::AMBIENT0D05, light::DIFFUSE0D1, light::SPEC0D1, light::WHITE
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE
+				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_20, { 2.0f, 2.f, 2.f, 1.f }
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::RED
+				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_20, {2.0f, 2.f, 2.f, 1.f}
 			);
-			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::GREEN
-			);
+			/*LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE
+			);*/
 
 			LightSystem::getInstance().setSpotLightSettings(
 				light::SLIGHT_ANG_12H_17H, light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE

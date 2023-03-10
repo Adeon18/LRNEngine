@@ -33,7 +33,6 @@ float3 correctGamma(float3 color, float gamma)
 }
 
 
-
 struct VS_OUTPUT
 {
     float4 clipPos : SV_POSITION;
@@ -44,10 +43,9 @@ Texture2D g_texture0 : TEXTURE : register(t0);
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
 {
-    //return float4(1.0f, 1.0f, 1.0f, 1.0f);
-    float3 fragCol = g_texture0.Sample(g_linearWrap, inp.texCoords);
+    float3 fragCol = g_texture0.Sample(g_pointWrap, inp.texCoords);
     
-    fragCol = adjustExposure(fragCol, -2.0f);
+    fragCol = adjustExposure(fragCol, -1.0f);
     fragCol = acesHdr2Ldr(fragCol);
     fragCol = correctGamma(fragCol, 2.2f);
     
