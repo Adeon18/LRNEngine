@@ -235,12 +235,12 @@ namespace engn {
 				// We set the rendertargetview each frame
 				bindInitialRTV();
 				bindViewport();
-				// TODO: Change to HDR
-				m_renderTargetLDRFinal.clear(color);
+				m_renderTargetHDR.clear(color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			}
 
+			//! Clear the final LDR RTV and bind it
 			void bindAndClearBackbuffer(float* color) {
 				// So we don't crash at window minimize
 				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
@@ -271,6 +271,9 @@ namespace engn {
 
 			[[nodiscard]] int getBIWidth() const { return m_windowRenderData.bufferWidth; }
 			[[nodiscard]] int getBIHeight() const { return m_windowRenderData.bufferHeight; }
+
+			[[nodiscard]] rend::HDRRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
+			[[nodiscard]] rend::LDRRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
 
 
 		private:

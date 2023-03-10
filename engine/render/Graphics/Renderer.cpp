@@ -21,23 +21,27 @@ namespace engn {
 			m_initSamplers();
 			m_initScene();
 			m_initializeSky();
+			m_initPostProcess();
 		}
 
-		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags)
+		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
-			// Set render states and DepthStencil state, everything else is set by the systems
+			// ---- Clear the write buffer
+			//winPtr->bindAndClearInitialRTV(BG_COLOR);
+			winPtr->bindAndClearBackbuffer(BG_COLOR);
+
+			// ---- Render ----
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
 			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
-
 			m_fillPerFrameCBs(camPtr, renderData);
-
 			m_bindSamplers();
-
 			LightSystem::getInstance().bindLighting(camPtr, flags);
-
 			MeshSystem::getInstance().render(flags);
 			// Render the sky after we are done
 			m_skyTriangle.render(camPtr);
+
+			// ---- Post Process ----
+			m_postProcess.ressolve(winPtr->getHDRRTVRef(), winPtr->getLDRRTVRef());
 		}
 
 		void Renderer::m_initScene()
@@ -239,6 +243,10 @@ namespace engn {
 #endif // !_WIN64
 
 			m_skyTriangle.init(SKYBOX_TEXTURE_PATH);
+		}
+		void Renderer::m_initPostProcess()
+		{
+			m_postProcess.init();
 		}
 	} // rend
 } // engn

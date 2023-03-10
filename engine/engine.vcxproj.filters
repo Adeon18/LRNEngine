@@ -192,6 +192,9 @@
     <ClInclude Include="render\Graphics\DXRTVs\LDRRenderTarget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\PostProcess\PostProcess.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -290,6 +293,9 @@
     <ClCompile Include="render\Graphics\DXRTVs\LDRRenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Graphics\PostProcess\PostProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\normal\VSBasicColor.hlsl">
@@ -316,6 +322,8 @@
     <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\PSSkyFullscreen.hlsl" />
     <FxCompile Include="render\Graphics\shaders\emission_only\VSEmission.hlsl" />
     <FxCompile Include="render\Graphics\shaders\emission_only\PSEmission.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\post_process\PSPostProcess.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\post_process\VSPostProcess.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />

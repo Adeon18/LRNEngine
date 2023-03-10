@@ -12,8 +12,13 @@
 
 #include "EngineCamera.hpp"
 
+#include "windows/Window.h"
+
+#include "render/Graphics/PostProcess/PostProcess.hpp"
 #include "render/Objects/SkyTriangle/SkyTriangle.hpp"
 #include "DXTextures/Sampler.hpp"
+
+#include "include/config.hpp"
 
 namespace engn {
 	namespace rend {
@@ -29,9 +34,10 @@ namespace engn {
 		/// This class facilitates everything needed for the rendering pipeline
 		/// </summary>
 		class Renderer {
+			inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 		public:
 			void init();
-			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData, const RenderModeFlags& flags);
+			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
 			void m_initScene();
 			//! Initialize the RasterizerState
@@ -50,6 +56,8 @@ namespace engn {
 			void m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 			//! Initialize the skyTriangle
 			void m_initializeSky();
+			//! Initialize the postprocess class
+			void m_initPostProcess();
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
@@ -59,6 +67,7 @@ namespace engn {
 			Sampler m_samplerAnisotropicWrap;
 
 			SkyTriangle m_skyTriangle;
+			PostProcess m_postProcess;
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

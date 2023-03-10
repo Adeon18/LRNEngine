@@ -50,5 +50,11 @@ namespace engn {
 			light::PointLight pointLights[MAX_POINTLIGHT_COUNT];
 			light::SpotLight spotLight;
 		};
+
+		// Cb Struct for the postProcess effect
+		struct CB_PS_HDR {
+			XMFLOAT4 EV100;
+		};
+
 	} // rend
 } // engn

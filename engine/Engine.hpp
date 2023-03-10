@@ -16,13 +16,12 @@
 #include "windows/Window.h"
 #include "render/Graphics/Renderer.hpp"
 
+#include "include/config.hpp"
+
 namespace engn {
 	using namespace DirectX;
 	class Engine
 	{
-		static constexpr int WIN_WIDTH_DEF = 960;
-		static constexpr int WIN_HEIGHT_DEF = 540;
-		inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	public:
 		Engine();
 		//! Reset engine and camera window size for proper dragging
