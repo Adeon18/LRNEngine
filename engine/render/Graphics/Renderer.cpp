@@ -28,7 +28,7 @@ namespace engn {
 		{
 			// ---- Clear the write buffer
 			//winPtr->bindAndClearInitialRTV(BG_COLOR);
-			winPtr->bindAndClearBackbuffer(BG_COLOR);
+			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
 			// ---- Render ----
 			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
@@ -41,6 +41,7 @@ namespace engn {
 			m_skyTriangle.render(camPtr);
 
 			// ---- Post Process ----
+			winPtr->bindAndClearBackbuffer(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef(), winPtr->getLDRRTVRef());
 		}
 

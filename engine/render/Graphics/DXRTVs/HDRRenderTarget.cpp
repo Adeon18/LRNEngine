@@ -43,7 +43,7 @@ namespace engn {
 		{
 			d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), depthStensilView);
 		}
-		void HDRRenderTarget::bindSRV(int slot)
+		void HDRRenderTarget::bindSRV(int slot) const
 		{
 			d3d::s_devcon->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
 		}

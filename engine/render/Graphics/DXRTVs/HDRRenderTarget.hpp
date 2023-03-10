@@ -17,7 +17,7 @@ namespace engn {
 			void OMSetCurrent(ID3D11DepthStencilView *depthStensilView);
 
 			//! Bind the SRV as texture to the current shader with the specified slot
-			void bindSRV(int slot);
+			void bindSRV(int slot) const;
 
 			//! Clear the RTV with the specified color
 			void clear(const FLOAT* color);

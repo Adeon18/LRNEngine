@@ -31,11 +31,17 @@ namespace engn {
 			}
 			// Turn off IL
 			d3d::s_devcon->IASetInputLayout(NULL);
+			// Unbind prev stuff
+
+			src.bindSRV(0);
 
 			// Bind the pipeline
 			bindPipeline(m_pipeline);
 			// Draw call
 			d3d::s_devcon->Draw(3, 0);
+			// Clear the SRV to allow it to be bound next frame
+			ID3D11ShaderResourceView* nullSRV = nullptr;
+			d3d::s_devcon->PSSetShaderResources(0, 1, &nullSRV);
 		}
 	} // rend
 } // engn
