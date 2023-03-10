@@ -17,9 +17,16 @@ namespace engn {
 		private:
 			const std::wstring VS_NAME = L"VSPostProcess.cso";
 			const std::wstring PS_NAME = L"PSPostProcess.cso";
+			static constexpr float EV100_CHANGE_VALUE = 0.5f;
+
+			//! Handles input, which is kinda BAD, and is responsible for dynamically changing the EV100 value for the test
+			void handleEV100Adjustment();
 
 			Pipeline m_pipeline;
 			ConstantBuffer<CB_PS_HDR> m_cbuffer;
+
+			//! EV100 value that can be changed vie +/- keys by 0.5 value
+			float m_ev100Exposure = -1.0f;
 
 			bool m_initialized = false;
 		};

@@ -25,6 +25,8 @@ namespace engn {
 				static constexpr int KEY_V = 0x56;
 				static constexpr int KEY_CTRL = VK_CONTROL;
 				static constexpr int KEY_SPACE = VK_SPACE;
+				static constexpr int KEY_PLUS = VK_OEM_PLUS;
+				static constexpr int KEY_MINUS = VK_OEM_MINUS;
 			};
 		public:
 			//! Constructor chicanery

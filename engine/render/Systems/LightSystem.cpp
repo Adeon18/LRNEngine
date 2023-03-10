@@ -9,25 +9,25 @@ namespace engn {
 		{
 			m_lightBuffer.init();
 		}
-		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color)
+		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color, float intensity)
 		{
 			light::DirectionalLight dLight;
 			dLight.direction = { direction.x, direction.y, direction.z };
 			dLight.ambient = { ambient.x, ambient.y, ambient.z };
 			dLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
 			dLight.specular = { specular.x, specular.y, specular.z };
-			dLight.color = color;
+			dLight.color = color * intensity;
 
 			m_directionalLights.push_back(std::move(dLight));
 		}
-		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color)
+		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity)
 		{
 			light::PointLight pLight;
 			pLight.ambient = { ambient.x, ambient.y, ambient.z };
 			pLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
 			pLight.specular = { specular.x, specular.y, specular.z };
 			pLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			pLight.color = color;
+			pLight.color = color * intensity;
 
 			addPointLight(std::move(pLight), modelToWorld);
 		}
@@ -37,13 +37,13 @@ namespace engn {
 				MeshSystem::getInstance().addEmissionInstance(
 					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
 					{},
-					// We decrease the sphere 5 times to visualize pointlight
-					{ XMMatrixScaling(0.2f, 0.2f, 0.2f) * modelToWorld, {}, pLight.color }
+					// We decrease the sphere 2 times to visualize pointlight
+					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color }
 				)
 			);
 			m_pointLights.push_back(pLight);
 		}
-		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color)
+		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity)
 		{
 			m_spotLight.cutoffAngleInner = { XMScalarCos(XMConvertToRadians(cutoffAngles.x)) };
 			m_spotLight.cutoffAngleOuter = { XMScalarCos(XMConvertToRadians(cutoffAngles.y)) };
@@ -51,7 +51,7 @@ namespace engn {
 			m_spotLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
 			m_spotLight.specular = { specular.x, specular.y, specular.z };
 			m_spotLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			m_spotLight.color = color;
+			m_spotLight.color = color * intensity;
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{

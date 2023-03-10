@@ -1,5 +1,10 @@
 #include "../globals.hlsli"
 
+cbuffer perFrame : register(b0)
+{
+    float4 ev100;
+};
+
 float3 acesHdr2Ldr(float3 hdr)
 {
     float3x3 m1 = float3x3(
@@ -45,7 +50,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
 {
     float3 fragCol = g_texture0.Sample(g_pointWrap, inp.texCoords);
     
-    fragCol = adjustExposure(fragCol, -1.0f);
+    fragCol = adjustExposure(fragCol, ev100.x);
     fragCol = acesHdr2Ldr(fragCol);
     fragCol = correctGamma(fragCol, 2.2f);
     
