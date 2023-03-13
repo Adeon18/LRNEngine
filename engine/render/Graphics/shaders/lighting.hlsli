@@ -3,33 +3,33 @@
 #define MAX_POINTLIGHT_COUNT 10
 #define MAX_DIRLIGHT_COUNT 1
 
-Texture2D g_textureSpotLight : TEXTURE : register(t16);
-
 float remap(float low1, float high1, float low2, float high2, float value)
 {
     return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
 }
 
+Texture2D g_textureSpotLight : TEXTURE : register(t16);
+
+//! For now, material placeholders
+static const float3 g_materialAmbient = float3(0.05f, 0.05f, 0.05f);
+static const float3 g_materialDiffuse = float3(0.8f, 0.8f, 0.8f);
+static const float3 g_materialSpecular = float3(1.0f, 1.0f, 1.0f);
+
 struct DirectionalLight
 {
     float4 direction;
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
     
+    float4 intensity;
     float4 color;
 };
 
 struct PointLight
 {
     float4 position;
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
-    
     // X - constant, Y - linear, Z - quadratic
     float4 distProperties;
     
+    float4 intensity;
     float4 color;
 };
 
@@ -43,13 +43,10 @@ struct SpotLight
     
     float4 cutoffAngle;
     
-    float4 ambient;
-    float4 diffuse;
-    float4 specular;
-    
     // X - constant, Y - linear, Z - quadratic
     float4 distProperties;
     
+    float4 intensity;
     float4 color;
 };
 
@@ -81,11 +78,11 @@ float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 toC
     #endif
     
     // combine results
-    float3 ambient = light.ambient.xyz * inFragTexCol;
-    float3 diffuse = light.diffuse.xyz * diff * inFragTexCol;
-    float3 specular = light.specular.xyz * spec * inFragTexCol;
+    float3 ambient = inFragTexCol * g_materialAmbient;
+    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
+    float3 specular = spec * inFragTexCol * g_materialSpecular;
     // Apply color
-    return light.color.xyz * (ambient + diffuse + specular);
+    return light.intensity.xyz * light.color.xyz * (ambient + diffuse + specular);
 }
 
 // calculates the color when using a point light.
@@ -108,11 +105,11 @@ float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, f
     #endif
     // attenuation
     float distance = length(light.position.xyz - fragWorldPos);
-    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance));
+    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance)) * light.intensity.xyz;
     // combine results
-    float3 ambient = light.ambient.xyz * inFragTexCol;
-    float3 diffuse = light.diffuse.xyz * diff * inFragTexCol;
-    float3 specular = light.specular.xyz * spec * inFragTexCol;
+    float3 ambient = inFragTexCol * g_materialAmbient;
+    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
+    float3 specular = spec * inFragTexCol * g_materialSpecular;
 
     ambient *= attenuation;
     diffuse *= attenuation;
@@ -123,7 +120,6 @@ float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, f
 
 float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
 {
-    
     const float COS_CUTOFF_ANGLE = cos(light.cutoffAngle.x);
     const float TAN_CUTOFF_ANGLE = tan(light.cutoffAngle.x);
     
@@ -145,7 +141,7 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
     
     if (theta < COS_CUTOFF_ANGLE)
     {
-        return light.ambient.xyz * inFragTexCol * flashMask;
+        return g_materialAmbient * inFragTexCol;
     }
         
     // diffuse shading
@@ -160,11 +156,11 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
 #endif
     // attenuation
     float distance = length(light.position.xyz - fragWorldPos);
-    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance));
+    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance)) * light.intensity.xyz;
     // combine results
-    float3 ambient = light.ambient.xyz * inFragTexCol;
-    float3 diffuse = light.diffuse.xyz * diff * inFragTexCol;
-    float3 specular = light.specular.xyz * spec * inFragTexCol;
+    float3 ambient = inFragTexCol * g_materialAmbient;
+    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
+    float3 specular = spec * inFragTexCol * g_materialSpecular;
 
     //! Attenuation is left unaffected by border intensity
     ambient *= attenuation;

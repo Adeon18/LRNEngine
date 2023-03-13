@@ -37,11 +37,11 @@ namespace engn {
 			//! Initialize the LightSystem, should be called in Engine::init()
 			void init();
 			//! Set the directional light parameters
-			void addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color, float intensity = 1.0f);
+			void addDirLight(const XMFLOAT3& direction, const XMFLOAT3& intensity, const XMVECTOR& color);
 			//! Set the pointlight via parameters
-			void addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity = 1.0f);
-			//! Set the lighting settings for a spotlight
-			void setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity = 1.0f);
+			void addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color);
+			//! Set the lighting settings for a spotlight(angle is the entire spotligth "diameter" angle)
+			void setSpotLightSettings(float cutoffAngle, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color);
 			//! Bind the lighting CB, TODO: FOR NOW IS BOUND EVERY FRAME
 			void bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags);
 		private:

@@ -14,24 +14,14 @@ namespace engn {
 		static constexpr XMVECTOR BLUE{ 0.0f, 0.0f, 1.0f, 1.0f };
 		static constexpr XMVECTOR BLACK{ 0.0f, 0.0f, 0.0f, 1.0f };
 
-		//! Ambient - Read as XDX is read as X DOT X as in X.X
-		static constexpr XMFLOAT3 AMBIENT0D05{ 0.05f, 0.05f, 0.05f };
-
-		//! Diffuse - Read as XDX is read as X DOT X as in X.X
-		static constexpr XMFLOAT3 DIFFUSE0D1{ 0.1f, 0.1f, 0.1f };
-		static constexpr XMFLOAT3 DIFFUSE0D2{ 0.2f, 0.2f, 0.2f };
-		static constexpr XMFLOAT3 DIFFUSE0D4{ 0.4f, 0.4f, 0.4f };
-		static constexpr XMFLOAT3 DIFFUSE0D6{ 0.6f, 0.6f, 0.6f };
-		static constexpr XMFLOAT3 DIFFUSE0D8{ 0.8f, 0.8f, 0.8f };
-		static constexpr XMFLOAT3 DIFFUSE1{ 1.0f, 1.0f, 1.0f };
-
-		//! Specular - Read as XDX is read as X DOT X as in X.X
-		static constexpr XMFLOAT3 SPEC0D1{ 0.1f, 0.1f, 0.1f };
-		static constexpr XMFLOAT3 SPEC0D2{ 0.2f, 0.2f, 0.2f };
-		static constexpr XMFLOAT3 SPEC0D4{ 0.4f, 0.4f, 0.4f };
-		static constexpr XMFLOAT3 SPEC0D6{ 0.6f, 0.6f, 0.6f };
-		static constexpr XMFLOAT3 SPEC0D8{ 0.8f, 0.8f, 0.8f };
-		static constexpr XMFLOAT3 SPEC1{ 1.0f, 1.0f, 1.0f };
+		//! Light intensities
+		static constexpr XMFLOAT3 INTENSITY_0P1{ 0.1f, 0.1f, 0.1f };
+		static constexpr XMFLOAT3 INTENSITY_0P5{ 0.5f, 0.5f, 0.5f };
+		static constexpr XMFLOAT3 INTENSITY_DEFAULT{ 1.0f, 1.0f, 1.0f };
+		static constexpr XMFLOAT3 INTENSITY_1P5X{ 1.5f, 1.5f, 1.5f };
+		static constexpr XMFLOAT3 INTENSITY_2X{ 2.0f, 2.0f, 2.0f };
+		static constexpr XMFLOAT3 INTENSITY_2P5X{ 2.5f, 2.5f, 2.5f };
+		static constexpr XMFLOAT3 INTENSITY_3X{ 3.0f, 3.0f, 3.0f };
 
 		//! Basic constant attenuation configs for PointLight
 		static constexpr XMFLOAT3 LIGHT_DIST_7{ 1.0f, 0.7f, 1.8f };
@@ -49,23 +39,19 @@ namespace engn {
 		// Directional light struct(for now, partially constant)
 		struct DirectionalLight {
 			XMVECTOR direction{ 0.0f, 0.0f, 0.0f };
-			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
-			XMVECTOR diffuse{ 0.1f, 0.1f, 0.1f };
-			XMVECTOR specular{ 0.1f, 0.1f, 0.1f };
 
+			XMVECTOR intensity;
 			XMVECTOR color;
 		};
 
 		// Pointlight structs(again, for now, partically constant)
 		struct PointLight {
 			XMVECTOR position{ 0.0f, 0.0f, 0.0f, 1.0f };
-			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
-			XMVECTOR diffuse{ 0.8f, 0.8f, 0.8f };
-			XMVECTOR specular{ 1.0f, 1.0f, 1.0f };
 
 			// Constant, linear, quadratic and padding
 			XMVECTOR distanceCharacteristics;
 
+			XMVECTOR intensity;
 			XMVECTOR color;
 		};
 
@@ -79,13 +65,10 @@ namespace engn {
 			// The XMVECTOR filled with 4 cutoff angle values(inner and outer)
 			XMVECTOR cutoffAngle;
 
-			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
-			XMVECTOR diffuse{ 0.8f, 0.8f, 0.8f };
-			XMVECTOR specular{ 1.0f, 1.0f, 1.0f };
-
 			// Constant, linear, quadratic and padding
 			XMVECTOR distanceCharacteristics;
 
+			XMVECTOR intensity;
 			XMVECTOR color;
 		};
 

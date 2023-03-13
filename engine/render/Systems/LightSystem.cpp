@@ -15,25 +15,21 @@ namespace engn {
 			m_spotLightTexture = tex::TextureManager::getInstance().getTexture(EXE_DIR + SPOTLIGHT_TEXTURE_PATH);
 			m_lightBuffer.init();
 		}
-		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color, float intensity)
+		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& intensity, const XMVECTOR& color)
 		{
 			light::DirectionalLight dLight;
 			dLight.direction = { direction.x, direction.y, direction.z };
-			dLight.ambient = { ambient.x, ambient.y, ambient.z };
-			dLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
-			dLight.specular = { specular.x, specular.y, specular.z };
-			dLight.color = color * intensity;
+			dLight.intensity = { intensity.x, intensity.y, intensity.z };
+			dLight.color = color;
 
 			m_directionalLights.push_back(std::move(dLight));
 		}
-		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity)
+		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color)
 		{
 			light::PointLight pLight;
-			pLight.ambient = { ambient.x, ambient.y, ambient.z };
-			pLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
-			pLight.specular = { specular.x, specular.y, specular.z };
 			pLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			pLight.color = color * intensity;
+			pLight.intensity = { intensity.x, intensity.y, intensity.z };
+			pLight.color = color;
 
 			addPointLight(std::move(pLight), modelToWorld);
 		}
@@ -49,14 +45,13 @@ namespace engn {
 			);
 			m_pointLights.push_back(pLight);
 		}
-		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity)
+		void LightSystem::setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color)
 		{
-			m_spotLight.cutoffAngle = { XMConvertToRadians(15.0f), XMConvertToRadians(15.0f), XMConvertToRadians(15.0f), XMConvertToRadians(15.0f) };
-			m_spotLight.ambient = { ambient.x, ambient.y, ambient.z };
-			m_spotLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
-			m_spotLight.specular = { specular.x, specular.y, specular.z };
+			float angRad = XMConvertToRadians(cutoffAngleDeg);
+			m_spotLight.cutoffAngle = { angRad, angRad, angRad, angRad };
 			m_spotLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			m_spotLight.color = color * intensity;
+			m_spotLight.intensity = { intensity.x, intensity.y, intensity.z };
+			m_spotLight.color = color;
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{
