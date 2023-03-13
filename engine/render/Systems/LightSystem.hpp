@@ -19,10 +19,10 @@ namespace engn {
 			const std::string EXE_DIR = util::getExeDir();
 #ifdef _WIN64 
 			const std::string SPHERE_MODEL_PATH = "../../assets/Models/Sphere/sphere.fbx";
-			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\..\\assets\\Textures\\SpotLightMasks\\flashlight.dds";
+			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\..\\assets\\Textures\\SpotLightMasks\\flashlight2.dds";
 
 #else
-			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\assets\\Textures\\SpotLightMasks\\flashlight.dds";
+			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\assets\\Textures\\SpotLightMasks\\flashlight2.dds";
 			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
 #endif // !_WIN64
 		public:
