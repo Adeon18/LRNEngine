@@ -1,12 +1,18 @@
+#include <string>
+
 #include "LightSystem.hpp"
 
 #include "render/Systems/MeshSystem.hpp"
+#include "utils/TextureManager/TextureManager.hpp"
 #include "utils/ModelManager/ModelManager.hpp"
 
 namespace engn {
 	namespace rend {
 		void LightSystem::init()
 		{
+			tex::TextureManager::getInstance().loadTextureDDS(EXE_DIR + SPOTLIGHT_TEXTURE_PATH);
+
+			m_spotLightTexture = tex::TextureManager::getInstance().getTexture(EXE_DIR + SPOTLIGHT_TEXTURE_PATH);
 			m_lightBuffer.init();
 		}
 		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMVECTOR& color, float intensity)
@@ -45,8 +51,7 @@ namespace engn {
 		}
 		void LightSystem::setSpotLightSettings(const XMFLOAT2& cutoffAngles, const XMFLOAT3& ambient, const XMFLOAT3& diffuse, const XMFLOAT3& specular, const XMFLOAT3& distParams, const XMVECTOR& color, float intensity)
 		{
-			m_spotLight.cutoffAngleInner = { XMScalarCos(XMConvertToRadians(cutoffAngles.x)) };
-			m_spotLight.cutoffAngleOuter = { XMScalarCos(XMConvertToRadians(cutoffAngles.y)) };
+			m_spotLight.cutoffAngle = { XMConvertToRadians(15.0f), XMConvertToRadians(15.0f), XMConvertToRadians(15.0f), XMConvertToRadians(15.0f) };
 			m_spotLight.ambient = { ambient.x, ambient.y, ambient.z };
 			m_spotLight.diffuse = { diffuse.x, diffuse.y, diffuse.z };
 			m_spotLight.specular = { specular.x, specular.y, specular.z };
@@ -84,7 +89,24 @@ namespace engn {
 		{
 			// TODO: For now set every frame at bind
 			m_spotLight.position = position;
-			m_spotLight.direction = direction;
+			m_spotLight.direction = XMVectorSetW(direction, 0.0f);;
+
+			const XMVECTOR UP{ 0.0f, 1.0f, 0.0f };
+
+			XMVECTOR right = XMVector3Normalize(XMVector3Cross(UP, m_spotLight.direction));
+			XMVECTOR top = XMVector3Normalize(XMVector3Cross(m_spotLight.direction, right));
+
+			XMMATRIX modelToWorld;
+			modelToWorld.r[0] = right;
+			modelToWorld.r[1] = top;
+			modelToWorld.r[2] = m_spotLight.direction;
+			modelToWorld.r[3] = position;
+
+			m_spotLight.modelToWorld = XMMatrixTranspose(modelToWorld);
+			m_spotLight.modelToWorldInv = XMMatrixTranspose(XMMatrixInverse(nullptr, modelToWorld));
+
+			// Bind the texture
+			d3d::s_devcon->PSSetShaderResources(16, 1, m_spotLightTexture->textureView.GetAddressOf());
 		}
 	} // rend
 } // engn

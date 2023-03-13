@@ -53,7 +53,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outCol += calculatePointLight(pointLights[i], inp.worldNorm, inp.worldPos, camDir, colFromTex);
     }
     
-    outCol += calculateSpotLight(spotLight, inp.worldNorm, inp.worldPos, camDir, colFromTex);
+    outCol += calculateSpotLight(spotLight, inp.worldNorm, inp.worldPos, camDir, colFromTex /* Probably multiply by Color from texture */);
     
     return float4(pow(outCol, 2.2f), 1.0f);
 #endif

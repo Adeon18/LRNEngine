@@ -72,9 +72,12 @@ namespace engn {
 		struct SpotLight {
 			XMVECTOR position;
 			XMVECTOR direction;
-			// The 2 XMVECTOR filled with 4 cutoff angle values(inner and outer)
-			XMVECTOR cutoffAngleInner;
-			XMVECTOR cutoffAngleOuter;
+
+			XMMATRIX modelToWorld;
+			XMMATRIX modelToWorldInv;
+
+			// The XMVECTOR filled with 4 cutoff angle values(inner and outer)
+			XMVECTOR cutoffAngle;
 
 			XMVECTOR ambient{ 0.05f, 0.05f, 0.05f };
 			XMVECTOR diffuse{ 0.8f, 0.8f, 0.8f };

@@ -10,6 +10,8 @@
 
 #include "render/Systems/LightStructs.hpp"
 
+#include "render/Objects/Texture.hpp"
+
 namespace engn {
 	namespace rend {
 		class LightSystem {
@@ -17,7 +19,10 @@ namespace engn {
 			const std::string EXE_DIR = util::getExeDir();
 #ifdef _WIN64 
 			const std::string SPHERE_MODEL_PATH = "../../assets/Models/Sphere/sphere.fbx";
+			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\..\\assets\\Textures\\SpotLightMasks\\flashlight.dds";
+
 #else
+			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\assets\\Textures\\SpotLightMasks\\flashlight.dds";
 			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
 #endif // !_WIN64
 		public:
@@ -53,6 +58,7 @@ namespace engn {
 			// This light can be bound to player camera
 			light::SpotLight m_spotLight;
 
+			std::shared_ptr<tex::Texture> m_spotLightTexture;
 			ConstantBuffer<CB_PS_LightEmitters> m_lightBuffer;
 		};
 	} // rend

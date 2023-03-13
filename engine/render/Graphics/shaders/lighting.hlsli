@@ -1,5 +1,14 @@
+#include "globals.hlsli"
+
 #define MAX_POINTLIGHT_COUNT 10
 #define MAX_DIRLIGHT_COUNT 1
+
+Texture2D g_textureSpotLight : TEXTURE : register(t16);
+
+float remap(float low1, float high1, float low2, float high2, float value)
+{
+    return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+}
 
 struct DirectionalLight
 {
@@ -28,8 +37,11 @@ struct SpotLight
 {
     float4 position;
     float4 direction;
-    float4 cutoffAngleInnerCos;
-    float4 cutoffAngleOuterCos;
+    
+    float4x4 modelToWorld;
+    float4x4 modelToWorldInv;
+    
+    float4 cutoffAngle;
     
     float4 ambient;
     float4 diffuse;
@@ -111,16 +123,31 @@ float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, f
 
 float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
 {
+    
+    const float COS_CUTOFF_ANGLE = cos(light.cutoffAngle.x);
+    const float TAN_CUTOFF_ANGLE = tan(light.cutoffAngle.x);
+    
+    float3 fragPosModelLight = mul(float4(fragWorldPos, 1.0f), light.modelToWorldInv);
+
+    float spotLightRadius = fragPosModelLight.z * TAN_CUTOFF_ANGLE;
+    
+    float u = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.x);
+    float v = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.y);
+
+    float3 flashMask = g_textureSpotLight.Sample(g_linearWrap, float2(u, v));
+    
     float constant = light.distProperties.x;
     float lin = light.distProperties.y;
     float quadratic = light.distProperties.z;
     
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
     float theta = dot(lightDir, -light.direction.xyz);
-    float epsilon = light.cutoffAngleInnerCos - light.cutoffAngleOuterCos;
     
-    float borderIntensity = clamp((theta - light.cutoffAngleOuterCos.x) / epsilon, 0.0f, 1.0f);
-    
+    if (theta < COS_CUTOFF_ANGLE)
+    {
+        return light.ambient.xyz * inFragTexCol * flashMask;
+    }
+        
     // diffuse shading
     float diff = max(dot(norm, lightDir), 0.0001);
     // specular shading
@@ -141,8 +168,8 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
 
     //! Attenuation is left unaffected by border intensity
     ambient *= attenuation;
-    diffuse *= attenuation * borderIntensity;
-    specular *= attenuation * borderIntensity;
+    diffuse *= attenuation;
+    specular *= attenuation;
     // Apply color
-    return light.color.xyz * (ambient + diffuse + specular);
+    return flashMask * (ambient + diffuse + specular);
 }
