@@ -1,19 +1,21 @@
 #include "globals.hlsli"
+#include "utility.hlsli"
 
-#define MAX_POINTLIGHT_COUNT 10
-#define MAX_DIRLIGHT_COUNT 1
+static const int MAX_POINTLIGHT_COUNT = 10;
+static const int MAX_DIRLIGHT_COUNT = 1;
 
-float remap(float low1, float high1, float low2, float high2, float value)
-{
-    return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
-}
+static const float MIN_LIGHT_INTENCITY = 0.0001f;
 
 Texture2D g_textureSpotLight : TEXTURE : register(t16);
 
-//! For now, material placeholders
-static const float3 g_materialAmbient = float3(0.05f, 0.05f, 0.05f);
-static const float3 g_materialDiffuse = float3(0.8f, 0.8f, 0.8f);
-static const float3 g_materialSpecular = float3(1.0f, 1.0f, 1.0f);
+struct Material
+{
+    float3 ambient;
+    float3 diffuse;
+    float3 specular;
+
+    float shininess;
+};
 
 struct DirectionalLight
 {
@@ -63,63 +65,67 @@ cbuffer perFrameLight : register(b1)
 
 #define BLINN 1
 
-float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 toCam, float3 inFragTexCol)
+float getDiffuseComponent(float3 lightDirection, float3 norm)
+{
+    return max(dot(norm, lightDirection), MIN_LIGHT_INTENCITY);
+}
+
+float getSpecularComponent(float3 lightDirection, float3 norm, float3 toCam, float3 shininess)
+{
+#if BLINN == 1
+    float3 halfwayDir = normalize(lightDirection + toCam);
+    return pow(max(dot(norm, halfwayDir), MIN_LIGHT_INTENCITY), shininess);
+#else
+    float3 reflectDir = reflect(-lightDirection, norm);
+    return pow(max(dot(toCam, reflectDir), MIN_LIGHT_INTENCITY), shininess);
+#endif
+}
+
+//! Get the attenuation based on the components and the distance
+float getAttenuation(float constantC, float linearC, float quadraticC, float distance)
+{
+    return 1.0 / (constantC + linearC * distance + quadraticC * (distance * distance));
+}
+
+float3 calculateDirectionalLight(DirectionalLight light, Material mat, float3 norm, float3 toCam, float3 inFragTexCol)
 {
     float3 lightDir = normalize(-light.direction.xyz);
-    // diffuse shading
-    float diff = max(dot(norm, lightDir), 0.0001);
-    // specular shading
-    #if BLINN == 1
-        float3 halfwayDir = normalize(lightDir + toCam);
-        float spec = pow(max(dot(norm, halfwayDir), 0.0), 32.0f);
-    #else
-        float3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(toCam, reflectDir), 0.0001), 16.0f);
-    #endif
+    
+    float3 diff = getDiffuseComponent(lightDir, norm);
+    float spec = getSpecularComponent(lightDir, norm, toCam, mat.shininess);
     
     // combine results
-    float3 ambient = inFragTexCol * g_materialAmbient;
-    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
-    float3 specular = spec * inFragTexCol * g_materialSpecular;
-    // Apply color
-    return light.intensity.xyz * light.color.xyz * (ambient + diffuse + specular);
+    float3 ambient = mat.ambient;
+    float3 diffuse = diff * mat.diffuse;
+    float3 specular = spec * mat.specular;
+    // Apply light color, intensity and surface color
+    return inFragTexCol * light.intensity.xyz * light.color.xyz * (ambient + diffuse + specular);
 }
 
 // calculates the color when using a point light.
-float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
-{
-    float constant = light.distProperties.x;
-    float lin = light.distProperties.y;
-    float quadratic = light.distProperties.z;
-    
+float3 calculatePointLight(PointLight light, Material mat, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
+{    
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
     // diffuse shading
-    float diff = max(dot(norm, lightDir), 0.0001);
+    float diff = getDiffuseComponent(lightDir, norm);
     // specular shading
-    #if BLINN == 1
-        float3 halfwayDir = normalize(lightDir + toCam);
-        float spec = pow(max(dot(norm, halfwayDir), 0.0001), 32.0f);
-    #else
-        float3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(toCam, reflectDir), 0.0001), 16.0f);
-    #endif
+    float spec = getSpecularComponent(lightDir, norm, toCam, mat.shininess);
     // attenuation
     float distance = length(light.position.xyz - fragWorldPos);
-    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance)) * light.intensity.xyz;
+    float lightIntencity = getAttenuation(light.distProperties.x, light.distProperties.y, light.distProperties.z, distance) * light.intensity.xyz;
+    
     // combine results
-    float3 ambient = inFragTexCol * g_materialAmbient;
-    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
-    float3 specular = spec * inFragTexCol * g_materialSpecular;
+    float3 ambient = mat.ambient;
+    float3 diffuse = diff * lightIntencity * mat.diffuse;
+    float3 specular = spec * lightIntencity * mat.specular;
 
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
-    // Apply color
-    return light.color.xyz * (ambient + diffuse + specular);
+    // Apply light color and surface color
+    return inFragTexCol * light.color.xyz * (ambient + diffuse + specular);
 }
 
-float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
+float3 calculateSpotLight(SpotLight light, Material mat, float3 norm, float3 fragWorldPos, float3 toCam, float3 inFragTexCol)
 {
+    //! Get the spotlight texture color
     const float COS_CUTOFF_ANGLE = cos(light.cutoffAngle.x);
     const float TAN_CUTOFF_ANGLE = tan(light.cutoffAngle.x);
     
@@ -132,40 +138,27 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
 
     float3 flashMask = g_textureSpotLight.Sample(g_linearWrap, float2(u, v));
     
-    float constant = light.distProperties.x;
-    float lin = light.distProperties.y;
-    float quadratic = light.distProperties.z;
-    
+    //! Lighting calculations
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
     float theta = dot(lightDir, -light.direction.xyz);
     
     if (theta < COS_CUTOFF_ANGLE)
     {
-        return g_materialAmbient * inFragTexCol;
+        return mat.ambient * inFragTexCol;
     }
         
     // diffuse shading
-    float diff = max(dot(norm, lightDir), 0.0001);
+    float diff = getDiffuseComponent(lightDir, norm);
     // specular shading
-#if BLINN == 1
-    float3 halfwayDir = normalize(lightDir + toCam);
-    float spec = pow(max(dot(norm, halfwayDir), 0.0001), 32.0f);
-#else
-    float3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(toCam, reflectDir), 0.0001), 16.0f);
-#endif
+    float spec = getSpecularComponent(lightDir, norm, toCam, mat.shininess);
     // attenuation
     float distance = length(light.position.xyz - fragWorldPos);
-    float attenuation = 1.0 / (constant + lin * distance + quadratic * (distance * distance)) * light.intensity.xyz;
+    float lightIntensity = getAttenuation(light.distProperties.x, light.distProperties.y, light.distProperties.z, distance) * light.intensity.xyz;
     // combine results
-    float3 ambient = inFragTexCol * g_materialAmbient;
-    float3 diffuse = diff * inFragTexCol * g_materialDiffuse;
-    float3 specular = spec * inFragTexCol * g_materialSpecular;
+    float3 ambient = mat.ambient;
+    float3 diffuse = diff * lightIntensity * mat.diffuse;
+    float3 specular = spec * lightIntensity * mat.specular;
 
-    //! Attenuation is left unaffected by border intensity
-    ambient *= attenuation;
-    diffuse *= attenuation;
-    specular *= attenuation;
-    // Apply color
-    return flashMask * (ambient + diffuse + specular);
+    // Apply mask color and the input texture color
+    return inFragTexCol * flashMask * (ambient + diffuse + specular);
 }

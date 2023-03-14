@@ -332,5 +332,6 @@
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\globals.hlsli" />
     <None Include="render\Graphics\shaders\lighting.hlsli" />
+    <None Include="render\Graphics\shaders\utility.hlsli" />
   </ItemGroup>
 </Project>
