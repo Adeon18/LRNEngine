@@ -40,7 +40,7 @@ namespace engn {
 					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
 					{},
 					// We decrease the sphere 2 times to visualize pointlight
-					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color }
+					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color * 5 }
 				)
 			);
 			m_pointLights.push_back(pLight);
@@ -78,15 +78,16 @@ namespace engn {
 
 			m_lightBuffer.fill();
 
-			d3d::s_devcon->PSSetConstantBuffers(1, 1, m_lightBuffer.getBufferAddress());
+			d3d::s_devcon->PSSetConstantBuffers(LIGHT_BUFFER_SLOT, 1, m_lightBuffer.getBufferAddress());
 		}
 		void LightSystem::bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction)
 		{
-			// TODO: For now set every frame at bind
+			if (XMVector3Equal(position, m_spotLight.position) && XMVector3Equal(direction, m_spotLight.direction)) { return;  }
+			
 			m_spotLight.position = position;
 			m_spotLight.direction = XMVectorSetW(direction, 0.0f);;
 
-			const XMVECTOR UP{ 0.0f, 1.0f, 0.0f };
+			static constexpr XMVECTOR UP{ 0.0f, 1.0f, 0.0f };
 
 			XMVECTOR right = XMVector3Normalize(XMVector3Cross(UP, m_spotLight.direction));
 			XMVECTOR top = XMVector3Normalize(XMVector3Cross(m_spotLight.direction, right));
@@ -101,7 +102,7 @@ namespace engn {
 			m_spotLight.modelToWorldInv = XMMatrixTranspose(XMMatrixInverse(nullptr, modelToWorld));
 
 			// Bind the texture
-			d3d::s_devcon->PSSetShaderResources(16, 1, m_spotLightTexture->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(SPOTLIGHT_TEXTURE_SLOT, 1, m_spotLightTexture->textureView.GetAddressOf());
 		}
 	} // rend
 } // engn
