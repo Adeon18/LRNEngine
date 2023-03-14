@@ -86,7 +86,7 @@ namespace engn {
 			);*/
 
 			LightSystem::getInstance().setSpotLightSettings(
-				17.0f, light::INTENSITY_DEFAULT, light::LIGHT_DIST_50, light::WHITE
+				17.0f, light::INTENSITY_1P5X, light::LIGHT_DIST_50, light::WHITE
 			);
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
