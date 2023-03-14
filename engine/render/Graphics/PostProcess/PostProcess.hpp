@@ -12,12 +12,12 @@ namespace engn {
 			//! Initialize all the postprocess structs for the first time, should be done in a class that owns it
 			void init();
 
-			//! Ressolve the HDR buffer into the LDR buffer using a postprocess effect
-			void ressolve(const HDRRenderTarget& src, const LDRRenderTarget& dest);
+			//! Ressolve the HDR buffer into the CURRENTLY BOUND buffer
+			void ressolve(const HDRRenderTarget& src);
 		private:
 			const std::wstring VS_NAME = L"VSPostProcess.cso";
 			const std::wstring PS_NAME = L"PSPostProcess.cso";
-			static constexpr float EV100_CHANGE_VALUE = 0.5f;
+			static constexpr float EV100_CHANGE_VALUE = 0.2f;
 
 			//! Handles input, which is kinda BAD, and is responsible for dynamically changing the EV100 value for the test
 			void handleEV100Adjustment();

@@ -27,22 +27,22 @@ namespace engn {
 
 			m_initialized = true;
 		}
-		void PostProcess::ressolve(const HDRRenderTarget& src, const LDRRenderTarget& dest)
+		void PostProcess::ressolve(const HDRRenderTarget& src)
 		{
 			if (!m_initialized) {
 				Logger::instance().logWarn("SkyTriangle::The texture for a TextureCube is not bound");
 				return;
 			}
+			// Check if EV100 was changed
 			handleEV100Adjustment();
 
 			// Turn off IL
 			d3d::s_devcon->IASetInputLayout(NULL);
-			// Unbind prev stuff
 
+			// Handle textures and buffers
 			src.bindSRV(0);
 			m_cbuffer.getData().EV100 = { m_ev100Exposure, m_ev100Exposure, m_ev100Exposure, m_ev100Exposure };
 			m_cbuffer.fill();
-
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_cbuffer.getBufferAddress());
 
 			// Bind the pipeline

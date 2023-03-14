@@ -40,7 +40,7 @@ namespace engn {
 					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
 					{},
 					// We decrease the sphere 2 times to visualize pointlight
-					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color * 5 }
+					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color }
 				)
 			);
 			m_pointLights.push_back(pLight);

@@ -42,7 +42,7 @@ namespace engn {
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
-			m_postProcess.ressolve(winPtr->getHDRRTVRef(), winPtr->getLDRRTVRef());
+			m_postProcess.ressolve(winPtr->getHDRRTVRef());
 		}
 
 		void Renderer::m_initScene()
@@ -81,9 +81,9 @@ namespace engn {
 			LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::INTENSITY_DEFAULT, light::LIGHT_DIST_50, light::WHITE
 			);
-			/*LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(0.0f, 5.0f, 7.0f), light::AMBIENT0D05, light::DIFFUSE0D8, light::SPEC1, light::LIGHT_DIST_50, light::WHITE
-			);*/
+			LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::INTENSITY_2X, light::LIGHT_DIST_20, light::RED
+			);
 
 			LightSystem::getInstance().setSpotLightSettings(
 				17.0f, light::INTENSITY_1P5X, light::LIGHT_DIST_50, light::WHITE
