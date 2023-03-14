@@ -15,6 +15,7 @@ namespace engn {
 		static constexpr XMVECTOR BLACK{ 0.0f, 0.0f, 0.0f, 1.0f };
 
 		//! Light intensities
+		static constexpr XMFLOAT3 INTENSITY_0P05{ 0.05f, 0.05f, 0.05f };
 		static constexpr XMFLOAT3 INTENSITY_0P1{ 0.1f, 0.1f, 0.1f };
 		static constexpr XMFLOAT3 INTENSITY_0P5{ 0.5f, 0.5f, 0.5f };
 		static constexpr XMFLOAT3 INTENSITY_DEFAULT{ 1.0f, 1.0f, 1.0f };

@@ -55,3 +55,23 @@ Additions:
 - Added debug face normal visualization, press `N`
 - Added wireframe visualization, press `F`
 - Rewrote the pipeline system
+
+## HW6: Textures and stuff
+How to run:
+- Same as previous HW
+- Added full texture support
+- Added cubes to scene with 2 different textures
+- Added a skybox using a fullscreen triangle technique
+
+## HW7
+- Added lighting and 3 different casters(directional, point and spot lights)
+- The pointlight are visualized by spheres that can be dragged(better to take sphere by the bottom, cuz dragging lags a bit othervise)
+- The spotlight has a texture mask and can be deattached from camera by pressing `F`. The wireframe visualization moved to `H`.
+- All the lights support different colors and intensities.
+- I render the scene in the HDR backbuffer now.
+- Added PostProcess with:
+	- EV100 Exposure control(Adjust value via `+/-` keys)
+	- Aces Tonemapping
+	- Gamma correction that defaults to `2.2`
+- The scene consists of: directional light and flashlight, 2 white pointlighs with distance 50 and
+default intensity and 1 pointlight with distance 20 and twice the intensity.
