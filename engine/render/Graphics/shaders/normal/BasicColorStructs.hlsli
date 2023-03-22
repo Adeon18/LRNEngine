@@ -1,19 +1,10 @@
-cbuffer perFrame : register(b0)
-{
-    float4x4 worldToClip;
-    float4x4 worldToClipInv;
-    float4 iResolution;
-    float4 iCameraPosition;
-    float iTime;
-};
-
 struct VS_INPUT
 {
     float3 inPos : POSITION;
     float3 inNorm : NORMAL;
     float3 inTangent : TANGENT;
     float3 inBiTangent : BITANGENT;
-    float3 inTC : TEXCOORD;
+    float2 inTC : TEXCOORD;
     float4 modelToWorld0 : MODEL2WORLD0;
     float4 modelToWorld1 : MODEL2WORLD1;
     float4 modelToWorld2 : MODEL2WORLD2;
@@ -25,16 +16,12 @@ struct VS_INPUT
     float4 color : COLOR;
 };
 
-struct VS_OUTPUT
-{
-    float3 worldPos : POS;
-    float3 worldNorm : NORM;
-    float3 worldTan : TANGENT;
-    float3 worldBiTan : BITANGENT;
-};
-
-struct GS_OUTPUT
+struct PS_INPUT
 {
     float4 outPos : SV_POSITION;
+    float3 worldPos : POS;
+    float3 worldNorm : NORM;
+    float2 outTexCoord : TEXCOORD;
     float4 outCol : COLOR;
+    float3x3 TBN : TBN;
 };

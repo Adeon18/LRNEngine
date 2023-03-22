@@ -333,5 +333,6 @@
     <None Include="render\Graphics\shaders\globals.hlsli" />
     <None Include="render\Graphics\shaders\lighting.hlsli" />
     <None Include="render\Graphics\shaders\utility.hlsli" />
+    <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
   </ItemGroup>
 </Project>

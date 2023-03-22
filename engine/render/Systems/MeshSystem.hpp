@@ -157,7 +157,7 @@ namespace engn {
 						for (auto& perMesh : perModel.perMesh) {
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
-								if (perMaterial.material == mtrl || !mtrl.texPtr.get()) {
+								if (perMaterial.material == mtrl || mtrl.empty()) {
 									perMaterial.instances.push_back({ inc.color, newInstanceIdx });
 									modelIsAdded.addedAsInstance = true;
 								}
@@ -188,12 +188,14 @@ namespace engn {
 					//! If we have textures in model and texture is not explicitly specified, use model textures
 					if (mesh.texturePaths.size() > 0) {
 						// TODO: Has a bug that puts only last texture as acrive in case of multiple textures per mesh
-						for (auto& texPath : mesh.texturePaths) {
-							PerMaterial perMat;
-							perMat.material = { tex::TextureManager::getInstance().getTexture(texPath) };
-							perMat.instances.push_back({ inc.color, newInstanceIdx });
-							perMesh.push_back(perMat);
-						}
+						PerMaterial perMat;
+						perMat.material = {
+							// TODO: CHANGE
+							tex::TextureManager::getInstance().getTexture(mesh.texturePaths[0]),
+							(mesh.texturePaths.size() > 1) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[1]): nullptr,
+						};
+						perMat.instances.push_back({ inc.color, newInstanceIdx });
+						perMesh.push_back(perMat);
 					}
 					else {
 						PerMaterial perMat;
@@ -298,7 +300,8 @@ namespace engn {
 							// materialData.update(...); // we don't have it in HW4
 
 							// ... bind each material texture, we don't have it in HW4
-							if (material.texPtr) d3d::s_devcon->PSSetShaderResources(0, 1, material.texPtr->textureView.GetAddressOf());
+							if (material.ambientTex) d3d::s_devcon->PSSetShaderResources(0, 1, material.ambientTex->textureView.GetAddressOf());
+							if (material.normalMap) d3d::s_devcon->PSSetShaderResources(1, 1, material.normalMap->textureView.GetAddressOf());
 
 							uint32_t numInstances = uint32_t(perMaterial.instances.size());
 							d3d::s_devcon->DrawIndexedInstanced(meshRange.indexNum, numInstances, meshRange.indexOffset, meshRange.vertexOffset, renderedInstances);

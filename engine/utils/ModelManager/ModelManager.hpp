@@ -64,7 +64,7 @@ namespace engn {
 				aiTextureType_DISPLACEMENT,
 				aiTextureType_LIGHTMAP,
 				aiTextureType_REFLECTION,
-				aiTextureType_UNKNOWN
+				aiTextureType_UNKNOWN,
 			};
 		};
 	} // mdl

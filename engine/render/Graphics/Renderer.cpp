@@ -56,8 +56,11 @@ namespace engn {
 			const std::string TOWER_MODEL_PATH = "../../assets/Models/EastTower/EastTower.fbx";
 			const std::string MAXWELL_MODEL_PATH = "../../assets/Models/Maxwell/source/Maxwell.fbx";
 
-			const std::string BRICK_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds";
+			const std::string BRICK_TEXTURE_PATH = "..\\..\\assets\\Textures\\BrickWall\\blank.dds";
+			const std::string BRICK_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\BrickWall\\Stone_NORM.dds";
 			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
+			const std::string STONE_TEXTURE_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
+			const std::string STONE_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
@@ -68,6 +71,8 @@ namespace engn {
 
 			const std::string BRICK_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds";
 			const std::string CRATE_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Crate\\crate.dds";
+			const std::string STONE_TEXTURE_PATH = "..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
+			const std::string STONE_NORMAL_MAP_PATH = "..\\assets\\Textures\\Stone\\Stone_NORM.dds";
 #endif // !_WIN64
 
 			const std::string EXE_DIR = util::getExeDir();
@@ -100,7 +105,10 @@ namespace engn {
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
-				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH) },
+				{
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_TEXTURE_PATH),
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_NORMAL_MAP_PATH)
+				},
 				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
@@ -132,7 +140,10 @@ namespace engn {
 			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
-				{ tex::TextureManager::getInstance().getTexture(util::getExeDir() + CRATE_TEXTURE_PATH) },
+				{
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH),
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_NORMAL_MAP_PATH)
+				},
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 

@@ -1,6 +1,8 @@
 #include "../globals.hlsli"
 #include "../lighting.hlsli"
 
+#include "BasicColorStructs.hlsli"
+
 cbuffer perFrame : register(b0)
 {
     float4 iResolution;
@@ -9,16 +11,17 @@ cbuffer perFrame : register(b0)
 };
 
 
-struct PS_INPUT
-{
-    float4 outPos : SV_POSITION;
-    float3 worldPos : POS;
-    float4 outCol : COLOR;
-    float3 worldNorm : NORM;
-    float2 outTexCoord : TEXCOORD;
-};
-
 Texture2D g_texture0 : TEXTURE : register(t0);
+Texture2D g_texture1 : TEXTURE : register(t1);
+
+float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
+{
+    float3 normFromTex = g_texture1.Sample(g_linearWrap, texCoords).xyz;
+    normFromTex = normFromTex * 2.0f - 1.0f;
+    normFromTex = normalize(mul(normFromTex, TBN));
+    
+    return normFromTex;
+}
 
 #define DEBUG 0
 #define MODE 1
@@ -46,20 +49,23 @@ float4 main(PS_INPUT inp) : SV_TARGET
     float3 colFromTex = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
 #endif
     
+    float3 fragNorm = getNormalFromTexture(inp.outTexCoord, inp.TBN);
+    //float3 fragNorm = inp.worldNorm;
+    
     float3 outCol = float3(0.0f, 0.0f, 0.0f);
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        outCol += calculateDirectionalLight(directLights[i], placeHolderMaterial, inp.worldNorm, camDir, colFromTex);
+        outCol += calculateDirectionalLight(directLights[i], placeHolderMaterial, fragNorm, camDir, colFromTex);
     }
     
     
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        outCol += calculatePointLight(pointLights[i], placeHolderMaterial, inp.worldNorm, inp.worldPos, camDir, colFromTex);
+        outCol += calculatePointLight(pointLights[i], placeHolderMaterial, fragNorm, inp.worldPos, camDir, colFromTex);
     }
     
-    outCol += calculateSpotLight(spotLight, placeHolderMaterial, inp.worldNorm, inp.worldPos, camDir, colFromTex);
+    outCol += calculateSpotLight(spotLight, placeHolderMaterial, fragNorm, inp.worldPos, camDir, colFromTex);
     
     return float4(outCol, 1.0f);
 #endif

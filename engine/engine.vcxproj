@@ -439,6 +439,7 @@
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
     <None Include="render\Graphics\shaders\lighting.hlsli" />
+    <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
     <None Include="render\Graphics\shaders\utility.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />

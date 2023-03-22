@@ -16,11 +16,14 @@ namespace engn {
 		};
 
 		struct Material {
-			std::shared_ptr<tex::Texture> texPtr = nullptr;
+			std::shared_ptr<tex::Texture> ambientTex = nullptr;
+			std::shared_ptr<tex::Texture> normalMap = nullptr;
 
 			bool operator==(const Material& other) {
-				return texPtr == other.texPtr;
+				return ambientTex == other.ambientTex && normalMap == other.normalMap;
 			}
+
+			bool empty() const { return !ambientTex.get() && !normalMap.get(); }
 		};
 	} // rend
 } // engn

@@ -321,6 +321,7 @@ namespace engn {
 
 			// Load the textures
 			loadTextures(assimpScene, modelPtr, aiTextureType_DIFFUSE, filename);
+			loadTextures(assimpScene, modelPtr, aiTextureType_NORMALS, filename);
 
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)
 			{
@@ -362,7 +363,7 @@ namespace engn {
 
 				for (uint32_t t = 0; t < textureCount; ++t) {
 					aiString path;
-					material->GetTexture(textureType, t, &path, NULL, NULL, NULL, NULL, NULL);
+					material->GetTexture(textureType, t, &path);
 					std::string fullTexturePath = util::getDirectoryFromPath(filename) + util::changeFileExt(path.C_Str(), ".dds");
 					// Load texture by full path and save the full path
 					tex::TextureManager::getInstance().loadTextureDDS(fullTexturePath);
@@ -379,10 +380,10 @@ namespace engn {
 				aiMaterial* material = pScene->mMaterials[pMesh->mMaterialIndex];
 				for (auto texType : TEXTURE_TYPES) {
 					uint32_t textureCount = material->GetTextureCount(texType);
-					std::cout << "Type: " << aiTextureTypeToString(texType) << std::endl;
+					std::cout << "Type: " << aiTextureTypeToString(texType) << " : Count : " << textureCount << std::endl;
 					for (uint32_t t = 0; t < textureCount; ++t) {
 						aiString path;
-						material->GetTexture(texType, t, &path, NULL, NULL, NULL, NULL, NULL);
+						material->GetTexture(texType, t, &path);
 						std::cout << "path: " << path.C_Str() << std::endl;
 					}
 				}
