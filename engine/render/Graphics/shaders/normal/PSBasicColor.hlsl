@@ -10,13 +10,22 @@ cbuffer perFrame : register(b0)
     float iTime;
 };
 
+cbuffer perMaterialc : register(b1)
+{
+    bool isDiffuseBound;
+    bool isNormalMapBound;
+    bool isRoughnessBound;
+    bool isMetallicBound;
+}
 
-Texture2D g_texture0 : TEXTURE : register(t0);
-Texture2D g_texture1 : TEXTURE : register(t1);
+Texture2D g_textureDiffuse : TEXTURE : register(t0);
+Texture2D g_textureNormalMap : TEXTURE : register(t1);
+Texture2D g_textureRoughness : TEXTURE : register(t2);
+Texture2D g_textureMetallic : TEXTURE : register(t3);
 
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {
-    float3 normFromTex = g_texture1.Sample(g_linearWrap, texCoords).xyz;
+    float3 normFromTex = g_textureNormalMap.Sample(g_linearWrap, texCoords).xyz;
     normFromTex = normFromTex * 2.0f - 1.0f;
     normFromTex = normalize(mul(normFromTex, TBN));
     
@@ -44,13 +53,12 @@ float4 main(PS_INPUT inp) : SV_TARGET
 #if MODE == 0
     float3 colFromTex = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
 #elif MODE == 1
-    float3 colFromTex = g_texture0.Sample(g_linearWrap, inp.outTexCoord).xyz;
+    float3 colFromTex = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
 #elif MODE == 2
     float3 colFromTex = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
 #endif
     
-    float3 fragNorm = getNormalFromTexture(inp.outTexCoord, inp.TBN);
-    //float3 fragNorm = inp.worldNorm;
+    float3 fragNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
     
     float3 outCol = float3(0.0f, 0.0f, 0.0f);
     

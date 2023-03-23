@@ -27,7 +27,6 @@ namespace engn {
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
 			// ---- Clear the write buffer
-			//winPtr->bindAndClearInitialRTV(BG_COLOR);
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
 			// ---- Render ----
@@ -57,7 +56,7 @@ namespace engn {
 			const std::string MAXWELL_MODEL_PATH = "../../assets/Models/Maxwell/source/Maxwell.fbx";
 
 			const std::string BRICK_TEXTURE_PATH = "..\\..\\assets\\Textures\\BrickWall\\blank.dds";
-			const std::string BRICK_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\BrickWall\\Stone_NORM.dds";
+			const std::string BRICK_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";
 			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
 			const std::string STONE_TEXTURE_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
 			const std::string STONE_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";

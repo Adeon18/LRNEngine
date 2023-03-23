@@ -53,7 +53,7 @@ struct SpotLight
 };
 
 
-cbuffer perFrameLight : register(b1)
+cbuffer perFrameLight : register(b2)
 {
     // Has 4 ints that describe point light count
     int4 dirLightCount;

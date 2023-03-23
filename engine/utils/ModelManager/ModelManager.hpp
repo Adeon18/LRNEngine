@@ -64,7 +64,13 @@ namespace engn {
 				aiTextureType_DISPLACEMENT,
 				aiTextureType_LIGHTMAP,
 				aiTextureType_REFLECTION,
-				aiTextureType_UNKNOWN,
+				aiTextureType_BASE_COLOR,
+				aiTextureType_NORMAL_CAMERA,
+				aiTextureType_EMISSION_COLOR,
+				aiTextureType_METALNESS,
+				aiTextureType_DIFFUSE_ROUGHNESS,
+				aiTextureType_AMBIENT_OCCLUSION,
+				aiTextureType_UNKNOWN
 			};
 		};
 	} // mdl

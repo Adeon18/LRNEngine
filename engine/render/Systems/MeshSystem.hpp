@@ -57,6 +57,7 @@ namespace engn {
 			std::vector<PerModel> m_models;
 			InstanceBuffer<I> m_instanceBuffer;
 			ConstantBuffer<CB_VS_MeshData> m_meshData;
+			ConstantBuffer<CB_PS_MaterialData> m_materialData;
 
 			//! A unique enum identifier that allows to get the group type at dragger collision - Normal by default
 			GroupTypes m_type = GroupTypes::NORMAL;
@@ -68,6 +69,7 @@ namespace engn {
 			//! Init the input layout(for now the same for all)
 			void init() {
 				m_meshData.init();
+				m_materialData.init();
 			}
 
 			// Find the closest instance that intersects with a ray and fill in the infor struct
@@ -191,8 +193,10 @@ namespace engn {
 						PerMaterial perMat;
 						perMat.material = {
 							// TODO: CHANGE
-							tex::TextureManager::getInstance().getTexture(mesh.texturePaths[0]),
-							(mesh.texturePaths.size() > 1) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[1]): nullptr,
+							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_DIFFUSE)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_DIFFUSE)]) : nullptr,
+							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_NORMALS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_NORMALS)]) : nullptr,
+							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_SHININESS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_SHININESS)]) : nullptr,
+							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)]) : nullptr,
 						};
 						perMat.instances.push_back({ inc.color, newInstanceIdx });
 						perMesh.push_back(perMat);
@@ -297,11 +301,19 @@ namespace engn {
 							const auto& material = perMaterial.material;
 
 							// ... update shader local per-draw uniform buffer
-							// materialData.update(...); // we don't have it in HW4
+							m_materialData.getData().isDiffuseTexBound = (material.ambientTex) ? 1: 0;
+							m_materialData.getData().isNormalMapBound = (material.normalMap) ? 1 : 0;
+							m_materialData.getData().isRoughnessTexBound = (material.roughness) ? 1 : 0;
+							m_materialData.getData().isMetallicTexBound = (material.metallness) ? 1 : 0;
+							m_materialData.fill();
+							d3d::s_devcon->PSSetConstantBuffers(1, 1, m_materialData.getBufferAddress());
 
-							// ... bind each material texture, we don't have it in HW4
-							if (material.ambientTex) d3d::s_devcon->PSSetShaderResources(0, 1, material.ambientTex->textureView.GetAddressOf());
-							if (material.normalMap) d3d::s_devcon->PSSetShaderResources(1, 1, material.normalMap->textureView.GetAddressOf());
+							// ... bind each material texture
+							ID3D11ShaderResourceView* nullSRV = nullptr;
+							d3d::s_devcon->PSSetShaderResources(0, 1, (material.ambientTex) ? material.ambientTex->textureView.GetAddressOf(): &nullSRV);
+							d3d::s_devcon->PSSetShaderResources(1, 1, (material.normalMap) ? material.normalMap->textureView.GetAddressOf() : &nullSRV);
+							d3d::s_devcon->PSSetShaderResources(2, 1, (material.roughness) ? material.roughness->textureView.GetAddressOf() : &nullSRV);
+							d3d::s_devcon->PSSetShaderResources(3, 1, (material.metallness) ? material.metallness->textureView.GetAddressOf(): &nullSRV);
 
 							uint32_t numInstances = uint32_t(perMaterial.instances.size());
 							d3d::s_devcon->DrawIndexedInstanced(meshRange.indexNum, numInstances, meshRange.indexOffset, meshRange.vertexOffset, renderedInstances);

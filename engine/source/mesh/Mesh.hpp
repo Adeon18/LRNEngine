@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 #include "source/math/Ray.hpp"
 
@@ -19,15 +20,14 @@ namespace engn {
 			};
 			std::string name;
 			geom::BoundingBox box = geom::BoundingBox::empty();
-			std::vector<std::string> texturePaths;
 			std::vector<Vertex> vertices;
 			std::vector<Triangle> triangles;
 
+			// The map of paths like: (texture_type, path);
+			std::unordered_map<std::string, std::string> texturePaths;
+
 			XMMATRIX meshToModel;
 			XMMATRIX meshToModelInv;
-
-			//std::vector<XMMATRIX> instances;
-			//std::vector<XMMATRIX> instancesInv;
 		};
 	} // mdl
 } // engn

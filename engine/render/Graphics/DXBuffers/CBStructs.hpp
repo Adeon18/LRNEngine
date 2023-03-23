@@ -56,5 +56,13 @@ namespace engn {
 			XMFLOAT4 EV100;
 		};
 
+		//! CB Struct to tell whether a patricular material has respective textures, ints are used as booleans
+		struct CB_PS_MaterialData {
+			int isDiffuseTexBound;
+			int isNormalMapBound;
+			int isRoughnessTexBound;
+			int isMetallicTexBound;
+		};
+
 	} // rend
 } // engn

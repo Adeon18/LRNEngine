@@ -265,6 +265,7 @@ namespace engn {
 		{
 			Assimp::Importer importer;
 			const aiScene* assimpScene = importer.ReadFile(filename, IMPORT_FLAGS);
+			printAllTexturesPath(assimpScene);
 			if (!assimpScene) {
 				Logger::instance().logInfo("ModelManager::Failed loading model. Location: " + filename);
 				return false;
@@ -322,6 +323,8 @@ namespace engn {
 			// Load the textures
 			loadTextures(assimpScene, modelPtr, aiTextureType_DIFFUSE, filename);
 			loadTextures(assimpScene, modelPtr, aiTextureType_NORMALS, filename);
+			loadTextures(assimpScene, modelPtr, aiTextureType_SHININESS, filename);
+			loadTextures(assimpScene, modelPtr, aiTextureType_METALNESS, filename);
 
 			std::function<void(aiNode*)> loadInstances = [&loadInstances, &modelPtr](aiNode* node)
 			{
@@ -367,7 +370,7 @@ namespace engn {
 					std::string fullTexturePath = util::getDirectoryFromPath(filename) + util::changeFileExt(path.C_Str(), ".dds");
 					// Load texture by full path and save the full path
 					tex::TextureManager::getInstance().loadTextureDDS(fullTexturePath);
-					modelMesh.texturePaths.push_back(fullTexturePath);
+					modelMesh.texturePaths[aiTextureTypeToString(textureType)] = fullTexturePath;
 				}
 			}
 		}

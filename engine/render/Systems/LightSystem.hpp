@@ -25,7 +25,7 @@ namespace engn {
 			const std::string SPOTLIGHT_TEXTURE_PATH = "..\\assets\\Textures\\SpotLightMasks\\flashlight2.dds";
 			const std::string SPHERE_MODEL_PATH = "..\\assets\\Models\\Sphere\\sphere.fbx";
 #endif // !_WIN64
-			static constexpr int LIGHT_BUFFER_SLOT = 1;
+			static constexpr int LIGHT_BUFFER_SLOT = 2;
 			static constexpr int SPOTLIGHT_TEXTURE_SLOT = 16;
 		public:
 			static LightSystem& getInstance() {

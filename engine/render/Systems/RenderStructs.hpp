@@ -18,9 +18,14 @@ namespace engn {
 		struct Material {
 			std::shared_ptr<tex::Texture> ambientTex = nullptr;
 			std::shared_ptr<tex::Texture> normalMap = nullptr;
+			std::shared_ptr<tex::Texture> roughness = nullptr;
+			std::shared_ptr<tex::Texture> metallness = nullptr;
 
 			bool operator==(const Material& other) {
-				return ambientTex == other.ambientTex && normalMap == other.normalMap;
+				return ambientTex == other.ambientTex &&
+					normalMap == other.normalMap &&
+					metallness == other.metallness &&
+					roughness == other.roughness;
 			}
 
 			bool empty() const { return !ambientTex.get() && !normalMap.get(); }
