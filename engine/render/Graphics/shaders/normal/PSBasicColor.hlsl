@@ -1,5 +1,5 @@
 #include "../globals.hlsli"
-#include "../lighting.hlsli"
+#include "../lighting_blinn_phong.hlsli"
 
 #include "BasicColorStructs.hlsli"
 
@@ -10,7 +10,7 @@ cbuffer perFrame : register(b0)
     float iTime;
 };
 
-cbuffer perMaterialc : register(b1)
+cbuffer perMaterial : register(b1)
 {
     bool isDiffuseBound;
     bool isNormalMapBound;

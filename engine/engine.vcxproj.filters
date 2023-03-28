@@ -331,8 +331,9 @@
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\globals.hlsli" />
-    <None Include="render\Graphics\shaders\lighting.hlsli" />
+    <None Include="render\Graphics\shaders\lighting_blinn_phong.hlsli" />
     <None Include="render\Graphics\shaders\utility.hlsli" />
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
+    <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
   </ItemGroup>
 </Project>
