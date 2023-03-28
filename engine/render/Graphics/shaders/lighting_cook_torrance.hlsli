@@ -104,3 +104,66 @@ float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, f
     float NdotH = dot(norm, halfVector);
     return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(HdotL, F0);
 }
+
+float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+{
+    float3 lightDir = -light.direction;
+    float3 halfVector = normalize(viewDir + lightDir);
+        
+    float3 NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
+        
+    float solidAngle = light.solidAngle;
+        
+    return light.radiance.xyz *
+        (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+}
+
+float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+{
+    float3 lightDir = normalize(light.position.xyz - fragWorldPos);
+    float3 halfVector = normalize(viewDir + lightDir);
+        
+    float3 NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
+        
+    float solidAngle = getSolidAngle(fragWorldPos, light.position.xyz, light.radius.x);
+        
+    return light.radiance.xyz *
+        (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+}
+
+float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+{
+    //! Get the spotlight texture color
+    const float COS_CUTOFF_ANGLE = cos(light.cutoffAngle.x);
+    const float TAN_CUTOFF_ANGLE = tan(light.cutoffAngle.x);
+    
+    float3 fragPosModelLight = mul(float4(fragWorldPos, 1.0f), light.modelToWorldInv);
+
+    float spotLightRadius = fragPosModelLight.z * TAN_CUTOFF_ANGLE;
+    
+    float u = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.x);
+    float v = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.y);
+
+    float3 flashMask = g_textureSpotLight.Sample(g_linearWrap, float2(u, v));
+    
+        //! Lighting calculations
+    float3 lightDir = normalize(light.position.xyz - fragWorldPos);
+    float theta = dot(lightDir, -light.direction.xyz);
+    
+    if (theta < COS_CUTOFF_ANGLE)
+    {
+        return float3(0.0f, 0.0f, 0.0f);
+    }
+
+    float3 halfVector = normalize(viewDir + lightDir);
+        
+    float3 NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
+        
+    float solidAngle = getSolidAngle(fragWorldPos, light.position.xyz, light.radius.x);
+        
+    return flashMask *
+        (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+}
