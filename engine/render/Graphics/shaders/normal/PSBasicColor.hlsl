@@ -43,7 +43,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
     float3 albedo = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
 #elif MODE == 1
     float3 albedo = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
-    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x: 0.5f;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x : 0.15f;
     float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x: 0.5f;
 #elif MODE == 2
     float3 albedo = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
@@ -65,8 +65,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
         float3 NdotL = max(dot(fragNorm, lightDir), MIN_LIGHT_INTENCITY);
         
         outL0 += pointLights[i].color.xyz * pointLights[i].intensity.xyz *
-        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, 1.0f) * NdotL +
-            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, 1.0f, roughness, F0));
+        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, 0.5f) * NdotL +
+            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, 0.5f, roughness, F0));
     }
     
     

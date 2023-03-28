@@ -42,18 +42,16 @@ namespace engn {
 			XMVECTOR direction{ 0.0f, 0.0f, 0.0f };
 
 			XMVECTOR intensity;
-			XMVECTOR color;
+			XMVECTOR solidAngle;
 		};
 
 		// Pointlight structs(again, for now, partically constant)
 		struct PointLight {
 			XMVECTOR position{ 0.0f, 0.0f, 0.0f, 1.0f };
 
-			// Constant, linear, quadratic and padding
-			XMVECTOR distanceCharacteristics;
-
 			XMVECTOR intensity;
-			XMVECTOR color;
+			// XMVector filled with radius values
+			XMVECTOR radius;
 		};
 
 		struct SpotLight {
@@ -66,11 +64,8 @@ namespace engn {
 			// The XMVECTOR filled with 4 cutoff angle values(inner and outer)
 			XMVECTOR cutoffAngle;
 
-			// Constant, linear, quadratic and padding
-			XMVECTOR distanceCharacteristics;
-
 			XMVECTOR intensity;
-			XMVECTOR color;
+			XMVECTOR radius;
 		};
 
 	} // light

@@ -96,5 +96,5 @@ float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, f
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     float HdotL = max(dot(halfVector, lightDir), MIN_LIGHT_INTENCITY);
     float NdotH = max(dot(norm, halfVector), MIN_LIGHT_INTENCITY);
-    return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(NdotL, F0);
+    return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(HdotL, F0);
 }
