@@ -1,5 +1,5 @@
 #include "../globals.hlsli"
-#include "../lighting_blinn_phong.hlsli"
+#include "../lighting_cook_torrance.hlsli"
 
 #include "BasicColorStructs.hlsli"
 
@@ -37,44 +37,38 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 
 float4 main(PS_INPUT inp) : SV_TARGET
 {
-#if DEBUG == 1
-    return float4(inp.modelNorm / 2.0f + 0.5f, 1.0f);
-#else
-    
-    Material placeHolderMaterial = {
-        float3(0.05f, 0.05f, 0.05f),
-        float3(0.8f, 0.8f, 0.8f),
-        float3(1.0f, 1.0f, 1.0f),
-        32.0f
-    };
-    
-    float3 camDir = normalize(iCameraPosition.xyz - inp.worldPos);
+   
     
 #if MODE == 0
-    float3 colFromTex = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
+    float3 albedo = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
 #elif MODE == 1
-    float3 colFromTex = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
+    float3 albedo = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x: 0.5f;
+    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x: 0.5f;
 #elif MODE == 2
-    float3 colFromTex = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
+    float3 albedo = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
 #endif
     
+    float3 viewDir = normalize(iCameraPosition.xyz - inp.worldPos);
     float3 fragNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
     
-    float3 outCol = float3(0.0f, 0.0f, 0.0f);
+    float3 outL0 = float3(0.0f, 0.0f, 0.0f);
     
-    for (int i = 0; i < dirLightCount.x; ++i)
-    {
-        outCol += calculateDirectionalLight(directLights[i], placeHolderMaterial, fragNorm, camDir, colFromTex);
-    }
-    
+    float3 F0 = float3(0.04f, 0.04f, 0.04f);
+    F0 = lerp(F0, albedo, metallic);
     
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        outCol += calculatePointLight(pointLights[i], placeHolderMaterial, fragNorm, inp.worldPos, camDir, colFromTex);
+        float3 lightDir = normalize(pointLights[i].position.xyz - inp.worldPos);
+        float3 halfVector = normalize(viewDir + lightDir);
+        
+        float3 NdotL = max(dot(fragNorm, lightDir), MIN_LIGHT_INTENCITY);
+        
+        outL0 += pointLights[i].color.xyz * pointLights[i].intensity.xyz *
+        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, 1.0f) * NdotL +
+            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, 1.0f, roughness, F0));
     }
     
-    outCol += calculateSpotLight(spotLight, placeHolderMaterial, fragNorm, inp.worldPos, camDir, colFromTex);
     
-    return float4(outCol, 1.0f);
-#endif
+    return float4(outL0, 1.0f);
 }

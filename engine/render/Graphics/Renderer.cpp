@@ -60,6 +60,7 @@ namespace engn {
 			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
 			const std::string STONE_TEXTURE_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
 			const std::string STONE_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";
+			const std::string STONE_ROUGHNESS_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_ROUGH.dds";
 #else
 			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
 			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
@@ -106,7 +107,8 @@ namespace engn {
 				mptr,
 				{
 					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_TEXTURE_PATH),
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_NORMAL_MAP_PATH)
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_NORMAL_MAP_PATH),
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_ROUGHNESS_PATH)
 				},
 				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
@@ -141,7 +143,7 @@ namespace engn {
 				mptr,
 				{
 					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH),
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_NORMAL_MAP_PATH)
+					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_NORMAL_MAP_PATH),
 				},
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);

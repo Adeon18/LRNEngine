@@ -90,11 +90,11 @@ float3 getLambertDiffuse(float3 albedo, float3 norm, float3 lightDir, float3 F0,
     return (solidAngle * albedo * (1 - metalness) / PI) * (1 - fresnel(NdotL, F0));
 }
 
-float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, float3 lightDir, float solidAngle, float roughness, float F0)
+float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, float3 lightDir, float solidAngle, float roughness, float3 F0)
 {
-    float NdotV = dot(norm, viewDir);
-    float NdotL = dot(norm, lightDir);
-    float HdotL = dot(halfVector, lightDir);
-    float NdotH = dot(norm, halfVector);
+    float NdotV = max(dot(norm, viewDir), MIN_LIGHT_INTENCITY);
+    float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
+    float HdotL = max(dot(halfVector, lightDir), MIN_LIGHT_INTENCITY);
+    float NdotH = max(dot(norm, halfVector), MIN_LIGHT_INTENCITY);
     return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(NdotL, F0);
 }
