@@ -57,6 +57,20 @@ float4 main(PS_INPUT inp) : SV_TARGET
     float3 F0 = float3(0.04f, 0.04f, 0.04f);
     F0 = lerp(F0, albedo, metallic);
     
+    for (int i = 0; i < dirLightCount.x; ++i)
+    {
+        float3 lightDir = -directLights[i].direction;
+        float3 halfVector = normalize(viewDir + lightDir);
+        
+        float3 NdotL = max(dot(fragNorm, lightDir), MIN_LIGHT_INTENCITY);
+        
+        float solidAngle = directLights[i].solidAngle;
+        
+        outL0 += directLights[i].radiance.xyz *
+        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+    }
+
     for (int i = 0; i < pointLightCount.x; ++i)
     {
         float3 lightDir = normalize(pointLights[i].position.xyz - inp.worldPos);
@@ -69,6 +83,38 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outL0 += pointLights[i].radiance.xyz *
         (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, solidAngle) * NdotL +
             getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+    }
+    
+    {
+        //! Get the spotlight texture color
+        const float COS_CUTOFF_ANGLE = cos(spotLight.cutoffAngle.x);
+        const float TAN_CUTOFF_ANGLE = tan(spotLight.cutoffAngle.x);
+    
+        float3 fragPosModelLight = mul(float4(inp.worldPos, 1.0f), spotLight.modelToWorldInv);
+
+        float spotLightRadius = fragPosModelLight.z * TAN_CUTOFF_ANGLE;
+    
+        float u = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.x);
+        float v = remap(-spotLightRadius, spotLightRadius, 0, 1, fragPosModelLight.y);
+
+        float3 flashMask = g_textureSpotLight.Sample(g_linearWrap, float2(u, v));
+    
+        //! Lighting calculations
+        float3 lightDir = normalize(spotLight.position.xyz - inp.worldPos);
+        float theta = dot(lightDir, -spotLight.direction.xyz);
+    
+        if (theta > COS_CUTOFF_ANGLE)
+        {
+            float3 halfVector = normalize(viewDir + lightDir);
+        
+            float3 NdotL = max(dot(fragNorm, lightDir), MIN_LIGHT_INTENCITY);
+        
+            float solidAngle = getSolidAngle(inp.worldPos, spotLight.position.xyz, spotLight.radius.x);
+        
+            outL0 += flashMask *
+            (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, solidAngle) * NdotL +
+                getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+        }
     }
     
     

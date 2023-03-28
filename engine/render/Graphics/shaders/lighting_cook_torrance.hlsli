@@ -1,3 +1,5 @@
+#include "globals.hlsli"
+#include "utility.hlsli"
 
 static const float PI = 3.14159265f;
 static const float MIN_LIGHT_INTENCITY = 0.0001f;
@@ -99,6 +101,6 @@ float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, f
     float NdotV = max(dot(norm, viewDir), MIN_LIGHT_INTENCITY);
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     float HdotL = max(dot(halfVector, lightDir), MIN_LIGHT_INTENCITY);
-    float NdotH = max(dot(norm, halfVector), MIN_LIGHT_INTENCITY);
+    float NdotH = dot(norm, halfVector);
     return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(HdotL, F0);
 }

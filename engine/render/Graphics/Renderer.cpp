@@ -78,7 +78,7 @@ namespace engn {
 			const std::string EXE_DIR = util::getExeDir();
 
 			LightSystem::getInstance().addDirLight(
-				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.05f
+				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.15f
 			);
 			LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 0.5f
