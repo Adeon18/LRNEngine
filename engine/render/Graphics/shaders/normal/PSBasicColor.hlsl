@@ -64,9 +64,11 @@ float4 main(PS_INPUT inp) : SV_TARGET
         
         float3 NdotL = max(dot(fragNorm, lightDir), MIN_LIGHT_INTENCITY);
         
-        outL0 += pointLights[i].color.xyz * pointLights[i].intensity.xyz *
-        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, 0.5f) * NdotL +
-            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, 0.5f, roughness, F0));
+        float solidAngle = getSolidAngle(inp.worldPos, pointLights[i].position.xyz, pointLights[i].radius.x);
+        
+        outL0 += pointLights[i].radiance.xyz *
+        (getLambertDiffuse(albedo, fragNorm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(fragNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
     }
     
     

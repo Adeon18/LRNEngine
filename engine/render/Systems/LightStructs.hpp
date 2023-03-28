@@ -8,11 +8,11 @@ namespace engn {
 		using namespace DirectX;
 
 		//! Colors
-		static constexpr XMVECTOR WHITE{ 1.0f, 1.0f, 1.0f, 1.0f };
-		static constexpr XMVECTOR RED{ 1.0f, 0.0f, 0.0f, 1.0f };
-		static constexpr XMVECTOR GREEN{ 0.0f, 1.0f, 0.0f, 1.0f };
-		static constexpr XMVECTOR BLUE{ 0.0f, 0.0f, 1.0f, 1.0f };
-		static constexpr XMVECTOR BLACK{ 0.0f, 0.0f, 0.0f, 1.0f };
+		static constexpr XMFLOAT3 WHITE{ 1.0f, 1.0f, 1.0f };
+		static constexpr XMFLOAT3 RED{ 1.0f, 0.0f, 0.0f };
+		static constexpr XMFLOAT3 GREEN{ 0.0f, 1.0f, 0.0f };
+		static constexpr XMFLOAT3 BLUE{ 0.0f, 0.0f, 1.0f };
+		static constexpr XMFLOAT3 BLACK{ 0.0f, 0.0f, 0.0f };
 
 		//! Light intensities
 		static constexpr XMFLOAT3 INTENSITY_0P05{ 0.05f, 0.05f, 0.05f };
@@ -41,7 +41,7 @@ namespace engn {
 		struct DirectionalLight {
 			XMVECTOR direction{ 0.0f, 0.0f, 0.0f };
 
-			XMVECTOR intensity;
+			XMVECTOR radiance;
 			XMVECTOR solidAngle;
 		};
 
@@ -49,7 +49,7 @@ namespace engn {
 		struct PointLight {
 			XMVECTOR position{ 0.0f, 0.0f, 0.0f, 1.0f };
 
-			XMVECTOR intensity;
+			XMVECTOR radiance;
 			// XMVector filled with radius values
 			XMVECTOR radius;
 		};
@@ -64,7 +64,7 @@ namespace engn {
 			// The XMVECTOR filled with 4 cutoff angle values(inner and outer)
 			XMVECTOR cutoffAngle;
 
-			XMVECTOR intensity;
+			XMVECTOR radiance;
 			XMVECTOR radius;
 		};
 

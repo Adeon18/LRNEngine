@@ -15,43 +15,42 @@ namespace engn {
 			m_spotLightTexture = tex::TextureManager::getInstance().getTexture(EXE_DIR + SPOTLIGHT_TEXTURE_PATH);
 			m_lightBuffer.init();
 		}
-		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& intensity, const XMVECTOR& color)
+		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& intensity, float solidAngle)
 		{
 			light::DirectionalLight dLight;
 			dLight.direction = { direction.x, direction.y, direction.z };
-			dLight.intensity = { intensity.x, intensity.y, intensity.z };
-			dLight.color = color;
+			dLight.radiance = { intensity.x, intensity.y, intensity.z };
+			dLight.solidAngle = { solidAngle, solidAngle, solidAngle, solidAngle };
 
 			m_directionalLights.push_back(std::move(dLight));
 		}
-		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color)
+		void LightSystem::addPointLight(const XMMATRIX& modelToWorld, const XMFLOAT3& intensity, float radius)
 		{
 			light::PointLight pLight;
-			pLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			pLight.intensity = { intensity.x, intensity.y, intensity.z };
-			pLight.color = color;
+			pLight.radiance = { intensity.x, intensity.y, intensity.z };
+			pLight.radius = { radius, radius, radius, radius };
 
 			addPointLight(std::move(pLight), modelToWorld);
 		}
 		void LightSystem::addPointLight(light::PointLight&& pLight, const XMMATRIX& modelToWorld)
 		{
+			float lightRadius = XMVectorGetX(pLight.radius);
 			m_pointLightMatrixIndices.push_back(
 				MeshSystem::getInstance().addEmissionInstance(
 					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
 					{},
 					// We decrease the sphere 2 times to visualize pointlight
-					{ XMMatrixScaling(0.5f, 0.5f, 0.5f) * modelToWorld, {}, pLight.color }
+					{ XMMatrixScaling(lightRadius, lightRadius, lightRadius) * modelToWorld, {}, pLight.radiance }
 				)
 			);
 			m_pointLights.push_back(pLight);
 		}
-		void LightSystem::setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& intensity, const XMFLOAT3& distParams, const XMVECTOR& color)
+		void LightSystem::setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& intensity, float radius)
 		{
 			float angRad = XMConvertToRadians(cutoffAngleDeg);
 			m_spotLight.cutoffAngle = { angRad, angRad, angRad, angRad };
-			m_spotLight.distanceCharacteristics = { distParams.x, distParams.y, distParams.z };
-			m_spotLight.intensity = { intensity.x, intensity.y, intensity.z };
-			m_spotLight.color = color;
+			m_spotLight.radiance = { intensity.x, intensity.y, intensity.z };
+			m_spotLight.radius = { radius, radius, radius, radius };
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{

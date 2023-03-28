@@ -13,18 +13,19 @@ struct DirectionalLight
 {
     float4 direction;
     
-    float4 intensity;
-    float4 color;
+    float4 radiance;
+    // float4 filled with solidAngle value
+    float4 solidAngle;
 };
 
 struct PointLight
 {
     float4 position;
     // X - constant, Y - linear, Z - quadratic
-    float4 distProperties;
-    
-    float4 intensity;
-    float4 color;
+
+    float4 radiance;
+    // float4 filled with radius value
+    float4 radius;
 };
 
 struct SpotLight
@@ -36,12 +37,10 @@ struct SpotLight
     float4x4 modelToWorldInv;
     
     float4 cutoffAngle;
-    
-    // X - constant, Y - linear, Z - quadratic
-    float4 distProperties;
-    
-    float4 intensity;
-    float4 color;
+
+    float4 radiance;
+    // float4 filled with radius value
+    float4 radius;
 };
 
 
@@ -55,6 +54,11 @@ cbuffer perFrameLight : register(b2)
     SpotLight spotLight;
 };
 
+float getSolidAngle(float3 fragPos, float3 lightPos, float radius)
+{
+    float distance = length(fragPos - lightPos);
+    return 2 * PI * (1.0f - sqrt(max(1.0f - pow(radius / distance, 2), MIN_LIGHT_INTENCITY)));
+}
 
 // Schlick's approximation of Fresnel reflectance,
 float3 fresnel(float NdotL, float3 F0)

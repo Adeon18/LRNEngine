@@ -78,20 +78,20 @@ namespace engn {
 			const std::string EXE_DIR = util::getExeDir();
 
 			LightSystem::getInstance().addDirLight(
-				{ 0.0f, -0.8f, 0.6f }, light::INTENSITY_0P05, light::WHITE
+				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.05f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::INTENSITY_DEFAULT, light::LIGHT_DIST_50, light::WHITE
+				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 0.5f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::INTENSITY_DEFAULT, light::LIGHT_DIST_50, light::WHITE
+				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::BLUE, 0.3f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::INTENSITY_2X, light::LIGHT_DIST_20, light::RED
+				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::RED, 0.3f
 			);
 
 			LightSystem::getInstance().setSpotLightSettings(
-				17.0f, light::INTENSITY_1P5X, light::LIGHT_DIST_50, light::WHITE
+				17.0f, light::WHITE, 1.0f
 			);
 
 			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
