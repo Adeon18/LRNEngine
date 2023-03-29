@@ -9,7 +9,6 @@ namespace engn {
 		std::shared_ptr<Model> ModelManager::getModel(const std::string& filename)
 		{
 			if (m_loadedModels.find(filename) != m_loadedModels.end()) {
-				Logger::instance().logInfo("ModelManager: Model is already cached. Location: " + filename);
 				return m_loadedModels[filename];
 			}
 

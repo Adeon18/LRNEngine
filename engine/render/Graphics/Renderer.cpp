@@ -122,14 +122,22 @@ namespace engn {
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
-			//// Fill the field with cubes
-			//for (int i = -32; i < 32; ++i) {
-			//	for (int j = 0; j < 32; ++j) {
-			//		mptr.reset();
-			//		mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
-			//		MeshSystem::getInstance().addNormalInstance(mptr, {}, { XMMatrixScaling(0.5f, 0.5f, 0.5f) * XMMatrixTranslation(i * 2.0f, 0.0f, 12.0f + j * 2.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-			//	}
-			//}
+			// Fill the field with cubes
+			for (int i = -32; i < 32; ++i) {
+				for (int j = 0; j < 32; ++j) {
+					mptr.reset();
+					mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
+					MeshSystem::getInstance().addNormalInstance(
+						mptr,
+						{
+							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
+							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
+							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness)
+						},
+						{ XMMatrixScaling(1.0f, 0.3f, 1.0f) * XMMatrixTranslation(2 * i, -1.0f, 2 * j), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+					);
+				}
+			}
 
 			//mptr.reset();
 			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);

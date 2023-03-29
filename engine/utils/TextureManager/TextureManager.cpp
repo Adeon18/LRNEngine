@@ -38,7 +38,6 @@ namespace engn {
 		std::shared_ptr<Texture> TextureManager::getTexture(const std::string& path)
 		{
 			if (m_loadedTextures.find(path) != m_loadedTextures.end()) {
-				Logger::instance().logInfo("TextureManager: Texture is already cached. Location: " + path);
 				return m_loadedTextures[path];
 			}
 

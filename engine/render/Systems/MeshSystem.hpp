@@ -173,7 +173,6 @@ namespace engn {
 							}
 						}
 						if (modelIsAdded.wasAdded()) {
-							Logger::instance().logInfo("Model " + mod->name + " instance already exists, filled the needed info in perModel");
 							return newInstanceIdx;
 						}
 					}
