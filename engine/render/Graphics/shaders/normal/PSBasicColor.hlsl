@@ -35,7 +35,7 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 #define DEBUG 0
 #define MODE 1
 
-static const float DEFAULT_METALLIC = 0.15f;
+static const float DEFAULT_METALLIC = 0.3f;
 static const float DEFAULT_ROUGHNESS = 0.3f;
 
 float4 main(PS_INPUT inp) : SV_TARGET

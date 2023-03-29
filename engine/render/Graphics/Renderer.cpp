@@ -123,8 +123,8 @@ namespace engn {
 			);
 
 			// Fill the field with cubes
-			for (int i = -32; i < 32; ++i) {
-				for (int j = 0; j < 32; ++j) {
+			for (int i = -24; i < 24; ++i) {
+				for (int j = -24; j < 32; ++j) {
 					mptr.reset();
 					mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
 					MeshSystem::getInstance().addNormalInstance(
@@ -217,7 +217,6 @@ namespace engn {
 			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
 
 			//! Fill global constant PS CB
-			//m_globalConstantBufferPS.getData().worldToClip = XMMatrixTranspose( camPtr->getViewMatrix() * camPtr->getProjMatrix() );
 			m_globalConstantBufferPS.getData().gResolution = gResolution;
 			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
 			m_globalConstantBufferPS.getData().gTime = renderData.iTime;
