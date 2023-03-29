@@ -13,6 +13,9 @@ namespace engn {
 		static constexpr XMFLOAT3 GREEN{ 0.0f, 1.0f, 0.0f };
 		static constexpr XMFLOAT3 BLUE{ 0.0f, 0.0f, 1.0f };
 		static constexpr XMFLOAT3 BLACK{ 0.0f, 0.0f, 0.0f };
+		static constexpr XMFLOAT3 SKYBLUE{ 0.08f, 0.0953f, 1.0f };
+		static constexpr XMFLOAT3 LIGHTGREEN{ 0.155f, 0.99f, 0.0792f };
+		static constexpr XMFLOAT3 LIGHTRED{ 1.0f, 0.13f, 0.13f };
 
 		//! Light intensities
 		static constexpr XMFLOAT3 INTENSITY_0P05{ 0.05f, 0.05f, 0.05f };

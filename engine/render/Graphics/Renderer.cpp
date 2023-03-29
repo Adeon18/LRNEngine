@@ -81,13 +81,16 @@ namespace engn {
 				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.15f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 0.5f
+				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), light::BLUE, 0.3f
+				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), {0.16, 0.19, 2.0f}, 0.8f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::RED, 0.3f
+				XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 3.0f, 0.39f, 0.39f }, 0.8f
+			);
+			LightSystem::getInstance().addPointLight(
+				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::LIGHTGREEN, 0.8f
 			);
 
 			LightSystem::getInstance().setSpotLightSettings(

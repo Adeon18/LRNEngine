@@ -35,18 +35,23 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 #define DEBUG 0
 #define MODE 1
 
+static const float DEFAULT_METALLIC = 0.15f;
+static const float DEFAULT_ROUGHNESS = 0.3f;
+
 float4 main(PS_INPUT inp) : SV_TARGET
 {
-   
-    
 #if MODE == 0
     float3 albedo = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_pointWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
+    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_pointWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
 #elif MODE == 1
     float3 albedo = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
-    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x : 0.15f;
-    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x: 0.5f;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
+    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
 #elif MODE == 2
     float3 albedo = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_anisotropicWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
+    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_anisotropicWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
 #endif
     
     float3 viewDir = normalize(iCameraPosition.xyz - inp.worldPos);
