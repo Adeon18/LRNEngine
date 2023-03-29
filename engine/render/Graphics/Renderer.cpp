@@ -217,7 +217,7 @@ namespace engn {
 			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
 
 			//! Fill global constant PS CB
-			m_globalConstantBufferPS.getData().worldToClip = XMMatrixTranspose( camPtr->getViewMatrix() * camPtr->getProjMatrix() );
+			//m_globalConstantBufferPS.getData().worldToClip = XMMatrixTranspose( camPtr->getViewMatrix() * camPtr->getProjMatrix() );
 			m_globalConstantBufferPS.getData().gResolution = gResolution;
 			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
 			m_globalConstantBufferPS.getData().gTime = renderData.iTime;

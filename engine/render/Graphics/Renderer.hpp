@@ -67,7 +67,7 @@ namespace engn {
 			void m_initPostProcess();
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
-			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferPS;
+			ConstantBuffer<CB_PS_RealTimeData> m_globalConstantBufferPS;
 
 			Sampler m_samplerPointWrap;
 			Sampler m_samplerLinearWrap;
