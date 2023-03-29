@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "HelperStructs.hpp"
 
 #include "DXBuffers/IndexBuffer.hpp"
@@ -35,6 +37,11 @@ namespace engn {
 		/// </summary>
 		class Renderer {
 			inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+#ifdef _WIN64
+			const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\..\\";
+#else
+			const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\";
+#endif
 		public:
 			void init();
 			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
@@ -68,6 +75,33 @@ namespace engn {
 
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;
+
+			std::unordered_map<std::string, MaterialTexturePaths> MATERIALS{
+				{"STONE", 
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_COLOR.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_NORM.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_ROUGH.dds",
+						""
+					}
+				},
+				{"COBBLESTONE",
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_albedo.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_normal.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_roughness.dds",
+						""
+					}
+				},
+			};
+
+			std::unordered_map<std::string, std::string> MODELS{
+				{"HORSE", TEX_REL_PATH_PREF + "assets/Models/KnightHorse/KnightHorse.fbx"},
+				{"SAMURAI", TEX_REL_PATH_PREF + "assets/Models/Samurai/Samurai.fbx"},
+				{"TOWER", TEX_REL_PATH_PREF + "assets/Models/EastTower/EastTower.fbx"},
+				{"CUBE", TEX_REL_PATH_PREF + "assets/Models/Cube/Cube.fbx"},
+				{"SPHERE", TEX_REL_PATH_PREF + "assets/Models/Sphere/sphere.fbx"},
+			};
 
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

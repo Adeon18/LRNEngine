@@ -46,37 +46,6 @@ namespace engn {
 
 		void Renderer::m_initScene()
 		{
-			// TODO: Later may move to some map
-#ifdef _WIN64 
-			const std::string CUBE_MODEL_PATH = "../../assets/Models/Cube/Cube.fbx";
-			const std::string SPHERE_MODEL_PATH = "../../assets/Models/Sphere/sphere.fbx";
-			const std::string HORSE_MODEL_PATH = "../../assets/Models/KnightHorse/KnightHorse.fbx";
-			const std::string SAMURAI_MODEL_PATH = "../../assets/Models/Samurai/Samurai.fbx";
-			const std::string TOWER_MODEL_PATH = "../../assets/Models/EastTower/EastTower.fbx";
-			const std::string MAXWELL_MODEL_PATH = "../../assets/Models/Maxwell/source/Maxwell.fbx";
-
-			const std::string BRICK_TEXTURE_PATH = "..\\..\\assets\\Textures\\BrickWall\\blank.dds";
-			const std::string BRICK_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";
-			const std::string CRATE_TEXTURE_PATH = "..\\..\\assets\\Textures\\128x128\\Crate\\crate.dds";
-			const std::string STONE_TEXTURE_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
-			const std::string STONE_NORMAL_MAP_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_NORM.dds";
-			const std::string STONE_ROUGHNESS_PATH = "..\\..\\assets\\Textures\\Stone\\Stone_ROUGH.dds";
-#else
-			const std::string CUBE_MODEL_PATH = "../assets/Models/Cube/Cube.fbx";
-			const std::string SPHERE_MODEL_PATH = "../assets/Models/Sphere/sphere.fbx";
-			const std::string HORSE_MODEL_PATH = "../assets/Models/KnightHorse/KnightHorse.fbx";
-			const std::string SAMURAI_MODEL_PATH = "../assets/Models/Samurai/Samurai.fbx";
-			const std::string TOWER_MODEL_PATH = "../assets/Models/EastTower/EastTower.fbx";
-			const std::string MAXWELL_MODEL_PATH = "../assets/Models/Maxwell/maxwell.fbx";
-
-			const std::string BRICK_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Bricks\\Bricks_06-128x128.dds";
-			const std::string CRATE_TEXTURE_PATH = "..\\assets\\Textures\\128x128\\Crate\\crate.dds";
-			const std::string STONE_TEXTURE_PATH = "..\\assets\\Textures\\Stone\\Stone_COLOR.dds";
-			const std::string STONE_NORMAL_MAP_PATH = "..\\assets\\Textures\\Stone\\Stone_NORM.dds";
-#endif // !_WIN64
-
-			const std::string EXE_DIR = util::getExeDir();
-
 			LightSystem::getInstance().addDirLight(
 				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.15f
 			);
@@ -97,7 +66,7 @@ namespace engn {
 				17.0f, light::WHITE, 1.0f
 			);
 
-			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + TOWER_MODEL_PATH);
+			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(MODELS["TOWER"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
@@ -105,19 +74,19 @@ namespace engn {
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_TEXTURE_PATH),
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_NORMAL_MAP_PATH),
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + STONE_ROUGHNESS_PATH)
+					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].albedo),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].normalMap),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].roughness)
 				},
 				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["SAMURAI"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
@@ -125,7 +94,7 @@ namespace engn {
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
@@ -133,7 +102,7 @@ namespace engn {
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{ },
@@ -141,12 +110,14 @@ namespace engn {
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + CUBE_MODEL_PATH);
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
 				{
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_TEXTURE_PATH),
-					tex::TextureManager::getInstance().getTexture(util::getExeDir() + BRICK_NORMAL_MAP_PATH),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness),
+					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].metallic),
 				},
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
