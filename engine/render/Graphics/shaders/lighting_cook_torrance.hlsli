@@ -148,14 +148,13 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
 
     float3 flashMask = g_textureSpotLight.Sample(g_linearWrap, float2(u, v));
     
-        //! Lighting calculations
+    //! Lighting calculations
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
     float theta = dot(lightDir, -light.direction.xyz);
     
-    if (theta < COS_CUTOFF_ANGLE)
-    {
-        return float3(0.0f, 0.0f, 0.0f);
-    }
+    // We smooth the edges of spotlight
+    float epsilon = 0.05f;
+    float intensity = clamp((theta - COS_CUTOFF_ANGLE) / epsilon, 0.0, 1.0);
 
     float3 halfVector = normalize(viewDir + lightDir);
         
@@ -163,7 +162,7 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
         
     float solidAngle = getSolidAngle(fragWorldPos, light.position.xyz, light.radius.x);
         
-    return flashMask *
+    return flashMask * light.radiance.xyz * intensity *
         (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
             getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
