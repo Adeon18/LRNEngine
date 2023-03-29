@@ -53,7 +53,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
     float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_anisotropicWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
     float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_anisotropicWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
 #endif
-    
+    // Square the rouhnhdfhehess
+    roughness = pow(roughness, 2);
     float3 viewDir = normalize(iCameraPosition.xyz - inp.worldPos);
     float3 fragNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
     
