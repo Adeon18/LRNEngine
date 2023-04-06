@@ -71,5 +71,9 @@ namespace engn {
 			m_renderTargetView.Reset();
 			m_shaderResourceView.Reset();
 		}
+		ID3D11Texture2D* BindableRenderTarget::getTexturePtr() { return m_texture.Get(); }
+		ID3D11Texture2D** BindableRenderTarget::getTexturePtrAddress() { return m_texture.GetAddressOf(); }
+		ID3D11RenderTargetView* BindableRenderTarget::getRTVPtr() { return m_renderTargetView.Get(); }
+		ID3D11RenderTargetView** BindableRenderTarget::getRTVPtrAddress() { return m_renderTargetView.GetAddressOf(); }
 	} // rend
 } // engn

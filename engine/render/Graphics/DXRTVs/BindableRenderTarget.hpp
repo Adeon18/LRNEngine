@@ -31,10 +31,10 @@ namespace engn {
 			//! Release all the resourses, called at window resize
 			void releaseAll();
 
-			[[nodiscard]] ID3D11Texture2D* getTexturePtr() { return m_texture.Get(); }
-			[[nodiscard]] ID3D11Texture2D** getTexturePtrAddress() { return m_texture.GetAddressOf(); }
-			[[nodiscard]] ID3D11RenderTargetView* getRTVPtr() { return m_renderTargetView.Get(); }
-			[[nodiscard]] ID3D11RenderTargetView** getRTVPtrAddress() { return m_renderTargetView.GetAddressOf(); }
+			[[nodiscard]] ID3D11Texture2D* getTexturePtr();
+			[[nodiscard]] ID3D11Texture2D** getTexturePtrAddress();
+			[[nodiscard]] ID3D11RenderTargetView* getRTVPtr();
+			[[nodiscard]] ID3D11RenderTargetView** getRTVPtrAddress();
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
