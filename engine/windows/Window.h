@@ -11,8 +11,7 @@
 
 #include "render/D3D/d3d.hpp"
 
-#include "render/Graphics/DXRTVs/LDRRenderTarget.hpp"
-#include "render/Graphics/DXRTVs/HDRRenderTarget.hpp"
+#include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
 
 #include "utils/paralell_executor/parallel_executor.h"
 
@@ -152,7 +151,7 @@ namespace engn {
 			//! Initialize the renderTargetViews(HDR and LDR)
 			void initRenderTargetViews()
 			{
-				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight);
+				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 				m_renderTargetLDRFinal.init();
 			}
 			//! Bind the initial HDR rtv
@@ -269,8 +268,8 @@ namespace engn {
 			[[nodiscard]] int getBIWidth() const { return m_windowRenderData.bufferWidth; }
 			[[nodiscard]] int getBIHeight() const { return m_windowRenderData.bufferHeight; }
 
-			[[nodiscard]] rend::HDRRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
-			[[nodiscard]] rend::LDRRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
+			[[nodiscard]] rend::BindableRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
+			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
 
 
 		private:
@@ -288,8 +287,8 @@ namespace engn {
 
 			inline static WindowClassData m_windowClassData;
 
-			rend::LDRRenderTarget m_renderTargetLDRFinal;
-			rend::HDRRenderTarget m_renderTargetHDR;
+			rend::BindableRenderTarget m_renderTargetLDRFinal;
+			rend::BindableRenderTarget m_renderTargetHDR;
 
 			D3D11_VIEWPORT m_viewPort;
 

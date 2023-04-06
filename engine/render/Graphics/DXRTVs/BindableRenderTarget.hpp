@@ -1,20 +1,26 @@
 #pragma once
 
+#pragma once
+
 #include "render/D3D/d3d.hpp"
 
 namespace engn {
 	namespace rend {
 		/// <summary>
-		/// The HDR render target wrapper, it wraps the texture and RTV and SRV needed to render to 
-		/// a texture that can store FLOOAT16 RGBA.
+		/// A render target that can be binded, can either be created from the groud up, or partially by setting the 
+		/// texture externally
 		/// </summary>
-		class HDRRenderTarget {
+		class BindableRenderTarget {
 		public:
-			//! Initialize the texture, RTV and SRV and more, should be called at the start or after releaseAll only
-			void init(int screenWidth, int screenHeight);
+			//! Initialize the texture => RTV -> SRV from the ground up, using screen width and height(typical for HDR buffers)
+			void init(int screenWidth, int screenHeight, DXGI_FORMAT textureFormat);
+
+			//! Initialize the RTV, when we already have the texture filled with data externally(typical for Final LDR RTV)
+			//! WARNING: Does not initialize SRV!
+			void init();
 
 			//! Set the Output Merger RTV to the current one with the specified depth stensil view
-			void OMSetCurrent(ID3D11DepthStencilView *depthStensilView);
+			void OMSetCurrent(ID3D11DepthStencilView* depthStensilView);
 
 			//! Bind the SRV as texture to the current shader with the specified slot
 			void bindSRV(int slot) const;

@@ -1,17 +1,17 @@
-#include "HDRRenderTarget.hpp"
+#include "BindableRenderTarget.hpp"
 
 #include "utils/Logger/Logger.hpp"
 
 namespace engn {
 	namespace rend {
-		void HDRRenderTarget::init(int screenWidth, int screenHeight)
+		void BindableRenderTarget::init(int screenWidth, int screenHeight, DXGI_FORMAT textureFormat)
 		{
 			D3D11_TEXTURE2D_DESC textureDesc{};
 			textureDesc.Width = screenWidth;
 			textureDesc.Height = screenHeight;
 			textureDesc.MipLevels = 1;
 			textureDesc.ArraySize = 1;
-			textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			textureDesc.Format = textureFormat;
 			textureDesc.SampleDesc.Count = 1;
 			textureDesc.SampleDesc.Quality = 0;
 			textureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -20,38 +20,52 @@ namespace engn {
 			HRESULT hr = d3d::s_device->CreateTexture2D(&textureDesc, nullptr, m_texture.GetAddressOf());
 
 			if (FAILED(hr)) {
-				Logger::instance().logErr("HDRRenderTarget::init: Failed at creation of RTV texture");
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of RTV texture");
 				return;
 			}
 
 			hr = d3d::s_device->CreateRenderTargetView(m_texture.Get(), nullptr, m_renderTargetView.GetAddressOf());
 
 			if (FAILED(hr)) {
-				Logger::instance().logErr("HDRRenderTarget::init: Failed at creation of RTV");
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of RTV");
 				return;
 			}
 
 			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), nullptr, m_shaderResourceView.GetAddressOf());
 
 			if (FAILED(hr)) {
-				Logger::instance().logErr("HDRRenderTarget::init: Failed at creation of SRV");
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of SRV");
 				return;
 			}
-			
+
 		}
-		void HDRRenderTarget::OMSetCurrent(ID3D11DepthStencilView* depthStensilView)
+		void BindableRenderTarget::init()
+		{
+			// Before calling init have to fill texture manually from the outside
+			if (!m_texture.Get()) {
+				Logger::instance().logErr("BindableRenderTarget::init: you need to fill texture of LDR RTV before calling init");
+				return;
+			}
+
+			HRESULT hr = d3d::s_device->CreateRenderTargetView(m_texture.Get(), nullptr, m_renderTargetView.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("BindableRenderTarget::init: Failed creating LDR RTV " + std::system_category().message(hr));
+				return;
+			}
+		}
+		void BindableRenderTarget::OMSetCurrent(ID3D11DepthStencilView* depthStensilView)
 		{
 			d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), depthStensilView);
 		}
-		void HDRRenderTarget::bindSRV(int slot) const
+		void BindableRenderTarget::bindSRV(int slot) const
 		{
 			d3d::s_devcon->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
 		}
-		void HDRRenderTarget::clear(const FLOAT* color)
+		void BindableRenderTarget::clear(const FLOAT* color)
 		{
 			d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
 		}
-		void HDRRenderTarget::releaseAll()
+		void BindableRenderTarget::releaseAll()
 		{
 			m_texture.Reset();
 			m_renderTargetView.Reset();
