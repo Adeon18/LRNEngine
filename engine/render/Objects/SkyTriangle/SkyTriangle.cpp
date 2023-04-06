@@ -6,6 +6,17 @@ namespace engn {
 	namespace rend {
 		void SkyTriangle::init(const std::string& texturePath)
 		{
+			//! Depth stencil state
+			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
+			depthStencilStateDesc.DepthEnable = true;
+			// Zero here becaus ewe disable depth writing for skybox
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+			//! Rasterizer state
+			D3D11_RASTERIZER_DESC rasterizerDesc{};
+			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+
 			// Init Pipeline
 			const std::wstring exeDirW = util::getExeDirW();
 			PipelineData skyPipelineData{
@@ -14,7 +25,9 @@ namespace engn {
 				D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 				exeDirW + VS_NAME,
 				L"", L"", L"",
-				exeDirW + PS_NAME
+				exeDirW + PS_NAME,
+				rasterizerDesc,
+				depthStencilStateDesc
 			};
 			initPipeline(m_skyPipeline, skyPipelineData);
 			// Init constant buffers
@@ -28,7 +41,7 @@ namespace engn {
 			m_initialized = true;
 
 			// Initialize Depth Stensil state
-			initDepthStensil();
+			//initDepthStensil();
 		}
 		void SkyTriangle::render(std::unique_ptr<EngineCamera>& camPtr)
 		{
@@ -48,8 +61,6 @@ namespace engn {
 			m_skyBuffer.getData().TLFarPlane = frustumFarPlaneCoords[1];
 
 			m_skyBuffer.fill();
-			// Set depth buffer write to 0
-			d3d::s_devcon->OMSetDepthStencilState(m_skyDepthStensilState.Get(), 0);
 
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_skyBuffer.getBufferAddress());
 			// Bind a texture
@@ -58,21 +69,6 @@ namespace engn {
 			bindPipeline(m_skyPipeline);
 			// Draw call
 			d3d::s_devcon->Draw(3, 0);
-		}
-		void SkyTriangle::initDepthStensil()
-		{
-			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
-
-			depthStencilStateDesc.DepthEnable = true;
-			// Zero here becaus ewe disable depth writing for skybox
-			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
-			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
-
-			HRESULT hr = d3d::s_device->CreateDepthStencilState(&depthStencilStateDesc, m_skyDepthStensilState.GetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("SkyTriangle CreateDepthStencilState fail: " + std::system_category().message(hr));
-				return;
-			}
 		}
 	} // rend
 } // engn

@@ -138,6 +138,14 @@ namespace engn {
 		void MeshSystem::initPipelines()
 		{
 			for (auto& [type, data] : PIPELINE_TYPE_DATA) {
+				// Fill the rasterized and stencil data before init
+				data.rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+				data.rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+
+				data.depthStencilDesc.DepthEnable = true;
+				data.depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+				data.depthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+
 				initPipeline(m_pipelines[type], data);
 			}
 		}

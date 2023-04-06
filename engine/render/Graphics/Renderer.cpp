@@ -15,8 +15,6 @@
 namespace engn {
 	namespace rend {
 		void Renderer::init() {
-			m_initRasterizer();
-			m_initDepthStencilState();
 			m_initBuffers();
 			m_initSamplers();
 			m_initScene();
@@ -31,8 +29,6 @@ namespace engn {
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
 			// ---- Render ----
-			d3d::s_devcon->RSSetState(m_rasterizerState.Get());
-			d3d::s_devcon->OMSetDepthStencilState(m_depthStensilState.Get(), 0);
 			m_fillPerFrameCBs(camPtr, renderData);
 			m_bindSamplers();
 			LightSystem::getInstance().bindLighting(camPtr, flags);
@@ -165,34 +161,6 @@ namespace engn {
 					MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(i * 3.0f, 0.0f, j * 3.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
 				}
 			}*/
-		}
-
-		void Renderer::m_initRasterizer()
-		{
-			D3D11_RASTERIZER_DESC rasterizerDesc{};
-			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-
-			HRESULT hr = d3d::s_device->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("CreateRasterizerState fail: " + std::system_category().message(hr));
-				return;
-			}
-		}
-		//! Initialize the depth stencil state, set only once in window constructor
-		void Renderer::m_initDepthStencilState() {
-			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
-
-			depthStencilStateDesc.DepthEnable = true;
-			// If it is ALL, the stancil is turned ON, if ZERO, turned OFF
-			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
-
-			HRESULT hr = d3d::s_device->CreateDepthStencilState(&depthStencilStateDesc, m_depthStensilState.GetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("Window CreateDepthStencilState fail: " + std::system_category().message(hr));
-				return;
-			}
 		}
 		void Renderer::m_initBuffers()
 		{
