@@ -186,13 +186,10 @@
     <ClInclude Include="utils\SolidVector\SolidVector.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\DXRTVs\HDRRenderTarget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXRTVs\LDRRenderTarget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render\Graphics\PostProcess\PostProcess.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -287,13 +284,10 @@
     <ClCompile Include="render\Systems\TransformSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\DXRTVs\HDRRenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXRTVs\LDRRenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="render\Graphics\PostProcess\PostProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXRTVs\BindableRenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

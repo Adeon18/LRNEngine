@@ -1,8 +1,7 @@
 #pragma once
 
 #include "render/Systems/Pipeline.hpp"
-#include "render/Graphics/DXRTVs/LDRRenderTarget.hpp"
-#include "render/Graphics/DXRTVs/HDRRenderTarget.hpp"
+#include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
 
 namespace engn {
@@ -13,7 +12,7 @@ namespace engn {
 			void init();
 
 			//! Ressolve the HDR buffer into the CURRENTLY BOUND buffer
-			void ressolve(const HDRRenderTarget& src);
+			void ressolve(const BindableRenderTarget& src);
 		private:
 			const std::wstring VS_NAME = L"VSPostProcess.cso";
 			const std::wstring PS_NAME = L"PSPostProcess.cso";

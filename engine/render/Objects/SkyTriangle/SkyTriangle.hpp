@@ -19,9 +19,6 @@ namespace engn {
 			//! Should be called at the end of all the rendering in a frame
 			void render(std::unique_ptr<EngineCamera>& camPtr);
 		private:
-			//! Initialize WRITE_ZERO depth stensil for the skybox
-			void initDepthStensil();
-		private:
 			const std::wstring VS_NAME = L"VSSkyFullscreen.cso";
 			const std::wstring PS_NAME = L"PSSkyFullscreen.cso";
 

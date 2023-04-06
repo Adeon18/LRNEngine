@@ -385,9 +385,12 @@ namespace engn {
 					{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			};
 
+			D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{};
+			D3D11_DEPTH_STENCIL_DESC DEFAULT_DEPTH_STENSIL_STATE_DESC{};
+
 			const std::wstring SHADER_FOLDER = util::getExeDirW();
 
-			const std::unordered_map<PipelineTypes, PipelineData> PIPELINE_TYPE_DATA{
+			std::unordered_map<PipelineTypes, PipelineData> PIPELINE_TYPE_DATA{
 				{
 					PipelineTypes::NORMAL_RENDER,
 					PipelineData{
@@ -398,7 +401,9 @@ namespace engn {
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSBasicColor.cso"
+						SHADER_FOLDER + L"PSBasicColor.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
 					}
 				},
 				{
@@ -411,7 +416,9 @@ namespace engn {
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSEmission.cso"
+						SHADER_FOLDER + L"PSEmission.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
 					}
 				},
 				{
@@ -424,7 +431,9 @@ namespace engn {
 						SHADER_FOLDER + L"HSHologram.cso",
 						SHADER_FOLDER + L"DSHologram.cso",
 						SHADER_FOLDER + L"GSHologram.cso",
-						SHADER_FOLDER + L"PSHologram.cso"
+						SHADER_FOLDER + L"PSHologram.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
 					}
 				},
 				{
@@ -437,7 +446,9 @@ namespace engn {
 						L"",
 						L"",
 						SHADER_FOLDER + L"GSVisNormal.cso",
-						SHADER_FOLDER + L"PSVisNormal.cso"
+						SHADER_FOLDER + L"PSVisNormal.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
 					}
 				},
 				{
@@ -450,7 +461,9 @@ namespace engn {
 						L"",
 						L"",
 						SHADER_FOLDER + L"GSVisWireframe.cso",
-						SHADER_FOLDER + L"PSVisWireframe.cso"
+						SHADER_FOLDER + L"PSVisWireframe.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
 					}
 				},
 			};

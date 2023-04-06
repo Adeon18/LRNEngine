@@ -27,7 +27,7 @@ namespace engn {
 
 			m_initialized = true;
 		}
-		void PostProcess::ressolve(const HDRRenderTarget& src)
+		void PostProcess::ressolve(const BindableRenderTarget& src)
 		{
 			if (!m_initialized) {
 				Logger::instance().logWarn("SkyTriangle::The texture for a TextureCube is not bound");

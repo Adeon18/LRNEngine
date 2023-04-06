@@ -47,12 +47,6 @@ namespace engn {
 			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
 			void m_initScene();
-			//! Initialize the RasterizerState
-			/// RasterizerState basically tells us HOW to draw triangles
-			///	Cull back, draw only Wireframe, etc.
-			void m_initRasterizer();
-			//! Depth stensil state
-			void m_initDepthStencilState();
 			//! Initialize all the per Frame constant buffers
 			void m_initBuffers();
 			//! Initialize all the global samplers
