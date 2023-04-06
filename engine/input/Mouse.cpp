@@ -34,5 +34,11 @@ namespace engn {
 			m_moveData.mouseOffset = newMosPos - m_moveData.mousePos;
 			m_moveData.mousePos = newMosPos;
 		}
+		void Mouse::unpressAllKeys()
+		{
+			for (auto& [key, val] : m_pressedButtons) {
+				m_pressedButtons[key] = false;
+			}
+		}
 	} // inp
 } // engnd

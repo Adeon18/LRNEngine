@@ -38,6 +38,10 @@ namespace engn {
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
+
+			ImGui::End();
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 		}
 
 		void Renderer::m_initScene()

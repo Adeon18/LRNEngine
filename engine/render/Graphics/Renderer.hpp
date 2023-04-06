@@ -22,6 +22,7 @@
 
 #include "include/config.hpp"
 
+
 namespace engn {
 	namespace rend {
 		struct RenderData {

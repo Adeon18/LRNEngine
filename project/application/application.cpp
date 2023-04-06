@@ -8,7 +8,8 @@ Application::Application() :
 	m_isRunning{ true },
 	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
 	m_engine{ new engn::Engine{} }
-{}
+{
+}
 
 
 int Application::run() {
@@ -50,10 +51,8 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 void Application::m_handleRender() {
 	// Get fill the needed data for the engine
 	m_engine->setEngineData({ m_timer->getSecondsSinceStart() });
-	// Handle engine physics
-	m_engine->handlePhysics();
-	// Render fucntions
-	m_engine->render();
+	// Run the engine
+	m_engine->run();
 }
 
 

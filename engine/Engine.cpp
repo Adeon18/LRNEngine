@@ -1,11 +1,15 @@
 #include "Engine.hpp"
 
+#include "render/UI/UI.hpp"
+
 namespace engn {
 	Engine::Engine() :
 		m_camera{ new rend::EngineCamera{60.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, {0.0f, 0.0f, -2.0f}} },
 		m_window{ new win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() }
 	{
 		m_graphics.init();
+		// ImGui
+		rend::UI::instance().init(m_window->getHandler());
 	}
 
 	void Engine::setWindowSize(int screenWidth, int screenHeight) {
@@ -19,6 +23,13 @@ namespace engn {
 		m_renderData.iResolutionY = m_window->getHeight();
 		m_renderData.invResolutionX = 1.0f / m_window->getWidth();
 		m_renderData.invResolutionY = 1.0f / m_window->getHeight();
+	}
+
+	void Engine::run()
+	{
+		rend::UI::instance().startFrame();
+		handlePhysics();
+		render();
 	}
 
 	void Engine::render() {
@@ -61,7 +72,7 @@ namespace engn {
 		// pitch and yaw
 		auto& mouse = inp::Mouse::getInstance();
 		XMVECTOR& offset = mouse.getMoveData().mouseOffset;
-		if (mouse.isLMBPressed() && XMVectorGetX(XMVector2LengthSq(offset)) > 0.0f) {
+		if (!ImGui::IsWindowFocused() && mouse.isLMBPressed() && XMVectorGetX(XMVector2LengthSq(offset)) > 0.0f) {
 			if (!cameraRotated) { cameraRotated = true; }
 			rotation = XMVectorSetX(rotation, XMVectorGetY(offset));
 			rotation = XMVectorSetY(rotation, XMVectorGetX(offset));
@@ -82,10 +93,10 @@ namespace engn {
 	void Engine::findDraggable() {
 		auto& mouse = inp::Mouse::getInstance();
 
-		if (mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
+		if (!ImGui::IsWindowFocused() && mouse.isRMBPressed() && !m_dragger.isMeshCaptured()) {
 			m_dragger.capture(m_camera);
 		}
-		if (!mouse.isRMBPressed()) {
+		if (!ImGui::IsWindowFocused() && !mouse.isRMBPressed()) {
 			m_dragger.release();
 		}
 	}

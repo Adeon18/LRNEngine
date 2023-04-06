@@ -30,10 +30,8 @@ namespace engn {
 		//! Set the needed engine data to the renderdata struct
 		void setEngineData(const rend::RenderData& data);
 
-		//! Call the render be the rendere
-		void render();
-		//! Handle "physics" like dragging and camera movement
-		void handlePhysics();
+		//! Run engine: Handle physics and render
+		void run();
 
 		// called from main.cpp - Must be called BEFORE engine construction
 		static void init()
@@ -52,6 +50,10 @@ namespace engn {
 		{
 			// deinitilizes engine singletons in reverse order
 			rend::D3D::getInstance().deinit();
+
+			ImGui_ImplDX11_Shutdown();
+			ImGui_ImplWin32_Shutdown();
+			ImGui::DestroyContext();
 		}
 	private:
 		// Render
@@ -64,6 +66,10 @@ namespace engn {
 		rend::RenderModeFlags m_renderFlags;
 
 	private:
+		//! Call the render be the rendere
+		void render();
+		//! Handle "physics" like dragging and camera movement
+		void handlePhysics();
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement();
 		//! check for camera rotation and update if there was
