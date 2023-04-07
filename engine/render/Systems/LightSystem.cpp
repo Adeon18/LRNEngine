@@ -14,6 +14,7 @@ namespace engn {
 
 			m_spotLightTexture = tex::TextureManager::getInstance().getTexture(EXE_DIR + SPOTLIGHT_TEXTURE_PATH);
 			m_lightBuffer.init();
+			m_lightFlagsBuffer.init();
 		}
 		void LightSystem::addDirLight(const XMFLOAT3& direction, const XMFLOAT3& intensity, float solidAngle)
 		{
@@ -74,10 +75,16 @@ namespace engn {
 			}
 
 			m_lightBuffer.getData().spotLight = m_spotLight;
-
 			m_lightBuffer.fill();
 
+			auto& lightWidgetData = UI::instance().getLightWidgetData();
+			m_lightFlagsBuffer.getData().isDiffuseEnabled = static_cast<int>(lightWidgetData.toggleDiffuse);
+			m_lightFlagsBuffer.getData().isSpecularEnabled = static_cast<int>(lightWidgetData.toggleSpecular);
+			m_lightFlagsBuffer.getData().isIBLEnabled = static_cast<int>(lightWidgetData.toggleIBL);
+			m_lightFlagsBuffer.fill();
+
 			d3d::s_devcon->PSSetConstantBuffers(LIGHT_BUFFER_SLOT, 1, m_lightBuffer.getBufferAddress());
+			d3d::s_devcon->PSSetConstantBuffers(LIGHT_FLAGS_BUFFER_SLOT, 1, m_lightFlagsBuffer.getBufferAddress());
 		}
 		void LightSystem::bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction)
 		{

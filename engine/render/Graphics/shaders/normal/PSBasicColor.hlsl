@@ -12,6 +12,8 @@ cbuffer perFrame : register(b0)
 
 cbuffer perMaterial : register(b1)
 {
+    float4 defaultMetallic;
+    float4 defaultRoughness;
     bool isDiffuseBound;
     bool isNormalMapBound;
     bool isRoughnessBound;
@@ -35,9 +37,6 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 #define DEBUG 0
 #define MODE 1
 
-static const float DEFAULT_METALLIC = 0.3f;
-static const float DEFAULT_ROUGHNESS = 0.3f;
-
 float4 main(PS_INPUT inp) : SV_TARGET
 {
 #if MODE == 0
@@ -46,8 +45,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
     float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_pointWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
 #elif MODE == 1
     float3 albedo = g_textureDiffuse.Sample(g_linearWrap, inp.outTexCoord).xyz;
-    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
-    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x : DEFAULT_ROUGHNESS;
+    float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_linearWrap, inp.outTexCoord).x : defaultMetallic.x;
+    float roughness = (isRoughnessBound) ? g_textureRoughness.Sample(g_linearWrap, inp.outTexCoord).x : defaultRoughness.x;
 #elif MODE == 2
     float3 albedo = g_texture0.Sample(g_anisotropicWrap, inp.outTexCoord).xyz;
     float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_anisotropicWrap, inp.outTexCoord).x : DEFAULT_METALLIC;

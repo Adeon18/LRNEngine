@@ -45,13 +45,20 @@ namespace engn {
 		void UI::manageGeometry()
 		{
 			ImGui::Checkbox("Visualize normals", &m_geometryData.normalVisEnabled);
-			ImGui::Checkbox("Visualize vireframes", &m_geometryData.vireframeVisEnabled);
+			ImGui::Checkbox("Visualize wireframes", &m_geometryData.vireframeVisEnabled);
 		}
 		void UI::manageMaterial()
 		{
+			ImGui::Checkbox("Use texture roughness", &m_materialData.useTextureRoughness);
+			ImGui::SliderFloat("Roughness", &m_materialData.defaultRoughness, 0.0f, 1.0f);
+			ImGui::Checkbox("Use texture metallic", &m_materialData.useTextureMetallic);
+			ImGui::SliderFloat("Metallic", &m_materialData.defaultMetallic, 0.0f, 1.0f);
 		}
 		void UI::manageLighting()
 		{
+			ImGui::Checkbox("Enable Diffuse", &m_lightingData.toggleDiffuse);
+			ImGui::Checkbox("Enable Specular", &m_lightingData.toggleSpecular);
+			ImGui::Checkbox("Enable IBL", &m_lightingData.toggleIBL);
 		}
 	}
 } // engn

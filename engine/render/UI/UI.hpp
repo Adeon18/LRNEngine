@@ -16,6 +16,20 @@ namespace engn {
 				//! Check if any of the debug visualization is active
 				[[nodiscard]] bool isDebugVisEnabled() const { return normalVisEnabled || vireframeVisEnabled; }
 			};
+
+			struct MaterialWidgetData {
+				bool useTextureMetallic = true;
+				bool useTextureRoughness = true;
+
+				float defaultMetallic = 0.3f;
+				float defaultRoughness = 0.7f;
+			};
+
+			struct LightingWidgetData {
+				bool toggleDiffuse = true;
+				bool toggleSpecular = true;
+				bool toggleIBL = true;
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -36,6 +50,8 @@ namespace engn {
 			void deinit();
 
 			[[nodiscard]] const GeometryWidgetData& getGeomWidgetData() const { return m_geometryData; }
+			[[nodiscard]] const MaterialWidgetData& getMatWidgetData() const { return m_materialData; }
+			[[nodiscard]] const LightingWidgetData& getLightWidgetData() const { return m_lightingData; }
 		private:
 			UI() {}
 
@@ -45,6 +61,8 @@ namespace engn {
 			void manageLighting();
 
 			GeometryWidgetData m_geometryData;
+			MaterialWidgetData m_materialData;
+			LightingWidgetData m_lightingData;
 		};
 	} // rend
 } // engn

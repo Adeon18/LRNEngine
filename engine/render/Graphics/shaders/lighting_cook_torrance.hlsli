@@ -56,6 +56,13 @@ cbuffer perFrameLight : register(b2)
     SpotLight spotLight;
 };
 
+cbuffer perFrameLightFlags : register(b3)
+{
+    bool isDiffuseEnabled;
+    bool isSpecularEnabled;
+    bool isIBLEnabled;
+};
+
 float getSolidAngle(float3 fragPos, float3 lightPos, float radius)
 {
     float distance = length(fragPos - lightPos);
@@ -92,12 +99,22 @@ float ggx(float roughness, float NdotH)
 
 float3 getLambertDiffuse(float3 albedo, float3 norm, float3 lightDir, float3 F0, float metalness, float solidAngle)
 {
+    if (!isDiffuseEnabled)
+    {
+        return float3(0.0f, 0.0f, 0.0f);
+
+    }
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     return (solidAngle * albedo * (1 - metalness) / PI) * (1 - fresnel(NdotL, F0));
 }
 
 float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, float3 lightDir, float solidAngle, float roughness, float3 F0)
 {
+    if (!isSpecularEnabled)
+    {
+        return float3(0.0f, 0.0f, 0.0f);
+
+    }
     float NdotV = max(dot(norm, viewDir), MIN_LIGHT_INTENCITY);
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     float HdotL = max(dot(halfVector, lightDir), MIN_LIGHT_INTENCITY);

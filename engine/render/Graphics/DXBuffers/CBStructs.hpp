@@ -51,6 +51,12 @@ namespace engn {
 			light::SpotLight spotLight;
 		};
 
+		struct CB_PS_LightControlFlags {
+			int isDiffuseEnabled;
+			int isSpecularEnabled;
+			int isIBLEnabled;
+		};
+
 		// Cb Struct for the postProcess effect
 		struct CB_PS_HDR {
 			XMFLOAT4 EV100;
@@ -58,6 +64,8 @@ namespace engn {
 
 		//! CB Struct to tell whether a patricular material has respective textures, ints are used as booleans
 		struct CB_PS_MaterialData {
+			XMFLOAT4 defaultMetallicValue;
+			XMFLOAT4 defaultRoughnessValue;
 			int isDiffuseTexBound;
 			int isNormalMapBound;
 			int isRoughnessTexBound;

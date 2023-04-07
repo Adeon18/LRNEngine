@@ -12,6 +12,8 @@
 
 #include "render/Objects/Texture.hpp"
 
+#include "render/UI/UI.hpp"
+
 namespace engn {
 	namespace rend {
 		class LightSystem {
@@ -26,6 +28,7 @@ namespace engn {
 			const std::string SPHERE_MODEL_PATH = "..\\assets\\Models\\Sphere\\sphere.fbx";
 #endif // !_WIN64
 			static constexpr int LIGHT_BUFFER_SLOT = 2;
+			static constexpr int LIGHT_FLAGS_BUFFER_SLOT = 3;
 			static constexpr int SPOTLIGHT_TEXTURE_SLOT = 16;
 		public:
 			static LightSystem& getInstance() {
@@ -62,6 +65,7 @@ namespace engn {
 
 			std::shared_ptr<tex::Texture> m_spotLightTexture;
 			ConstantBuffer<CB_PS_LightEmitters> m_lightBuffer;
+			ConstantBuffer<CB_PS_LightControlFlags> m_lightFlagsBuffer;
 		};
 	} // rend
 } // engn

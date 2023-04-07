@@ -274,6 +274,10 @@ namespace engn {
 				if (m_instanceBuffer.getSize() == 0)
 					return;
 
+				auto& guiMatData = UI::instance().getMatWidgetData();
+				m_materialData.getData().defaultMetallicValue = XMFLOAT4{ guiMatData.defaultMetallic, guiMatData.defaultMetallic, guiMatData.defaultMetallic, guiMatData.defaultMetallic };
+				m_materialData.getData().defaultRoughnessValue = XMFLOAT4{ guiMatData.defaultRoughness, guiMatData.defaultRoughness, guiMatData.defaultRoughness, guiMatData.defaultRoughness};
+
 				m_instanceBuffer.bind();
 
 				uint32_t renderedInstances = 0;
@@ -304,8 +308,8 @@ namespace engn {
 							// ... update shader local per-draw uniform buffer
 							m_materialData.getData().isDiffuseTexBound = (material.ambientTex) ? 1: 0;
 							m_materialData.getData().isNormalMapBound = (material.normalMap) ? 1 : 0;
-							m_materialData.getData().isRoughnessTexBound = (material.roughness) ? 1 : 0;
-							m_materialData.getData().isMetallicTexBound = (material.metallness) ? 1 : 0;
+							m_materialData.getData().isRoughnessTexBound = (material.roughness && guiMatData.useTextureRoughness) ? 1 : 0;
+							m_materialData.getData().isMetallicTexBound = (material.metallness && guiMatData.useTextureMetallic) ? 1 : 0;
 							m_materialData.fill();
 							d3d::s_devcon->PSSetConstantBuffers(1, 1, m_materialData.getBufferAddress());
 
