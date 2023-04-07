@@ -108,14 +108,6 @@ namespace engn {
 	}
 	void Engine::fillRenderModeFlagsFromInput()
 	{
-		if (inp::Keyboard::getInstance().isKeyJustPressed(inp::Keyboard::Keys::KEY_N)) {
-			m_renderFlags.renderFaceNormals = !m_renderFlags.renderFaceNormals;
-		}
-
-		if (inp::Keyboard::getInstance().isKeyJustPressed(inp::Keyboard::Keys::KEY_H)) {
-			m_renderFlags.renderWireframes = !m_renderFlags.renderWireframes;
-		}
-
 		if (inp::Keyboard::getInstance().isKeyJustPressed(inp::Keyboard::Keys::KEY_F)) {
 			m_renderFlags.bindFlashlight = !m_renderFlags.bindFlashlight;
 		}

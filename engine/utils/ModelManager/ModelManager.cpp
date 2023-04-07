@@ -264,7 +264,6 @@ namespace engn {
 		{
 			Assimp::Importer importer;
 			const aiScene* assimpScene = importer.ReadFile(filename, IMPORT_FLAGS);
-			printAllTexturesPath(assimpScene);
 			if (!assimpScene) {
 				Logger::instance().logInfo("ModelManager::Failed loading model. Location: " + filename);
 				return false;

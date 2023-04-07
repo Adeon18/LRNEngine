@@ -17,6 +17,8 @@
 
 #include "render/Graphics/HelperStructs.hpp"
 
+#include "render/UI/UI.hpp"
+
 namespace engn {
 	namespace rend {
 		enum GroupTypes {

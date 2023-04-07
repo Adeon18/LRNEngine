@@ -18,5 +18,40 @@ namespace engn {
 			ImGui::NewFrame();
 			ImGui::Begin("Debug Window");
 		}
+		void UI::manageMenus()
+		{
+			if (ImGui::CollapsingHeader("Geometry")) {
+				manageGeometry();
+			}
+			if (ImGui::CollapsingHeader("Material")) {
+				manageMaterial();
+			}
+			if (ImGui::CollapsingHeader("Lighting")) {
+				manageLighting();
+			}
+		}
+		void UI::endFrame()
+		{
+			ImGui::End();
+			ImGui::Render();
+			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		}
+		void UI::deinit()
+		{
+			ImGui_ImplDX11_Shutdown();
+			ImGui_ImplWin32_Shutdown();
+			ImGui::DestroyContext();
+		}
+		void UI::manageGeometry()
+		{
+			ImGui::Checkbox("Visualize normals", &m_geometryData.normalVisEnabled);
+			ImGui::Checkbox("Visualize vireframes", &m_geometryData.vireframeVisEnabled);
+		}
+		void UI::manageMaterial()
+		{
+		}
+		void UI::manageLighting()
+		{
+		}
 	}
 } // engn

@@ -9,6 +9,13 @@
 namespace engn {
 	namespace rend {
 		class UI {
+			struct GeometryWidgetData {
+				bool normalVisEnabled = false;
+				bool vireframeVisEnabled = false;
+
+				//! Check if any of the debug visualization is active
+				[[nodiscard]] bool isDebugVisEnabled() const { return normalVisEnabled || vireframeVisEnabled; }
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -21,8 +28,23 @@ namespace engn {
 			void init(HWND hWnd);
 			//! Start the imgui frame, should be done before Rendered::renderFrame
 			void startFrame();
+
+			void manageMenus();
+			//! End the imgui frame render
+			void endFrame();
+			//! To be called by Engine on exit, frees all imgui data
+			void deinit();
+
+			[[nodiscard]] const GeometryWidgetData& getGeomWidgetData() const { return m_geometryData; }
 		private:
 			UI() {}
+
+			//! Respective widget managers
+			void manageGeometry();
+			void manageMaterial();
+			void manageLighting();
+
+			GeometryWidgetData m_geometryData;
 		};
 	} // rend
 } // engn

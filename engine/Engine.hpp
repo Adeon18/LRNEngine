@@ -48,12 +48,9 @@ namespace engn {
 
 		static void deinit()
 		{
+			rend::UI::instance().deinit();
 			// deinitilizes engine singletons in reverse order
 			rend::D3D::getInstance().deinit();
-
-			ImGui_ImplDX11_Shutdown();
-			ImGui_ImplWin32_Shutdown();
-			ImGui::DestroyContext();
 		}
 	private:
 		// Render

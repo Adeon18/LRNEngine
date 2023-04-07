@@ -27,6 +27,8 @@ namespace engn {
 			// ---- Clear the write buffer
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
+			UI::instance().manageMenus();
+
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
 			m_bindSamplers();
@@ -39,9 +41,7 @@ namespace engn {
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
 
-			ImGui::End();
-			ImGui::Render();
-			ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+			UI::instance().endFrame();
 		}
 
 		void Renderer::m_initScene()

@@ -29,28 +29,29 @@ namespace engn {
 		
 		void MeshSystem::render(const RenderModeFlags& flags)
 		{
+			auto& geomWidgetData = UI::instance().getGeomWidgetData();
 			// Normal group 
 			m_normalGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
 			m_normalGroup.render();
-			if (flags.renderFaceNormals) {
+			if (geomWidgetData.normalVisEnabled){
 				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
 				m_normalGroup.render();
 			}
-			if (flags.renderWireframes) {
+			if (geomWidgetData.vireframeVisEnabled) {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_normalGroup.render();
 			}
 
 			// Hologram group
 			m_hologramGroup.fillInstanceBuffer();
-			this->bindPipelineViaType((flags.renderFaceNormals || flags.renderWireframes) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
+			this->bindPipelineViaType((geomWidgetData.isDebugVisEnabled()) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
 			m_hologramGroup.render();
-			if (flags.renderFaceNormals) {
+			if (geomWidgetData.normalVisEnabled) {
 				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
 				m_hologramGroup.render();
 			}
-			if (flags.renderWireframes) {
+			if (geomWidgetData.vireframeVisEnabled) {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_hologramGroup.render();
 			}
@@ -59,11 +60,11 @@ namespace engn {
 			m_emissionOnlyGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::EMISSION_ONLY_RENDER);
 			m_emissionOnlyGroup.render();
-			if (flags.renderFaceNormals) {
+			if (geomWidgetData.normalVisEnabled) {
 				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
 				m_emissionOnlyGroup.render();
 			}
-			if (flags.renderWireframes) {
+			if (geomWidgetData.vireframeVisEnabled) {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_emissionOnlyGroup.render();
 			}
