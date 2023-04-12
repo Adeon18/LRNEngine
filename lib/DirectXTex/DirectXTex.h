@@ -173,18 +173,18 @@ namespace DirectX
         TEX_DIMENSION   dimension;
 
         size_t __cdecl ComputeIndex(_In_ size_t mip, _In_ size_t item, _In_ size_t slice) const noexcept;
-        // Returns size_t(-1) to indicate an out-of-range error
+            // Returns size_t(-1) to indicate an out-of-range error
 
         bool __cdecl IsCubemap() const noexcept { return (miscFlags & TEX_MISC_TEXTURECUBE) != 0; }
-        // Helper for miscFlags
+            // Helper for miscFlags
 
         bool __cdecl IsPMAlpha() const noexcept { return ((miscFlags2 & TEX_MISC2_ALPHA_MODE_MASK) == TEX_ALPHA_MODE_PREMULTIPLIED) != 0; }
         void __cdecl SetAlphaMode(TEX_ALPHA_MODE mode) noexcept { miscFlags2 = (miscFlags2 & ~static_cast<uint32_t>(TEX_MISC2_ALPHA_MODE_MASK)) | static_cast<uint32_t>(mode); }
         TEX_ALPHA_MODE __cdecl GetAlphaMode() const noexcept { return static_cast<TEX_ALPHA_MODE>(miscFlags2 & TEX_MISC2_ALPHA_MODE_MASK); }
-        // Helpers for miscFlags2
+            // Helpers for miscFlags2
 
         bool __cdecl IsVolumemap() const noexcept { return (dimension == TEX_DIMENSION_TEXTURE3D); }
-        // Helper for dimension
+            // Helper for dimension
     };
 
     enum DDS_FLAGS : unsigned long
@@ -289,7 +289,7 @@ namespace DirectX
         WIC_FLAGS_FILTER_LINEAR = 0x200000,
         WIC_FLAGS_FILTER_CUBIC = 0x300000,
         WIC_FLAGS_FILTER_FANT = 0x400000, // Combination of Linear and Box filter
-        // Filtering mode to use for any required image resizing (only needed when loading arrays of differently sized images; defaults to Fant)
+            // Filtering mode to use for any required image resizing (only needed when loading arrays of differently sized images; defaults to Fant)
     };
 
     HRESULT __cdecl GetMetadataFromDDSMemory(
@@ -348,7 +348,7 @@ namespace DirectX
         DXGI_FORMAT format;
         size_t      rowPitch;
         size_t      slicePitch;
-        uint8_t* pixels;
+        uint8_t*    pixels;
     };
 
     class ScratchImage
@@ -357,9 +357,7 @@ namespace DirectX
         ScratchImage() noexcept
             : m_nimages(0), m_size(0), m_metadata{}, m_image(nullptr), m_memory(nullptr) {}
         ScratchImage(ScratchImage&& moveFrom) noexcept
-            : m_nimages(0), m_size(0), m_metadata{}, m_image(nullptr), m_memory(nullptr) {
-            *this = std::move(moveFrom);
-        }
+            : m_nimages(0), m_size(0), m_metadata{}, m_image(nullptr), m_memory(nullptr) { *this = std::move(moveFrom); }
         ~ScratchImage() { Release(); }
 
         ScratchImage& __cdecl operator= (ScratchImage&& moveFrom) noexcept;
@@ -398,8 +396,8 @@ namespace DirectX
         size_t      m_nimages;
         size_t      m_size;
         TexMetadata m_metadata;
-        Image* m_image;
-        uint8_t* m_memory;
+        Image*      m_image;
+        uint8_t*    m_memory;
     };
 
     //---------------------------------------------------------------------------------
@@ -420,17 +418,17 @@ namespace DirectX
 
         void __cdecl Release() noexcept;
 
-        void* __cdecl GetBufferPointer() const noexcept { return m_buffer; }
+        void *__cdecl GetBufferPointer() const noexcept { return m_buffer; }
         size_t __cdecl GetBufferSize() const noexcept { return m_size; }
 
         HRESULT __cdecl Resize(size_t size) noexcept;
-        // Reallocate for a new size
+            // Reallocate for a new size
 
         HRESULT __cdecl Trim(size_t size) noexcept;
-        // Shorten size without reallocation
+            // Shorten size without reallocation
 
     private:
-        void* m_buffer;
+        void*   m_buffer;
         size_t  m_size;
     };
 
@@ -551,7 +549,7 @@ namespace DirectX
     HRESULT __cdecl FlipRotate(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ TEX_FR_FLAGS flags, _Out_ ScratchImage& result) noexcept;
-    // Flip and/or rotate image
+        // Flip and/or rotate image
 #endif
 
     enum TEX_FILTER_FLAGS : unsigned long
@@ -618,11 +616,11 @@ namespace DirectX
     HRESULT __cdecl Resize(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ size_t width, _In_ size_t height, _In_ TEX_FILTER_FLAGS filter, _Out_ ScratchImage& result) noexcept;
-    // Resize the image to width x height. Defaults to Fant filtering.
-    // Note for a complex resize, the result will always have mipLevels == 1
+        // Resize the image to width x height. Defaults to Fant filtering.
+        // Note for a complex resize, the result will always have mipLevels == 1
 
     constexpr float TEX_THRESHOLD_DEFAULT = 0.5f;
-    // Default value for alpha threshold used when converting to 1-bit alpha
+        // Default value for alpha threshold used when converting to 1-bit alpha
 
     HRESULT __cdecl Convert(
         _In_ const Image& srcImage, _In_ DXGI_FORMAT format, _In_ TEX_FILTER_FLAGS filter, _In_ float threshold,
@@ -630,13 +628,13 @@ namespace DirectX
     HRESULT __cdecl Convert(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ DXGI_FORMAT format, _In_ TEX_FILTER_FLAGS filter, _In_ float threshold, _Out_ ScratchImage& result) noexcept;
-    // Convert the image to a new format
+        // Convert the image to a new format
 
     HRESULT __cdecl ConvertToSinglePlane(_In_ const Image& srcImage, _Out_ ScratchImage& image) noexcept;
     HRESULT __cdecl ConvertToSinglePlane(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _Out_ ScratchImage& image) noexcept;
-    // Converts the image from a planar format to an equivalent non-planar format
+        // Converts the image from a planar format to an equivalent non-planar format
 
     HRESULT __cdecl GenerateMipMaps(
         _In_ const Image& baseImage, _In_ TEX_FILTER_FLAGS filter, _In_ size_t levels,
@@ -644,8 +642,8 @@ namespace DirectX
     HRESULT __cdecl GenerateMipMaps(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ TEX_FILTER_FLAGS filter, _In_ size_t levels, _Inout_ ScratchImage& mipChain);
-    // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
-    // Defaults to Fant filtering which is equivalent to a box filter
+        // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
+        // Defaults to Fant filtering which is equivalent to a box filter
 
     HRESULT __cdecl GenerateMipMaps3D(
         _In_reads_(depth) const Image* baseImages, _In_ size_t depth, _In_ TEX_FILTER_FLAGS filter, _In_ size_t levels,
@@ -653,8 +651,8 @@ namespace DirectX
     HRESULT __cdecl GenerateMipMaps3D(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ TEX_FILTER_FLAGS filter, _In_ size_t levels, _Out_ ScratchImage& mipChain);
-    // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
-    // Defaults to Fant filtering which is equivalent to a box filter
+        // levels of '0' indicates a full mipchain, otherwise is generates that number of total levels (including the source base image)
+        // Defaults to Fant filtering which is equivalent to a box filter
 
     HRESULT __cdecl ScaleMipMapsAlphaForCoverage(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata, _In_ size_t item,
@@ -682,7 +680,7 @@ namespace DirectX
     HRESULT __cdecl PremultiplyAlpha(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ TEX_PMALPHA_FLAGS flags, _Out_ ScratchImage& result) noexcept;
-    // Converts to/from a premultiplied alpha version of the texture
+        // Converts to/from a premultiplied alpha version of the texture
 
     enum TEX_COMPRESS_FLAGS : unsigned long
     {
@@ -722,7 +720,7 @@ namespace DirectX
     HRESULT __cdecl Compress(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ DXGI_FORMAT format, _In_ TEX_COMPRESS_FLAGS compress, _In_ float threshold, _Out_ ScratchImage& cImages) noexcept;
-    // Note that threshold is only used by BC1. TEX_THRESHOLD_DEFAULT is a typical value to use
+        // Note that threshold is only used by BC1. TEX_THRESHOLD_DEFAULT is a typical value to use
 
 #if defined(__d3d11_h__) || defined(__d3d11_x_h__)
     HRESULT __cdecl Compress(
@@ -731,7 +729,7 @@ namespace DirectX
     HRESULT __cdecl Compress(
         _In_ ID3D11Device* pDevice, _In_ const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ DXGI_FORMAT format, _In_ TEX_COMPRESS_FLAGS compress, _In_ float alphaWeight, _Out_ ScratchImage& cImages) noexcept;
-    // DirectCompute-based compression (alphaWeight is only used by BC7. 1.0 is the typical value to use)
+        // DirectCompute-based compression (alphaWeight is only used by BC7. 1.0 is the typical value to use)
 #endif
 
     HRESULT __cdecl Decompress(_In_ const Image& cImage, _In_ DXGI_FORMAT format, _Out_ ScratchImage& image) noexcept;

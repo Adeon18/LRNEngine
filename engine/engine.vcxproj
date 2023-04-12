@@ -71,7 +71,6 @@
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\OcTree\OcTree.hpp" />
     <ClInclude Include="utils\paralell_executor\parallel_executor.h" />
-    <ClInclude Include="utils\ReflectionCapture\DirectXTex.h" />
     <ClInclude Include="utils\ReflectionCapture\ReflectionCapture.hpp" />
     <ClInclude Include="utils\SolidVector\SolidVector.hpp" />
     <ClInclude Include="utils\TextureManager\DDSTextureLoader11.h" />
@@ -512,7 +511,11 @@
     <None Include="render\Graphics\shaders\utility.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
-    <None Include="utils\ReflectionCapture\DirectXTex.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\lib\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
+      <Project>{371b9fa9-4c90-4ac6-a123-aced756d6c77}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

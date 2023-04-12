@@ -1,6 +1,8 @@
 #pragma once
 
-#include "DirectXTex.h"
+#include <array>
+
+#include <DirectXTex/DirectXTex.h>
 
 #include "ReflectionCapture.hpp"
 
@@ -117,6 +119,27 @@ namespace engn {
 			initPipeline(m_BRDFIntegrationPipeline, integrBRDFPipelineData);
 
 		}
+		void ReflectionCapture::initDiffuseIrradianceCubeMap()
+		{
+			D3D11_TEXTURE2D_DESC cubemapTextureDesc;
+			cubemapTextureDesc.Width = 256;
+			cubemapTextureDesc.Height = 256;
+			cubemapTextureDesc.MipLevels = 1;
+			cubemapTextureDesc.ArraySize = 6;
+			cubemapTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			cubemapTextureDesc.SampleDesc.Count = 1;
+			cubemapTextureDesc.SampleDesc.Quality = 0;
+			cubemapTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+			cubemapTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			cubemapTextureDesc.CPUAccessFlags = 0;
+			cubemapTextureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+			HRESULT hr = d3d::s_device->CreateTexture2D(&cubemapTextureDesc, nullptr, m_diffuseIrradianceCubemap.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("ReflectionCapture::initDiffuseIrradianceRTVs: Failed at cubemap creation");
+				return;
+			}
+		}
 		void ReflectionCapture::renderCube()
 		{
 			m_cubeVertexBuffer.bind();
@@ -127,18 +150,57 @@ namespace engn {
 		void ReflectionCapture::generateDiffuseIrradianceCubemap(const XMMATRIX& projection)
 		{
 
+			std::array<DirectX::ScratchImage, 6> scratchImages;
+			std::array<DirectX::Image, 6> images;
 
+			// Create the render target view for the cubemap texture
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDIDesc;
+			rtvDIDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			rtvDIDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			rtvDIDesc.Texture2DArray.MipSlice = 0;
+			rtvDIDesc.Texture2DArray.ArraySize = 1;
 
-			bindPipeline(m_diffuseIrradiancePipeline);
+			for (uint32_t i = 0; i < 6; ++i) {
+				// ----- Create RTV -----
+				rtvDIDesc.Texture2DArray.FirstArraySlice = i;
+				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTV.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("ReflectionCapture::generateDiffuseIrradianceCubemap: Failed at RTV creation");
+				}
 
-			m_worldToClipBuffer.getData().worldToClip = projection;
-			m_worldToClipBuffer.fill();
+				// ----- Set RTV ------
+				d3d::s_devcon->OMSetRenderTargets(1, m_currentDIRTV.GetAddressOf(), nullptr);
+				float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+				d3d::s_devcon->ClearRenderTargetView(m_currentDIRTV.Get(), clearColor);
 
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
-			d3d::s_devcon->PSSetShaderResources(0, 1, m_skyBoxTexture->textureView.GetAddressOf());
+				// ----- Render -----
+				bindPipeline(m_diffuseIrradiancePipeline);
 
-			renderCube();
+				m_worldToClipBuffer.getData().worldToClip = projection;
+				m_worldToClipBuffer.fill();
 
+				d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
+				d3d::s_devcon->PSSetShaderResources(0, 1, m_skyBoxTexture->textureView.GetAddressOf());
+
+				renderCube();
+
+				Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
+				m_currentDIRTV->GetResource(rtvResource.GetAddressOf());
+				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
+				images[i] = scratchImages[i].GetImages()[0];
+			}
+			DirectX::ScratchImage diffuseIrradiaceCubeImage;
+			diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
+
+			std::wstring filepath = util::getExeDirW() + L"AAAA.dds";
+
+			DirectX::SaveToDDSFile(
+				diffuseIrradiaceCubeImage.GetImages(),
+				diffuseIrradiaceCubeImage.GetImageCount(),
+				diffuseIrradiaceCubeImage.GetMetadata(),
+				DirectX::DDS_FLAGS_NONE,
+				filepath.c_str()
+			);
 
 		}
 		void ReflectionCapture::generatePreFilteredSpecularCubemap(const XMMATRIX& projection)

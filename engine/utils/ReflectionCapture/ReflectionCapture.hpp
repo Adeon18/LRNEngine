@@ -31,6 +31,8 @@ namespace engn {
 			void initCubeBuffers();
 			//! Init all the pipelines
 			void initPipelines();
+
+			void initDiffuseIrradianceCubeMap();
 			//! Render the inside out cube
 			void renderCube();
 		private:
@@ -42,6 +44,9 @@ namespace engn {
 			IndexBuffer m_cubeIndexBuffer;
 
 			ConstantBuffer<CB_VS_WorldToClip> m_worldToClipBuffer;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_diffuseIrradianceCubemap;
+			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_currentDIRTV;
 
 			std::shared_ptr<tex::Texture> m_skyBoxTexture;
 		};

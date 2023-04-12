@@ -39,6 +39,7 @@ namespace engn {
 
 #if BAKE_CUBEMAPS == 1
 			m_reflectionCapture.generateDiffuseIrradianceCubemap(XMMatrixTranspose(camPtr->getViewMatrix() * camPtr->getProjMatrix()));
+			std::exit(0);
 #endif
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
