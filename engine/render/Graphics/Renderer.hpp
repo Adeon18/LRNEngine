@@ -20,6 +20,8 @@
 #include "render/Objects/SkyTriangle/SkyTriangle.hpp"
 #include "DXTextures/Sampler.hpp"
 
+#include "utils/ReflectionCapture/ReflectionCapture.hpp"
+
 #include "include/config.hpp"
 
 
@@ -70,6 +72,9 @@ namespace engn {
 
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;
+#if BAKE_CUBEMAPS == 1
+			ReflectionCapture m_reflectionCapture;
+#endif
 
 			std::unordered_map<std::string, MaterialTexturePaths> MATERIALS{
 				{"STONE", 

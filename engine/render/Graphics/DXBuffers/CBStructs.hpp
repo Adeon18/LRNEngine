@@ -72,5 +72,9 @@ namespace engn {
 			int isMetallicTexBound;
 		};
 
+		struct CB_VS_WorldToClip {
+			XMMATRIX worldToClip;
+		};
+
 	} // rend
 } // engn

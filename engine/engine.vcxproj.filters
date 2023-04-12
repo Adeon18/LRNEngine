@@ -219,6 +219,12 @@
     <ClInclude Include="render\UI\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\ReflectionCapture\ReflectionCapture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ReflectionCapture\DirectXTex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -338,6 +344,9 @@
     <ClCompile Include="render\UI\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\ReflectionCapture\ReflectionCapture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\normal\VSBasicColor.hlsl">
@@ -366,6 +375,11 @@
     <FxCompile Include="render\Graphics\shaders\emission_only\PSEmission.hlsl" />
     <FxCompile Include="render\Graphics\shaders\post_process\PSPostProcess.hlsl" />
     <FxCompile Include="render\Graphics\shaders\post_process\VSPostProcess.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\VSDIPFS.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\DiffuseIrradiance\PSDiffuseIrradiance.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\PreFilteredSpecular\PSPreFilteredSpecular.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\VSBRDFIntegration.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\PSBRDFIntegration.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
@@ -377,5 +391,9 @@
     <None Include="render\Graphics\shaders\utility.hlsli" />
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
     <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
+    <None Include="render\Graphics\shaders\reflection_capture\sample_util.hlsli" />
+    <None Include="utils\ReflectionCapture\DirectXTex.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

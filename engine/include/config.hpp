@@ -5,3 +5,5 @@
 
 static constexpr int WIN_WIDTH_DEF = 960;
 static constexpr int WIN_HEIGHT_DEF = 540;
+
+#define BAKE_CUBEMAPS 1;

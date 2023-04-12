@@ -20,6 +20,14 @@ namespace engn {
 			m_initScene();
 			m_initializeSky();
 			m_initPostProcess();
+#if BAKE_CUBEMAPS == 1
+#ifdef _WIN64 
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\night_street.dds";
+#else
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\night_street.dds";
+#endif // !_WIN64
+			m_reflectionCapture.init(SKYBOX_TEXTURE_PATH);
+#endif
 		}
 
 		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
@@ -29,6 +37,9 @@ namespace engn {
 
 			UI::instance().manageMenus();
 
+#if BAKE_CUBEMAPS == 1
+			m_reflectionCapture.generateDiffuseIrradianceCubemap(XMMatrixTranspose(camPtr->getViewMatrix() * camPtr->getProjMatrix()));
+#endif
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
 			m_bindSamplers();
@@ -134,7 +145,7 @@ namespace engn {
 							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
 							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness)
 						},
-						{ XMMatrixScaling(1.0f, 0.3f, 1.0f) * XMMatrixTranslation(2 * i, -1.0f, 2 * j), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+						{ XMMatrixScaling(1.0f, 0.3f, 1.0f) * XMMatrixTranslation(2 * i, -2.0f, 2 * j), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 					);
 				}
 			}
