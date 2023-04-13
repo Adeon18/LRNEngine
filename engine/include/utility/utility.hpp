@@ -26,6 +26,8 @@ namespace engn {
 		//! Change the file extension from current to the specified in the second argument and return
 		//! Extension should be specified as .ext
 		std::string changeFileExt(const std::string& path, const std::string& ext);
+		//! Remove the file extension from the string path
+		std::string removeFileExt(const std::string& path);
 		//! Convert the assimp library vector3 type to XMVECTOR
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
 		//! Convert the assimp library aiMatrix4x4 type to XMMATRIX

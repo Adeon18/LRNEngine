@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 #include "render/Graphics/Vertex.hpp"
 #include "render/Systems/Pipeline.hpp"
@@ -21,7 +22,7 @@ namespace engn {
 			const std::wstring BRDF_PS_NAME = L"PSBRDFIntegration.cso";
 		public:
 			//! Initialize everything from the reflection capture
-			void init(const std::string& skyTexturePat);
+			void init(const std::vector<std::string>& skyTexturePaths);
 			//! Generate and save to .dds the diffuse irradiance cubemap
 			void generateDiffuseIrradianceCubemap(const XMMATRIX& projection);
 			//! Generate and save the pre filtered cubemap
@@ -50,7 +51,8 @@ namespace engn {
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_diffuseIrradianceCubemap;
 			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, 6> m_currentDIRTVs;
 
-			std::shared_ptr<tex::Texture> m_skyBoxTexture;
+			//! All the map paths to be converted
+			std::vector<std::string> m_textureMapPaths;
 
 			const std::array<XMMATRIX, 6> CAMERA_CAPTURE_VIEWS{
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f, 0.0f}),

@@ -10,16 +10,14 @@
 
 namespace engn {
 	namespace rend {
-		void ReflectionCapture::init(const std::string& skyTexturePath)
+		void ReflectionCapture::init(const std::vector<std::string>& skyTexturePaths)
 		{
 			initCubeBuffers();
 			initPipelines();
 			initDiffuseIrradianceCubeMap();
 
 			m_worldToClipBuffer.init();
-			m_skyBoxTexture = tex::TextureManager::getInstance().getTexture(skyTexturePath);
-
-			Logger::instance().logDebug("HOLY FUCK IT WORKS");
+			m_textureMapPaths = skyTexturePaths;
 		}
 		void ReflectionCapture::initCubeBuffers()
 		{
@@ -123,8 +121,8 @@ namespace engn {
 		void ReflectionCapture::initDiffuseIrradianceCubeMap()
 		{
 			D3D11_TEXTURE2D_DESC cubemapTextureDesc;
-			cubemapTextureDesc.Width = 256;
-			cubemapTextureDesc.Height = 256;
+			cubemapTextureDesc.Width = 8;
+			cubemapTextureDesc.Height = 8;
 			cubemapTextureDesc.MipLevels = 1;
 			cubemapTextureDesc.ArraySize = 6;
 			cubemapTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -164,60 +162,58 @@ namespace engn {
 			D3D11_VIEWPORT viewPort;
 			viewPort.TopLeftX = 0;
 			viewPort.TopLeftY = 0;
-			viewPort.Width = 256;
-			viewPort.Height = 256;
+			viewPort.Width = 8;
+			viewPort.Height = 8;
 			// It is set this way, despite the reversed depth matrix
 			viewPort.MinDepth = 0.0f;
 			viewPort.MaxDepth = 1.0f;
 
 			d3d::s_devcon->RSSetViewports(1, &viewPort);
 
-			for (uint32_t i = 0; i < 6; ++i) {
-				// ----- Create RTV -----
-				rtvDIDesc.Texture2DArray.FirstArraySlice = i;
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTVs[i].ReleaseAndGetAddressOf());
-				if (FAILED(hr)) {
-					Logger::instance().logErr("ReflectionCapture::generateDiffuseIrradianceCubemap: Failed at RTV creation");
+			for (const auto& mapPath : m_textureMapPaths) {
+				for (uint32_t i = 0; i < 6; ++i) {
+					// ----- Create RTV -----
+					rtvDIDesc.Texture2DArray.FirstArraySlice = i;
+					HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTVs[i].ReleaseAndGetAddressOf());
+					if (FAILED(hr)) {
+						Logger::instance().logErr("ReflectionCapture::generateDiffuseIrradianceCubemap: Failed at RTV creation");
+					}
+
+					// ----- Set RTV ------
+					d3d::s_devcon->OMSetRenderTargets(1, m_currentDIRTVs[i].GetAddressOf(), nullptr);
+					float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+					d3d::s_devcon->ClearRenderTargetView(m_currentDIRTVs[i].Get(), clearColor);
+
+					// ----- Render -----
+					bindPipeline(m_diffuseIrradiancePipeline);
+
+
+					m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
+					m_worldToClipBuffer.fill();
+
+					d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
+					d3d::s_devcon->PSSetShaderResources(0, 1, tex::TextureManager::getInstance().getTexture(mapPath)->textureView.GetAddressOf());
+
+					renderCube();
+
+					Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
+					m_currentDIRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
+					DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
+					images[i] = scratchImages[i].GetImages()[i];
 				}
+				DirectX::ScratchImage diffuseIrradiaceCubeImage;
+				diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
 
-				// ----- Set RTV ------
-				d3d::s_devcon->OMSetRenderTargets(1, m_currentDIRTVs[i].GetAddressOf(), nullptr);
-				float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				d3d::s_devcon->ClearRenderTargetView(m_currentDIRTVs[i].Get(), clearColor);
+				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"DI.dds";
 
-				// ----- Render -----
-				bindPipeline(m_diffuseIrradiancePipeline);
-
-				std::stringstream ss;
-				ss << "MAt:\n" << CAMERA_CAPTURE_VIEWS[i] << '\n';
-				Logger::instance().logInfo(ss.str());
-
-				m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
-				m_worldToClipBuffer.fill();
-
-				d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
-				d3d::s_devcon->PSSetShaderResources(0, 1, m_skyBoxTexture->textureView.GetAddressOf());
-
-				renderCube();
-
-				Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
-				m_currentDIRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
-				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
-				images[i] = scratchImages[i].GetImages()[i];
+				DirectX::SaveToDDSFile(
+					diffuseIrradiaceCubeImage.GetImages(),
+					diffuseIrradiaceCubeImage.GetImageCount(),
+					diffuseIrradiaceCubeImage.GetMetadata(),
+					DirectX::DDS_FLAGS_NONE,
+					filepath.c_str()
+				);
 			}
-			DirectX::ScratchImage diffuseIrradiaceCubeImage;
-			diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
-
-			std::wstring filepath = util::getExeDirW() + L"AAAA.dds";
-
-			DirectX::SaveToDDSFile(
-				diffuseIrradiaceCubeImage.GetImages(),
-				diffuseIrradiaceCubeImage.GetImageCount(),
-				diffuseIrradiaceCubeImage.GetMetadata(),
-				DirectX::DDS_FLAGS_NONE,
-				filepath.c_str()
-			);
-
 		}
 		void ReflectionCapture::generatePreFilteredSpecularCubemap(const XMMATRIX& projection)
 		{

@@ -21,12 +21,13 @@ namespace engn {
 			m_initializeSky();
 			m_initPostProcess();
 #if BAKE_CUBEMAPS == 1
-#ifdef _WIN64 
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\grass_field.dds";
-#else
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\night_street.dds";
-#endif // !_WIN64
-			m_reflectionCapture.init(SKYBOX_TEXTURE_PATH);
+			std::vector<std::string> cubemapsToBake{
+				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds",
+				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds",
+				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\lake_beach.dds",
+				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\night_street.dds",
+			};
+			m_reflectionCapture.init(cubemapsToBake);
 #endif
 		}
 

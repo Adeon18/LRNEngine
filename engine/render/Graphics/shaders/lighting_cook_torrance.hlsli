@@ -1,3 +1,6 @@
+#ifndef LIGHTING_COOK_TORRANCE_HLSLI
+#define LIGHTING_COOK_TORRANCE_HLSLI
+
 #include "globals.hlsli"
 #include "utility.hlsli"
 
@@ -183,3 +186,5 @@ float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, flo
         (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
             getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
+
+#endif // LIGHTING_COOK_TORRANCE_HLSLI

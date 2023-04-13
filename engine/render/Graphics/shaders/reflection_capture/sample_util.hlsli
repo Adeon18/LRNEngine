@@ -1,7 +1,7 @@
 #ifndef SAMPLE_UTIL_HLSLI
 #define SAMPLE_UTIL_HLSLI
 
-static const float PI = 3.14159265f;
+#include "../lighting_cook_torrance.hlsli"
 
 // Fibonacci hemisphere point uniform distribution
 float3 randomHemisphere(out float NdotV, float i, float N)

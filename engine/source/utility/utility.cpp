@@ -51,6 +51,11 @@ namespace engn {
 			return path.substr(0, path.find_last_of('.')) + ext;
 		}
 
+		std::string removeFileExt(const std::string& path)
+		{
+			return path.substr(0, path.find_last_of('.'));
+		}
+
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec)
 		{
 			return { vec.x, vec.y, vec.z };
