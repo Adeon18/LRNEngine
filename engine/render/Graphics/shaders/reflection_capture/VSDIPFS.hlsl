@@ -13,8 +13,8 @@ VS_OUTPUT main(inout float3 pos : POSITION)
 {
     VS_OUTPUT output;
     // We don;t make the skybox
-    float4 clipPos = mul(float4(pos, 0.0f), worldToClip);
-    output.clipPos = float4(clipPos.x, clipPos.y, 1.0f, clipPos.w);
+    float4 clipPos = mul(float4(pos, 1.0f), worldToClip);
+    output.clipPos = clipPos;
     output.modelPos = pos;
     return output;
 }

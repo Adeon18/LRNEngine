@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "render/Graphics/Vertex.hpp"
 #include "render/Systems/Pipeline.hpp"
 
@@ -46,9 +48,20 @@ namespace engn {
 			ConstantBuffer<CB_VS_WorldToClip> m_worldToClipBuffer;
 
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_diffuseIrradianceCubemap;
-			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_currentDIRTV;
+			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, 6> m_currentDIRTVs;
 
 			std::shared_ptr<tex::Texture> m_skyBoxTexture;
+
+			const std::array<XMMATRIX, 6> CAMERA_CAPTURE_VIEWS{
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f, 0.0f}),
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f, 0.0f}),
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  1.0f,  0.0f}, {0.0f, 0.0f, -1.0f}),
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  -1.0f,  0.0f}, {1.0f, 0.0f, 0.0f}),
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  0.0f,  1.0f}, {0.0f, 1.0f, 0.0f}),
+				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  0.0f,  -1.0f}, {0.0f, 1.0f, 0.0f})
+			};
+
+			const XMMATRIX PROJECTION = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1.0f, 0.1f, 1000.0f);
 		};
 	} // rend
 } // engn

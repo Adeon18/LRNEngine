@@ -1,6 +1,6 @@
 #pragma once
 
-#include <array>
+#include <sstream>
 
 #include <DirectXTex/DirectXTex.h>
 
@@ -14,6 +14,7 @@ namespace engn {
 		{
 			initCubeBuffers();
 			initPipelines();
+			initDiffuseIrradianceCubeMap();
 
 			m_worldToClipBuffer.init();
 			m_skyBoxTexture = tex::TextureManager::getInstance().getTexture(skyTexturePath);
@@ -67,7 +68,7 @@ namespace engn {
 			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
 			depthStencilStateDesc.DepthEnable = true;
 			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS;
 			//! Rasterizer state
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
@@ -160,23 +161,38 @@ namespace engn {
 			rtvDIDesc.Texture2DArray.MipSlice = 0;
 			rtvDIDesc.Texture2DArray.ArraySize = 1;
 
+			D3D11_VIEWPORT viewPort;
+			viewPort.TopLeftX = 0;
+			viewPort.TopLeftY = 0;
+			viewPort.Width = 256;
+			viewPort.Height = 256;
+			// It is set this way, despite the reversed depth matrix
+			viewPort.MinDepth = 0.0f;
+			viewPort.MaxDepth = 1.0f;
+
+			d3d::s_devcon->RSSetViewports(1, &viewPort);
+
 			for (uint32_t i = 0; i < 6; ++i) {
 				// ----- Create RTV -----
 				rtvDIDesc.Texture2DArray.FirstArraySlice = i;
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTV.ReleaseAndGetAddressOf());
+				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTVs[i].ReleaseAndGetAddressOf());
 				if (FAILED(hr)) {
 					Logger::instance().logErr("ReflectionCapture::generateDiffuseIrradianceCubemap: Failed at RTV creation");
 				}
 
 				// ----- Set RTV ------
-				d3d::s_devcon->OMSetRenderTargets(1, m_currentDIRTV.GetAddressOf(), nullptr);
+				d3d::s_devcon->OMSetRenderTargets(1, m_currentDIRTVs[i].GetAddressOf(), nullptr);
 				float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				d3d::s_devcon->ClearRenderTargetView(m_currentDIRTV.Get(), clearColor);
+				d3d::s_devcon->ClearRenderTargetView(m_currentDIRTVs[i].Get(), clearColor);
 
 				// ----- Render -----
 				bindPipeline(m_diffuseIrradiancePipeline);
 
-				m_worldToClipBuffer.getData().worldToClip = projection;
+				std::stringstream ss;
+				ss << "MAt:\n" << CAMERA_CAPTURE_VIEWS[i] << '\n';
+				Logger::instance().logInfo(ss.str());
+
+				m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
 				m_worldToClipBuffer.fill();
 
 				d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
@@ -185,9 +201,9 @@ namespace engn {
 				renderCube();
 
 				Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
-				m_currentDIRTV->GetResource(rtvResource.GetAddressOf());
+				m_currentDIRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
 				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
-				images[i] = scratchImages[i].GetImages()[0];
+				images[i] = scratchImages[i].GetImages()[i];
 			}
 			DirectX::ScratchImage diffuseIrradiaceCubeImage;
 			diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());

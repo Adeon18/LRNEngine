@@ -22,7 +22,7 @@ namespace engn {
 			m_initPostProcess();
 #if BAKE_CUBEMAPS == 1
 #ifdef _WIN64 
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\night_street.dds";
+			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\grass_field.dds";
 #else
 			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\night_street.dds";
 #endif // !_WIN64
@@ -37,18 +37,18 @@ namespace engn {
 
 			UI::instance().manageMenus();
 
+			m_bindSamplers();
+
 #if BAKE_CUBEMAPS == 1
-			m_reflectionCapture.generateDiffuseIrradianceCubemap(XMMatrixTranspose(camPtr->getViewMatrix() * camPtr->getProjMatrix()));
+			m_reflectionCapture.generateDiffuseIrradianceCubemap(camPtr->getProjMatrix());
 			std::exit(0);
 #endif
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
-			m_bindSamplers();
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
 			// Render the sky after we are done
 			m_skyTriangle.render(camPtr);
-
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());

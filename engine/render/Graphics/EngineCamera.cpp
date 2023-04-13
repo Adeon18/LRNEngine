@@ -79,6 +79,12 @@ namespace engn {
             m_upVec = XMVector3Transform(DEF_UP_VECTOR, rotMatrix);
 
             m_view = XMMatrixLookAtLH(m_positionVec, forwardVec, m_upVec);
+
+            std::cout << "m_positionVec:\n " << m_positionVec << std::endl;
+            std::cout << "m_positionVec:\n " << forwardVec << std::endl;
+            std::cout << "m_upVec:\n " << m_upVec << std::endl;
+            std::cout << "ViewMat:\n " << m_view << std::endl;
+
             m_viewT = XMMatrixTranspose(m_view);
         }
 
