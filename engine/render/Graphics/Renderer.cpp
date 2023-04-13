@@ -46,6 +46,9 @@ namespace engn {
 #endif
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
+
+			d3d::s_devcon->PSSetShaderResources(6, 1, m_diffuseIrradianceMap->textureView.GetAddressOf());
+
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
 			// Render the sky after we are done
@@ -217,13 +220,14 @@ namespace engn {
 		}
 		void Renderer::m_initializeSky()
 		{
-#ifdef _WIN64 
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\..\\assets\\Textures\\SkyBoxes\\night_street.dds";
-#else
-			const std::string SKYBOX_TEXTURE_PATH = util::getExeDir() + "..\\assets\\Textures\\SkyBoxes\\night_street.dds";
-#endif // !_WIN64
+			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\night_street.dds";
+			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds";
+			const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds";
+			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\lake_beach.dds";
 
-			m_skyTriangle.init(SKYBOX_TEXTURE_PATH);
+			m_diffuseIrradianceMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::DI_TEXTURE_SUFFIX);
+
+			m_skyTriangle.init(skyBoxTexturePath);
 		}
 		void Renderer::m_initPostProcess()
 		{

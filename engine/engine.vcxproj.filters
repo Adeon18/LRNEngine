@@ -34,9 +34,6 @@
     <Filter Include="Header Files\Window">
       <UniqueIdentifier>{80039917-eda5-4851-9055-4cd1686f687a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics">
-      <UniqueIdentifier>{55dd0750-e521-4de1-bfc3-1504554b2e6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{01af2287-b4bd-4def-83c1-026bf0fd24c8}</UniqueIdentifier>
     </Filter>
@@ -45,6 +42,33 @@
     </Filter>
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{ba996a7b-b4cc-4d6a-bd95-42833f53265c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Libs">
+      <UniqueIdentifier>{ae69f5ff-6515-4a65-9ce5-d967a387b0e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{c4237760-1883-4268-92c5-c7a51e96de00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects">
+      <UniqueIdentifier>{a7837b26-e252-4b97-a7ec-b2aaceba502a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Systems">
+      <UniqueIdentifier>{1f4e7a16-2a69-43c5-8715-1e4145af5de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{55dd0750-e521-4de1-bfc3-1504554b2e6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Libs">
+      <UniqueIdentifier>{fab342a9-268f-4e36-a2ce-2d5aa7453af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{4261ad3f-b4cc-4f43-aa56-d525501eb67f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Systems">
+      <UniqueIdentifier>{ca224cbb-19c1-4c50-a2e1-a1cfda6b265c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{8e230c82-fdf3-4fd8-bca1-e17d3a2886da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,119 +132,119 @@
     <ClInclude Include="input\Mouse.hpp">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="render\Graphics\EngineCamera.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\ModelManager\ModelManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Objects\Model.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\mesh\Mesh.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\MeshSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXBuffers\InstanceBuffer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\RenderStructs.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\math\Ray.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\OcTree\OcTree.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="source\dragger\MeshDragger.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\Pipeline.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\HelperStructs.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Objects\Texture.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\TextureManager\TextureManager.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\TextureManager\DDSTextureLoader11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXTextures\Sampler.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Objects\SkyTriangle\SkyTriangle.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\LightSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\LightStructs.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Systems\TransformSystem.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\SolidVector\SolidVector.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\PostProcess\PostProcess.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render\UI\UI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="render\UI\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imgui.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imgui_impl_dx11.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imgui_impl_win32.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
     </ClInclude>
     <ClInclude Include="render\UI\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\HelperStructs.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXBuffers\InstanceBuffer.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\PostProcess\PostProcess.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\Pipeline.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\RenderStructs.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="utils\ReflectionCapture\ReflectionCapture.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Objects\SkyTriangle\SkyTriangle.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\SolidVector\SolidVector.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXTextures\Sampler.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\TextureManager\TextureManager.hpp">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\OcTree\OcTree.hpp">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\ModelManager\ModelManager.hpp">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\TextureManager\DDSTextureLoader11.h">
+      <Filter>Header Files\Libs</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Objects\Texture.hpp">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\Ray.hpp">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Objects\Model.hpp">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="source\mesh\Mesh.hpp">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\EngineCamera.hpp">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="render\UI\UI.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\MeshSystem.hpp">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\LightSystem.hpp">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\TransformSystem.hpp">
+      <Filter>Header Files\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="source\dragger\MeshDragger.hpp">
+      <Filter>Header Files\RayTracer</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\LightStructs.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,95 +278,95 @@
     <ClCompile Include="input\Mouse.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\EngineCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="input\Keyboard.cpp">
       <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\ModelManager\ModelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Systems\MeshSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\math\Ray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\OcTree\OcTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="source\dragger\MeshDragger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Objects\Model.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\TextureManager\TextureManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\TextureManager\DDSTextureLoader11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXTextures\Sampler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Objects\SkyTriangle\SkyTriangle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Systems\LightSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Systems\TransformSystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\PostProcess\PostProcess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\Graphics\DXRTVs\BindableRenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="render\UI\UI.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="render\UI\imgui\imgui_tables.cpp">
+      <Filter>Source Files\Libs</Filter>
     </ClCompile>
     <ClCompile Include="render\UI\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Libs</Filter>
     </ClCompile>
     <ClCompile Include="render\UI\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Libs</Filter>
     </ClCompile>
     <ClCompile Include="render\UI\imgui\imgui_impl_dx11.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Libs</Filter>
     </ClCompile>
     <ClCompile Include="render\UI\imgui\imgui_impl_win32.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Libs</Filter>
     </ClCompile>
-    <ClCompile Include="render\UI\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="render\UI\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="render\Graphics\DXRTVs\BindableRenderTarget.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp">
+      <Filter>Source Files\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="utils\ReflectionCapture\ReflectionCapture.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXTextures\Sampler.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\PostProcess\PostProcess.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Objects\SkyTriangle\SkyTriangle.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\TextureManager\DDSTextureLoader11.cpp">
+      <Filter>Source Files\Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="render\UI\imgui\imgui_widgets.cpp">
+      <Filter>Source Files\Libs</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Systems\MeshSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Systems\TransformSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Systems\LightSystem.cpp">
+      <Filter>Source Files\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="render\UI\UI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\EngineCamera.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Objects\Model.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="source\math\Ray.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\OcTree\OcTree.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\ModelManager\ModelManager.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\TextureManager\TextureManager.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="source\dragger\MeshDragger.cpp">
+      <Filter>Source Files\RayTracer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,42 +376,112 @@
     <FxCompile Include="render\Graphics\shaders\normal\PSVoronoi.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\hologram\PSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\hologram\VSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\normal\PSBasicColor.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\normal_visualization\VSVisNormal.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\normal_visualization\GSVisNormal.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\normal_visualization\PSVisNormal.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\skybox\PSSky.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\skybox\VSSky.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\VSSkyFullscreen.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\PSSkyFullscreen.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\emission_only\VSEmission.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\emission_only\PSEmission.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\post_process\PSPostProcess.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\post_process\VSPostProcess.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\reflection_capture\VSDIPFS.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\reflection_capture\DiffuseIrradiance\PSDiffuseIrradiance.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\reflection_capture\PreFilteredSpecular\PSPreFilteredSpecular.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\VSBRDFIntegration.hlsl" />
-    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\PSBRDFIntegration.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\GSHologram.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\GSVisNormal.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\GSVisWireframe.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\HSHologram.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal\PSBasicColor.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\PSBRDFIntegration.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\DiffuseIrradiance\PSDiffuseIrradiance.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\emission_only\PSEmission.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\PSHologram.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\post_process\PSPostProcess.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\PreFilteredSpecular\PSPreFilteredSpecular.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\skybox\PSSky.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\PSSkyFullscreen.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\PSVisNormal.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\PSVisWireframe.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\BRDFIntegration\VSBRDFIntegration.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\reflection_capture\VSDIPFS.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\emission_only\VSEmission.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\hologram\VSHologram.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\post_process\VSPostProcess.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\skybox\VSSky.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\skyfullscreentriangle\VSSkyFullscreen.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\normal_visualization\VSVisNormal.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl">
+      <Filter>Resource Files</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
-    <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
-    <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
-    <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
-    <None Include="render\Graphics\shaders\globals.hlsli" />
-    <None Include="render\Graphics\shaders\lighting_blinn_phong.hlsli" />
-    <None Include="render\Graphics\shaders\utility.hlsli" />
-    <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
-    <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
-    <None Include="render\Graphics\shaders\reflection_capture\sample_util.hlsli" />
+    <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\globals.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\lighting_blinn_phong.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\reflection_capture\sample_util.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\utility.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

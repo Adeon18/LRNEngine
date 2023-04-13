@@ -25,6 +25,8 @@ Texture2D g_textureNormalMap : TEXTURE : register(t1);
 Texture2D g_textureRoughness : TEXTURE : register(t2);
 Texture2D g_textureMetallic : TEXTURE : register(t3);
 
+TextureCube g_diffuseIrradiance : register(t6);
+
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {
     float3 normFromTex = g_textureNormalMap.Sample(g_linearWrap, texCoords).xyz;
@@ -73,6 +75,12 @@ float4 main(PS_INPUT inp) : SV_TARGET
     }
     
     outL0 += calculateSpotLight(spotLight, fragNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+    
+    
+    if (isIBLEnabled)
+    {
+        outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, fragNorm).rgb;
+    }
     
     
     return float4(outL0, 1.0f);

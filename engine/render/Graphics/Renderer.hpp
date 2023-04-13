@@ -71,6 +71,10 @@ namespace engn {
 			Sampler m_samplerLinearWrap;
 			Sampler m_samplerAnisotropicWrap;
 
+			std::shared_ptr<tex::Texture> m_diffuseIrradianceMap;
+			std::shared_ptr<tex::Texture> m_preFilteredSpecularMap;
+			std::shared_ptr<tex::Texture> m_BDRFIntegrationTex;
+
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;
 #if BAKE_CUBEMAPS == 1
