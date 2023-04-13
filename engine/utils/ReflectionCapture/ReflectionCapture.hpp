@@ -26,9 +26,9 @@ namespace engn {
 			//! Initialize everything from the reflection capture
 			void init(const std::vector<std::string>& skyTexturePaths);
 			//! Generate and save to .dds the diffuse irradiance cubemap
-			void generateDiffuseIrradianceCubemap(const XMMATRIX& projection);
+			void generateDiffuseIrradianceCubemap();
 			//! Generate and save the pre filtered cubemap
-			void generatePreFilteredSpecularCubemap(const XMMATRIX& projection);
+			void generatePreFilteredSpecularCubemap();
 			//! Generate and save the BRDF integration texture
 			void generateBRDFIntegrationTexture();
 		private:

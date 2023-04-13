@@ -30,8 +30,8 @@ namespace engn {
 		//! Set the needed engine data to the renderdata struct
 		void setEngineData(const rend::RenderData& data);
 
-		//! Run engine: Handle physics and render
-		void run();
+		//! Run engine: Handle physics and render - return false at faulty render or cubemap baking
+		bool run();
 
 		// called from main.cpp - Must be called BEFORE engine construction
 		static void init()
@@ -64,7 +64,7 @@ namespace engn {
 
 	private:
 		//! Call the render be the rendere
-		void render();
+		bool render();
 		//! Handle "physics" like dragging and camera movement
 		void handlePhysics();
 		//! Check for camera movement and if it exists, update it

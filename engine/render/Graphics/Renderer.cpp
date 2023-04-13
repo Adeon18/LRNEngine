@@ -31,7 +31,7 @@ namespace engn {
 #endif
 		}
 
-		void Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
+		bool Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
 			// ---- Clear the write buffer
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
@@ -41,8 +41,8 @@ namespace engn {
 			m_bindSamplers();
 
 #if BAKE_CUBEMAPS == 1
-			m_reflectionCapture.generateDiffuseIrradianceCubemap(camPtr->getProjMatrix());
-			std::exit(0);
+			m_reflectionCapture.generateDiffuseIrradianceCubemap();
+			return false;
 #endif
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
@@ -55,6 +55,8 @@ namespace engn {
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
 
 			UI::instance().endFrame();
+
+			return true;
 		}
 
 		void Renderer::m_initScene()

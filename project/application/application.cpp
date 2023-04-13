@@ -52,7 +52,7 @@ void Application::m_handleRender() {
 	// Get fill the needed data for the engine
 	m_engine->setEngineData({ m_timer->getSecondsSinceStart() });
 	// Run the engine
-	m_engine->run();
+	if (!m_engine->run()) { m_isRunning = false; }
 }
 
 

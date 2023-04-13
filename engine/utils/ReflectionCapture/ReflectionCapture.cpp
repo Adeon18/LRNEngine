@@ -165,14 +165,14 @@ namespace engn {
 
 			d3d::s_devcon->DrawIndexed(36, 0, 0);
 		}
-		void ReflectionCapture::generateDiffuseIrradianceCubemap(const XMMATRIX& projection)
+		void ReflectionCapture::generateDiffuseIrradianceCubemap()
 		{
 			initAndBindViewPort(DI_TEXTURE_DIMENSION);
 
-			std::array<DirectX::ScratchImage, 6> scratchImages;
-			std::array<DirectX::Image, 6> images;
-
 			for (const auto& mapPath : m_textureMapPaths) {
+
+				std::array<DirectX::ScratchImage, 6> scratchImages;
+				std::array<DirectX::Image, 6> images;
 				for (uint32_t i = 0; i < 6; ++i) {
 					// ----- Create RTV -----
 					m_RTVDIDesc.Texture2DArray.FirstArraySlice = i;
@@ -217,7 +217,7 @@ namespace engn {
 				);
 			}
 		}
-		void ReflectionCapture::generatePreFilteredSpecularCubemap(const XMMATRIX& projection)
+		void ReflectionCapture::generatePreFilteredSpecularCubemap()
 		{
 		}
 		void ReflectionCapture::generateBRDFIntegrationTexture()

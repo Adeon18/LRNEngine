@@ -47,7 +47,8 @@ namespace engn {
 #endif
 		public:
 			void init();
-			void renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
+			//! Render entire frame, return false at error or cubamap baking to entirely shut down the engine and free the resources
+			bool renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
 			void m_initScene();
 			//! Initialize all the per Frame constant buffers

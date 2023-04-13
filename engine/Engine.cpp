@@ -25,19 +25,22 @@ namespace engn {
 		m_renderData.invResolutionY = 1.0f / m_window->getHeight();
 	}
 
-	void Engine::run()
+	bool Engine::run()
 	{
 		rend::UI::instance().startFrame();
 		handlePhysics();
-		render();
+		return render();
 	}
 
-	void Engine::render() {
+	bool Engine::render() {
 		if (m_window->pollResize()) {
 			setWindowSize(m_window->getWidth(), m_window->getHeight());
 		}
-		m_graphics.renderFrame(m_camera, m_window, m_renderData, m_renderFlags);
+		if (!m_graphics.renderFrame(m_camera, m_window, m_renderData, m_renderFlags)) {
+			return false;
+		}
 		m_window->present();
+		return true;
 	}
 
 	void Engine::handlePhysics() {
