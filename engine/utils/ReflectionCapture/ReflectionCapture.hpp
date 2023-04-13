@@ -15,6 +15,8 @@
 namespace engn {
 	namespace rend {		
 		class ReflectionCapture {
+			static constexpr uint32_t DI_TEXTURE_DIMENSION = 8;
+
 			const std::wstring DI_AND_PFS_VS_NAME = L"VSDIPFS.cso";
 			const std::wstring DI_PS_NAME = L"PSDiffuseIrradiance.cso";
 			const std::wstring PFS_PS_NAME = L"PSPreFilteredSpecular.cso";
@@ -36,6 +38,9 @@ namespace engn {
 			void initPipelines();
 
 			void initDiffuseIrradianceCubeMap();
+
+			//! Init and bind a square viewport
+			void initAndBindViewPort(uint32_t dimension);
 			//! Render the inside out cube
 			void renderCube();
 		private:
@@ -50,6 +55,7 @@ namespace engn {
 
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_diffuseIrradianceCubemap;
 			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, 6> m_currentDIRTVs;
+			D3D11_RENDER_TARGET_VIEW_DESC m_RTVDIDesc;
 
 			//! All the map paths to be converted
 			std::vector<std::string> m_textureMapPaths;

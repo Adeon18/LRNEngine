@@ -121,8 +121,8 @@ namespace engn {
 		void ReflectionCapture::initDiffuseIrradianceCubeMap()
 		{
 			D3D11_TEXTURE2D_DESC cubemapTextureDesc;
-			cubemapTextureDesc.Width = 8;
-			cubemapTextureDesc.Height = 8;
+			cubemapTextureDesc.Width = DI_TEXTURE_DIMENSION;
+			cubemapTextureDesc.Height = DI_TEXTURE_DIMENSION;
 			cubemapTextureDesc.MipLevels = 1;
 			cubemapTextureDesc.ArraySize = 6;
 			cubemapTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -138,6 +138,25 @@ namespace engn {
 				Logger::instance().logErr("ReflectionCapture::initDiffuseIrradianceRTVs: Failed at cubemap creation");
 				return;
 			}
+
+			// Init the RTV, 1 field here will be overriden at each 2D texture in the cubemap write
+			m_RTVDIDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			m_RTVDIDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+			m_RTVDIDesc.Texture2DArray.MipSlice = 0;
+			m_RTVDIDesc.Texture2DArray.ArraySize = 1;
+		}
+		void ReflectionCapture::initAndBindViewPort(uint32_t dimension)
+		{
+			D3D11_VIEWPORT viewPort;
+			viewPort.TopLeftX = 0;
+			viewPort.TopLeftY = 0;
+			viewPort.Width = dimension;
+			viewPort.Height = dimension;
+			// It is set this way, despite the reversed depth matrix
+			viewPort.MinDepth = 0.0f;
+			viewPort.MaxDepth = 1.0f;
+
+			d3d::s_devcon->RSSetViewports(1, &viewPort);
 		}
 		void ReflectionCapture::renderCube()
 		{
@@ -148,33 +167,16 @@ namespace engn {
 		}
 		void ReflectionCapture::generateDiffuseIrradianceCubemap(const XMMATRIX& projection)
 		{
+			initAndBindViewPort(DI_TEXTURE_DIMENSION);
 
 			std::array<DirectX::ScratchImage, 6> scratchImages;
 			std::array<DirectX::Image, 6> images;
 
-			// Create the render target view for the cubemap texture
-			D3D11_RENDER_TARGET_VIEW_DESC rtvDIDesc;
-			rtvDIDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-			rtvDIDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
-			rtvDIDesc.Texture2DArray.MipSlice = 0;
-			rtvDIDesc.Texture2DArray.ArraySize = 1;
-
-			D3D11_VIEWPORT viewPort;
-			viewPort.TopLeftX = 0;
-			viewPort.TopLeftY = 0;
-			viewPort.Width = 8;
-			viewPort.Height = 8;
-			// It is set this way, despite the reversed depth matrix
-			viewPort.MinDepth = 0.0f;
-			viewPort.MaxDepth = 1.0f;
-
-			d3d::s_devcon->RSSetViewports(1, &viewPort);
-
 			for (const auto& mapPath : m_textureMapPaths) {
 				for (uint32_t i = 0; i < 6; ++i) {
 					// ----- Create RTV -----
-					rtvDIDesc.Texture2DArray.FirstArraySlice = i;
-					HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &rtvDIDesc, m_currentDIRTVs[i].ReleaseAndGetAddressOf());
+					m_RTVDIDesc.Texture2DArray.FirstArraySlice = i;
+					HRESULT hr = d3d::s_device->CreateRenderTargetView(m_diffuseIrradianceCubemap.Get(), &m_RTVDIDesc, m_currentDIRTVs[i].ReleaseAndGetAddressOf());
 					if (FAILED(hr)) {
 						Logger::instance().logErr("ReflectionCapture::generateDiffuseIrradianceCubemap: Failed at RTV creation");
 					}
@@ -187,7 +189,6 @@ namespace engn {
 					// ----- Render -----
 					bindPipeline(m_diffuseIrradiancePipeline);
 
-
 					m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
 					m_worldToClipBuffer.fill();
 
@@ -196,14 +197,15 @@ namespace engn {
 
 					renderCube();
 
+					// ----- Capture Result -----
 					Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
 					m_currentDIRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
 					DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
 					images[i] = scratchImages[i].GetImages()[i];
 				}
+				// ----- Write to cubemap -----
 				DirectX::ScratchImage diffuseIrradiaceCubeImage;
 				diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
-
 				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"DI.dds";
 
 				DirectX::SaveToDDSFile(
