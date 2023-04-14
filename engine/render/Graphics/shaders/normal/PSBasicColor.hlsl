@@ -26,6 +26,7 @@ Texture2D g_textureRoughness : TEXTURE : register(t2);
 Texture2D g_textureMetallic : TEXTURE : register(t3);
 
 TextureCube g_diffuseIrradiance : register(t6);
+TextureCube g_preFilteredSpecular : register(t7);
 
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {

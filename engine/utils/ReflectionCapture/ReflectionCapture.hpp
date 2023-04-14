@@ -26,6 +26,7 @@ namespace engn {
 			const std::wstring BRDF_PS_NAME = L"PSBRDFIntegration.cso";
 		public:
 			inline static std::string DI_TEXTURE_SUFFIX = "DI.dds";
+			inline static std::string PFS_TEXTURE_SUFFIX = "PFS.dds";
 		public:
 			//! Initialize everything from the reflection capture
 			void init(const std::vector<std::string>& skyTexturePaths);

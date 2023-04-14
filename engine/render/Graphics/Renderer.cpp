@@ -49,6 +49,7 @@ namespace engn {
 			m_fillPerFrameCBs(camPtr, renderData);
 
 			d3d::s_devcon->PSSetShaderResources(6, 1, m_diffuseIrradianceMap->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(7, 1, m_preFilteredSpecularMap->textureView.GetAddressOf());
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
@@ -227,6 +228,7 @@ namespace engn {
 			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\lake_beach.dds";
 
 			m_diffuseIrradianceMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::DI_TEXTURE_SUFFIX);
+			m_preFilteredSpecularMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::PFS_TEXTURE_SUFFIX);
 
 			m_skyTriangle.init(skyBoxTexturePath);
 		}
