@@ -43,6 +43,7 @@ namespace engn {
 #if BAKE_CUBEMAPS == 1
 			m_reflectionCapture.generateDiffuseIrradianceCubemap();
 			m_reflectionCapture.generatePreFilteredSpecularCubemap();
+			m_reflectionCapture.generateBRDFIntegrationTexture();
 			return false;
 #endif
 			// ---- Render ----

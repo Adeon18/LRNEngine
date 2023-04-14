@@ -18,6 +18,7 @@ namespace engn {
 			static constexpr uint32_t DI_TEXTURE_DIMENSION = 8;
 			static constexpr uint32_t PFS_TEXTURE_DIMENSION = 512;
 			static constexpr uint32_t PFS_TEXTURE_MIPS = 6;
+			static constexpr uint32_t BRDFI_TEXTURE_DIMENSION = 512;
 
 			const std::wstring DI_AND_PFS_VS_NAME = L"VSDIPFS.cso";
 			const std::wstring DI_PS_NAME = L"PSDiffuseIrradiance.cso";
@@ -44,6 +45,7 @@ namespace engn {
 
 			void initDiffuseIrradianceCubeMap();
 			void initPreFilteredSpecularCubeMap();
+			void initBRDFIntegrationTexture();
 
 			//! Init and bind a square viewport
 			void initAndBindViewPort(uint32_t dimension);
@@ -67,6 +69,9 @@ namespace engn {
 
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_preFilteredSpecularCubemap;
 			D3D11_RENDER_TARGET_VIEW_DESC m_RTVPFSDesc;
+
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_BRDFIntegrationTexture;
+			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_BRDFIntegrationRTV;
 
 			//! All the map paths to be converted
 			std::vector<std::string> m_textureMapPaths;

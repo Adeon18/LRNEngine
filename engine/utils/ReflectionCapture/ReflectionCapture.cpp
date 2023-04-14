@@ -16,6 +16,7 @@ namespace engn {
 			initPipelines();
 			initDiffuseIrradianceCubeMap();
 			initPreFilteredSpecularCubeMap();
+			initBRDFIntegrationTexture();
 
 			m_worldToClipBuffer.init();
 			m_roughnessBuffer.init();
@@ -174,6 +175,31 @@ namespace engn {
 			m_RTVPFSDesc.Texture2DArray.MipSlice = 0;
 			m_RTVPFSDesc.Texture2DArray.ArraySize = 1;
 		}
+		void ReflectionCapture::initBRDFIntegrationTexture()
+		{
+			D3D11_TEXTURE2D_DESC textureDesc{};
+			textureDesc.Width = BRDFI_TEXTURE_DIMENSION;
+			textureDesc.Height = BRDFI_TEXTURE_DIMENSION;
+			textureDesc.MipLevels = 1;
+			textureDesc.ArraySize = 1;
+			textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			textureDesc.SampleDesc.Count = 1;
+			textureDesc.SampleDesc.Quality = 0;
+			textureDesc.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+			textureDesc.CPUAccessFlags = 0;
+
+			HRESULT hr = d3d::s_device->CreateTexture2D(&textureDesc, nullptr, m_BRDFIntegrationTexture.GetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("ReflectionCapture::initDiffuseIrradianceRTVs: Failed at cubemap creation");
+				return;
+			}
+
+			hr = d3d::s_device->CreateRenderTargetView(m_BRDFIntegrationTexture.Get(), nullptr, m_BRDFIntegrationRTV.ReleaseAndGetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("ReflectionCapture::initBRDFIntegrationTexture: Failed at RTV creation");
+			}
+		}
 		void ReflectionCapture::initAndBindViewPort(uint32_t dimension)
 		{
 			D3D11_VIEWPORT viewPort;
@@ -310,6 +336,39 @@ namespace engn {
 		}
 		void ReflectionCapture::generateBRDFIntegrationTexture()
 		{
+			initAndBindViewPort(BRDFI_TEXTURE_DIMENSION);
+
+			d3d::s_devcon->IASetInputLayout(NULL);
+
+			// ----- Set RTV ------
+			d3d::s_devcon->OMSetRenderTargets(1, m_BRDFIntegrationRTV.GetAddressOf(), nullptr);
+			float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+			d3d::s_devcon->ClearRenderTargetView(m_BRDFIntegrationRTV.Get(), clearColor);
+
+			// ----- Render -----
+			bindPipeline(m_BRDFIntegrationPipeline);
+
+			/*m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
+			m_worldToClipBuffer.fill();*/
+
+			//d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
+			//d3d::s_devcon->PSSetConstantBuffers(0, 1, m_roughnessBuffer.getBufferAddress());
+			//d3d::s_devcon->PSSetShaderResources(0, 1, tex::TextureManager::getInstance().getTexture(mapPath)->textureView.GetAddressOf());
+
+			d3d::s_devcon->Draw(3, 0);
+
+			DirectX::ScratchImage brdfIntegrationTexture;
+			DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_BRDFIntegrationTexture.Get(), brdfIntegrationTexture);
+			std::wstring filepath = util::getExeDirW() + L"..\\..\\assets\\Textures\\SkyBoxes\\2DLUT.dds";
+
+			// TODO: Replace with proper saving later
+			HRESULT hr = DirectX::SaveToDDSFile(
+				brdfIntegrationTexture.GetImages(),
+				brdfIntegrationTexture.GetImageCount(),
+				brdfIntegrationTexture.GetMetadata(),
+				DirectX::DDS_FLAGS_NONE,
+				filepath.c_str()
+			);
 		}
 	} // rend
 } // engn
