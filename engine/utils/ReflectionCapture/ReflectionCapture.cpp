@@ -18,6 +18,7 @@ namespace engn {
 			initPreFilteredSpecularCubeMap();
 
 			m_worldToClipBuffer.init();
+			m_roughnessBuffer.init();
 			m_textureMapPaths = skyTexturePaths;
 		}
 		void ReflectionCapture::initCubeBuffers()
@@ -265,7 +266,7 @@ namespace engn {
 			for (const auto& mapPath : m_textureMapPaths) {
 
 				std::array<DirectX::ScratchImage, 6> scratchImages;
-				std::array<DirectX::Image, 6> images;
+				std::array<DirectX::Image, 30> images;
 				for (uint32_t i = 0; i < 6; ++i) {
 					// ----- Create RTV -----
 					m_RTVPFSDesc.Texture2DArray.FirstArraySlice = i;
@@ -291,30 +292,45 @@ namespace engn {
 						m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
 						m_worldToClipBuffer.fill();
 
+						float roughness = static_cast<float>(PFS_TEXTURE_MIPS - mipLevel) / static_cast<float>(PFS_TEXTURE_MIPS);
+						m_roughnessBuffer.getData().roughness = roughness;
+						m_roughnessBuffer.fill();
+
 						d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
+						d3d::s_devcon->PSSetConstantBuffers(0, 1, m_roughnessBuffer.getBufferAddress());
 						d3d::s_devcon->PSSetShaderResources(0, 1, tex::TextureManager::getInstance().getTexture(mapPath)->textureView.GetAddressOf());
 
 						renderCube();
+
+						// ----- Capture Result -----
+						Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
+						m_currentRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
+						DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
+						Logger::instance().logInfo(std::to_string(scratchImages[i].GetImageCount()));
+						Logger::instance().logInfo(std::to_string(scratchImages[i].GetMetadata().mipLevels));
+						images[i * PFS_TEXTURE_MIPS + mipLevel] = scratchImages[i].GetImages()[i * PFS_TEXTURE_MIPS + mipLevel];
 					}
-					// ----- Capture Result -----
-					Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
-					m_currentRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
-					DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
-					images[i] = scratchImages[i].GetImages()[0];
 				}
-				// ----- Write to cubemap -----
+
 				DirectX::ScratchImage preFIlteredSpeculareCubeImage;
-				preFIlteredSpeculareCubeImage.InitializeCubeFromImages(images.data(), images.size());
+				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_preFilteredSpecularCubemap.Get(), preFIlteredSpeculareCubeImage);
 				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"PFS.dds";
 
 				DirectX::ScratchImage mipchain;
-				DirectX::GenerateMipMaps(preFIlteredSpeculareCubeImage.GetImages(), preFIlteredSpeculareCubeImage.GetImageCount(), preFIlteredSpeculareCubeImage.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 5, mipchain);
+				DirectX::GenerateMipMaps(
+					preFIlteredSpeculareCubeImage.GetImages(),
+					preFIlteredSpeculareCubeImage.GetImageCount(),
+					preFIlteredSpeculareCubeImage.GetMetadata(),
+					DirectX::TEX_FILTER_DEFAULT,
+					PFS_TEXTURE_MIPS,
+					mipchain
+				);
 
 				// TODO: Replace with proper saving later
 				HRESULT hr = DirectX::SaveToDDSFile(
-					mipchain.GetImages(),
-					mipchain.GetImageCount(),
-					mipchain.GetMetadata(),
+					preFIlteredSpeculareCubeImage.GetImages(),
+					preFIlteredSpeculareCubeImage.GetImageCount(),
+					preFIlteredSpeculareCubeImage.GetMetadata(),
 					DirectX::DDS_FLAGS_NONE,
 					filepath.c_str()
 				);

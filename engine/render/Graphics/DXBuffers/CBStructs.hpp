@@ -76,5 +76,10 @@ namespace engn {
 			XMMATRIX worldToClip;
 		};
 
+		//! This buffer is used during preFilteredSpecular precomputing
+		struct CB_PS_RoughnessBuffer {
+			float roughness;
+		};
+
 	} // rend
 } // engn

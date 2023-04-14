@@ -57,6 +57,7 @@ namespace engn {
 			IndexBuffer m_cubeIndexBuffer;
 
 			ConstantBuffer<CB_VS_WorldToClip> m_worldToClipBuffer;
+			ConstantBuffer<CB_PS_RoughnessBuffer> m_roughnessBuffer;
 
 			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, 6> m_currentRTVs;
 
