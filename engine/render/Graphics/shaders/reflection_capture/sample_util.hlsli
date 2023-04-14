@@ -55,7 +55,7 @@ float2 randomHammersley(float i, float N)
 float3 randomGGX(float2 random, float rough2)
 {
     float phi = 2.0 * PI * random.x;
-    float cosTheta = sqrt((1.0 - random.y) / (1.0 + (rough2 - 1.0) * random.y));
+    float cosTheta = sqrt((1.0 - random.y) / (1.0 + (rough2 * rough2 - 1.0) * random.y));
     float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
 	
     float3 dir;

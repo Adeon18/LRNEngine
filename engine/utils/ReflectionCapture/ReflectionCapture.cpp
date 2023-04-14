@@ -173,18 +173,6 @@ namespace engn {
 			m_RTVPFSDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 			m_RTVPFSDesc.Texture2DArray.MipSlice = 0;
 			m_RTVPFSDesc.Texture2DArray.ArraySize = 1;
-
-			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-			srvDesc.Format = cubemapTextureDesc.Format;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-			srvDesc.TextureCube.MipLevels = PFS_TEXTURE_MIPS;
-			srvDesc.TextureCube.MostDetailedMip = 0;
-
-			hr = d3d::s_device->CreateShaderResourceView(m_preFilteredSpecularCubemap.Get(), &srvDesc, m_preFilteredSpecularSRV.GetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("ReflectionCapture::initPreFilteredSpecularCubeMap: Failed at cubemap SRV creation");
-				return;
-			}
 		}
 		void ReflectionCapture::initAndBindViewPort(uint32_t dimension)
 		{
@@ -264,9 +252,6 @@ namespace engn {
 			initAndBindViewPort(PFS_TEXTURE_DIMENSION);
 
 			for (const auto& mapPath : m_textureMapPaths) {
-
-				std::array<DirectX::ScratchImage, 6> scratchImages;
-				std::array<DirectX::Image, 30> images;
 				for (uint32_t i = 0; i < 6; ++i) {
 					// ----- Create RTV -----
 					m_RTVPFSDesc.Texture2DArray.FirstArraySlice = i;
@@ -292,7 +277,8 @@ namespace engn {
 						m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
 						m_worldToClipBuffer.fill();
 
-						float roughness = static_cast<float>(PFS_TEXTURE_MIPS - mipLevel) / static_cast<float>(PFS_TEXTURE_MIPS);
+						float roughness = static_cast<float>(mipLevel) / static_cast<float>(PFS_TEXTURE_MIPS - 1);
+						//Logger::instance().logInfo(std::to_string(roughness));
 						m_roughnessBuffer.getData().roughness = roughness;
 						m_roughnessBuffer.fill();
 
@@ -301,30 +287,12 @@ namespace engn {
 						d3d::s_devcon->PSSetShaderResources(0, 1, tex::TextureManager::getInstance().getTexture(mapPath)->textureView.GetAddressOf());
 
 						renderCube();
-
-						// ----- Capture Result -----
-						Microsoft::WRL::ComPtr<ID3D11Resource> rtvResource;
-						m_currentRTVs[i]->GetResource(rtvResource.ReleaseAndGetAddressOf());
-						DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, rtvResource.Get(), scratchImages[i]);
-						Logger::instance().logInfo(std::to_string(scratchImages[i].GetImageCount()));
-						Logger::instance().logInfo(std::to_string(scratchImages[i].GetMetadata().mipLevels));
-						images[i * PFS_TEXTURE_MIPS + mipLevel] = scratchImages[i].GetImages()[i * PFS_TEXTURE_MIPS + mipLevel];
 					}
 				}
 
 				DirectX::ScratchImage preFIlteredSpeculareCubeImage;
 				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_preFilteredSpecularCubemap.Get(), preFIlteredSpeculareCubeImage);
 				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"PFS.dds";
-
-				DirectX::ScratchImage mipchain;
-				DirectX::GenerateMipMaps(
-					preFIlteredSpeculareCubeImage.GetImages(),
-					preFIlteredSpeculareCubeImage.GetImageCount(),
-					preFIlteredSpeculareCubeImage.GetMetadata(),
-					DirectX::TEX_FILTER_DEFAULT,
-					PFS_TEXTURE_MIPS,
-					mipchain
-				);
 
 				// TODO: Replace with proper saving later
 				HRESULT hr = DirectX::SaveToDDSFile(
