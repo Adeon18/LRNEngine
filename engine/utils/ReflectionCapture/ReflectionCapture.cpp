@@ -2,8 +2,6 @@
 
 #include <sstream>
 
-#include <DirectXTex/DirectXTex.h>
-
 #include "ReflectionCapture.hpp"
 
 #include "utils/Logger/Logger.hpp"
@@ -238,6 +236,28 @@ namespace engn {
 
 			d3d::s_devcon->DrawIndexed(36, 0, 0);
 		}
+		void ReflectionCapture::compressAndSave(const DirectX::ScratchImage& image, const std::wstring& filename, FileFormat format)
+		{
+			DirectX::ScratchImage compressed;
+			if (FileFormat::BC6_UNSIGNED <= format && format <= FileFormat::BC7_SRGB) {
+				HRESULT hr = DirectX::Compress(d3d::s_device, image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+					DXGI_FORMAT(format), DirectX::TEX_COMPRESS_PARALLEL, 1.f, compressed);
+				if (FAILED(hr)) { Logger::instance().logWarn("ReflectionCapture::compressAndSave: Failed compressing texture in BC6/7"); }
+			} else {
+				HRESULT hr = DirectX::Compress(image.GetImages(), image.GetImageCount(), image.GetMetadata(),
+					DXGI_FORMAT(format), DirectX::TEX_COMPRESS_PARALLEL, 1.f, compressed);
+				if (FAILED(hr)) { Logger::instance().logWarn("ReflectionCapture::compressAndSave: Failed compressing texture in BC1-5"); }
+			}
+
+			HRESULT hr = DirectX::SaveToDDSFile(
+				compressed.GetImages(),
+				compressed.GetImageCount(),
+				compressed.GetMetadata(),
+				DirectX::DDS_FLAGS(0),
+				filename.c_str()
+			);
+			if (FAILED(hr)) { Logger::instance().logWarn("ReflectionCapture::compressAndSave: Failed saving compserred texture"); }
+		}
 		void ReflectionCapture::generateDiffuseIrradianceCubemap()
 		{
 			initAndBindViewPort(DI_TEXTURE_DIMENSION);
@@ -281,14 +301,7 @@ namespace engn {
 				diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
 				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"DI.dds";
 
-				// TODO: Replace with proper saving later
-				DirectX::SaveToDDSFile(
-					diffuseIrradiaceCubeImage.GetImages(),
-					diffuseIrradiaceCubeImage.GetImageCount(),
-					diffuseIrradiaceCubeImage.GetMetadata(),
-					DirectX::DDS_FLAGS_NONE,
-					filepath.c_str()
-				);
+				compressAndSave(diffuseIrradiaceCubeImage, filepath, FileFormat::BC6_UNSIGNED);
 			}
 		}
 		void ReflectionCapture::generatePreFilteredSpecularCubemap()
@@ -334,22 +347,11 @@ namespace engn {
 					}
 				}
 
-				DirectX::ScratchImage preFIlteredSpeculareCubeImage;
-				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_preFilteredSpecularCubemap.Get(), preFIlteredSpeculareCubeImage);
+				DirectX::ScratchImage preFilteredSpeculareCubeImage;
+				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_preFilteredSpecularCubemap.Get(), preFilteredSpeculareCubeImage);
 				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"PFS.dds";
 
-				// TODO: Replace with proper saving later
-				HRESULT hr = DirectX::SaveToDDSFile(
-					preFIlteredSpeculareCubeImage.GetImages(),
-					preFIlteredSpeculareCubeImage.GetImageCount(),
-					preFIlteredSpeculareCubeImage.GetMetadata(),
-					DirectX::DDS_FLAGS_NONE,
-					filepath.c_str()
-				);
-
-				if (FAILED(hr)) {
-					Logger::instance().logErr("ReflectionCapture::generatePreFilteredSpecularCubemap: Failed at saving .dds" + std::system_category().message(hr));
-				}
+				compressAndSave(preFilteredSpeculareCubeImage, filepath, FileFormat::BC6_UNSIGNED);
 			}
 		}
 		void ReflectionCapture::generateBRDFIntegrationTexture()
@@ -372,14 +374,8 @@ namespace engn {
 			DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_BRDFIntegrationTexture.Get(), brdfIntegrationTexture);
 			std::wstring filepath = util::getExeDirW() + L"..\\..\\assets\\Textures\\SkyBoxes\\2DLUT.dds";
 
-			// TODO: Replace with proper saving later
-			HRESULT hr = DirectX::SaveToDDSFile(
-				brdfIntegrationTexture.GetImages(),
-				brdfIntegrationTexture.GetImageCount(),
-				brdfIntegrationTexture.GetMetadata(),
-				DirectX::DDS_FLAGS_NONE,
-				filepath.c_str()
-			);
+			compressAndSave(brdfIntegrationTexture, filepath, FileFormat::BC5_UNSIGNED);
+
 		}
 	} // rend
 } // engn

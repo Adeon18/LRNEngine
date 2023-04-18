@@ -3,6 +3,8 @@
 #include <array>
 #include <vector>
 
+#include <DirectXTex/DirectXTex.h>
+
 #include "render/Graphics/Vertex.hpp"
 #include "render/Systems/Pipeline.hpp"
 
@@ -13,7 +15,27 @@
 #include "utils/TextureManager/TextureManager.hpp"
 
 namespace engn {
-	namespace rend {		
+	namespace rend {	
+		enum class FileFormat
+		{
+			NONE,
+			PNG,
+			TGA,
+			HDR,
+			BC1_LINEAR = DXGI_FORMAT_BC1_UNORM,			// RGB, 1 bit Alpha
+			BC1_SRGB = DXGI_FORMAT_BC1_UNORM_SRGB,		// RGB, 1-bit Alpha, SRGB
+			BC3_LINEAR = DXGI_FORMAT_BC3_UNORM,			// RGBA
+			BC3_SRGB = DXGI_FORMAT_BC3_UNORM_SRGB,		// RGBA, SRGB
+			BC4_UNSIGNED = DXGI_FORMAT_BC4_UNORM,		// GRAY, unsigned
+			BC4_SIGNED = DXGI_FORMAT_BC4_SNORM,			// GRAY, signed
+			BC5_UNSIGNED = DXGI_FORMAT_BC5_UNORM,		// RG, unsigned
+			BC5_SIGNED = DXGI_FORMAT_BC5_SNORM,			// RG, signed
+			BC6_UNSIGNED = DXGI_FORMAT_BC6H_UF16,		// RGB HDR, unsigned
+			BC6_SIGNED = DXGI_FORMAT_BC6H_SF16,			// RGB HDR, signed
+			BC7_LINEAR = DXGI_FORMAT_BC7_UNORM,			// RGBA Advanced
+			BC7_SRGB = DXGI_FORMAT_BC7_UNORM_SRGB,		// RGBA Advanced, SRGB
+		};
+
 		class ReflectionCapture {
 		public:
 			static constexpr uint32_t DI_TEXTURE_DIMENSION = 8;
@@ -51,6 +73,7 @@ namespace engn {
 			//! Generate the dot product between the view vector and the fibonacci hemisphere
 			void fibonacciHemisphere(float& NdotV, float i, float N);
 
+			//! Initialize texture objects and RTVs properly here
 			void initDiffuseIrradianceCubeMap();
 			void initPreFilteredSpecularCubeMap();
 			void initBRDFIntegrationTexture();
@@ -59,6 +82,8 @@ namespace engn {
 			void initAndBindViewPort(uint32_t dimension);
 			//! Render the inside out cube
 			void renderCube();
+
+			void compressAndSave(const DirectX::ScratchImage& image, const std::wstring& filename, FileFormat format);
 		private:
 			Pipeline m_diffuseIrradiancePipeline;
 			Pipeline m_preFilteredSpecularPipeline;
