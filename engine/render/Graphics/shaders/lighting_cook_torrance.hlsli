@@ -137,12 +137,16 @@ void SphereMaxNoH(float NoV, inout float NoL, inout float VoL, float SinAlpha, f
     }
 }
 
-
-
 float getSolidAngle(float3 fragPos, float3 lightPos, float radius)
 {
     float distance = length(fragPos - lightPos);
     return 2 * PI * (1.0f - sqrt(max(1.0f - pow(radius / distance, 2), MIN_LIGHT_INTENCITY)));
+}
+
+// Get the falloff factor for a spherelight
+float getHorizonAttenuation(float lightRadius, float3 lightPos, float3 fragPos)
+{
+    return min(1.0f, (length(lightPos - fragPos) + lightRadius) / (2 * lightRadius));
 }
 
 // Schlick's approximation of Fresnel reflectance,
@@ -194,7 +198,12 @@ float3 getCookTorrenceSpecular(float3 norm, float3 halfVector, float3 viewDir, f
     float NdotV = max(dot(norm, viewDir), MIN_LIGHT_INTENCITY);
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     float HdotL = max(dot(halfVector, lightDir), MIN_LIGHT_INTENCITY);
-    float NdotH = dot(norm, halfVector);
+    float NdotH = max(dot(norm, halfVector), MIN_LIGHT_INTENCITY);
+    float VdotL = dot(viewDir, lightDir);
+    float VdotH;
+    
+    SphereMaxNoH(NdotV, NdotL, VdotL, 1.0f, 0.0f, false, NdotH, VdotH);
+    
     return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(HdotL, F0);
 }
 
@@ -215,11 +224,7 @@ float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 vie
 float3 calculatePointLight(PointLight light, float3 micNorm, float3 macNorm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
 {
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
-    
-    if (dot(macNorm, lightDir) < MIN_LIGHT_INTENCITY)
-    {
-        return float3(0.0f, 0.0f, 0.0f);
-    }
+
     float3 halfVector = normalize(viewDir + lightDir);
     
     float NdotL = dot(micNorm, lightDir);
@@ -227,8 +232,11 @@ float3 calculatePointLight(PointLight light, float3 micNorm, float3 macNorm, flo
     clampDirToHorizon(micNorm, NdotL, macNorm, MIN_LIGHT_INTENCITY);
         
     float solidAngle = getSolidAngle(fragWorldPos, light.position.xyz, light.radius.x);
+    
+    // Get the falloff factor when light hides at horizon
+    float falloff = getHorizonAttenuation(light.radius.x, light.position.xyz, fragWorldPos);
         
-    return light.radiance.xyz *
+    return light.radiance.xyz * falloff *
         (getLambertDiffuse(albedo, micNorm, lightDir, F0, metallic, solidAngle) * NdotL +
             getCookTorrenceSpecular(micNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
