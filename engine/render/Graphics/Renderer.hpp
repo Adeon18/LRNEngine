@@ -73,7 +73,7 @@ namespace engn {
 
 			std::shared_ptr<tex::Texture> m_diffuseIrradianceMap;
 			std::shared_ptr<tex::Texture> m_preFilteredSpecularMap;
-			std::shared_ptr<tex::Texture> m_BDRFIntegrationTex;
+			std::shared_ptr<tex::Texture> m_BRDFIntegrationTex;
 
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;

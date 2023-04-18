@@ -65,6 +65,15 @@ cbuffer perFrameLightFlags : register(b3)
     bool isIBLEnabled;
 };
 
+
+// Determing which mip level to read in cubemap sampling with uniform/importance sampling
+float hemisphereMip(float sampleProbability, float cubemapSize)
+{
+    float hemisphereTexels = cubemapSize * cubemapSize * 3;
+    float log4 = 0.5 * log2(sampleProbability * hemisphereTexels);
+    return log4;
+}
+
 float getSolidAngle(float3 fragPos, float3 lightPos, float radius)
 {
     float distance = length(fragPos - lightPos);

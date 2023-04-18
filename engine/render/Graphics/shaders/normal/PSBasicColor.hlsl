@@ -7,6 +7,7 @@ cbuffer perFrame : register(b0)
 {
     float4 iResolution;
     float4 iCameraPosition;
+    float4 iPFSCubemapResolution;
     float iTime;
 };
 
@@ -27,6 +28,7 @@ Texture2D g_textureMetallic : TEXTURE : register(t3);
 
 TextureCube g_diffuseIrradiance : register(t6);
 TextureCube g_preFilteredSpecular : register(t7);
+Texture2D g_BRDFIntegration : TEXTURE : register(t8);
 
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {
@@ -39,6 +41,8 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 
 #define DEBUG 0
 #define MODE 1
+
+static const int PFS_SAMPLE_COUNT = 16384;
 
 float4 main(PS_INPUT inp) : SV_TARGET
 {
@@ -80,7 +84,14 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     if (isIBLEnabled)
     {
-        outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, fragNorm).rgb;
+        float S_importance = 4 / (2 * PI * ggx(roughness, 1.0f) * PFS_SAMPLE_COUNT);
+        float mipLevel = hemisphereMip(S_importance, iPFSCubemapResolution.x);
+        float BIUV = float2(roughness, dot(fragNorm, viewDir));
+        
+        float3 E_spec = g_preFilteredSpecular.SampleLevel(g_linearWrap, reflect(-viewDir, fragNorm), mipLevel);
+        float2 K_spec = g_BRDFIntegration.Sample(g_linearWrap, BIUV).rg;
+        
+        outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, fragNorm).rgb + E_spec * (K_spec.r * F0 + K_spec.g);
     }
     
     

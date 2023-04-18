@@ -40,6 +40,7 @@ namespace engn {
 		struct CB_PS_RealTimeData {
 			XMFLOAT4 gResolution;
 			XMFLOAT4 gCameraPosition;
+			XMFLOAT4 gPFSCubemapResolution;
 			float gTime;
 		};
 

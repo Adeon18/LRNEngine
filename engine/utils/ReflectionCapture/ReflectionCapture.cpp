@@ -348,13 +348,6 @@ namespace engn {
 			// ----- Render -----
 			bindPipeline(m_BRDFIntegrationPipeline);
 
-			/*m_worldToClipBuffer.getData().worldToClip = XMMatrixTranspose(CAMERA_CAPTURE_VIEWS[i] * PROJECTION);
-			m_worldToClipBuffer.fill();*/
-
-			//d3d::s_devcon->VSSetConstantBuffers(0, 1, m_worldToClipBuffer.getBufferAddress());
-			//d3d::s_devcon->PSSetConstantBuffers(0, 1, m_roughnessBuffer.getBufferAddress());
-			//d3d::s_devcon->PSSetShaderResources(0, 1, tex::TextureManager::getInstance().getTexture(mapPath)->textureView.GetAddressOf());
-
 			d3d::s_devcon->Draw(3, 0);
 
 			DirectX::ScratchImage brdfIntegrationTexture;

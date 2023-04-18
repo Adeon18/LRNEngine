@@ -73,12 +73,4 @@ float3 randomGGX(out float NdotH, uint index, uint N, float roughness, float3x3 
     return mul(H, rotation);
 }
 
-// Determing which mip level to read in cubemap sampling with uniform/importance sampling
-float hemisphereMip(float sampleProbability, float cubemapSize)
-{
-    float hemisphereTexels = cubemapSize * cubemapSize * 3;
-    float log4 = 0.5 * log2(sampleProbability * hemisphereTexels);
-    return log4;
-}
-
 #endif // SAMPLE_UTIL_HLSLI

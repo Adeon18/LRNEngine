@@ -15,6 +15,7 @@
 namespace engn {
 	namespace rend {		
 		class ReflectionCapture {
+		public:
 			static constexpr uint32_t DI_TEXTURE_DIMENSION = 8;
 			static constexpr uint32_t PFS_TEXTURE_DIMENSION = 512;
 			static constexpr uint32_t PFS_TEXTURE_MIPS = 6;
@@ -28,6 +29,7 @@ namespace engn {
 		public:
 			inline static std::string DI_TEXTURE_SUFFIX = "DI.dds";
 			inline static std::string PFS_TEXTURE_SUFFIX = "PFS.dds";
+			inline static std::string BRDFI_TEXTURE_NAME = "2DLUT.dds";
 		public:
 			//! Initialize everything from the reflection capture
 			void init(const std::vector<std::string>& skyTexturePaths);

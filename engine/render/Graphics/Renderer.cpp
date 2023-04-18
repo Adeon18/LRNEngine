@@ -51,6 +51,7 @@ namespace engn {
 
 			d3d::s_devcon->PSSetShaderResources(6, 1, m_diffuseIrradianceMap->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(7, 1, m_preFilteredSpecularMap->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(8, 1, m_BRDFIntegrationTex->textureView.GetAddressOf());
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
@@ -210,7 +211,9 @@ namespace engn {
 			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
 
 			//! Fill global constant PS CB
+			const float res = ReflectionCapture::PFS_TEXTURE_DIMENSION;
 			m_globalConstantBufferPS.getData().gResolution = gResolution;
+			m_globalConstantBufferPS.getData().gPFSCubemapResolution = { res, res, res, res };
 			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
 			m_globalConstantBufferPS.getData().gTime = renderData.iTime;
 			
@@ -230,6 +233,7 @@ namespace engn {
 
 			m_diffuseIrradianceMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::DI_TEXTURE_SUFFIX);
 			m_preFilteredSpecularMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::PFS_TEXTURE_SUFFIX);
+			m_BRDFIntegrationTex = tex::TextureManager::getInstance().getTexture(TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\" + ReflectionCapture::BRDFI_TEXTURE_NAME);
 
 			m_skyTriangle.init(skyBoxTexturePath);
 		}
