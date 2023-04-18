@@ -26,12 +26,12 @@ namespace engn {
 		{
 			float sum = 0.0f;
 
-			for (uint32_t i = 0; i < 1024; ++i) {
+			for (uint32_t i = 0; i < FIBONACCI_SAMPLE_COUNT; ++i) {
 				float NdotV;
-				fibonacciHemisphere(NdotV, i, 1024);
+				fibonacciHemisphere(NdotV, i, FIBONACCI_SAMPLE_COUNT);
 				sum += NdotV;
 			}
-			Logger::instance().logInfo("Hemisphere sum: " + std::to_string(2 * PI_CONST / 1024 * sum));
+			Logger::instance().logInfo("Hemisphere sum: " + std::to_string(2 * PI_CONST / FIBONACCI_SAMPLE_COUNT * sum));
 		}
 		void ReflectionCapture::initCubeBuffers()
 		{

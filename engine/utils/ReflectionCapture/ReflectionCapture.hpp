@@ -20,6 +20,7 @@ namespace engn {
 			static constexpr uint32_t PFS_TEXTURE_DIMENSION = 512;
 			static constexpr uint32_t PFS_TEXTURE_MIPS = 6;
 			static constexpr uint32_t BRDFI_TEXTURE_DIMENSION = 512;
+			static constexpr uint32_t FIBONACCI_SAMPLE_COUNT = 1024;
 			static constexpr float PI_CONST = 3.14159f;
 
 			const std::wstring DI_AND_PFS_VS_NAME = L"VSDIPFS.cso";
@@ -34,7 +35,7 @@ namespace engn {
 		public:
 			//! Initialize everything from the reflection capture
 			void init(const std::vector<std::string>& skyTexturePaths);
-
+			//! Check if the integral over hemisphere is correct - should print PI
 			void checkHemisphereIntegral();
 			//! Generate and save to .dds the diffuse irradiance cubemap
 			void generateDiffuseIrradianceCubemap();
@@ -47,7 +48,7 @@ namespace engn {
 			void initCubeBuffers();
 			//! Init all the pipelines
 			void initPipelines();
-
+			//! Generate the dot product between the view vector and the fibonacci hemisphere
 			void fibonacciHemisphere(float& NdotV, float i, float N);
 
 			void initDiffuseIrradianceCubeMap();
