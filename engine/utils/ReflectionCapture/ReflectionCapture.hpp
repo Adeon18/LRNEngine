@@ -20,6 +20,7 @@ namespace engn {
 			static constexpr uint32_t PFS_TEXTURE_DIMENSION = 512;
 			static constexpr uint32_t PFS_TEXTURE_MIPS = 6;
 			static constexpr uint32_t BRDFI_TEXTURE_DIMENSION = 512;
+			static constexpr float PI_CONST = 3.14159f;
 
 			const std::wstring DI_AND_PFS_VS_NAME = L"VSDIPFS.cso";
 			const std::wstring DI_PS_NAME = L"PSDiffuseIrradiance.cso";
@@ -33,6 +34,8 @@ namespace engn {
 		public:
 			//! Initialize everything from the reflection capture
 			void init(const std::vector<std::string>& skyTexturePaths);
+
+			void checkHemisphereIntegral();
 			//! Generate and save to .dds the diffuse irradiance cubemap
 			void generateDiffuseIrradianceCubemap();
 			//! Generate and save the pre filtered cubemap
@@ -44,6 +47,8 @@ namespace engn {
 			void initCubeBuffers();
 			//! Init all the pipelines
 			void initPipelines();
+
+			void fibonacciHemisphere(float& NdotV, float i, float N);
 
 			void initDiffuseIrradianceCubeMap();
 			void initPreFilteredSpecularCubeMap();

@@ -22,6 +22,17 @@ namespace engn {
 			m_roughnessBuffer.init();
 			m_textureMapPaths = skyTexturePaths;
 		}
+		void ReflectionCapture::checkHemisphereIntegral()
+		{
+			float sum = 0.0f;
+
+			for (uint32_t i = 0; i < 1024; ++i) {
+				float NdotV;
+				fibonacciHemisphere(NdotV, i, 1024);
+				sum += NdotV;
+			}
+			Logger::instance().logInfo("Hemisphere sum: " + std::to_string(2 * PI_CONST / 1024 * sum));
+		}
 		void ReflectionCapture::initCubeBuffers()
 		{
 			std::vector vertices =
@@ -120,6 +131,13 @@ namespace engn {
 
 			initPipeline(m_BRDFIntegrationPipeline, integrBRDFPipelineData);
 
+		}
+		void ReflectionCapture::fibonacciHemisphere(float& NdotV, float i, float N)
+		{
+			const float GOLDEN_RATIO = (1.0 + sqrt(5.0)) / 2.0;
+			float theta = 2.0 * PI_CONST * i / GOLDEN_RATIO;
+			float phiCos = NdotV = 1.0 - (i + 0.5) / N;
+			float phiSin = sqrt(1.0 - phiCos * phiCos);
 		}
 		void ReflectionCapture::initDiffuseIrradianceCubeMap()
 		{
