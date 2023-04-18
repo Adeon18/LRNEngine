@@ -74,6 +74,71 @@ float hemisphereMip(float sampleProbability, float cubemapSize)
     return log4;
 }
 
+// Input dir and NoD is N and NoL in a case of lighting computation 
+void clampDirToHorizon(inout float3 dir, inout float NoD, float3 normal, float minNoD)
+{
+    if (NoD < minNoD)
+    {
+        dir = normalize(dir + (minNoD - NoD) * normal);
+        NoD = minNoD;
+    }
+}
+
+//void getKarisNdotH(float radiusTan, float NdotL, float NdotV, float VdotL)
+//{
+//    float radiusCos = rsqrt(1.0f * radiusTan * radiusTan);
+//}
+
+// [ de Carpentier 2017, "Decima Engine: Advances in Lighting and AA" ]
+void SphereMaxNoH(float NoV, inout float NoL, inout float VoL, float SinAlpha, float CosAlpha, bool bNewtonIteration, out float NoH, out float VoH)
+{
+    float RoL = 2 * NoL * NoV - VoL;
+    if (RoL >= CosAlpha)
+    {
+        NoH = 1;
+        VoH = abs(NoV);
+    }
+    else
+    {
+        float rInvLengthT = SinAlpha * rsqrt(1 - RoL * RoL);
+        float NoTr = rInvLengthT * (NoV - RoL * NoL);
+        float VoTr = rInvLengthT * (2 * NoV * NoV - 1 - RoL * VoL);
+
+        if (bNewtonIteration && SinAlpha != 0)
+        {
+			// dot( cross(N,L), V )
+            float NxLoV = sqrt(saturate(1 - pow(NoL, 2) - pow(NoV, 2) - pow(VoL, 2) + 2 * NoL * NoV * VoL));
+
+            float NoBr = rInvLengthT * NxLoV;
+            float VoBr = rInvLengthT * NxLoV * 2 * NoV;
+
+            float NoLVTr = NoL * CosAlpha + NoV + NoTr;
+            float VoLVTr = VoL * CosAlpha + 1 + VoTr;
+
+            float p = NoBr * VoLVTr;
+            float q = NoLVTr * VoLVTr;
+            float s = VoBr * NoLVTr;
+
+            float xNum = q * (-0.5 * p + 0.25 * VoBr * NoLVTr);
+            float xDenom = p * p + s * (s - 2 * p) + NoLVTr * ((NoL * CosAlpha + NoV) * pow(VoLVTr, 2) + q * (-0.5 * (VoLVTr + VoL * CosAlpha) - 0.5));
+            float TwoX1 = 2 * xNum / (pow(xDenom, 2) + pow(xNum, 2));
+            float SinTheta = TwoX1 * xDenom;
+            float CosTheta = 1.0 - TwoX1 * xNum;
+            NoTr = CosTheta * NoTr + SinTheta * NoBr;
+            VoTr = CosTheta * VoTr + SinTheta * VoBr;
+        }
+
+        NoL = NoL * CosAlpha + NoTr;
+        VoL = VoL * CosAlpha + VoTr;
+
+        float InvLenH = rsqrt(2 + 2 * VoL);
+        NoH = saturate((NoL + NoV) * InvLenH);
+        VoH = saturate(InvLenH + InvLenH * VoL);
+    }
+}
+
+
+
 float getSolidAngle(float3 fragPos, float3 lightPos, float radius)
 {
     float distance = length(fragPos - lightPos);
@@ -147,18 +212,25 @@ float3 calculateDirectionalLight(DirectionalLight light, float3 norm, float3 vie
             getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
 
-float3 calculatePointLight(PointLight light, float3 norm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+float3 calculatePointLight(PointLight light, float3 micNorm, float3 macNorm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
 {
     float3 lightDir = normalize(light.position.xyz - fragWorldPos);
+    
+    if (dot(macNorm, lightDir) < MIN_LIGHT_INTENCITY)
+    {
+        return float3(0.0f, 0.0f, 0.0f);
+    }
     float3 halfVector = normalize(viewDir + lightDir);
-        
-    float3 NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
+    
+    float NdotL = dot(micNorm, lightDir);
+    
+    clampDirToHorizon(micNorm, NdotL, macNorm, MIN_LIGHT_INTENCITY);
         
     float solidAngle = getSolidAngle(fragWorldPos, light.position.xyz, light.radius.x);
         
     return light.radiance.xyz *
-        (getLambertDiffuse(albedo, norm, lightDir, F0, metallic, solidAngle) * NdotL +
-            getCookTorrenceSpecular(norm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+        (getLambertDiffuse(albedo, micNorm, lightDir, F0, metallic, solidAngle) * NdotL +
+            getCookTorrenceSpecular(micNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
 
 float3 calculateSpotLight(SpotLight light, float3 norm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)

@@ -62,7 +62,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
     // Square the rouhnhdfhehess
     roughness = pow(roughness, 2);
     float3 viewDir = normalize(iCameraPosition.xyz - inp.worldPos);
-    float3 fragNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
+    float3 micNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
     
     float3 outL0 = float3(0.0f, 0.0f, 0.0f);
     
@@ -71,27 +71,27 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        outL0 += calculateDirectionalLight(directLights[i], fragNorm, viewDir, albedo, F0, metallic, roughness);
+        outL0 += calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
     }
 
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        outL0 += calculatePointLight(pointLights[i], fragNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+        outL0 += calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
-    outL0 += calculateSpotLight(spotLight, fragNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+    outL0 += calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     
     
     if (isIBLEnabled)
     {
         float S_importance = 4 / (2 * PI * ggx(roughness, 1.0f) * PFS_SAMPLE_COUNT);
         float mipLevel = hemisphereMip(S_importance, iPFSCubemapResolution.x);
-        float BIUV = float2(roughness, dot(fragNorm, viewDir));
+        float BIUV = float2(roughness, dot(micNorm, viewDir));
         
-        float3 E_spec = g_preFilteredSpecular.SampleLevel(g_linearWrap, reflect(-viewDir, fragNorm), mipLevel);
+        float3 E_spec = g_preFilteredSpecular.SampleLevel(g_linearWrap, reflect(-viewDir, micNorm), mipLevel);
         float2 K_spec = g_BRDFIntegration.Sample(g_linearWrap, BIUV).rg;
         
-        outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, fragNorm).rgb + E_spec * (K_spec.r * F0 + K_spec.g);
+        outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, micNorm).rgb + E_spec * (K_spec.r * F0 + K_spec.g);
     }
     
     
