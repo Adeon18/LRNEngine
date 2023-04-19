@@ -75,3 +75,18 @@ How to run:
 	- Gamma correction that defaults to `2.2`
 - The scene consists of: directional light and flashlight, 2 white pointlighs with distance 50 and
 default intensity and 1 pointlight with distance 20 and twice the intensity.
+
+## HW8: PBR
+- Replaced Blinn-Phong with PBR: used Lambert Diffuse and Cook-Torrance specular
+- Used solid angles instead of quadratic attenuation
+- Added normal mapping
+- Used PBR textures for metallness and roughness
+
+## HW9: IBL
+- Added ImGUI integration
+- Added 2 modes of program operation: go to `engine/include/config.hpp`, set `BAKE_CUBEMAPS` to `1`, and the engine will start, generate cubemaps into `assets/Textures/Skyboxes`
+directory and shut down. Set `BAKE_CUBEMAPS` to `0` after generation to run engine with IBL. Recommended to run the engine after the cubemap generation.
+The `BAKE_CUBEMAPS` mode also prints the sum over the hemisphere into a `logs/engine.log` file.
+- ReflectionCapture class can precompute Diffuse Irradinace, Pre-Filter Specular cubemaps and generate the 2D BRDF Integration LUT.
+- Added horizon attenuation and the Carpentier's method for finding the closest representative point, to make better SphereLight lighting.
+- The cubemaps are compressed into `BC6` and the 2D LUT - in `BC5`.

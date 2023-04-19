@@ -229,8 +229,8 @@ namespace engn {
 		{
 			// All the skybox textures
 			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\night_street.dds";
-			const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds";
-			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds";
+			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds";
+			const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds";
 			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\lake_beach.dds";
 
 			m_diffuseIrradianceMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::DI_TEXTURE_SUFFIX);
