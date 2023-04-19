@@ -97,18 +97,6 @@ namespace engn {
 			);
 
 			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{
-					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].albedo),
-					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].normalMap),
-					tex::TextureManager::getInstance().getTexture(MATERIALS["STONE"].roughness)
-				},
-				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
 			mptr = mdl::ModelManager::getInstance().getModel(MODELS["SAMURAI"]);
 			MeshSystem::getInstance().addNormalInstance(
 				mptr,
@@ -144,6 +132,18 @@ namespace engn {
 				},
 				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
 			);
+
+			// A cube that you can play with via editing the reflection
+			mptr.reset();
+			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
+			MeshSystem::getInstance().addNormalInstance(
+				mptr,
+				{
+					tex::TextureManager::getInstance().getTexture(MATERIALS["TEST"].albedo),
+				},
+				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+			);
+
 
 			// Fill the field with cubes
 			for (int i = -24; i < 24; ++i) {
@@ -227,9 +227,10 @@ namespace engn {
 		}
 		void Renderer::m_initializeSky()
 		{
+			// All the skybox textures
 			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\night_street.dds";
-			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds";
-			const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds";
+			const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds";
+			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\mountains.dds";
 			//const std::string skyBoxTexturePath = TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\lake_beach.dds";
 
 			m_diffuseIrradianceMap = tex::TextureManager::getInstance().getTexture(util::removeFileExt(skyBoxTexturePath) + ReflectionCapture::DI_TEXTURE_SUFFIX);

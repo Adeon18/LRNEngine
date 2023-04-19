@@ -28,6 +28,8 @@ namespace engn {
 		std::string changeFileExt(const std::string& path, const std::string& ext);
 		//! Remove the file extension from the string path
 		std::string removeFileExt(const std::string& path);
+		//! Get the directory of the file specified, WORKS ONLY ON BACKSLASHES - FOR WIN
+		std::string getFileDir(const std::string& filepath);
 		//! Convert the assimp library vector3 type to XMVECTOR
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
 		//! Convert the assimp library aiMatrix4x4 type to XMMATRIX

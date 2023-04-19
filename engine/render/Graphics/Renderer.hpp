@@ -98,6 +98,14 @@ namespace engn {
 						""
 					}
 				},
+				{"TEST",
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\BrickWall\\blank.dds",
+						"",
+						"",
+						""
+					}
+				},
 			};
 
 			std::unordered_map<std::string, std::string> MODELS{

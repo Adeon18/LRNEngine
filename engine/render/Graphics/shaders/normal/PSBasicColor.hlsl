@@ -81,7 +81,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     outL0 += calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     
-    
+    // IBL
     if (isIBLEnabled)
     {
         float S_importance = 4 / (2 * PI * ggx(roughness, 1.0f) * PFS_SAMPLE_COUNT);

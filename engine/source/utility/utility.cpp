@@ -56,6 +56,11 @@ namespace engn {
 			return path.substr(0, path.find_last_of('.'));
 		}
 
+		std::string getFileDir(const std::string& filepath)
+		{
+			return filepath.substr(0, filepath.find_last_of('\\') + 1);
+		}
+
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec)
 		{
 			return { vec.x, vec.y, vec.z };

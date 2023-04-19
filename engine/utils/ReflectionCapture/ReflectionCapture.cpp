@@ -299,7 +299,7 @@ namespace engn {
 				// ----- Write to cubemap -----
 				DirectX::ScratchImage diffuseIrradiaceCubeImage;
 				diffuseIrradiaceCubeImage.InitializeCubeFromImages(images.data(), images.size());
-				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"DI.dds";
+				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath) + DI_TEXTURE_SUFFIX);
 
 				compressAndSave(diffuseIrradiaceCubeImage, filepath, FileFormat::BC6_UNSIGNED);
 			}
@@ -314,7 +314,7 @@ namespace engn {
 					m_RTVPFSDesc.Texture2DArray.FirstArraySlice = i;
 
 					for (int mipLevel = PFS_TEXTURE_MIPS - 1; mipLevel >= 0 ; --mipLevel) {
-
+						// Handle viewports for different sizes of mips
 						initAndBindViewPort(PFS_TEXTURE_DIMENSION >> mipLevel);
 						m_RTVPFSDesc.Texture2DArray.MipSlice = mipLevel;
 
@@ -335,7 +335,6 @@ namespace engn {
 						m_worldToClipBuffer.fill();
 
 						float roughness = static_cast<float>(mipLevel) / static_cast<float>(PFS_TEXTURE_MIPS - 1);
-						//Logger::instance().logInfo(std::to_string(roughness));
 						m_roughnessBuffer.getData().roughness = roughness;
 						m_roughnessBuffer.fill();
 
@@ -346,10 +345,10 @@ namespace engn {
 						renderCube();
 					}
 				}
-
+				// ----- Capture and save the result -----
 				DirectX::ScratchImage preFilteredSpeculareCubeImage;
 				DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_preFilteredSpecularCubemap.Get(), preFilteredSpeculareCubeImage);
-				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath)) + L"PFS.dds";
+				std::wstring filepath = util::stringToWstring(util::removeFileExt(mapPath) + PFS_TEXTURE_SUFFIX);
 
 				compressAndSave(preFilteredSpeculareCubeImage, filepath, FileFormat::BC6_UNSIGNED);
 			}
@@ -372,7 +371,7 @@ namespace engn {
 
 			DirectX::ScratchImage brdfIntegrationTexture;
 			DirectX::CaptureTexture(d3d::s_device, d3d::s_devcon, m_BRDFIntegrationTexture.Get(), brdfIntegrationTexture);
-			std::wstring filepath = util::getExeDirW() + L"..\\..\\assets\\Textures\\SkyBoxes\\2DLUT.dds";
+			std::wstring filepath = util::stringToWstring(util::getFileDir(m_textureMapPaths[0]) + BRDFI_TEXTURE_NAME);
 
 			compressAndSave(brdfIntegrationTexture, filepath, FileFormat::BC5_UNSIGNED);
 
