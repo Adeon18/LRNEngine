@@ -13,8 +13,8 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
 {
     float3 normal = float3(0.0f, 0.0f, 1.0f);
     
-    float roughness = inp.texCoords.y;
-    float NdotV = inp.texCoords.x;
+    float roughness = inp.texCoords.x;
+    float NdotV = inp.texCoords.y;
     
     float specR = 0.0f;
     float specG = 0.0f;
@@ -27,13 +27,14 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         
         float3 view = float3(sqrt(1.0 - NdotV * NdotV), 0.0f, NdotV);
         
-        float3 sampleDir = 2.0 * dot(view, halfVector) * halfVector - view;
+        // reflect
+        float3 sampleDir = 2.0f * dot(view, halfVector) * halfVector - view;
         
         float NdotL = dot(sampleDir, normal);
         float NdotH = dot(halfVector, normal);
         float HdotV = dot(halfVector, view);
         
-        if (NdotL > 0)
+        if (NdotL > 0.0f)
         {
             float G = smith(roughness, NdotV, NdotL);
         
