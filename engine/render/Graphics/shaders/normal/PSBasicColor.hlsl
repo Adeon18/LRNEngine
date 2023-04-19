@@ -71,7 +71,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        outL0 += calculateDirectionalLight(directLights[i], micNorm, inp.worldNorm, viewDir, albedo, F0, metallic, roughness);
+        outL0 += calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
     }
 
     for (int i = 0; i < pointLightCount.x; ++i)
@@ -79,7 +79,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outL0 += calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
-    outL0 += calculateSpotLight(spotLight, micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+    outL0 += calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     
     
     if (isIBLEnabled)

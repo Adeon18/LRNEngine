@@ -182,13 +182,12 @@ float3 getLambertDiffuse(float3 albedo, float3 norm, float3 lightDir, float3 F0,
     if (!isDiffuseEnabled)
     {
         return float3(0.0f, 0.0f, 0.0f);
-
     }
     float NdotL = max(dot(norm, lightDir), MIN_LIGHT_INTENCITY);
     return (solidAngle * albedo * (1 - metalness) / PI) * (1 - fresnel(NdotL, F0));
 }
 
-float3 getCookTorrenceSpecular(float3 micNorm, float3 macNorm, float3 halfVector, float3 viewDir, float3 lightDir, float solidAngle, float roughness, float3 F0)
+float3 getCookTorrenceSpecular(float3 micNorm, float3 halfVector, float3 viewDir, float3 lightDir, float solidAngle, float roughness, float3 F0)
 {
     if (!isSpecularEnabled)
     {
@@ -202,14 +201,14 @@ float3 getCookTorrenceSpecular(float3 micNorm, float3 macNorm, float3 halfVector
     float VdotL = dot(viewDir, lightDir);
     float VdotH;
     
+    // Apply the carpenties method before specular compute
+    // We can find spheresin and sphere cos with the help of the solidangle
     SphereMaxNoH(NdotV, NdotL, VdotL, sin(solidAngle / 2.0f), cos(solidAngle / 2.0f), false, NdotH, VdotH);
-    
-    clampDirToHorizon(micNorm, NdotL, macNorm, MIN_LIGHT_INTENCITY);
-    
+        
     return min(1, (ggx(roughness, NdotH) * solidAngle) / (4 * NdotV)) * smith(roughness, NdotV, NdotL) * fresnel(HdotL, F0);
 }
 
-float3 calculateDirectionalLight(DirectionalLight light, float3 micNorm, float3 macNorm, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+float3 calculateDirectionalLight(DirectionalLight light, float3 micNorm, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
 {
     float3 lightDir = -light.direction;
     float3 halfVector = normalize(viewDir + lightDir);
@@ -220,24 +219,25 @@ float3 calculateDirectionalLight(DirectionalLight light, float3 micNorm, float3 
         
     return light.radiance.xyz *
         (getLambertDiffuse(albedo, micNorm, lightDir, F0, metallic, solidAngle) * NdotL +
-            getCookTorrenceSpecular(micNorm, macNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+            getCookTorrenceSpecular(micNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
 
 float3 calculatePointLight(PointLight light, float3 micNorm, float3 macNorm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
 {
     //float3 lightDir = normalize(light.position.xyz - fragWorldPos);
     
-    // This is some shit from here fo now https://alextardif.com/arealights.html
+    // This code is taken from here https://alextardif.com/arealights.html
+    // Instead of having the light direction as to the center of a sphere, we take it to
+    // the closest point ABOVE HORIZON
     float3 r = reflect(-viewDir, micNorm);
     float3 lightDir = light.position.xyz - fragWorldPos;
-    float3 centerToRay = (max(dot(lightDir, r), MIN_LIGHT_INTENCITY) * r) - lightDir;
+    float3 centerToRay = (dot(lightDir, r) * r) - lightDir;
     float3 closestPoint = lightDir + centerToRay * saturate(light.radius.x / length(centerToRay));
     lightDir = normalize(closestPoint);
-    float distLight = length(closestPoint);
-    float alphaPrime = saturate(light.radius.x / (distLight * 2.0) + roughness);
 
     float3 halfVector = normalize(viewDir + lightDir);
     
+    // Discard if below horizon
     float NdotL = dot(macNorm, lightDir);
     if (NdotL < MIN_LIGHT_INTENCITY)
     {
@@ -251,10 +251,10 @@ float3 calculatePointLight(PointLight light, float3 micNorm, float3 macNorm, flo
         
     return light.radiance.xyz * falloff *
         (getLambertDiffuse(albedo, micNorm, lightDir, F0, metallic, solidAngle) * NdotL +
-            getCookTorrenceSpecular(micNorm, macNorm, halfVector, viewDir, lightDir, solidAngle, alphaPrime, F0));
+            getCookTorrenceSpecular(micNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
 
-float3 calculateSpotLight(SpotLight light, float3 micNorm, float3 macNorm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
+float3 calculateSpotLight(SpotLight light, float3 micNorm, float3 fragWorldPos, float3 viewDir, float3 albedo, float3 F0, float metallic, float roughness)
 {
     //! Get the spotlight texture color
     const float COS_CUTOFF_ANGLE = cos(light.cutoffAngle.x);
@@ -285,7 +285,7 @@ float3 calculateSpotLight(SpotLight light, float3 micNorm, float3 macNorm, float
         
     return flashMask * light.radiance.xyz * intensity *
         (getLambertDiffuse(albedo, micNorm, lightDir, F0, metallic, solidAngle) * NdotL +
-            getCookTorrenceSpecular(micNorm, macNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
+            getCookTorrenceSpecular(micNorm, halfVector, viewDir, lightDir, solidAngle, roughness, F0));
 }
 
 #endif // LIGHTING_COOK_TORRANCE_HLSLI
