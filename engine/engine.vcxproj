@@ -24,6 +24,7 @@
     <ClInclude Include="include\utility\utility.hpp" />
     <ClInclude Include="input\Keyboard.hpp" />
     <ClInclude Include="input\Mouse.hpp" />
+    <ClInclude Include="render\Graphics\DXRTVs\BindableDepthBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="input\Keyboard.cpp" />
     <ClCompile Include="input\Mouse.cpp" />
     <ClCompile Include="render\D3D\d3d.cpp" />
+    <ClCompile Include="render\Graphics\DXRTVs\BindableDepthBuffer.cpp" />
     <ClCompile Include="render\Graphics\DXRTVs\BindableRenderTarget.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp" />

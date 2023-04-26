@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "render/D3D/d3d.hpp"
 
 namespace engn {

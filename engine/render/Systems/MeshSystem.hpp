@@ -345,6 +345,8 @@ namespace engn {
 
 			//! Do all the mesh rendering, called every frame on each group
 			void render(const RenderModeFlags& flags);
+
+			void renderDepth2D();
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			uint32_t addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);

@@ -246,6 +246,9 @@
     <ClInclude Include="render\Systems\LightStructs.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DXRTVs\BindableDepthBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -367,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="source\dragger\MeshDragger.cpp">
       <Filter>Source Files\RayTracer</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Graphics\DXRTVs\BindableDepthBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
