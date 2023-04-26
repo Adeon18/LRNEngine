@@ -39,7 +39,7 @@ namespace engn {
 			shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 			shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
-			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), nullptr, m_shaderResourceView.GetAddressOf());
+			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), &shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
 
 			if (FAILED(hr)) {
 				Logger::instance().logErr("BindableDepthBuffer::init: Failed at creation of SRV");
@@ -51,7 +51,7 @@ namespace engn {
 		{
 			d3d::s_devcon->PSSetShaderResources(slot, 1, m_shaderResourceView.GetAddressOf());
 		}
-		void BindableDepthBuffer::clear(const FLOAT* color)
+		void BindableDepthBuffer::clear()
 		{
 			d3d::s_devcon->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 		}

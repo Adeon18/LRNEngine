@@ -16,7 +16,7 @@ namespace engn {
 			void bindSRV(int slot) const;
 
 			//! Clear the DSV with the specified color
-			void clear(const FLOAT* color);
+			void clear();
 
 			//! Release all the resourses, called at window resize
 			void releaseAll();

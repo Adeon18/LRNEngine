@@ -17,6 +17,9 @@
 
 #include "render/Graphics/HelperStructs.hpp"
 
+#include "render/Graphics/DXRTVs/BindableDepthBuffer.hpp"
+#include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
+
 #include "render/UI/UI.hpp"
 
 namespace engn {
@@ -345,7 +348,7 @@ namespace engn {
 
 			//! Do all the mesh rendering, called every frame on each group
 			void render(const RenderModeFlags& flags);
-
+			//! Precompute the Directional and SpotLight shadow maps into the respective textures
 			void renderDepth2D();
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
@@ -366,8 +369,16 @@ namespace engn {
 			void initEmissionGroup();
 			//! Initialize all the pipelines
 			void initPipelines();
+			//! 
+			void initShadowMapData();
 			//! Bind a certain pipeline by type - must be called before group render
 			void bindPipelineViaType(PipelineTypes pipelineType);
+
+			//! Here for now
+			BindableDepthBuffer m_directionalLightShadowMap;
+			BindableRenderTarget m_shadowGenRTV;
+			Pipeline m_shadowPipeline;
+			ConstantBuffer<CB_VS_RealTimeData> m_dirLightVSCB;
 			
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;

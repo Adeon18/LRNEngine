@@ -457,6 +457,7 @@
     <FxCompile Include="render\Graphics\shaders\wireframe_visualization\VSVisWireframe.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\shadow_compute\VS2DShadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

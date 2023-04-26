@@ -7,6 +7,11 @@ namespace engn {
 			initNormalGroup();
 			initHologramGroup();
 			initEmissionGroup();
+			initShadowMapData();
+
+			m_directionalLightShadowMap.init(1024, 1024, DXGI_FORMAT_R24G8_TYPELESS, DXGI_FORMAT_D24_UNORM_S8_UINT, DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
+			m_shadowGenRTV.init(1024, 1024, DXGI_FORMAT_R16G16B16A16_FLOAT);
+			m_dirLightVSCB.init();
 		}
 
 		void MeshSystem::initNormalGroup()
@@ -68,6 +73,39 @@ namespace engn {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_emissionOnlyGroup.render();
 			}
+		}
+
+		void MeshSystem::renderDepth2D()
+		{
+			D3D11_VIEWPORT viewPort;
+			viewPort.TopLeftX = 0;
+			viewPort.TopLeftY = 0;
+			viewPort.Width = 1024;
+			viewPort.Height = 1024;
+			// It is set this way, despite the reversed depth matrix
+			viewPort.MinDepth = 0.0f;
+			viewPort.MaxDepth = 1.0f;
+
+			d3d::s_devcon->RSSetViewports(1, &viewPort);
+			m_directionalLightShadowMap.clear();
+			m_shadowGenRTV.OMSetCurrent(m_directionalLightShadowMap.getDSVPtr());
+			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
+			m_normalGroup.fillInstanceBuffer();
+			bindPipeline(m_shadowPipeline);
+			d3d::s_devcon->PSSetShader(NULL, NULL, 0);
+
+			const XMMATRIX PROJECTION = XMMatrixOrthographicLH(50, 50, 1000.0f, 0.1f);
+			XMVECTOR lightDirection = { 0.0f, -0.8f, 0.6f };
+			XMVECTOR worldCenter = { 0.0f, 0.0f, 0.0f };
+			const XMMATRIX VIEW = XMMatrixLookAtLH(worldCenter + 20 * -lightDirection, { 0.0f,  0.0f,  0.0f }, { 0.0f, 1.0f, 0.0f });
+			
+			m_dirLightVSCB.getData().worldToClip = XMMatrixTranspose(VIEW * PROJECTION);
+			m_dirLightVSCB.getData().worldToClipInv = XMMatrixInverse(nullptr, VIEW * PROJECTION);
+
+			m_dirLightVSCB.fill();
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_dirLightVSCB.getBufferAddress());
+
+			m_normalGroup.render();
 		}
 
 		uint32_t MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
@@ -149,6 +187,35 @@ namespace engn {
 
 				initPipeline(m_pipelines[type], data);
 			}
+		}
+		void MeshSystem::initShadowMapData()
+		{
+			//! Depth stencil state
+			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
+			depthStencilStateDesc.DepthEnable = true;
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+			//! Rasterizer state
+			D3D11_RASTERIZER_DESC rasterizerDesc{};
+			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+
+			// Init Pipelines
+			const std::wstring exeDirW = util::getExeDirW();
+
+			// Diffuse Irradiance
+			PipelineData shadowMapPipelineData{
+				DEFAULT_LAYOUT,
+				ARRAYSIZE(DEFAULT_LAYOUT),
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				exeDirW + L"VSBasicColor.cso",
+				L"", L"", L"", L"",
+				rasterizerDesc,
+				depthStencilStateDesc
+			};
+
+			initPipeline(m_shadowPipeline, shadowMapPipelineData);
+
 		}
 		void MeshSystem::bindPipelineViaType(PipelineTypes pipelineType)
 		{
