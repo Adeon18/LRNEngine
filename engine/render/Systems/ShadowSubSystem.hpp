@@ -41,7 +41,6 @@ namespace engn {
 			std::vector<BindableDepthBuffer> m_directionalShadowMaps;
 			BindableDepthBuffer m_spotShadowMap;
 
-			BindableRenderTarget m_shadowGenRTV;
 			Pipeline m_shadow2DPipeline;
 			ConstantBuffer<CB_VS_Shadow2DGenBuffer> m_shadow2DVSCB;
 

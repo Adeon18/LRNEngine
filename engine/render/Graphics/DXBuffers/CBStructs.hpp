@@ -58,6 +58,12 @@ namespace engn {
 			int isIBLEnabled;
 		};
 
+		struct CB_PS_ShadowMapToLightMatrices {
+			XMMATRIX dirLightViewProj[MAX_DIRLIGHT_COUNT];
+			XMMATRIX pointLightViewProj[MAX_POINTLIGHT_COUNT];
+			XMMATRIX spotLightViewProj;
+		};
+
 		// Cb Struct for the postProcess effect
 		struct CB_PS_HDR {
 			XMFLOAT4 EV100;

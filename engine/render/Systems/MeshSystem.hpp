@@ -381,12 +381,7 @@ namespace engn {
 			//! Here for now
 			bool shadowSystemInitialized = false;
 			ShadowSubSystem m_shadowSubSystem;
-			//! 
-			BindableDepthBuffer m_directionalLightShadowMap;
-			BindableRenderTarget m_shadowGenRTV;
-			Pipeline m_shadowPipeline;
-			ConstantBuffer<CB_VS_RealTimeData> m_dirLightVSCB;
-			
+
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;

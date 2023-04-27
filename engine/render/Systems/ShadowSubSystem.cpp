@@ -73,8 +73,6 @@ namespace engn {
 				DXGI_FORMAT_D24_UNORM_S8_UINT,
 				DXGI_FORMAT_R24_UNORM_X8_TYPELESS
 			);
-
-			m_shadowGenRTV.init(SHADOW_MAP_RESOLUTION2D, SHADOW_MAP_RESOLUTION2D, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		}
 		void ShadowSubSystem::initPipelines()
 		{

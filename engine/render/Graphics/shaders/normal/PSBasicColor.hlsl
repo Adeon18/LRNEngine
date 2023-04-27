@@ -21,6 +21,15 @@ cbuffer perMaterial : register(b1)
     bool isMetallicBound;
 }
 
+// lighting_cook_torrance has buffers 2 and 3
+
+cbuffer shadowMapToLightMatrices : register(b4)
+{
+    float4 dirLightViewProj[MAX_DIRLIGHT_COUNT];
+    float4 pointLightViewProj[MAX_POINTLIGHT_COUNT];
+    float4 spotLightViewProj;
+}
+
 Texture2D g_textureDiffuse : TEXTURE : register(t0);
 Texture2D g_textureNormalMap : TEXTURE : register(t1);
 Texture2D g_textureRoughness : TEXTURE : register(t2);

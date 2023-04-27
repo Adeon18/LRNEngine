@@ -7,11 +7,6 @@ namespace engn {
 			initNormalGroup();
 			initHologramGroup();
 			initEmissionGroup();
-			initShadowMapData();
-
-			m_directionalLightShadowMap.init(1024, 1024, DXGI_FORMAT_R24G8_TYPELESS, DXGI_FORMAT_D24_UNORM_S8_UINT, DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
-			m_shadowGenRTV.init(1024, 1024, DXGI_FORMAT_R16G16B16A16_FLOAT);
-			m_dirLightVSCB.init();
 		}
 
 		void MeshSystem::initNormalGroup()
@@ -77,6 +72,7 @@ namespace engn {
 
 		void MeshSystem::renderDepth2D()
 		{
+			// TODO: THIS
 			if (!shadowSystemInitialized) {
 				m_shadowSubSystem.init();
 				shadowSystemInitialized = true;
@@ -173,35 +169,6 @@ namespace engn {
 
 				initPipeline(m_pipelines[type], data);
 			}
-		}
-		void MeshSystem::initShadowMapData()
-		{
-			//! Depth stencil state
-			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
-			depthStencilStateDesc.DepthEnable = true;
-			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
-			//! Rasterizer state
-			D3D11_RASTERIZER_DESC rasterizerDesc{};
-			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-
-			// Init Pipelines
-			const std::wstring exeDirW = util::getExeDirW();
-
-			// Diffuse Irradiance
-			PipelineData shadowMapPipelineData{
-				DEFAULT_LAYOUT,
-				ARRAYSIZE(DEFAULT_LAYOUT),
-				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-				exeDirW + L"VSBasicColor.cso",
-				L"", L"", L"", L"",
-				rasterizerDesc,
-				depthStencilStateDesc
-			};
-
-			initPipeline(m_shadowPipeline, shadowMapPipelineData);
-
 		}
 		void MeshSystem::bindPipelineViaType(PipelineTypes pipelineType)
 		{
