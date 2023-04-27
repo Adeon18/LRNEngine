@@ -26,7 +26,6 @@ cbuffer perMaterial : register(b1)
 cbuffer shadowMapToLightMatrices : register(b4)
 {
     float4 dirLightViewProj[MAX_DIRLIGHT_COUNT];
-    float4 pointLightViewProj[MAX_POINTLIGHT_COUNT];
     float4 spotLightViewProj;
 }
 

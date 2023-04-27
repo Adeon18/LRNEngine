@@ -49,6 +49,33 @@ namespace engn {
 
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_shadow2DVSCB.getBufferAddress());
 		}
+		void ShadowSubSystem::bindDataAndBuffers()
+		{
+			//! Matrices
+			for (uint32_t i = 0; i < m_directionalViewProjMatrices.size(); ++i) {
+				m_shadowMapProjectionsPSCB.getData().dirLightViewProj[i] = m_directionalViewProjMatrices[i];
+			}
+
+			m_shadowMapProjectionsPSCB.getData().spotLightViewProj = m_spotlightViewProjMatrix;
+			m_shadowMapProjectionsPSCB.fill();
+
+			d3d::s_devcon->PSSetConstantBuffers(SHADOW_MAP_MATRICES_BUFFER_SLOT, 1, m_shadowMapProjectionsPSCB.getBufferAddress());
+
+			//! Depth buffers
+			m_spotShadowMap.bindSRV(SPOT_SHADOW_MAP_SLOT);
+			for (uint32_t i = 0; i < m_directionalShadowMaps.size(); ++i) {
+				m_directionalShadowMaps[i].bindSRV(DIRECTIONAL_SHADOW_MAP_SLOT + i);
+			}
+		}
+		void ShadowSubSystem::unbindDepthBuffers()
+		{
+			ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+			// TODO: I think this can be done via 1 call
+			d3d::s_devcon->PSSetShaderResources(SPOT_SHADOW_MAP_SLOT, 1, nullSRV);
+			for (uint32_t i = 0; i < m_directionalShadowMaps.size(); ++i) {
+				d3d::s_devcon->PSSetShaderResources(DIRECTIONAL_SHADOW_MAP_SLOT + i, 1, nullSRV);
+			}
+		}
 		std::vector<BindableDepthBuffer>& ShadowSubSystem::getDirectionalLightShadowMaps()
 		{
 			return m_directionalShadowMaps;
@@ -101,6 +128,7 @@ namespace engn {
 		void ShadowSubSystem::initBuffers()
 		{
 			m_shadow2DVSCB.init();
+			m_shadowMapProjectionsPSCB.init();
 		}
 		void ShadowSubSystem::fillDirectionalMatrices()
 		{

@@ -29,6 +29,8 @@ namespace engn {
 		
 		void MeshSystem::render(const RenderModeFlags& flags)
 		{
+			m_shadowSubSystem.bindDataAndBuffers();
+
 			auto& geomWidgetData = UI::instance().getGeomWidgetData();
 			// Normal group 
 			m_normalGroup.fillInstanceBuffer();
@@ -68,6 +70,8 @@ namespace engn {
 				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
 				m_emissionOnlyGroup.render();
 			}
+
+			m_shadowSubSystem.unbindDepthBuffers();
 		}
 
 		void MeshSystem::renderDepth2D()
