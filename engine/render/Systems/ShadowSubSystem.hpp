@@ -32,7 +32,10 @@ namespace engn {
 			void initDepthBuffers();
 			void initPipelines();
 			void initBuffers();
-			void initMatrices();
+			void fillDirectionalMatrices();
+			//! Both spotlight and directional light matrices should be filled repeatedly because their positions change 
+			void fillPointMatrices();
+			void fillSpotMatrices();
 			void initAndBindViewPort(uint32_t resolution);
 
 			std::vector<BindableDepthBuffer> m_directionalShadowMaps;

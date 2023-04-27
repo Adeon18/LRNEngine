@@ -10,7 +10,7 @@ namespace engn {
 			initDepthBuffers();
 			initPipelines();
 			initBuffers();
-			initMatrices();
+			fillDirectionalMatrices();
 		}
 		void ShadowSubSystem::captureDirectionalShadow(uint32_t idx)
 		{
@@ -22,7 +22,6 @@ namespace engn {
 				m_directionalShadowMaps[idx].getDSVPtr()
 			);
 			m_directionalShadowMaps[idx].clear();
-			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
 			bindPipeline(m_shadow2DPipeline);
 
 			m_shadow2DVSCB.getData().worldToClip = XMMatrixTranspose(m_directionalViewProjMatrices[idx]);
@@ -33,6 +32,7 @@ namespace engn {
 
 		void ShadowSubSystem::captureSpotShadow()
 		{
+			fillSpotMatrices();
 			initAndBindViewPort(SHADOW_MAP_RESOLUTION2D);
 
 			d3d::s_devcon->OMSetRenderTargets(
@@ -104,7 +104,7 @@ namespace engn {
 		{
 			m_shadow2DVSCB.init();
 		}
-		void ShadowSubSystem::initMatrices()
+		void ShadowSubSystem::fillDirectionalMatrices()
 		{
 			auto& lightSystem = LightSystem::getInstance();
 			for (auto& dirLight : lightSystem.getDirectionalLights()) {
@@ -113,7 +113,13 @@ namespace engn {
 					DIRECTIONAL_PROJECTION
 				);
 			}
-
+		}
+		void ShadowSubSystem::fillPointMatrices()
+		{
+		}
+		void ShadowSubSystem::fillSpotMatrices()
+		{
+			auto& lightSystem = LightSystem::getInstance();
 			auto& spotLight = lightSystem.getSpotLight();
 			m_spotlightViewProjMatrix =
 				XMMatrixLookAtLH(spotLight.position, spotLight.position + spotLight.direction, { 0.0f, 1.0f, 0.0f }) *
