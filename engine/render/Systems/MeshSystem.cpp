@@ -77,35 +77,17 @@ namespace engn {
 
 		void MeshSystem::renderDepth2D()
 		{
-			D3D11_VIEWPORT viewPort;
-			viewPort.TopLeftX = 0;
-			viewPort.TopLeftY = 0;
-			viewPort.Width = 1024;
-			viewPort.Height = 1024;
-			// It is set this way, despite the reversed depth matrix
-			viewPort.MinDepth = 0.0f;
-			viewPort.MaxDepth = 1.0f;
+			if (!shadowSystemInitialized) {
+				m_shadowSubSystem.init();
+				shadowSystemInitialized = true;
+			}
 
-			d3d::s_devcon->RSSetViewports(1, &viewPort);
-			m_directionalLightShadowMap.clear();
-			m_shadowGenRTV.OMSetCurrent(m_directionalLightShadowMap.getDSVPtr());
-			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
-			m_normalGroup.fillInstanceBuffer();
-			bindPipeline(m_shadowPipeline);
-			d3d::s_devcon->PSSetShader(NULL, NULL, 0);
+			for (uint32_t i = 0; i < m_shadowSubSystem.getDirectionalLightShadowMaps().size(); ++i) {
+				m_shadowSubSystem.captureDirectionalShadow(i);
 
-			const XMMATRIX PROJECTION = XMMatrixOrthographicLH(50, 50, 1000.0f, 0.1f);
-			XMVECTOR lightDirection = { 0.0f, -0.8f, 0.6f };
-			XMVECTOR worldCenter = { 0.0f, 0.0f, 0.0f };
-			const XMMATRIX VIEW = XMMatrixLookAtLH(worldCenter + 20 * -lightDirection, { 0.0f,  0.0f,  0.0f }, { 0.0f, 1.0f, 0.0f });
-			
-			m_dirLightVSCB.getData().worldToClip = XMMatrixTranspose(VIEW * PROJECTION);
-			m_dirLightVSCB.getData().worldToClipInv = XMMatrixInverse(nullptr, VIEW * PROJECTION);
-
-			m_dirLightVSCB.fill();
-			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_dirLightVSCB.getBufferAddress());
-
-			m_normalGroup.render();
+				m_normalGroup.fillInstanceBuffer();
+				m_normalGroup.render();
+			}
 		}
 
 		uint32_t MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)

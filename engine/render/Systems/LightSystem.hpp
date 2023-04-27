@@ -49,6 +49,10 @@ namespace engn {
 			void setSpotLightSettings(float cutoffAngleDeg, const XMFLOAT3& intensity, float radius);
 			//! Bind the lighting CB, TODO: FOR NOW IS BOUND EVERY FRAME
 			void bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags);
+
+			[[nodiscard]] const std::vector <light::DirectionalLight>& getDirectionalLights() const;
+			[[nodiscard]] const std::vector <light::PointLight>& getPointLights() const;
+			[[nodiscard]] const light::SpotLight& getSpotLight() const;
 		private:
 			LightSystem() {}
 			//! Add the pointlight and sync it with the sphere visualization
@@ -57,7 +61,7 @@ namespace engn {
 			void bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction);
 			
 			std::vector <light::DirectionalLight> m_directionalLights;
-			std::vector<light::PointLight> m_pointLights;
+			std::vector <light::PointLight> m_pointLights;
 			// The indices at which the pointlights have their transform matrices in TransformSystem
 			std::vector<uint32_t> m_pointLightMatrixIndices;
 			// This light can be bound to player camera

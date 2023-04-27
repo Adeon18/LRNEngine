@@ -3,6 +3,13 @@ cbuffer perFrame : register(b0)
     float4x4 worldToClip;
 };
 
+cbuffer perMesh : register(b1)
+{
+    float4x4 meshToModel;
+    float4x4 meshToModelInv;
+};
+
+
 struct VS_INPUT
 {
     float3 inPos : POSITION;
@@ -21,17 +28,22 @@ struct VS_INPUT
     float4 color : COLOR;
 };
 
-
-struct VS_OUTPUT
+struct PS_INPUT
 {
-    float4 clipPos : SV_POSITION;
+    float4 outPos : SV_POSITION;
 };
 
-VS_OUTPUT main(VS_INPUT input)
+
+PS_INPUT main(VS_INPUT input)
 {
-    VS_OUTPUT output;
+    PS_INPUT output;
+    float4x4 modelToWorld = float4x4(input.modelToWorld0, input.modelToWorld1, input.modelToWorld2, input.modelToWorld3);
     
-    output.clipPos = float4(0, 0, 0, 0);
+    float4 modelPos = mul(float4(input.inPos, 1.0f), meshToModel);
     
+    float4 worldPos = mul(modelPos, modelToWorld);
+
+    output.outPos = mul(worldPos, worldToClip);
+
     return output;
 }

@@ -86,6 +86,18 @@ namespace engn {
 			d3d::s_devcon->PSSetConstantBuffers(LIGHT_BUFFER_SLOT, 1, m_lightBuffer.getBufferAddress());
 			d3d::s_devcon->PSSetConstantBuffers(LIGHT_FLAGS_BUFFER_SLOT, 1, m_lightFlagsBuffer.getBufferAddress());
 		}
+		const std::vector<light::DirectionalLight>& LightSystem::getDirectionalLights() const
+		{
+			return m_directionalLights;
+		}
+		const std::vector<light::PointLight>& LightSystem::getPointLights() const
+		{
+			return m_pointLights;
+		}
+		const light::SpotLight& LightSystem::getSpotLight() const
+		{
+			return m_spotLight;
+		}
 		void LightSystem::bindSpotlight(const XMVECTOR& position, const XMVECTOR& direction)
 		{
 			if (XMVector3Equal(position, m_spotLight.position) && XMVector3Equal(direction, m_spotLight.direction)) { return;  }

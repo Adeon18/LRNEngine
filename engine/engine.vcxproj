@@ -55,6 +55,7 @@
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
     <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
+    <ClInclude Include="render\Systems\ShadowSubSystem.hpp" />
     <ClInclude Include="render\Systems\TransformSystem.hpp" />
     <ClInclude Include="render\UI\imgui\imconfig.h" />
     <ClInclude Include="render\UI\imgui\imgui.h" />
@@ -102,6 +103,7 @@
     <ClCompile Include="render\Graphics\Renderer.cpp" />
     <ClCompile Include="render\Systems\LightSystem.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
+    <ClCompile Include="render\Systems\ShadowSubSystem.cpp" />
     <ClCompile Include="render\Systems\TransformSystem.cpp" />
     <ClCompile Include="render\UI\imgui\imgui.cpp" />
     <ClCompile Include="render\UI\imgui\imgui_draw.cpp" />
@@ -267,7 +269,18 @@
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="render\Graphics\shaders\shadow_compute\VS2DShadow.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\shadow_compute\VS2DShadow.hlsl">
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EnableDebuggingInformation>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EnableDebuggingInformation>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="render\Graphics\shaders\skybox\PSSky.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>

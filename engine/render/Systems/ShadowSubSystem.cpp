@@ -1,0 +1,117 @@
+#include "ShadowSubSystem.hpp"
+
+#include "render/Systems/LightSystem.hpp"
+#include "render/Systems/MeshSystem.hpp"
+
+namespace engn {
+	namespace rend {
+		void ShadowSubSystem::init()
+		{
+			initDepthBuffers();
+			initPipelines();
+			initBuffers();
+			initMatrices();
+		}
+		void ShadowSubSystem::captureDirectionalShadow(uint32_t idx)
+		{
+			initAndBindViewPort(SHADOW_MAP_RESOLUTION2D);
+
+			m_directionalShadowMaps[idx].clear();
+			m_shadowGenRTV.OMSetCurrent(m_directionalShadowMaps[idx].getDSVPtr());
+			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
+			bindPipeline(m_shadow2DPipeline);
+
+			m_shadow2DVSCB.getData().worldToClip = XMMatrixTranspose(m_directionalViewProjMatrices[idx]);
+			m_shadow2DVSCB.fill();
+
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_shadow2DVSCB.getBufferAddress());
+		}
+
+		void ShadowSubSystem::captureSpotShadow()
+		{
+		}
+		std::vector<BindableDepthBuffer>& ShadowSubSystem::getDirectionalLightShadowMaps()
+		{
+			return m_directionalShadowMaps;
+		}
+		void ShadowSubSystem::initDepthBuffers()
+		{
+			auto& lightSystem = LightSystem::getInstance();
+			for (uint32_t i = 0; i < lightSystem.getDirectionalLights().size(); ++i) {
+				m_directionalShadowMaps.emplace_back();
+				m_directionalShadowMaps[i].init(
+					SHADOW_MAP_RESOLUTION2D,
+					SHADOW_MAP_RESOLUTION2D,
+					DXGI_FORMAT_R24G8_TYPELESS,
+					DXGI_FORMAT_D24_UNORM_S8_UINT,
+					DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+				);
+			}
+			m_spotShadowMap.init(
+				SHADOW_MAP_RESOLUTION2D,
+				SHADOW_MAP_RESOLUTION2D,
+				DXGI_FORMAT_R24G8_TYPELESS,
+				DXGI_FORMAT_D24_UNORM_S8_UINT,
+				DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+			);
+
+			m_shadowGenRTV.init(SHADOW_MAP_RESOLUTION2D, SHADOW_MAP_RESOLUTION2D, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		}
+		void ShadowSubSystem::initPipelines()
+		{
+			//! Depth stencil state
+			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
+			depthStencilStateDesc.DepthEnable = true;
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
+			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+			//! Rasterizer state
+			D3D11_RASTERIZER_DESC rasterizerDesc{};
+			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+
+			PipelineData shadow2DPipelineData{
+				MeshSystem::getInstance().getDefaultLayoutPtr(),
+				MeshSystem::getInstance().getDefaultLayoutArraySize(),
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				util::getExeDirW() + L"VS2DShadow.cso",
+				L"", L"", L"", L"",
+				rasterizerDesc,
+				depthStencilStateDesc
+			};
+
+			initPipeline(m_shadow2DPipeline, shadow2DPipelineData);
+		}
+		void ShadowSubSystem::initBuffers()
+		{
+			m_shadow2DVSCB.init();
+		}
+		void ShadowSubSystem::initMatrices()
+		{
+			auto& lightSystem = LightSystem::getInstance();
+			for (auto& dirLight : lightSystem.getDirectionalLights()) {
+				m_directionalViewProjMatrices.push_back(
+					XMMatrixLookAtLH(OBJECT_CENTER + 15 * -dirLight.direction, OBJECT_CENTER, { 0.0f, 1.0f, 0.0f }) *
+					DIRECTIONAL_PROJECTION
+				);
+			}
+
+			auto& spotLight = lightSystem.getSpotLight();
+			m_spotlightViewProjMatrix =
+				XMMatrixLookAtLH(spotLight.position, spotLight.position + spotLight.direction, { 0.0f, 1.0f, 0.0f }) *
+				XMMatrixPerspectiveFovLH(XMVectorGetX(spotLight.cutoffAngle) * 2, 1.0f, 1000.0f, 0.1f);
+		}
+		void ShadowSubSystem::initAndBindViewPort(uint32_t resolution)
+		{
+			D3D11_VIEWPORT viewPort;
+			viewPort.TopLeftX = 0;
+			viewPort.TopLeftY = 0;
+			viewPort.Width = resolution;
+			viewPort.Height = resolution;
+			// It is set this way, despite the reversed depth matrix
+			viewPort.MinDepth = 0.0f;
+			viewPort.MaxDepth = 1.0f;
+
+			d3d::s_devcon->RSSetViewports(1, &viewPort);
+		}
+	} // rend
+} // engn

@@ -82,5 +82,10 @@ namespace engn {
 			float roughness;
 		};
 
+		//! A buffer that is used at 2D directional and spotlight shadow generation
+		struct CB_VS_Shadow2DGenBuffer {
+			XMMATRIX worldToClip;
+		};
+
 	} // rend
 } // engn
