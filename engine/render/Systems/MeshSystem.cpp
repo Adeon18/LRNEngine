@@ -88,6 +88,10 @@ namespace engn {
 				m_normalGroup.fillInstanceBuffer();
 				m_normalGroup.render();
 			}
+
+			m_shadowSubSystem.captureSpotShadow();
+			m_normalGroup.fillInstanceBuffer();
+			m_normalGroup.render();
 		}
 
 		uint32_t MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)

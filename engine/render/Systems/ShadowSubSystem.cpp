@@ -16,8 +16,12 @@ namespace engn {
 		{
 			initAndBindViewPort(SHADOW_MAP_RESOLUTION2D);
 
+			d3d::s_devcon->OMSetRenderTargets(
+				0,
+				nullptr,
+				m_directionalShadowMaps[idx].getDSVPtr()
+			);
 			m_directionalShadowMaps[idx].clear();
-			m_shadowGenRTV.OMSetCurrent(m_directionalShadowMaps[idx].getDSVPtr());
 			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
 			bindPipeline(m_shadow2DPipeline);
 
@@ -29,6 +33,21 @@ namespace engn {
 
 		void ShadowSubSystem::captureSpotShadow()
 		{
+			initAndBindViewPort(SHADOW_MAP_RESOLUTION2D);
+
+			d3d::s_devcon->OMSetRenderTargets(
+				0,
+				nullptr,
+				m_spotShadowMap.getDSVPtr()
+			);
+			m_spotShadowMap.clear();
+			//d3d::s_devcon->OMSetRenderTargets(1, nullptr, m_directionalLightShadowMap.getDSVPtr());
+			bindPipeline(m_shadow2DPipeline);
+
+			m_shadow2DVSCB.getData().worldToClip = XMMatrixTranspose(m_spotlightViewProjMatrix);
+			m_shadow2DVSCB.fill();
+
+			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_shadow2DVSCB.getBufferAddress());
 		}
 		std::vector<BindableDepthBuffer>& ShadowSubSystem::getDirectionalLightShadowMaps()
 		{
