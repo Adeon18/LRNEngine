@@ -78,7 +78,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        float shadow = checkIfInShadow(inp.worldPos, dirLightViewProj[i], g_directionalLightShadowMaps[i]);
+        float shadow = checkIfInDirectionalShadow(inp.worldPos, dirLightViewProj[i], g_directionalLightShadowMaps[i], -directLights[i].direction.xyz, inp.worldNorm);
         outL0 += (1 - shadow) * calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
     }
 
@@ -87,9 +87,13 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outL0 += calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
-    float shadow = checkIfInShadow(inp.worldPos, spotLightViewProj, g_spotLightShadowMap);
-    outL0 += (1 - shadow) * calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
-    
+    //! Spotlight
+    {
+        float3 toLight = normalize(spotLight.position.xyz - inp.worldPos);
+        float shadow = checkIfInSpotShadow(inp.worldPos, spotLightViewProj, g_spotLightShadowMap, toLight, inp.worldNorm);
+        outL0 += (1 - shadow) * calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+    }
+
     // IBL
     if (isIBLEnabled)
     {
