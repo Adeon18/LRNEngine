@@ -71,9 +71,9 @@ namespace engn {
 		void Renderer::m_initScene()
 		{
 			LightSystem::getInstance().addDirLight(
-				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.15f
+				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.5f
 			);
-			LightSystem::getInstance().addPointLight(
+			/*LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
 			);
 			LightSystem::getInstance().addPointLight(
@@ -84,7 +84,7 @@ namespace engn {
 			);
 			LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::LIGHTGREEN, 0.8f
-			);
+			);*/
 
 			LightSystem::getInstance().setSpotLightSettings(
 				17.0f, light::WHITE, 2.0f

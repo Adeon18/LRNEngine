@@ -496,5 +496,6 @@
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="render\Graphics\shaders\shadow_mapping.hlsli" />
   </ItemGroup>
 </Project>

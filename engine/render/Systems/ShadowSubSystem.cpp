@@ -53,10 +53,10 @@ namespace engn {
 		{
 			//! Matrices
 			for (uint32_t i = 0; i < m_directionalViewProjMatrices.size(); ++i) {
-				m_shadowMapProjectionsPSCB.getData().dirLightViewProj[i] = m_directionalViewProjMatrices[i];
+				m_shadowMapProjectionsPSCB.getData().dirLightViewProj[i] = XMMatrixTranspose(m_directionalViewProjMatrices[i]);
 			}
 
-			m_shadowMapProjectionsPSCB.getData().spotLightViewProj = m_spotlightViewProjMatrix;
+			m_shadowMapProjectionsPSCB.getData().spotLightViewProj = XMMatrixTranspose(m_spotlightViewProjMatrix);
 			m_shadowMapProjectionsPSCB.fill();
 
 			d3d::s_devcon->PSSetConstantBuffers(SHADOW_MAP_MATRICES_BUFFER_SLOT, 1, m_shadowMapProjectionsPSCB.getBufferAddress());
@@ -138,6 +138,7 @@ namespace engn {
 					XMMatrixLookAtLH(OBJECT_CENTER + 15 * -dirLight.direction, OBJECT_CENTER, { 0.0f, 1.0f, 0.0f }) *
 					DIRECTIONAL_PROJECTION
 				);
+				std::cout << m_directionalViewProjMatrices[0] << std::endl;
 			}
 		}
 		void ShadowSubSystem::fillPointMatrices()

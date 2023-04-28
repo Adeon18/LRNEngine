@@ -1,5 +1,6 @@
 #include "../globals.hlsli"
 #include "../lighting_cook_torrance.hlsli"
+#include "../shadow_mapping.hlsli"
 
 #include "BasicColorStructs.hlsli"
 
@@ -23,12 +24,6 @@ cbuffer perMaterial : register(b1)
 
 // lighting_cook_torrance has buffers 2 and 3
 
-cbuffer shadowMapToLightMatrices : register(b4)
-{
-    float4 dirLightViewProj[MAX_DIRLIGHT_COUNT];
-    float4 spotLightViewProj;
-}
-
 Texture2D g_textureDiffuse : TEXTURE : register(t0);
 Texture2D g_textureNormalMap : TEXTURE : register(t1);
 Texture2D g_textureRoughness : TEXTURE : register(t2);
@@ -37,6 +32,10 @@ Texture2D g_textureMetallic : TEXTURE : register(t3);
 TextureCube g_diffuseIrradiance : register(t6);
 TextureCube g_preFilteredSpecular : register(t7);
 Texture2D g_BRDFIntegration : TEXTURE : register(t8);
+
+Texture2D<float> g_spotLightShadowMap : TEXTURE : register(t10);
+
+Texture2D<float> g_directionalLightShadowMaps[MAX_DIRLIGHT_COUNT] : register(t11);
 
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {
@@ -79,7 +78,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        outL0 += calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
+        float shadow = checkIfInShadow(inp.worldPos, dirLightViewProj[i], g_directionalLightShadowMaps[i]);
+        outL0 += (1 - shadow) * calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
     }
 
     for (int i = 0; i < pointLightCount.x; ++i)
@@ -87,7 +87,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
         outL0 += calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
-    outL0 += calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+    float shadow = checkIfInShadow(inp.worldPos, spotLightViewProj, g_spotLightShadowMap);
+    outL0 += (1 - shadow) * calculateSpotLight(spotLight, micNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     
     // IBL
     if (isIBLEnabled)

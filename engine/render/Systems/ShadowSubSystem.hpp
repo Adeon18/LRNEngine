@@ -59,8 +59,8 @@ namespace engn {
 			XMMATRIX m_spotlightViewProjMatrix;
 
 			//! Temporary constant to tell where are all the objects
-			static constexpr XMVECTOR OBJECT_CENTER{ 0.0f, 0.0f, 9.0f };
-			inline static XMMATRIX DIRECTIONAL_PROJECTION = XMMatrixOrthographicLH(20, 20, 1000.0f, 0.1f);
+			static constexpr XMVECTOR OBJECT_CENTER{ 0.0f, 0.0f, 0.0f };
+			inline static XMMATRIX DIRECTIONAL_PROJECTION = XMMatrixOrthographicLH(25, 25, 1000.0f, 0.1f);
 
 			static constexpr uint32_t SHADOW_MAP_RESOLUTION2D = 2048;
 			static constexpr uint32_t SHADOW_MAP_MATRICES_BUFFER_SLOT = 4;

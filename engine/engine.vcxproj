@@ -524,6 +524,7 @@
     <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
     <None Include="render\Graphics\shaders\reflection_capture\sample_util.hlsli" />
+    <None Include="render\Graphics\shaders\shadow_mapping.hlsli" />
     <None Include="render\Graphics\shaders\utility.hlsli" />
     <None Include="render\Graphics\shaders\wireframe_visualization\VisWireframeStructs.hlsli" />
     <None Include="render\Graphics\shaders\normal_visualization\VisNormalStructs.hlsli" />
