@@ -61,6 +61,8 @@ namespace engn {
 		struct CB_PS_ShadowMapToLightMatrices {
 			XMMATRIX dirLightViewProj[MAX_DIRLIGHT_COUNT];
 			XMMATRIX spotLightViewProj;
+			XMVECTOR texelSizeClipSpaceDirectionalMap;
+			XMVECTOR texelWorldSpaceSizeDirectionalMap;
 		};
 
 		// Cb Struct for the postProcess effect

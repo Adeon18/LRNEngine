@@ -57,6 +57,7 @@ namespace engn {
 			}
 
 			m_shadowMapProjectionsPSCB.getData().spotLightViewProj = XMMatrixTranspose(m_spotlightViewProjMatrix);
+			m_shadowMapProjectionsPSCB.getData().texelSizeClipSpaceDirectionalMap = { 1.0f / static_cast<float>(SHADOW_MAP_RESOLUTION2D) };
 			m_shadowMapProjectionsPSCB.fill();
 
 			d3d::s_devcon->PSSetConstantBuffers(SHADOW_MAP_MATRICES_BUFFER_SLOT, 1, m_shadowMapProjectionsPSCB.getBufferAddress());
