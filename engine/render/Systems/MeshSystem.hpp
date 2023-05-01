@@ -351,6 +351,9 @@ namespace engn {
 			void render(const RenderModeFlags& flags);
 			//! Precompute the Directional and SpotLight shadow maps into the respective textures
 			void renderDepth2D();
+
+			//! Precompute the cubemap depths for pointlights
+			void renderDepthCubemaps();
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			uint32_t addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
@@ -373,8 +376,6 @@ namespace engn {
 			void initEmissionGroup();
 			//! Initialize all the pipelines
 			void initPipelines();
-			//! 
-			void initShadowMapData();
 			//! Bind a certain pipeline by type - must be called before group render
 			void bindPipelineViaType(PipelineTypes pipelineType);
 

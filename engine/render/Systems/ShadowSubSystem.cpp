@@ -49,6 +49,28 @@ namespace engn {
 
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_shadow2DVSCB.getBufferAddress());
 		}
+		void ShadowSubSystem::capturePointShadow(uint32_t idx)
+		{
+			initAndBindViewPort(SHADOW_CUBEMAP_SIDE_RESOLUTION);
+
+			d3d::s_devcon->OMSetRenderTargets(
+				0,
+				nullptr,
+				m_pointShadowCubeMaps[idx].getDSVPtr()
+			);
+			m_pointShadowCubeMaps[idx].clear();
+			bindPipeline(m_shadowCubemapPipeline);
+
+			// Fill buffer
+			auto& viewMatrices = m_shadowOmniGSCB.getData().viewMatrices;
+			for (uint32_t i = 0; i < m_pointViewMatrices[idx].size(); ++i) {
+				viewMatrices[i] = XMMatrixTranspose(m_pointViewMatrices[idx][i]);
+			}
+			m_shadowOmniGSCB.getData().projMat = XMMatrixTranspose(POINTLIGHT_PROJECTION);
+			m_shadowOmniGSCB.fill();
+
+			d3d::s_devcon->GSSetConstantBuffers(0, 1, m_shadowOmniGSCB.getBufferAddress());
+		}
 		void ShadowSubSystem::bindDataAndBuffers()
 		{
 			//! Matrices
@@ -81,12 +103,16 @@ namespace engn {
 		{
 			return m_directionalShadowMaps;
 		}
+		std::vector<BindableDepthBuffer>& ShadowSubSystem::getPointLightShadowMaps()
+		{
+			return m_pointShadowCubeMaps;
+		}
 		void ShadowSubSystem::initDepthBuffers()
 		{
 			auto& lightSystem = LightSystem::getInstance();
-			for (uint32_t i = 0; i < lightSystem.getDirectionalLights().size(); ++i) {
-				m_directionalShadowMaps.emplace_back();
-				m_directionalShadowMaps[i].init(
+			for (const auto& dirLight: lightSystem.getDirectionalLights()) {
+				auto& buffer = m_directionalShadowMaps.emplace_back();
+				buffer.init(
 					SHADOW_MAP_RESOLUTION2D,
 					SHADOW_MAP_RESOLUTION2D,
 					DXGI_FORMAT_R24G8_TYPELESS,
@@ -95,6 +121,19 @@ namespace engn {
 					false
 				);
 			}
+
+			for (const auto& pointLight : lightSystem.getPointLights()) {
+				auto& buffer = m_pointShadowCubeMaps.emplace_back();
+				buffer.init(
+					SHADOW_CUBEMAP_SIDE_RESOLUTION,
+					SHADOW_CUBEMAP_SIDE_RESOLUTION,
+					DXGI_FORMAT_R24G8_TYPELESS,
+					DXGI_FORMAT_D24_UNORM_S8_UINT,
+					DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+					true
+				);
+			}
+
 			m_spotShadowMap.init(
 				SHADOW_MAP_RESOLUTION2D,
 				SHADOW_MAP_RESOLUTION2D,
@@ -106,6 +145,8 @@ namespace engn {
 		}
 		void ShadowSubSystem::initPipelines()
 		{
+			// 2D shadow pipeline
+
 			//! Depth stencil state
 			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
 			depthStencilStateDesc.DepthEnable = true;
@@ -127,10 +168,27 @@ namespace engn {
 			};
 
 			initPipeline(m_shadow2DPipeline, shadow2DPipelineData);
+
+			// Cubemap shadow pipeline
+
+			PipelineData shadowCubemapPipelineData{
+				MeshSystem::getInstance().getDefaultLayoutPtr(),
+				MeshSystem::getInstance().getDefaultLayoutArraySize(),
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				util::getExeDirW() + L"VSCubemapShadow.cso",
+				L"", L"",
+				util::getExeDirW() + L"GSCubemapShadow.cso",
+				L"",
+				rasterizerDesc,
+				depthStencilStateDesc
+			};
+
+			initPipeline(m_shadowCubemapPipeline, shadowCubemapPipelineData);
 		}
 		void ShadowSubSystem::initBuffers()
 		{
 			m_shadow2DVSCB.init();
+			m_shadowOmniGSCB.init();
 			m_shadowMapProjectionsPSCB.init();
 		}
 		void ShadowSubSystem::fillDirectionalMatrices()
@@ -145,6 +203,20 @@ namespace engn {
 		}
 		void ShadowSubSystem::fillPointMatrices()
 		{
+			auto& lightSystem = LightSystem::getInstance();
+			auto& pointLightArr = lightSystem.getPointLights();
+			m_pointViewMatrices.resize(pointLightArr.size());
+			for (uint32_t i = 0; i < pointLightArr.size(); ++i) {
+				// View matrices
+				auto& pointLight = pointLightArr[i];
+				auto& viewMatArr = m_pointViewMatrices[i];
+				viewMatArr[0] = XMMatrixLookAtLH(pointLight.position, pointLight.position + RIGHT_VECTOR, UP_VECTOR);
+				viewMatArr[1] = XMMatrixLookAtLH(pointLight.position, pointLight.position - RIGHT_VECTOR, UP_VECTOR);
+				viewMatArr[2] = XMMatrixLookAtLH(pointLight.position, pointLight.position + UP_VECTOR, -FORWARD_VECTOR);
+				viewMatArr[3] = XMMatrixLookAtLH(pointLight.position, pointLight.position - UP_VECTOR, FORWARD_VECTOR);
+				viewMatArr[4] = XMMatrixLookAtLH(pointLight.position, pointLight.position + FORWARD_VECTOR, UP_VECTOR);
+				viewMatArr[5] = XMMatrixLookAtLH(pointLight.position, pointLight.position - FORWARD_VECTOR, UP_VECTOR);
+			}
 		}
 		void ShadowSubSystem::fillSpotMatrices()
 		{

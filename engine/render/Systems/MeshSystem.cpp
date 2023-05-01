@@ -94,6 +94,23 @@ namespace engn {
 			m_normalGroup.render();
 		}
 
+		void MeshSystem::renderDepthCubemaps()
+		{
+			// TODO: THIS
+			if (!shadowSystemInitialized) {
+				m_shadowSubSystem.init();
+				shadowSystemInitialized = true;
+			}
+
+			m_shadowSubSystem.fillPointMatrices();
+			for (uint32_t i = 0; i < m_shadowSubSystem.getPointLightShadowMaps().size(); ++i) {
+				m_shadowSubSystem.capturePointShadow(i);
+
+				m_normalGroup.fillInstanceBuffer();
+				m_normalGroup.render();
+			}
+		}
+
 		uint32_t MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			return m_normalGroup.addModel(mod, mtrl, inc);

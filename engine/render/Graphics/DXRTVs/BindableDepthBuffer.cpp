@@ -33,7 +33,14 @@ namespace engn {
 			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
 			depthStencilViewDesc.Format = DSVformat;
 			depthStencilViewDesc.ViewDimension = (isTextureCube) ? D3D11_DSV_DIMENSION_TEXTURE2DARRAY : D3D11_DSV_DIMENSION_TEXTURE2D;
-			depthStencilViewDesc.Texture2D.MipSlice = 0;
+			if (isTextureCube) {
+				depthStencilViewDesc.Texture2DArray.MipSlice = 0;
+				depthStencilViewDesc.Texture2DArray.FirstArraySlice = 0;
+				depthStencilViewDesc.Texture2DArray.ArraySize = 6;
+			}
+			else {
+				depthStencilViewDesc.Texture2D.MipSlice = 0;
+			}
 			hr = d3d::s_device->CreateDepthStencilView(m_texture.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf());
 
 			if (FAILED(hr)) {
@@ -44,8 +51,16 @@ namespace engn {
 			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc{};
 			shaderResourceViewDesc.Format = SRVFormat;
 			shaderResourceViewDesc.ViewDimension = (isTextureCube) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;;
-			shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-			shaderResourceViewDesc.Texture2D.MipLevels = 1;
+			if (isTextureCube) {
+				shaderResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
+				shaderResourceViewDesc.Texture2DArray.MipLevels = 1;
+				shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
+				shaderResourceViewDesc.Texture2DArray.ArraySize = 6;
+			}
+			else {
+				shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+				shaderResourceViewDesc.Texture2D.MipLevels = 1;
+			}
 
 			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), &shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
 

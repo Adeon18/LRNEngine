@@ -27,24 +27,31 @@ namespace engn {
 			//! We only have 1 spotlight
 			void captureSpotShadow();
 
+			void capturePointShadow(uint32_t idx);
+
 			//! Bind textures and constant buffers to respective slots
 			void bindDataAndBuffers();
 			//! Unbind the buffers so you can render to them again
 			void unbindDepthBuffers();
 
+			//! Both spotlight and pointlights light matrices should be filled repeatedly because their positions change
+			//! For OPTIMIZATION PURPOSES THIS FUNCTION SHOULD BE CALLED ONCE BY THE MESHSYSTEM, so would be with
+			//! spotlgths but we only have 1 
+			void fillPointMatrices();
+			void fillSpotMatrices();
+
 			[[nodiscard]] std::vector<BindableDepthBuffer>& getDirectionalLightShadowMaps();
+			[[nodiscard]] std::vector<BindableDepthBuffer>& getPointLightShadowMaps();
 		private:
 			void initDepthBuffers();
 			void initPipelines();
 			void initBuffers();
 			void fillDirectionalMatrices();
-			//! Both spotlight and directional light matrices should be filled repeatedly because their positions change 
-			void fillPointMatrices();
-			void fillSpotMatrices();
 			void initAndBindViewPort(uint32_t resolution);
 
 			//! Shadow maps
 			std::vector<BindableDepthBuffer> m_directionalShadowMaps;
+			std::vector<BindableDepthBuffer> m_pointShadowCubeMaps;
 			BindableDepthBuffer m_spotShadowMap;
 
 			//! Main render bind
@@ -54,18 +61,29 @@ namespace engn {
 			Pipeline m_shadow2DPipeline;
 			ConstantBuffer<CB_VS_Shadow2DGenBuffer> m_shadow2DVSCB;
 
+			//! Shadow cube map gen pipeline
+			Pipeline m_shadowCubemapPipeline;
+			ConstantBuffer<CB_GS_ShadowCubeGenBuffer> m_shadowOmniGSCB;
+
 			//! Matrices
 			std::vector<XMMATRIX> m_directionalViewProjMatrices;
 			XMMATRIX m_spotlightViewProjMatrix;
+			std::vector<std::array<XMMATRIX, 6>> m_pointViewMatrices;
 
 			//! Temporary constant to tell where are all the objects
 			static constexpr XMVECTOR OBJECT_CENTER{ 0.0f, 0.0f, 0.0f };
 			inline static XMMATRIX DIRECTIONAL_PROJECTION = XMMatrixOrthographicLH(25, 25, 1000.0f, 0.1f);
+			inline static XMMATRIX POINTLIGHT_PROJECTION = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1.0f, 1000.0f, 0.1f);
 
+			static constexpr uint32_t SHADOW_CUBEMAP_SIDE_RESOLUTION = 512;
 			static constexpr uint32_t SHADOW_MAP_RESOLUTION2D = 2048;
 			static constexpr uint32_t SHADOW_MAP_MATRICES_BUFFER_SLOT = 4;
 			static constexpr uint32_t SPOT_SHADOW_MAP_SLOT = 10;
 			static constexpr uint32_t DIRECTIONAL_SHADOW_MAP_SLOT = 11;
+
+			static constexpr XMVECTOR UP_VECTOR{ 0.0f, 1.0f, 0.0f };
+			static constexpr XMVECTOR FORWARD_VECTOR{ 0.0f, 0.0f, 1.0f };
+			static constexpr XMVECTOR RIGHT_VECTOR{ 1.0f, 0.0f, 0.0f };
 		};
 	} // rend
 } // engn

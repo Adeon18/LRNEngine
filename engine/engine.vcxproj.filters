@@ -464,6 +464,8 @@
       <Filter>Resource Files</Filter>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\shadow_compute\VS2DShadow.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\shadow_compute\VSCubemapShadow.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\shadow_compute\GSCubemapShadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

@@ -34,6 +34,7 @@ namespace engn {
 		bool Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
 			MeshSystem::getInstance().renderDepth2D();
+			MeshSystem::getInstance().renderDepthCubemaps();
 			// ---- Clear the write buffer
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
@@ -73,10 +74,10 @@ namespace engn {
 			LightSystem::getInstance().addDirLight(
 				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.5f
 			);
-			/*LightSystem::getInstance().addPointLight(
+			LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
 			);
-			LightSystem::getInstance().addPointLight(
+			/*LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), {0.16, 0.19, 2.0f}, 0.8f
 			);
 			LightSystem::getInstance().addPointLight(

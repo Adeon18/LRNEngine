@@ -94,5 +94,12 @@ namespace engn {
 			XMMATRIX worldToClip;
 		};
 
+		//! A buffer used in geometry shader to write shadows to a cubemap via 1 draw call by doing
+		//! 6 transformations
+		struct CB_GS_ShadowCubeGenBuffer {
+			XMMATRIX projMat;
+			XMMATRIX viewMatrices[6];
+		};
+
 	} // rend
 } // engn

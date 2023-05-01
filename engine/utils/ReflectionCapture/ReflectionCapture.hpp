@@ -113,6 +113,7 @@ namespace engn {
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {1.0f,  0.0f,  0.0f}, {0.0f, 1.0f, 0.0f}),
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {-1.0f,  0.0f,  0.0f}, {0.0f, 1.0f, 0.0f}),
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  1.0f,  0.0f}, {0.0f, 0.0f, -1.0f}),
+				// TODO: Possible mistake, needs texting, UP VECTOR
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  -1.0f,  0.0f}, {1.0f, 0.0f, 0.0f}),
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  0.0f,  1.0f}, {0.0f, 1.0f, 0.0f}),
 				XMMatrixLookAtLH({0.0f, 0.0f, 0.0f}, {0.0f,  0.0f,  -1.0f}, {0.0f, 1.0f, 0.0f})
