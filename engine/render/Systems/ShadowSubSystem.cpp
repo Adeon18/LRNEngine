@@ -91,7 +91,8 @@ namespace engn {
 					SHADOW_MAP_RESOLUTION2D,
 					DXGI_FORMAT_R24G8_TYPELESS,
 					DXGI_FORMAT_D24_UNORM_S8_UINT,
-					DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+					DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+					false
 				);
 			}
 			m_spotShadowMap.init(
@@ -99,7 +100,8 @@ namespace engn {
 				SHADOW_MAP_RESOLUTION2D,
 				DXGI_FORMAT_R24G8_TYPELESS,
 				DXGI_FORMAT_D24_UNORM_S8_UINT,
-				DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+				DXGI_FORMAT_R24_UNORM_X8_TYPELESS,
+				false
 			);
 		}
 		void ShadowSubSystem::initPipelines()
@@ -139,7 +141,6 @@ namespace engn {
 					XMMatrixLookAtLH(OBJECT_CENTER + 15 * -dirLight.direction, OBJECT_CENTER, { 0.0f, 1.0f, 0.0f }) *
 					DIRECTIONAL_PROJECTION
 				);
-				std::cout << m_directionalViewProjMatrices[0] << std::endl;
 			}
 		}
 		void ShadowSubSystem::fillPointMatrices()

@@ -2,18 +2,26 @@
 
 namespace engn {
 	namespace rend {
-		void BindableDepthBuffer::init(int screenWidth, int screenHeight, DXGI_FORMAT textureFormat, DXGI_FORMAT DSVformat, DXGI_FORMAT SRVFormat)
+		void BindableDepthBuffer::init(
+			int screenWidth,
+			int screenHeight,
+			DXGI_FORMAT textureFormat,
+			DXGI_FORMAT DSVformat,
+			DXGI_FORMAT SRVFormat,
+			bool isTextureCube
+		)
 		{
 			D3D11_TEXTURE2D_DESC textureDesc{};
 			textureDesc.Width = screenWidth;
 			textureDesc.Height = screenHeight;
 			textureDesc.MipLevels = 1;
-			textureDesc.ArraySize = 1;
+			textureDesc.ArraySize = (isTextureCube) ? 6 : 1;
 			textureDesc.Format = textureFormat;
 			textureDesc.SampleDesc.Count = 1;
 			textureDesc.SampleDesc.Quality = 0;
 			textureDesc.Usage = D3D11_USAGE_DEFAULT;
 			textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+			if (isTextureCube) { textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE; }
 
 			HRESULT hr = d3d::s_device->CreateTexture2D(&textureDesc, nullptr, m_texture.GetAddressOf());
 
@@ -24,7 +32,7 @@ namespace engn {
 
 			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
 			depthStencilViewDesc.Format = DSVformat;
-			depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			depthStencilViewDesc.ViewDimension = (isTextureCube) ? D3D11_DSV_DIMENSION_TEXTURE2DARRAY : D3D11_DSV_DIMENSION_TEXTURE2D;
 			depthStencilViewDesc.Texture2D.MipSlice = 0;
 			hr = d3d::s_device->CreateDepthStencilView(m_texture.Get(), &depthStencilViewDesc, m_depthStencilView.GetAddressOf());
 
@@ -35,7 +43,7 @@ namespace engn {
 
 			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc{};
 			shaderResourceViewDesc.Format = SRVFormat;
-			shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			shaderResourceViewDesc.ViewDimension = (isTextureCube) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;;
 			shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 			shaderResourceViewDesc.Texture2D.MipLevels = 1;
 

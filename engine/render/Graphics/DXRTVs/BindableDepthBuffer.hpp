@@ -6,11 +6,18 @@
 
 namespace engn {
 	namespace rend {
-
+		
 		class BindableDepthBuffer {
 		public:
 			//! Initialize the texture with SRV, DSV
-			void init(int screenWidth, int screenHeight, DXGI_FORMAT textureFormat, DXGI_FORMAT DSVFromat, DXGI_FORMAT SRVFormat);
+			void init(
+				int screenWidth,
+				int screenHeight,
+				DXGI_FORMAT textureFormat,
+				DXGI_FORMAT DSVFromat,
+				DXGI_FORMAT SRVFormat,
+				bool isTextureCube
+			);
 
 			//! Bind the SRV as texture to the current shader with the specified slot
 			void bindSRV(int slot) const;
