@@ -55,6 +55,18 @@ namespace engn {
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{
+			// THIS IS FOR FLICKERING DEBUG
+			/*static float offset = -5.0f;
+			static bool isRev = false;
+			if (offset > 5.0f) {
+				isRev = true;
+			}
+			if (offset < -5.0f) {
+				isRev = false;
+			}
+
+			offset += (!isRev) ? 1.0f : -1.0f;*/
+
 			int32_t dirLightCount = m_directionalLights.size();
 			m_lightBuffer.getData().dirLightCount = { dirLightCount , dirLightCount , dirLightCount , dirLightCount };
 			for (int i = 0; i < m_directionalLights.size(); ++i) {

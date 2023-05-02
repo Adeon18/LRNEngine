@@ -35,6 +35,7 @@ float simplePCF9Dir(const Texture2D<float> shadowMap, float currentDepth, float2
 }
 
 //! THIS IS TAKEN FROM THE INTERNET
+//! Got it from here: https://sudonull.com/post/97826-Native-implementation-of-OmniDirectional-shadows-in-DirectX11
 float vectorToDepth(float3 vec, float n, float f)
 {
     float3 AbsVec = abs(vec);

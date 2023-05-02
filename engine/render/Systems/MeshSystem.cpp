@@ -45,6 +45,8 @@ namespace engn {
 				m_normalGroup.render();
 			}
 
+			m_shadowSubSystem.unbindDepthBuffers();
+
 			// Hologram group
 			m_hologramGroup.fillInstanceBuffer();
 			this->bindPipelineViaType((geomWidgetData.isDebugVisEnabled()) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
@@ -71,7 +73,6 @@ namespace engn {
 				m_emissionOnlyGroup.render();
 			}
 
-			m_shadowSubSystem.unbindDepthBuffers();
 		}
 
 		void MeshSystem::renderDepth2D()
