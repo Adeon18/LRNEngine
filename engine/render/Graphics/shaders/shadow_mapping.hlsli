@@ -34,6 +34,16 @@ float simplePCF9Dir(const Texture2D<float> shadowMap, float currentDepth, float2
     return shadow;
 }
 
+//! THIS IS TAKEN FROM THE INTERNET
+float vectorToDepth(float3 vec, float n, float f)
+{
+    float3 AbsVec = abs(vec);
+    float LocalZcomp = max(AbsVec.x, max(AbsVec.y, AbsVec.z));
+
+    float NormZComp = (f + n) / (f - n) - (2 * f * n) / (f - n) / LocalZcomp;
+    return (NormZComp + 1.0) * 0.5;
+}
+
 float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)
 {
     //! TODO: This might be sped up
@@ -57,11 +67,23 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
     sampleCoords.y = projCoords.y / -2 + 0.5;
     
     float currentDepth = projCoords.z;
-    //float closestDepth = shadowMap.Sample(g_pointWrap, sampleCoords);
     
     float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
     
     return simplePCF9Dir(shadowMap, currentDepth + bias, sampleCoords);
+}
+
+float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm)
+{
+    float3 lightDir = worldFragPos - lightPos;
+ 
+    float closestDepth = shadowCubeMap.Sample(g_linearWrap, lightDir).r;
+    
+    float currentDepth = vectorToDepth(lightDir, 1000.0f, 0.1f);
+    
+    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.0005f, 0.00005f);
+
+    return currentDepth + bias < closestDepth ? 1.0 : 0.0;
 }
 
 float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)

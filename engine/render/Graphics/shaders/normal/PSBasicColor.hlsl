@@ -35,7 +35,9 @@ Texture2D g_BRDFIntegration : TEXTURE : register(t8);
 
 Texture2D<float> g_spotLightShadowMap : TEXTURE : register(t10);
 
+//! Only 1 directional light but have possibility to support more
 Texture2D<float> g_directionalLightShadowMaps[MAX_DIRLIGHT_COUNT] : register(t11);
+TextureCube<float> g_pointLightShadowMaps[4] : register(t12);
 
 float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 {
@@ -84,7 +86,8 @@ float4 main(PS_INPUT inp) : SV_TARGET
 
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        outL0 += calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
+        float shadow = checkIfInPointShadow(inp.worldPos, pointLights[i].position.xyz, g_pointLightShadowMaps[i], inp.worldNorm);
+        outL0 += (1 - shadow) * calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
     //! Spotlight

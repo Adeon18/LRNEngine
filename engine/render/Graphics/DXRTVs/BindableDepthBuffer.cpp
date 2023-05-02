@@ -50,12 +50,12 @@ namespace engn {
 
 			D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc{};
 			shaderResourceViewDesc.Format = SRVFormat;
-			shaderResourceViewDesc.ViewDimension = (isTextureCube) ? D3D11_SRV_DIMENSION_TEXTURE2DARRAY : D3D11_SRV_DIMENSION_TEXTURE2D;;
+			shaderResourceViewDesc.ViewDimension = (isTextureCube) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;;
 			if (isTextureCube) {
 				shaderResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
 				shaderResourceViewDesc.Texture2DArray.MipLevels = 1;
 				shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
-				shaderResourceViewDesc.Texture2DArray.ArraySize = 6;
+				shaderResourceViewDesc.Texture2DArray.ArraySize = 1;
 			}
 			else {
 				shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;

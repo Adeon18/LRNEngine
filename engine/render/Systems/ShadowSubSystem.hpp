@@ -80,6 +80,7 @@ namespace engn {
 			static constexpr uint32_t SHADOW_MAP_MATRICES_BUFFER_SLOT = 4;
 			static constexpr uint32_t SPOT_SHADOW_MAP_SLOT = 10;
 			static constexpr uint32_t DIRECTIONAL_SHADOW_MAP_SLOT = 11;
+			static constexpr uint32_t POINT_SHADOW_MAP_START_SLOT = 12;
 
 			static constexpr XMVECTOR UP_VECTOR{ 0.0f, 1.0f, 0.0f };
 			static constexpr XMVECTOR FORWARD_VECTOR{ 0.0f, 0.0f, 1.0f };

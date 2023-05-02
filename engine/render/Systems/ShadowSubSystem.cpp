@@ -89,6 +89,9 @@ namespace engn {
 			for (uint32_t i = 0; i < m_directionalShadowMaps.size(); ++i) {
 				m_directionalShadowMaps[i].bindSRV(DIRECTIONAL_SHADOW_MAP_SLOT + i);
 			}
+			for (uint32_t i = 0; i < m_pointShadowCubeMaps.size(); ++i) {
+				m_pointShadowCubeMaps[i].bindSRV(POINT_SHADOW_MAP_START_SLOT + i);
+			}
 		}
 		void ShadowSubSystem::unbindDepthBuffers()
 		{
@@ -97,6 +100,9 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(SPOT_SHADOW_MAP_SLOT, 1, nullSRV);
 			for (uint32_t i = 0; i < m_directionalShadowMaps.size(); ++i) {
 				d3d::s_devcon->PSSetShaderResources(DIRECTIONAL_SHADOW_MAP_SLOT + i, 1, nullSRV);
+			}
+			for (uint32_t i = 0; i < m_pointShadowCubeMaps.size(); ++i) {
+				d3d::s_devcon->PSSetShaderResources(POINT_SHADOW_MAP_START_SLOT + i, 1, nullSRV);
 			}
 		}
 		std::vector<BindableDepthBuffer>& ShadowSubSystem::getDirectionalLightShadowMaps()
