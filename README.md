@@ -90,3 +90,10 @@ The `BAKE_CUBEMAPS` mode also prints the sum over the hemisphere into a `logs/en
 - ReflectionCapture class can precompute Diffuse Irradinace, Pre-Filter Specular cubemaps and generate the 2D BRDF Integration LUT.
 - Added horizon attenuation and the Carpentier's method for finding the closest representative point, to make better SphereLight lighting.
 - The cubemaps are compressed into `BC6` and the 2D LUT - in `BC5`.
+
+## HW10: Shadow Mapping
+- Added pointlight, directional and spotlight shadows
+- Added PCF to directional light
+- Used comparison samplers
+- Experimented with rasterizer depthbias
+- Configured bias to have **less shadow flickering** instead of more precise shadows.
