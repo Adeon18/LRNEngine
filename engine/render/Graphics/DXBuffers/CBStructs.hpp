@@ -8,7 +8,7 @@ namespace engn {
 	namespace rend {
 
 		static constexpr int MAX_DIRLIGHT_COUNT = 1;
-		static constexpr int MAX_POINTLIGHT_COUNT = 10;
+		static constexpr int MAX_POINTLIGHT_COUNT = 4;
 
 		//! This struct is for moving the vertices in the VS by some offset
 		struct CB_VS_MeshData {

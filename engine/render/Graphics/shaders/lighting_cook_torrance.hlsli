@@ -7,7 +7,7 @@
 static const float PI = 3.14159265f;
 static const float MIN_LIGHT_INTENCITY = 0.0001f;
 
-static const int MAX_POINTLIGHT_COUNT = 10;
+static const int MAX_POINTLIGHT_COUNT = 4;
 static const int MAX_DIRLIGHT_COUNT = 1;
 
 Texture2D g_textureSpotLight : TEXTURE : register(t16);

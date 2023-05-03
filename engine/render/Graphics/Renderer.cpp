@@ -78,9 +78,6 @@ namespace engn {
 				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
 			);
 			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(-5.0f, 5.0f, 7.0f), {0.16, 0.19, 2.0f}, 0.8f
-			);
-			LightSystem::getInstance().addPointLight(
 				XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 3.0f, 0.39f, 0.39f }, 0.8f
 			);
 			LightSystem::getInstance().addPointLight(

@@ -55,7 +55,7 @@ namespace engn {
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{
-			// THIS IS FOR FLICKERING DEBUG
+			// TODO: Remove, THIS IS FOR FLICKERING DEBUG
 			/*static float offset = -5.0f;
 			static bool isRev = false;
 			if (offset > 5.0f) {
