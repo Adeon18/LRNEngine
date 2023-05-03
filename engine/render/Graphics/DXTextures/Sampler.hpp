@@ -8,7 +8,8 @@ namespace engn {
 		class Sampler {
 		public:
 			//! Initialize the sampler with the respective filtering types and interpolation
-			bool init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressing);
+			//! Comparison is set to NEVER by defualt
+			bool init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressing, D3D11_COMPARISON_FUNC compFunc = D3D11_COMPARISON_NEVER);
 			//! Bind the sampler to the respective slot
 			void bind(uint32_t slot);
 		private:

@@ -10,6 +10,8 @@
 #include "render/Graphics/DXRTVs/BindableDepthBuffer.hpp"
 #include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
 
+#include "render/Graphics/DXTextures/Sampler.hpp"
+
 namespace engn {
 	namespace rend {
 		/// <summary>
@@ -47,7 +49,11 @@ namespace engn {
 			void initPipelines();
 			void initBuffers();
 			void fillDirectionalMatrices();
+			void initSamplers();
 			void initAndBindViewPort(uint32_t resolution);
+
+			//! Comparison sampler
+			Sampler m_comparionSampler;
 
 			//! Shadow maps
 			std::vector<BindableDepthBuffer> m_directionalShadowMaps;

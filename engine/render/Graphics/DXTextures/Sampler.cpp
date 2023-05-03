@@ -4,14 +4,14 @@
 
 namespace engn {
 	namespace rend {
-		bool Sampler::init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressing)
+		bool Sampler::init(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE addressing, D3D11_COMPARISON_FUNC compFunc)
 		{
 			D3D11_SAMPLER_DESC samplerDesc{};
 			samplerDesc.Filter = filter;
 			samplerDesc.AddressU = addressing;
 			samplerDesc.AddressV = addressing;
 			samplerDesc.AddressW = addressing;
-			samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+			samplerDesc.ComparisonFunc = compFunc;
 			samplerDesc.MinLOD = 0;
 			samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 

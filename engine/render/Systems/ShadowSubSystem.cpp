@@ -10,6 +10,7 @@ namespace engn {
 			initDepthBuffers();
 			initPipelines();
 			initBuffers();
+			initSamplers();
 			fillDirectionalMatrices();
 		}
 		void ShadowSubSystem::captureDirectionalShadow(uint32_t idx)
@@ -73,6 +74,9 @@ namespace engn {
 		}
 		void ShadowSubSystem::bindDataAndBuffers()
 		{
+			//! Bind sampler
+			m_comparionSampler.bind(3);
+
 			//! Matrices
 			auto& pointLightMatrices = m_shadowMapProjectionsPSCB.getData().pointLightViewProj;
 			for (uint32_t li = 0; li < m_pointViewMatrices.size(); ++li) {
@@ -213,6 +217,14 @@ namespace engn {
 					DIRECTIONAL_PROJECTION
 				);
 			}
+		}
+		void ShadowSubSystem::initSamplers()
+		{
+			m_comparionSampler.init(
+				D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT,
+				D3D11_TEXTURE_ADDRESS_WRAP,
+				D3D11_COMPARISON_LESS
+			);
 		}
 		void ShadowSubSystem::fillPointMatrices()
 		{

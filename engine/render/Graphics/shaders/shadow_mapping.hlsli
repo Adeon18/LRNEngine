@@ -3,6 +3,8 @@
 
 #include "lighting_cook_torrance.hlsli"
 
+SamplerComparisonState g_comparisonGEWrap : register(s3);
+
 cbuffer shadowMapToLightMatrices : register(b4)
 {
     float4x4 pointLightViewProj[MAX_POINTLIGHT_COUNT][6];
@@ -51,8 +53,7 @@ float simplePCF9Dir(const Texture2D<float> shadowMap, float currentDepth, float2
     {
         for (int y = -1; y <= 1; ++y)
         {
-            float closestDepth = shadowMap.Sample(g_pointWrap, centerSampleCoords + float2(x, y) * texelSizeClipSpaceDirectionalMap.x);
-            shadow += currentDepth < closestDepth ? 1.0 : 0.0;
+            shadow += shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, centerSampleCoords, currentDepth, float2(x, y));
         }
     }
 
@@ -119,8 +120,6 @@ float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCu
 float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm, int lightIdx)
 {
     float3 fragDir = worldFragPos - lightPos;
- 
-    float closestDepth = shadowCubeMap.Sample(g_linearWrap, fragDir).r;
     
     int matIdx = getFaceFromDir(fragDir);
     
@@ -128,9 +127,9 @@ float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, con
     float3 projCoords = lightFragPos.xyz / lightFragPos.w;
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.00005f, 0.000005f);
-
-    return currentDepth + bias < closestDepth ? 1.0 : 0.0;
+    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.001f, 0.00005f);
+    
+    return shadowCubeMap.SampleCmpLevelZero(g_comparisonGEWrap, fragDir, currentDepth + bias);
 }
 
 float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)
@@ -156,11 +155,10 @@ float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Te
     sampleCoords.y = projCoords.y / -2 + 0.5;
     
     float currentDepth = projCoords.z;
-    float closestDepth = shadowMap.Sample(g_pointWrap, sampleCoords);
     
-    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.05f, 0.005f);
+    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.005f, 0.0005f);
     
-    return currentDepth + bias < closestDepth ? 1.0 : 0.0;
+    return shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, sampleCoords, currentDepth + bias);
 }
 
 #endif
