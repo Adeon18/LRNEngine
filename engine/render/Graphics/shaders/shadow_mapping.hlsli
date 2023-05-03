@@ -106,7 +106,7 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
     
     float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
     
-    return simplePCF9Dir(shadowMap, currentDepth + bias, sampleCoords);
+    return smoothstep(0.33, 1.0, simplePCF9Dir(shadowMap, currentDepth + bias, sampleCoords));
 }
 
 //! Use a transformation lifehack(without matrices)
@@ -136,7 +136,7 @@ float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, con
     
     float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.005f, 0.00005f);
     
-    return shadowCubeMap.SampleCmpLevelZero(g_comparisonGEWrap, fragDir, currentDepth + bias);
+    return smoothstep(0.33, 1.0, shadowCubeMap.SampleCmpLevelZero(g_comparisonGEWrap, fragDir, currentDepth + bias));
 }
 
 float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)
@@ -164,7 +164,7 @@ float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Te
     
     float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
     
-    return shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, sampleCoords, currentDepth + bias);
+    return smoothstep(0.33, 1.0, shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, sampleCoords, currentDepth + bias));
 }
 
 #endif
