@@ -74,6 +74,13 @@ namespace engn {
 		void ShadowSubSystem::bindDataAndBuffers()
 		{
 			//! Matrices
+			auto& pointLightMatrices = m_shadowMapProjectionsPSCB.getData().pointLightViewProj;
+			for (uint32_t li = 0; li < m_pointViewMatrices.size(); ++li) {
+				for (uint32_t face = 0; face < 6; ++face) {
+					pointLightMatrices[li][face] = XMMatrixTranspose(m_pointViewMatrices[li][face] * POINTLIGHT_PROJECTION);
+				}
+			}
+
 			for (uint32_t i = 0; i < m_directionalViewProjMatrices.size(); ++i) {
 				m_shadowMapProjectionsPSCB.getData().dirLightViewProj[i] = XMMatrixTranspose(m_directionalViewProjMatrices[i]);
 			}

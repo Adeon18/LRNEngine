@@ -86,7 +86,7 @@ float4 main(PS_INPUT inp) : SV_TARGET
 
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        float shadow = checkIfInPointShadow(inp.worldPos, pointLights[i].position.xyz, g_pointLightShadowMaps[i], inp.worldNorm);
+        float shadow = checkIfInPointShadowViaTransform(inp.worldPos, pointLights[i].position.xyz, g_pointLightShadowMaps[i], inp.worldNorm, i);
         outL0 += (1 - shadow) * calculatePointLight(pointLights[i], micNorm, inp.worldNorm, inp.worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     

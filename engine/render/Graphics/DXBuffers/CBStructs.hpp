@@ -59,6 +59,7 @@ namespace engn {
 		};
 
 		struct CB_PS_ShadowMapToLightMatrices {
+			XMMATRIX pointLightViewProj[MAX_POINTLIGHT_COUNT][6];
 			XMMATRIX dirLightViewProj[MAX_DIRLIGHT_COUNT];
 			XMMATRIX spotLightViewProj;
 			XMVECTOR texelSizeClipSpaceDirectionalMap;

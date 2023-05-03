@@ -5,6 +5,7 @@
 
 cbuffer shadowMapToLightMatrices : register(b4)
 {
+    float4x4 pointLightViewProj[MAX_POINTLIGHT_COUNT][6];
     float4x4 dirLightViewProj[MAX_DIRLIGHT_COUNT];
     float4x4 spotLightViewProj;
     float4 texelSizeClipSpaceDirectionalMap;
@@ -14,6 +15,32 @@ cbuffer shadowMapToLightMatrices : register(b4)
 float getSimpleLightAngleBias(float3 surfaceNorm, float3 lightDir, float maxVal, float minVal)
 {
     return max(maxVal * (1.0f - dot(lightDir, surfaceNorm)), minVal);
+}
+
+//! Get the cubemap face from the direction given
+int getFaceFromDir(float3 dir)
+{
+    float maxAbsVal = max(abs(dir.x), max(abs(dir.y), abs(dir.z)));
+    
+    if (maxAbsVal == dir.x)
+    {
+        return 0;
+    } else if (maxAbsVal == -dir.x)
+    {
+        return 1;
+    } else if (maxAbsVal == dir.y)
+    {
+        return 2;
+    } else if (maxAbsVal == -dir.y)
+    {
+        return 3;
+    } else if (maxAbsVal == dir.z)
+    {
+        return 4;
+    } else
+    {
+        return 5;
+    }
 }
 
 //! Simple PCF that just samples 9 texels instead of 1
@@ -74,6 +101,7 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
     return simplePCF9Dir(shadowMap, currentDepth + bias, sampleCoords);
 }
 
+//! Use a transformation lifehack(without matrices)
 float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm)
 {
     float3 lightDir = worldFragPos - lightPos;
@@ -83,6 +111,24 @@ float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCu
     float currentDepth = vectorToDepth(lightDir, 1000.0f, 0.1f);
     
     float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.0005f, 0.00005f);
+
+    return currentDepth + bias < closestDepth ? 1.0 : 0.0;
+}
+
+//! Use matrix transformations by determining the right cubemap side
+float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm, int lightIdx)
+{
+    float3 fragDir = worldFragPos - lightPos;
+ 
+    float closestDepth = shadowCubeMap.Sample(g_linearWrap, fragDir).r;
+    
+    int matIdx = getFaceFromDir(fragDir);
+    
+    float4 lightFragPos = mul(float4(worldFragPos, 1.0f), pointLightViewProj[lightIdx][matIdx]);
+    float3 projCoords = lightFragPos.xyz / lightFragPos.w;
+    float currentDepth = projCoords.z;
+    
+    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.00005f, 0.000005f);
 
     return currentDepth + bias < closestDepth ? 1.0 : 0.0;
 }
