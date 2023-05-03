@@ -2,6 +2,7 @@
 #define SHADOW_MAPPING_HLSLI
 
 #include "lighting_cook_torrance.hlsli"
+#include "utility.hlsli"
 
 SamplerComparisonState g_comparisonGEWrap : register(s3);
 
@@ -19,7 +20,13 @@ float getSimpleLightAngleBias(float3 surfaceNorm, float3 lightDir, float maxVal,
     return max(maxVal * (1.0f - dot(lightDir, surfaceNorm)), minVal);
 }
 
+float getMappedLightAngleBias(float3 surfaceNorm, float3 lightDir, float maxVal, float minVal)
+{
+    return remap(0.0f, 1.0f, minVal, maxVal, dot(lightDir, surfaceNorm) );
+}
+
 //! Get the cubemap face from the direction given
+//! This is most likely slow but from openGl docs it looks like something like this is actually used
 int getFaceFromDir(float3 dir)
 {
     float maxAbsVal = max(abs(dir.x), max(abs(dir.y), abs(dir.z)));
@@ -92,8 +99,8 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
     
     //! TODO: understand why the hell
     float2 sampleCoords;
-    sampleCoords.x = projCoords.x / 2 + 0.5;
-    sampleCoords.y = projCoords.y / -2 + 0.5;
+    sampleCoords.x = projCoords.x * 0.5 + 0.5;
+    sampleCoords.y = projCoords.y * -0.5 + 0.5;
     
     float currentDepth = projCoords.z;
     
@@ -127,7 +134,7 @@ float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, con
     float3 projCoords = lightFragPos.xyz / lightFragPos.w;
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.001f, 0.00005f);
+    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.005f, 0.00005f);
     
     return shadowCubeMap.SampleCmpLevelZero(g_comparisonGEWrap, fragDir, currentDepth + bias);
 }
@@ -149,14 +156,13 @@ float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Te
         projCoords.z < 0.0f || projCoords.z > 1.0f)
         return 0.0;
     
-    //! TODO: understand why the hell
     float2 sampleCoords;
-    sampleCoords.x = projCoords.x / 2 + 0.5;
-    sampleCoords.y = projCoords.y / -2 + 0.5;
+    sampleCoords.x = projCoords.x * 0.5 + 0.5;
+    sampleCoords.y = projCoords.y * -0.5 + 0.5;
     
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.005f, 0.0005f);
+    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
     
     return shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, sampleCoords, currentDepth + bias);
 }
