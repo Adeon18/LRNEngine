@@ -66,6 +66,16 @@ namespace engn {
 			XMVECTOR texelWorldSpaceSizeDirectionalMap;
 		};
 
+		struct CB_PS_ShadowControlFlags {
+			bool enabled;
+			float directionalBiasMax;
+			float directionalBiasMin;
+			float pointBiasMax;
+			float pointBiasMin;
+			float spotBiasMax;
+			float spotBiasMin;
+		};
+
 		// Cb Struct for the postProcess effect
 		struct CB_PS_HDR {
 			XMFLOAT4 EV100;

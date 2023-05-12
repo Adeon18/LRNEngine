@@ -30,6 +30,19 @@ namespace engn {
 				bool toggleSpecular = true;
 				bool toggleIBL = true;
 			};
+
+			struct ShadowWidgetData {
+				bool enabled = true;
+
+				float directionalBiasMax = 0.0005f;
+				float directionalBiasMin = 0.00005f;
+
+				float pointBiasMax = 0.005f;
+				float pointBiasMin = 0.00005f;
+
+				float spotBiasMax = 0.0005f;
+				float spotBiasMin = 0.00005f;
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -52,6 +65,7 @@ namespace engn {
 			[[nodiscard]] const GeometryWidgetData& getGeomWidgetData() const { return m_geometryData; }
 			[[nodiscard]] const MaterialWidgetData& getMatWidgetData() const { return m_materialData; }
 			[[nodiscard]] const LightingWidgetData& getLightWidgetData() const { return m_lightingData; }
+			[[nodiscard]] const ShadowWidgetData& getShadowWidgetData() const { return m_shadowData; }
 		private:
 			UI() {}
 
@@ -59,10 +73,12 @@ namespace engn {
 			void manageGeometry();
 			void manageMaterial();
 			void manageLighting();
+			void manageShadows();
 
 			GeometryWidgetData m_geometryData;
 			MaterialWidgetData m_materialData;
 			LightingWidgetData m_lightingData;
+			ShadowWidgetData m_shadowData;
 		};
 	} // rend
 } // engn

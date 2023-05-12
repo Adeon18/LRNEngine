@@ -51,6 +51,8 @@ namespace engn {
 			void fillDirectionalMatrices();
 			void initSamplers();
 			void initAndBindViewPort(uint32_t resolution);
+			//! Fill and bind Imgui debug data buffer
+			void fillAndBindDebugBuffer();
 
 			//! Comparison sampler
 			Sampler m_comparionSampler;
@@ -71,6 +73,9 @@ namespace engn {
 			Pipeline m_shadowCubemapPipeline;
 			ConstantBuffer<CB_GS_ShadowCubeGenBuffer> m_shadowOmniGSCB;
 
+			//! Debug
+			ConstantBuffer<CB_PS_ShadowControlFlags> m_shadowDebugData;
+
 			//! Matrices
 			std::vector<XMMATRIX> m_directionalViewProjMatrices;
 			XMMATRIX m_spotlightViewProjMatrix;
@@ -80,6 +85,8 @@ namespace engn {
 			static constexpr XMVECTOR OBJECT_CENTER{ 0.0f, 0.0f, 0.0f };
 			inline static XMMATRIX DIRECTIONAL_PROJECTION = XMMatrixOrthographicLH(25, 25, 1000.0f, 0.1f);
 			inline static XMMATRIX POINTLIGHT_PROJECTION = XMMatrixPerspectiveFovLH(XMConvertToRadians(90.0f), 1.0f, 1000.0f, 0.1f);
+
+			static constexpr uint32_t DEBUG_BUFFER_SLOT = 11;
 
 			static constexpr uint32_t SHADOW_CUBEMAP_SIDE_RESOLUTION = 512;
 			static constexpr uint32_t SHADOW_MAP_RESOLUTION2D = 2048;

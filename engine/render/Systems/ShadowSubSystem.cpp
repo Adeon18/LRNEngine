@@ -95,6 +95,8 @@ namespace engn {
 
 			d3d::s_devcon->PSSetConstantBuffers(SHADOW_MAP_MATRICES_BUFFER_SLOT, 1, m_shadowMapProjectionsPSCB.getBufferAddress());
 
+			fillAndBindDebugBuffer();
+
 			//! Depth buffers
 			m_spotShadowMap.bindSRV(SPOT_SHADOW_MAP_SLOT);
 			for (uint32_t i = 0; i < m_directionalShadowMaps.size(); ++i) {
@@ -208,6 +210,8 @@ namespace engn {
 			m_shadow2DVSCB.init();
 			m_shadowOmniGSCB.init();
 			m_shadowMapProjectionsPSCB.init();
+
+			m_shadowDebugData.init();
 		}
 		void ShadowSubSystem::fillDirectionalMatrices()
 		{
@@ -264,6 +268,23 @@ namespace engn {
 			viewPort.MaxDepth = 1.0f;
 
 			d3d::s_devcon->RSSetViewports(1, &viewPort);
+		}
+		void ShadowSubSystem::fillAndBindDebugBuffer()
+		{
+			auto& buffer = m_shadowDebugData.getData();
+			auto& imguiBuffer = UI::instance().getShadowWidgetData();
+
+			buffer.enabled = imguiBuffer.enabled;
+			buffer.directionalBiasMax = imguiBuffer.directionalBiasMax;
+			buffer.directionalBiasMin = imguiBuffer.directionalBiasMin;
+			buffer.pointBiasMax = imguiBuffer.pointBiasMax;
+			buffer.pointBiasMin = imguiBuffer.pointBiasMin;
+			buffer.spotBiasMax = imguiBuffer.spotBiasMax;
+			buffer.spotBiasMin = imguiBuffer.spotBiasMin;
+
+			m_shadowDebugData.fill();
+
+			d3d::s_devcon->PSSetConstantBuffers(5, 1, m_shadowDebugData.getBufferAddress());
 		}
 	} // rend
 } // engn

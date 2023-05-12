@@ -29,6 +29,9 @@ namespace engn {
 			if (ImGui::CollapsingHeader("Lighting")) {
 				manageLighting();
 			}
+			if (ImGui::CollapsingHeader("Shadows")) {
+				manageShadows();
+			}
 		}
 		void UI::endFrame()
 		{
@@ -59,6 +62,16 @@ namespace engn {
 			ImGui::Checkbox("Enable Diffuse", &m_lightingData.toggleDiffuse);
 			ImGui::Checkbox("Enable Specular", &m_lightingData.toggleSpecular);
 			ImGui::Checkbox("Enable IBL", &m_lightingData.toggleIBL);
+		}
+		void UI::manageShadows()
+		{
+			ImGui::Checkbox("Enable Shadows", &m_shadowData.enabled);
+			ImGui::SliderFloat("Directional Bias Max", &m_shadowData.directionalBiasMax, 0.0001f, 0.001f, "%.5f");
+			ImGui::SliderFloat("Directional Bias Min", &m_shadowData.directionalBiasMin, 0.00001f, 0.0001f, "%.5f");
+			ImGui::SliderFloat("Point Bias Max", &m_shadowData.pointBiasMax, 0.001f, 0.01f, "%.5f");
+			ImGui::SliderFloat("Point Bias Min", &m_shadowData.pointBiasMin, 0.00001f, 0.0001f, "%.5f");
+			ImGui::SliderFloat("Spot Bias Max", &m_shadowData.spotBiasMax, 0.0001f, 0.001f, "%.5f");
+			ImGui::SliderFloat("Spot Bias Min", &m_shadowData.spotBiasMin, 0.00001f, 0.0001f, "%.5f");
 		}
 	}
 } // engn

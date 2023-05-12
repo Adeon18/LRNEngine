@@ -15,6 +15,17 @@ cbuffer shadowMapToLightMatrices : register(b4)
     float4 texelWorldSpaceSizeDirectionalMap;
 }
 
+cbuffer shadowDebugFlags : register(b5)
+{
+    bool enabled;
+    float directionalBiasMax;
+    float directionalBiasMin;
+    float pointBiasMax;
+    float pointBiasMin;
+    float spotBiasMax;
+    float spotBiasMin;
+};
+
 float getSimpleLightAngleBias(float3 surfaceNorm, float3 lightDir, float maxVal, float minVal)
 {
     return max(maxVal * (1.0f - dot(lightDir, surfaceNorm)), minVal);
@@ -82,6 +93,11 @@ float vectorToDepth(float3 vec, float n, float f)
 
 float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)
 {
+    if (!enabled)
+    {
+        return 0.0f;
+    }
+    
     //! TODO: This might be sped up
     if (dot(macNorm, toLightDir) < MIN_LIGHT_INTENCITY)
     {
@@ -104,7 +120,7 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
     
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
+    float bias = getSimpleLightAngleBias(macNorm, toLightDir, directionalBiasMax, directionalBiasMin);
     
     return smoothstep(0.33, 1.0, simplePCF9Dir(shadowMap, currentDepth + bias, sampleCoords));
 }
@@ -112,6 +128,11 @@ float checkIfInDirectionalShadow(float3 worldFragPos, float4x4 lightWorldProj, c
 //! Use a transformation lifehack(without matrices)
 float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm)
 {
+    if (!enabled)
+    {
+        return 0.0f;
+    }
+    
     float3 lightDir = worldFragPos - lightPos;
  
     float closestDepth = shadowCubeMap.Sample(g_linearWrap, lightDir).r;
@@ -126,6 +147,11 @@ float checkIfInPointShadow(float3 worldFragPos, float3 lightPos, const TextureCu
 //! Use matrix transformations by determining the right cubemap side
 float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, const TextureCube<float> shadowCubeMap, float3 macNorm, int lightIdx)
 {
+    if (!enabled)
+    {
+        return 0.0f;
+    }
+    
     float3 fragDir = worldFragPos - lightPos;
     
     int matIdx = getFaceFromDir(fragDir);
@@ -134,13 +160,18 @@ float checkIfInPointShadowViaTransform(float3 worldFragPos, float3 lightPos, con
     float3 projCoords = lightFragPos.xyz / lightFragPos.w;
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), 0.005f, 0.00005f);
+    float bias = getSimpleLightAngleBias(macNorm, normalize(lightPos - worldFragPos), pointBiasMax, pointBiasMin);
     
     return smoothstep(0.33, 1.0, shadowCubeMap.SampleCmpLevelZero(g_comparisonGEWrap, fragDir, currentDepth + bias));
 }
 
 float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Texture2D<float> shadowMap, float3 toLightDir, float3 macNorm)
 {
+    if (!enabled)
+    {
+        return 0.0f;
+    }
+    
     //! TODO: This might be sped up
     if (dot(macNorm, toLightDir) < MIN_LIGHT_INTENCITY)
     {
@@ -162,7 +193,7 @@ float checkIfInSpotShadow(float3 worldFragPos, float4x4 lightWorldProj, const Te
     
     float currentDepth = projCoords.z;
     
-    float bias = getSimpleLightAngleBias(macNorm, toLightDir, 0.0005f, 0.00005f);
+    float bias = getSimpleLightAngleBias(macNorm, toLightDir, spotBiasMax, spotBiasMin);
     
     return smoothstep(0.33, 1.0, shadowMap.SampleCmpLevelZero(g_comparisonGEWrap, sampleCoords, currentDepth + bias));
 }
