@@ -38,29 +38,12 @@ float getMappedLightAngleBias(float3 surfaceNorm, float3 lightDir, float maxVal,
 
 //! Get the cubemap face from the direction given
 //! This is most likely slow but from openGl docs it looks like something like this is actually used
-int getFaceFromDir(float3 dir)
+int getFaceFromDir(float3 xyz)
 {
-    float maxAbsVal = max(abs(dir.x), max(abs(dir.y), abs(dir.z)));
-    
-    if (maxAbsVal == dir.x)
-    {
-        return 0;
-    } else if (maxAbsVal == -dir.x)
-    {
-        return 1;
-    } else if (maxAbsVal == dir.y)
-    {
-        return 2;
-    } else if (maxAbsVal == -dir.y)
-    {
-        return 3;
-    } else if (maxAbsVal == dir.z)
-    {
-        return 4;
-    } else
-    {
-        return 5;
-    }
+    float3 axyz = abs(xyz);
+    int index = axyz[0] > axyz[1] ? 0 : 1;
+    index = axyz[index] > axyz[2] ? index : 2;
+    return axyz[index] == xyz[index] ? index * 2 : index * 2 + 1;
 }
 
 //! Simple PCF that just samples 9 texels instead of 1
