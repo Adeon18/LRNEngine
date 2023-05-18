@@ -25,6 +25,99 @@ namespace engn {
 		m_renderData.invResolutionY = 1.0f / m_window->getHeight();
 	}
 
+	void Engine::initScene()
+	{
+		rend::LightSystem::getInstance().addDirLight(
+			{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.5f
+		);
+		rend::LightSystem::getInstance().addPointLight(
+			XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
+		);
+		rend::LightSystem::getInstance().addPointLight(
+			XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 3.0f, 0.39f, 0.39f }, 0.8f
+		);
+		rend::LightSystem::getInstance().addPointLight(
+			XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::LIGHTGREEN, 0.8f
+		);
+
+		rend::LightSystem::getInstance().setSpotLightSettings(
+			17.0f, light::WHITE, 2.0f
+		);
+
+		std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(MODELS["TOWER"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{ },
+			{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {},  {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+		mptr.reset();
+		mptr = mdl::ModelManager::getInstance().getModel(MODELS["SAMURAI"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{ },
+			{ XMMatrixTranslation(5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+		mptr.reset();
+		mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{ },
+			{ XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+		mptr.reset();
+		mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{ },
+			{ XMMatrixTranslation(-3.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+		mptr.reset();
+		mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{
+				tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
+				tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
+				tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness),
+				tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].metallic),
+			},
+			{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+		// A cube that you can play with via editing the reflection
+		mptr.reset();
+		mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
+		rend::MeshSystem::getInstance().addNormalInstance(
+			mptr,
+			{
+				tex::TextureManager::getInstance().getTexture(MATERIALS["TEST"].albedo),
+			},
+			{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+		);
+
+
+		// Fill the field with cubes
+		for (int i = -24; i < 24; ++i) {
+			for (int j = -24; j < 32; ++j) {
+				mptr.reset();
+				mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
+				rend::MeshSystem::getInstance().addNormalInstance(
+					mptr,
+					{
+						tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
+						tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
+						tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness)
+					},
+					{ XMMatrixScaling(1.0f, 0.3f, 1.0f) * XMMatrixTranslation(2 * i, -2.0f, 2 * j), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
+				);
+			}
+		}
+	}
+
 	bool Engine::run()
 	{
 		rend::UI::instance().startFrame();

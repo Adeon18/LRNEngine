@@ -50,7 +50,6 @@ namespace engn {
 			//! Render entire frame, return false at error or cubamap baking to entirely shut down the engine and free the resources
 			bool renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
 		private:
-			void m_initScene();
 			//! Initialize all the per Frame constant buffers
 			void m_initBuffers();
 			//! Initialize all the global samplers
@@ -80,42 +79,6 @@ namespace engn {
 #if BAKE_CUBEMAPS == 1
 			ReflectionCapture m_reflectionCapture;
 #endif
-
-			std::unordered_map<std::string, MaterialTexturePaths> MATERIALS{
-				{"STONE", 
-					{
-						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_COLOR.dds",
-						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_NORM.dds",
-						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_ROUGH.dds",
-						""
-					}
-				},
-				{"COBBLESTONE",
-					{
-						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_albedo.dds",
-						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_normal.dds",
-						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_roughness.dds",
-						""
-					}
-				},
-				{"TEST",
-					{
-						TEX_REL_PATH_PREF + "assets\\Textures\\BrickWall\\blank.dds",
-						"",
-						"",
-						""
-					}
-				},
-			};
-
-			std::unordered_map<std::string, std::string> MODELS{
-				{"HORSE", TEX_REL_PATH_PREF + "assets/Models/KnightHorse/KnightHorse.fbx"},
-				{"SAMURAI", TEX_REL_PATH_PREF + "assets/Models/Samurai/Samurai.fbx"},
-				{"TOWER", TEX_REL_PATH_PREF + "assets/Models/EastTower/EastTower.fbx"},
-				{"CUBE", TEX_REL_PATH_PREF + "assets/Models/Cube/Cube.fbx"},
-				{"SPHERE", TEX_REL_PATH_PREF + "assets/Models/Sphere/sphere.fbx"},
-			};
-
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 		};

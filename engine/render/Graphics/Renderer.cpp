@@ -17,7 +17,6 @@ namespace engn {
 		void Renderer::init() {
 			m_initBuffers();
 			m_initSamplers();
-			m_initScene();
 			m_initializeSky();
 			m_initPostProcess();
 #if BAKE_CUBEMAPS == 1
@@ -71,119 +70,6 @@ namespace engn {
 			return true;
 		}
 
-		void Renderer::m_initScene()
-		{
-			LightSystem::getInstance().addDirLight(
-				{ 0.0f, -0.8f, 0.6f }, light::WHITE, 0.5f
-			);
-			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
-			);
-			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 3.0f, 0.39f, 0.39f }, 0.8f
-			);
-			LightSystem::getInstance().addPointLight(
-				XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::LIGHTGREEN, 0.8f
-			);
-
-			LightSystem::getInstance().setSpotLightSettings(
-				17.0f, light::WHITE, 2.0f
-			);
-
-			std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(MODELS["TOWER"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{ },
-				{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {},  {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["SAMURAI"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{ },
-				{ XMMatrixTranslation(5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{ },
-				{ XMMatrixTranslation(-5.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["HORSE"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{ },
-				{ XMMatrixTranslation(-3.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{
-					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
-					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
-					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness),
-					tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].metallic),
-				},
-				{ XMMatrixTranslation(7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-			// A cube that you can play with via editing the reflection
-			mptr.reset();
-			mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-			MeshSystem::getInstance().addNormalInstance(
-				mptr,
-				{
-					tex::TextureManager::getInstance().getTexture(MATERIALS["TEST"].albedo),
-				},
-				{ XMMatrixTranslation(-7.0f, 0.0f, 10.0f), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-			);
-
-
-			// Fill the field with cubes
-			for (int i = -24; i < 24; ++i) {
-				for (int j = -24; j < 32; ++j) {
-					mptr.reset();
-					mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-					MeshSystem::getInstance().addNormalInstance(
-						mptr,
-						{
-							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
-							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].normalMap),
-							tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].roughness)
-						},
-						{ XMMatrixScaling(1.0f, 0.3f, 1.0f) * XMMatrixTranslation(2 * i, -2.0f, 2 * j), {}, {1.0f, 0.0f, 0.0f, 1.0f} }
-					);
-				}
-			}
-
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(-8.0f, 0.0f, 15.0f), {1.0f, 0.0f, 0.0f, 1.0f}});
-
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + HORSE_MODEL_PATH);
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(0.0f, 0.0f, 15.0f), {0.0f, 1.0f, 0.0f, 1.0f} });
-
-			//mptr.reset();
-			//mptr = mdl::ModelManager::getInstance().getModel(EXE_DIR + SAMURAI_MODEL_PATH);
-			//MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(8.0f, 0.0f, 15.0f), {0.0f, 0.0f, 1.0f, 1.0f} });
-			
-			// Fill the field with samurai
-			/*for (int i = 0; i < 32; ++i) {
-				for (int j = 0; j < 32; ++j) {
-					mptr.reset();
-					mptr = mdl::ModelManager::getInstance().getModel(util::getExeDir() + "../../assets/Models/Samurai/Samurai.fbx");
-					MeshSystem::getInstance().addHologramInstance(mptr, {}, { XMMatrixScaling(0.05f, 0.05f, 0.05f) * XMMatrixRotationRollPitchYaw(0.0f, XM_PI, 0.0f) * XMMatrixTranslation(i * 3.0f, 0.0f, j * 3.0f), {1.0f, 0.0f, 0.0f, 1.0f} });
-				}
-			}*/
-		}
 		void Renderer::m_initBuffers()
 		{
 			m_globalConstantBufferVS.init();

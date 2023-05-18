@@ -14,6 +14,8 @@ Application::Application() :
 
 int Application::run() {
 
+	m_engine->initScene();
+
 	MSG msg = { 0 };
 	while (m_isRunning) {
 		m_processWIN32Queue(&msg);

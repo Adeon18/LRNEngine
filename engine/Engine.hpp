@@ -17,6 +17,7 @@
 #include "render/Graphics/Renderer.hpp"
 
 #include "include/config.hpp"
+#include <render/Graphics/HelperStructs.hpp>
 
 namespace engn {
 	using namespace DirectX;
@@ -29,6 +30,9 @@ namespace engn {
 
 		//! Set the needed engine data to the renderdata struct
 		void setEngineData(const rend::RenderData& data);
+
+		//! Set all the meshes and ligts that create the initial scene
+		void initScene();
 
 		//! Run engine: Handle physics and render - return false at faulty render or cubemap baking
 		bool run();
@@ -79,5 +83,46 @@ namespace engn {
 		void moveDraggable();
 		//! Based on the keyboard inputs, fill the struct that has info what mode of rendering is used(debug/normls/wireframs, etc.)
 		void fillRenderModeFlagsFromInput();
+
+#ifdef _WIN64
+		const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\..\\";
+#else
+		const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\";
+#endif
+
+		std::unordered_map<std::string, rend::MaterialTexturePaths> MATERIALS{
+				{"STONE",
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_COLOR.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_NORM.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Stone\\Stone_ROUGH.dds",
+						""
+					}
+				},
+				{"COBBLESTONE",
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_albedo.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_normal.dds",
+						TEX_REL_PATH_PREF + "assets\\Textures\\Cobblestone\\Cobblestone_roughness.dds",
+						""
+					}
+				},
+				{"TEST",
+					{
+						TEX_REL_PATH_PREF + "assets\\Textures\\BrickWall\\blank.dds",
+						"",
+						"",
+						""
+					}
+				},
+		};
+
+		std::unordered_map<std::string, std::string> MODELS{
+			{"HORSE", TEX_REL_PATH_PREF + "assets/Models/KnightHorse/KnightHorse.fbx"},
+			{"SAMURAI", TEX_REL_PATH_PREF + "assets/Models/Samurai/Samurai.fbx"},
+			{"TOWER", TEX_REL_PATH_PREF + "assets/Models/EastTower/EastTower.fbx"},
+			{"CUBE", TEX_REL_PATH_PREF + "assets/Models/Cube/Cube.fbx"},
+			{"SPHERE", TEX_REL_PATH_PREF + "assets/Models/Sphere/sphere.fbx"},
+		};
 	};
 } // engn
