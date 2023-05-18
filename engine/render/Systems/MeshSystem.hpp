@@ -27,6 +27,7 @@ namespace engn {
 	namespace rend {
 		enum GroupTypes {
 			NORMAL,
+			DISSOLUTION,
 			HOLOGRAM,
 			EMISSION_ONLY
 		};
@@ -357,6 +358,7 @@ namespace engn {
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			uint32_t addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			uint32_t addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			uint32_t addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			uint32_t addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
@@ -372,6 +374,7 @@ namespace engn {
 
 			//! Init render groups and set respective parameters
 			void initNormalGroup();
+			void initDissolutionGroup();
 			void initHologramGroup();
 			void initEmissionGroup();
 			//! Initialize all the pipelines
@@ -385,6 +388,7 @@ namespace engn {
 
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
+			RenderGroup<Instance, Material> m_dissolutionGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
 			RenderGroup<Instance, Material> m_emissionOnlyGroup;
 
@@ -415,6 +419,21 @@ namespace engn {
 			std::unordered_map<PipelineTypes, PipelineData> PIPELINE_TYPE_DATA{
 				{
 					PipelineTypes::NORMAL_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT,
+						ARRAYSIZE(DEFAULT_LAYOUT),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSBasicColor.cso",
+						L"",
+						L"",
+						L"",
+						SHADER_FOLDER + L"PSBasicColor.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{}
+					}
+				},
+				{
+					PipelineTypes::DISSOLUTION_RENDER,
 					PipelineData{
 						DEFAULT_LAYOUT,
 						ARRAYSIZE(DEFAULT_LAYOUT),

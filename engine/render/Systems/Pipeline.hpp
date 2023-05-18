@@ -11,6 +11,7 @@ namespace engn {
 		//! The enum that defines all the types of pipelines with shaders - basically a search key for a pipeline
 		enum PipelineTypes {
 			NORMAL_RENDER,
+			DISSOLUTION_RENDER,
 			HOLOGRAM_RENDER,
 			EMISSION_ONLY_RENDER,
 			FACE_NORMAL_DEBUG,

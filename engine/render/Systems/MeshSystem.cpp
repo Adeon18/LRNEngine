@@ -5,6 +5,7 @@ namespace engn {
 		void MeshSystem::init() {
 			initPipelines();
 			initNormalGroup();
+			initDissolutionGroup();
 			initHologramGroup();
 			initEmissionGroup();
 		}
@@ -13,7 +14,11 @@ namespace engn {
 		{
 			m_normalGroup.setType(GroupTypes::NORMAL);
 			m_normalGroup.init();
-
+		}
+		void MeshSystem::initDissolutionGroup()
+		{
+			m_dissolutionGroup.setType(GroupTypes::DISSOLUTION);
+			m_dissolutionGroup.init();
 		}
 		void MeshSystem::initHologramGroup()
 		{
@@ -29,23 +34,7 @@ namespace engn {
 		
 		void MeshSystem::render(const RenderModeFlags& flags)
 		{
-			m_shadowSubSystem.bindDataAndBuffers();
-
 			auto& geomWidgetData = UI::instance().getGeomWidgetData();
-			// Normal group 
-			m_normalGroup.fillInstanceBuffer();
-			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
-			m_normalGroup.render();
-			if (geomWidgetData.normalVisEnabled){
-				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
-				m_normalGroup.render();
-			}
-			if (geomWidgetData.vireframeVisEnabled) {
-				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
-				m_normalGroup.render();
-			}
-
-			m_shadowSubSystem.unbindDepthBuffers();
 
 			// Hologram group
 			m_hologramGroup.fillInstanceBuffer();
@@ -73,6 +62,28 @@ namespace engn {
 				m_emissionOnlyGroup.render();
 			}
 
+			m_shadowSubSystem.bindDataAndBuffers();
+
+			// Normal group 
+			m_normalGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
+			m_normalGroup.render();
+			if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_normalGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_normalGroup.render();
+			}
+
+			// Dissolution group
+			m_dissolutionGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::DISSOLUTION_RENDER);
+			m_dissolutionGroup.render();
+
+			m_shadowSubSystem.unbindDepthBuffers();
+
 		}
 
 		void MeshSystem::renderDepth2D()
@@ -88,11 +99,15 @@ namespace engn {
 
 				m_normalGroup.fillInstanceBuffer();
 				m_normalGroup.render();
+				m_dissolutionGroup.fillInstanceBuffer();
+				m_dissolutionGroup.render();
 			}
 
 			m_shadowSubSystem.captureSpotShadow();
 			m_normalGroup.fillInstanceBuffer();
 			m_normalGroup.render();
+			m_dissolutionGroup.fillInstanceBuffer();
+			m_dissolutionGroup.render();
 		}
 
 		void MeshSystem::renderDepthCubemaps()
@@ -109,6 +124,8 @@ namespace engn {
 
 				m_normalGroup.fillInstanceBuffer();
 				m_normalGroup.render();
+				m_dissolutionGroup.fillInstanceBuffer();
+				m_dissolutionGroup.render();
 			}
 		}
 
@@ -117,6 +134,10 @@ namespace engn {
 			return m_normalGroup.addModel(mod, mtrl, inc);
 		}
 
+		uint32_t MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		{
+			return m_dissolutionGroup.addModel(mod, mtrl, inc);
+		}
 
 		uint32_t MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
@@ -144,6 +165,7 @@ namespace engn {
 			case GroupTypes::EMISSION_ONLY: {
 				m_emissionOnlyGroup.addModelOffset(instanceData, offset);
 			}
+	
 			}
 		}
 

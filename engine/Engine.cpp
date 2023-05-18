@@ -105,7 +105,7 @@ namespace engn {
 			for (int j = -24; j < 32; ++j) {
 				mptr.reset();
 				mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-				rend::MeshSystem::getInstance().addNormalInstance(
+				rend::MeshSystem::getInstance().addDissolutionInstance(
 					mptr,
 					{
 						tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
