@@ -33,8 +33,10 @@ namespace engn {
 
 		bool Renderer::renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags)
 		{
-			MeshSystem::getInstance().renderDepth2D();
-			MeshSystem::getInstance().renderDepthCubemaps();
+			if (UI::instance().getShadowWidgetData().enabled) {
+				MeshSystem::getInstance().renderDepth2D();
+				MeshSystem::getInstance().renderDepthCubemaps();
+			}
 			// ---- Clear the write buffer
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 
