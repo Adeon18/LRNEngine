@@ -42,7 +42,7 @@ namespace engn {
 					{},
 					// We decrease the sphere 2 times to visualize pointlight
 					{ XMMatrixScaling(lightRadius, lightRadius, lightRadius) * modelToWorld, {}, pLight.radiance }
-				)
+				).first
 			);
 			m_pointLights.push_back(pLight);
 		}

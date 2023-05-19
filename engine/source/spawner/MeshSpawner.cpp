@@ -13,14 +13,49 @@ namespace engn {
 			);
 			XMVECTOR translationVec = camPtr->getCamPosition() + spawnWidget.spawnDistance * camPtr->getCamForward();
 
-			rend::MeshSystem::getInstance().addDissolutionInstance(
-				mptr,
-				{},
-				{ XMMatrixTranslationFromVector(translationVec), {}, {1.0f, 0.0f, 1.0f, 0.0f} }
-			);
+			SpawnEntry entry{
+				currentTime,
+				spawnWidget.modelSpawnTime,
+				rend::MeshSystem::getInstance().addDissolutionInstance(
+					mptr,
+					{},
+					{ XMMatrixTranslationFromVector(translationVec), {}, {1.0f, 0.0f, 1.0f, 0.0f} }
+				).second
+			};
+
+			m_spawningInstances.push_back(std::move(entry));
 		}
 		void MeshSpawner::updateInstances(float currentTime)
 		{
+			auto& spawnWidget = rend::UI::instance().getSpawnWidgetData();
+
+			//! TODO: This has a problem, if an instance was spawned with 7 seconds spawn time and 
+			//! then immediately after with 2 seconds swawn time, the second one will delete only after the first one.
+			//! This can be fixed by either adding the for loop again, which is O(n^2) and increasing complexity of the code, 
+			//! or use another data structure like std::map, hovewer erase() there is slover than pop_back.
+			//! For I use O(n^2), this makes the deque basically useless, 
+			auto it = m_spawningInstances.begin();
+			while (it != m_spawningInstances.end()) {
+				auto firstInstance = *it;
+				if (currentTime - firstInstance.timeSpawned > firstInstance.spawnTime) {
+					rend::MeshSystem::getInstance().removeDissolutionInstance(firstInstance.instanceProperties);
+					it = m_spawningInstances.erase(it);
+
+					//! Edit the indexes if the instance despawned, so other can too
+					for (auto& el : m_spawningInstances) {
+						if (el.instanceProperties.model->name == firstInstance.instanceProperties.model->name) {
+							if (el.instanceProperties.materialIdx == firstInstance.instanceProperties.materialIdx) {
+								if (el.instanceProperties.instanceIdx > firstInstance.instanceProperties.instanceIdx) {
+									--el.instanceProperties.instanceIdx;
+								}
+							}
+						}
+					}
+				}
+				else {
+					++it;
+				}
+			}
 		}
 	} // spwn
 } // engn

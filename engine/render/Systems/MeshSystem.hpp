@@ -147,7 +147,7 @@ namespace engn {
 					if (perModel.model->name == insProps.model->name) {
 						// Erase the instance matrix(only done once)
 						TransformSystem::getInstance().eraseMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex);
-						for (auto& mesh : perModel) {
+						for (auto& mesh : perModel.perMesh) {
 							mesh[insProps.materialIdx].instances.erase(mesh[insProps.materialIdx].instances.begin() + insProps.instanceIdx);
 						}
 						return;
@@ -156,7 +156,7 @@ namespace engn {
 			}
 
 			// Add the model by filling in the respective structs and return the instance matrix ID
-			uint32_t addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
+			std::pair<uint32_t, InstanceProperties> addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
 				if (!mod) {
 					Logger::instance().logErr("addModel: The model pointer is null");
 				}
@@ -171,30 +171,42 @@ namespace engn {
 
 				ModelIsAdded modelIsAdded;
 
+				std::pair<uint32_t, InstanceProperties> properties;
+				properties.second.group = m_type;
+
 				// Add the new instance world matrix to transform system and get the index fo later usage
-				uint32_t newInstanceIdx = TransformSystem::getInstance().addMatrixById(inc.modelToWorld);
+				properties.first = TransformSystem::getInstance().addMatrixById(inc.modelToWorld);
 
 				bool isCached = false;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
 						for (auto& perMesh : perModel.perMesh) {
+							uint32_t matIdx = 0;
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
 								if (perMaterial.material == mtrl || mtrl.empty()) {
-									perMaterial.instances.push_back({ inc.color, newInstanceIdx });
+									properties.second.model = mod;
+									properties.second.materialIdx = matIdx;
+									properties.second.instanceIdx = perMaterial.instances.size();
+									perMaterial.instances.push_back({ inc.color, properties.first });
 									modelIsAdded.addedAsInstance = true;
 								}
+								++matIdx;
 							}
 							if (!modelIsAdded.addedAsInstance) {
+								properties.second.model = mod;
+								properties.second.materialIdx = matIdx;
+								properties.second.instanceIdx = 0;
+
 								PerMaterial perMat;
 								perMat.material = mtrl;
-								perMat.instances.push_back({ inc.color, newInstanceIdx });
+								perMat.instances.push_back({ inc.color, properties.first });
 								perMesh.push_back(perMat);
 								modelIsAdded.addedAsMaterial = true;
 							}
 						}
 						if (modelIsAdded.wasAdded()) {
-							return newInstanceIdx;
+							return properties;
 						}
 					}
 				}
@@ -218,21 +230,28 @@ namespace engn {
 							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_SHININESS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_SHININESS)]) : nullptr,
 							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)]) : nullptr,
 						};
-						perMat.instances.push_back({ inc.color, newInstanceIdx });
+
+						perMat.instances.push_back({ inc.color, properties.first });
 						perMesh.push_back(perMat);
 					}
 					else {
+
 						PerMaterial perMat;
 						perMat.material = mtrl;
-						perMat.instances.push_back({inc.color, newInstanceIdx});
+						perMat.instances.push_back({inc.color, properties.first });
 						perMesh.push_back(perMat);
 					}
 					newModel.perMesh.push_back(perMesh);
 				}
 
+				// Fill the properties
+				properties.second.model = mod;
+				properties.second.materialIdx = 0;
+				properties.second.instanceIdx = 0;
+
 				m_models.push_back(newModel);
 
-				return newInstanceIdx;
+				return properties;
 			}
 
 			//! Fill the data to be passed by instance
@@ -371,10 +390,11 @@ namespace engn {
 			void renderDepthCubemaps();
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
-			uint32_t addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			uint32_t addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			uint32_t addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			uint32_t addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			std::pair<uint32_t, InstanceProperties> addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			void removeDissolutionInstance(const InstanceProperties& instanceData);
+			std::pair<uint32_t, InstanceProperties> addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			std::pair<uint32_t, InstanceProperties> addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
 			void addInstanceOffset(const InstanceProperties& instanceData, const XMVECTOR& offset);
 			void addInstanceRotation(const InstanceProperties& instanceData, const XMVECTOR& rotation);

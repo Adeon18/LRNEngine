@@ -153,6 +153,8 @@ namespace engn {
 		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_N)) {
 			m_spawner.addDissolutionInstance(m_camera, m_renderData.iTime);
 		}
+
+		m_spawner.updateInstances(m_renderData.iTime);
 	}
 
 	void Engine::handleCameraMovement() {

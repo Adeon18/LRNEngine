@@ -129,22 +129,27 @@ namespace engn {
 			}
 		}
 
-		uint32_t MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			return m_normalGroup.addModel(mod, mtrl, inc);
 		}
 
-		uint32_t MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			return m_dissolutionGroup.addModel(mod, mtrl, inc);
 		}
 
-		uint32_t MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		void MeshSystem::removeDissolutionInstance(const InstanceProperties& instanceData)
+		{
+			m_dissolutionGroup.removeInstance(instanceData);
+		}
+
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			return m_hologramGroup.addModel(mod, mtrl, inc);
 		}
 
-		uint32_t MeshSystem::addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
 		{
 			return m_emissionOnlyGroup.addModel(mod, mtrl, inc);
 		}
