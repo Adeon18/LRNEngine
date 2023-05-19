@@ -8,10 +8,16 @@
 namespace engn {
 	namespace spwn {
 		class MeshSpawner {
+			//! A spawn entry struct, looks strange but gets the job done
 			struct SpawnEntry {
+				//! First 2 are spawn check
 				float timeSpawned;
 				float spawnTime;
+				//! This is for delete
 				rend::InstanceProperties instanceProperties;
+				//! This is for a correct respawn
+				std::shared_ptr<mdl::Model> mptr;
+				XMVECTOR translationVec;
 			};
 		public:
 			//! Add the model with the respective instance data absed on camera position and direction

@@ -19,8 +19,10 @@ namespace engn {
 				rend::MeshSystem::getInstance().addDissolutionInstance(
 					mptr,
 					{},
-					{ XMMatrixTranslationFromVector(translationVec), {}, {1.0f, 0.0f, 1.0f, 0.0f} }
-				).second
+					{ XMMatrixTranslationFromVector(translationVec), {}, {} }
+				).second,
+				mptr,
+				translationVec
 			};
 
 			m_spawningInstances.push_back(std::move(entry));
@@ -33,12 +35,17 @@ namespace engn {
 			//! then immediately after with 2 seconds swawn time, the second one will delete only after the first one.
 			//! This can be fixed by either adding the for loop again, which is O(n^2) and increasing complexity of the code, 
 			//! or use another data structure like std::map, hovewer erase() there is slover than pop_back.
-			//! For I use O(n^2), this makes the deque basically useless, 
+			//! For I use O(n^2), this makes the deque basically useless, but I'll leave it here fir the future
 			auto it = m_spawningInstances.begin();
 			while (it != m_spawningInstances.end()) {
 				auto firstInstance = *it;
 				if (currentTime - firstInstance.timeSpawned > firstInstance.spawnTime) {
 					rend::MeshSystem::getInstance().removeDissolutionInstance(firstInstance.instanceProperties);
+					rend::MeshSystem::getInstance().addNormalInstance(
+						firstInstance.mptr,
+						{},
+						{ XMMatrixTranslationFromVector(firstInstance.translationVec), {}, {} }
+					);
 					it = m_spawningInstances.erase(it);
 
 					//! Edit the indexes if the instance despawned, so other can too
