@@ -105,7 +105,7 @@ namespace engn {
 			for (int j = -24; j < 32; ++j) {
 				mptr.reset();
 				mptr = mdl::ModelManager::getInstance().getModel(MODELS["CUBE"]);
-				rend::MeshSystem::getInstance().addDissolutionInstance(
+				rend::MeshSystem::getInstance().addNormalInstance(
 					mptr,
 					{
 						tex::TextureManager::getInstance().getTexture(MATERIALS["COBBLESTONE"].albedo),
@@ -142,7 +142,17 @@ namespace engn {
 
 		handleDragging();
 
+		handleSpawning();
+
 		fillRenderModeFlagsFromInput();
+	}
+
+	void Engine::handleSpawning()
+	{
+		auto& keyboard = inp::Keyboard::getInstance();
+		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_N)) {
+			m_spawner.addDissolutionInstance(m_camera, m_renderData.iTime);
+		}
 	}
 
 	void Engine::handleCameraMovement() {

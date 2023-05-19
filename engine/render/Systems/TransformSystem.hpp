@@ -21,6 +21,8 @@ namespace engn {
 			XMMATRIX& getMatrixById(uint32_t Id);
 			//! Insert a new transform matrix by index
 			uint32_t addMatrixById(const XMMATRIX& mat);
+			//! Erase matrix given the ID
+			void eraseMatrixById(uint32_t Id);
 		private:
 			TransformSystem() {}
 

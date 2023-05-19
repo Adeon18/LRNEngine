@@ -141,6 +141,20 @@ namespace engn {
 				}
 			}
 
+			//! Remove the instance of the given model, TODO: TEST!!!
+			void removeInstance(const InstanceProperties& insProps) {
+				for (auto& perModel : m_models) {
+					if (perModel.model->name == insProps.model->name) {
+						// Erase the instance matrix(only done once)
+						TransformSystem::getInstance().eraseMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex);
+						for (auto& mesh : perModel) {
+							mesh[insProps.materialIdx].instances.erase(mesh[insProps.materialIdx].instances.begin() + insProps.instanceIdx);
+						}
+						return;
+					}
+				}
+			}
+
 			// Add the model by filling in the respective structs and return the instance matrix ID
 			uint32_t addModel(std::shared_ptr<mdl::Model> mod, const M& mtrl, const I& inc) {
 				if (!mod) {

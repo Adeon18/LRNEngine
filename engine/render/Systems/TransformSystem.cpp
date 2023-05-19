@@ -10,5 +10,9 @@ namespace engn {
 		{
 			return m_transformMatrices.insert(mat);
 		}
+		void TransformSystem::eraseMatrixById(uint32_t Id)
+		{
+			m_transformMatrices.erase(Id);
+		}
 	} // rend
 } // engn

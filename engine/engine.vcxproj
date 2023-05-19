@@ -69,6 +69,7 @@
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
+    <ClInclude Include="source\spawner\MeshSpawner.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
     <ClInclude Include="utils\OcTree\OcTree.hpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="render\UI\UI.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
+    <ClCompile Include="source\spawner\MeshSpawner.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
     <ClCompile Include="utils\ModelManager\ModelManager.cpp" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "source/dragger/MeshDragger.hpp"
+#include "source/spawner/MeshSpawner.hpp"
 
 #include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
@@ -17,7 +18,7 @@
 #include "render/Graphics/Renderer.hpp"
 
 #include "include/config.hpp"
-#include <render/Graphics/HelperStructs.hpp>
+#include "render/Graphics/HelperStructs.hpp"
 
 namespace engn {
 	using namespace DirectX;
@@ -62,6 +63,7 @@ namespace engn {
 		std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>> m_window;
 		rend::Renderer m_graphics;
 		drag::MeshDragger m_dragger;
+		spwn::MeshSpawner m_spawner;
 
 		rend::RenderData m_renderData;
 		rend::RenderModeFlags m_renderFlags;
@@ -71,6 +73,9 @@ namespace engn {
 		bool render();
 		//! Handle "physics" like dragging and camera movement
 		void handlePhysics();
+
+		//! Handle object spawning with updating animation
+		void handleSpawning();
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement();
 		//! check for camera rotation and update if there was

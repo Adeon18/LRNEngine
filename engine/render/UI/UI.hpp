@@ -43,6 +43,12 @@ namespace engn {
 				float spotBiasMax = 0.0005f;
 				float spotBiasMin = 0.00005f;
 			};
+
+			struct SpawnWidgetData {
+				int modelToSpawnIdx = 0;
+				float spawnDistance = 5.0f;
+				float modelSpawnTime = 5.0f;
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -66,6 +72,9 @@ namespace engn {
 			[[nodiscard]] const MaterialWidgetData& getMatWidgetData() const { return m_materialData; }
 			[[nodiscard]] const LightingWidgetData& getLightWidgetData() const { return m_lightingData; }
 			[[nodiscard]] const ShadowWidgetData& getShadowWidgetData() const { return m_shadowData; }
+			[[nodiscard]] const SpawnWidgetData& getSpawnWidgetData() const { return m_spawnData; }
+
+			[[nodiscard]] std::string getModelNameFromWidgetIdx(int idx) const { return MODELS[idx]; }
 		private:
 			UI() {}
 
@@ -74,11 +83,15 @@ namespace engn {
 			void manageMaterial();
 			void manageLighting();
 			void manageShadows();
+			void manageSpawn();
 
 			GeometryWidgetData m_geometryData;
 			MaterialWidgetData m_materialData;
 			LightingWidgetData m_lightingData;
 			ShadowWidgetData m_shadowData;
+			SpawnWidgetData m_spawnData;
+
+			static constexpr const char* MODELS[] = { "HORSE", "SAMURAI", "TOWER" };
 		};
 	} // rend
 } // engn

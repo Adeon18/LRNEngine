@@ -32,6 +32,9 @@ namespace engn {
 			if (ImGui::CollapsingHeader("Shadows")) {
 				manageShadows();
 			}
+			if (ImGui::CollapsingHeader("Spawning")) {
+				manageSpawn();
+			}
 		}
 		void UI::endFrame()
 		{
@@ -72,6 +75,12 @@ namespace engn {
 			ImGui::SliderFloat("Point Bias Min", &m_shadowData.pointBiasMin, 0.00001f, 0.001f, "%.5f");
 			ImGui::SliderFloat("Spot Bias Max", &m_shadowData.spotBiasMax, 0.0001f, 0.01f, "%.5f");
 			ImGui::SliderFloat("Spot Bias Min", &m_shadowData.spotBiasMin, 0.00001f, 0.001f, "%.5f");
+		}
+		void UI::manageSpawn()
+		{
+			ImGui::Combo("Model", &m_spawnData.modelToSpawnIdx, MODELS, ARRAYSIZE(MODELS));
+			ImGui::SliderFloat("Distance", &m_spawnData.spawnDistance, 2.0f, 10.0f);
+			ImGui::SliderFloat("Spawn TIme", &m_spawnData.modelSpawnTime, 2.0f, 7.0f);
 		}
 	}
 } // engn
