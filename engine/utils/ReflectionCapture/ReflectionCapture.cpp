@@ -84,6 +84,8 @@ namespace engn {
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
+			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{ false };
+
 			// Init Pipelines
 			const std::wstring exeDirW = util::getExeDirW();
 
@@ -96,7 +98,8 @@ namespace engn {
 				L"", L"", L"",
 				exeDirW + DI_PS_NAME,
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 
 			initPipeline(m_diffuseIrradiancePipeline, diffIrradiancePipelineData);
@@ -110,7 +113,8 @@ namespace engn {
 				L"", L"", L"",
 				exeDirW + PFS_PS_NAME,
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 
 			initPipeline(m_preFilteredSpecularPipeline, preFiltSpecPipelineData);
@@ -124,7 +128,8 @@ namespace engn {
 				L"", L"", L"",
 				exeDirW + BRDF_PS_NAME,
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 
 			initPipeline(m_BRDFIntegrationPipeline, integrBRDFPipelineData);

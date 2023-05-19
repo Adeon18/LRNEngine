@@ -20,6 +20,11 @@ namespace engn {
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+
+			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{};
+			blendDesc.BlendEnable = false;
+			blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
 			// Init Pipeline
 			const std::wstring exeDirW = util::getExeDirW();
 			PipelineData pipelineData{
@@ -30,7 +35,8 @@ namespace engn {
 				L"", L"", L"",
 				exeDirW + PS_NAME,
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 			initPipeline(m_pipeline, pipelineData);
 

@@ -463,7 +463,8 @@ namespace engn {
 						L"",
 						SHADER_FOLDER + L"PSBasicColor.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 				{
@@ -478,7 +479,8 @@ namespace engn {
 						L"",
 						SHADER_FOLDER + L"PSBasicColor.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 				{
@@ -493,7 +495,8 @@ namespace engn {
 						L"",
 						SHADER_FOLDER + L"PSEmission.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 				{
@@ -508,7 +511,8 @@ namespace engn {
 						SHADER_FOLDER + L"GSHologram.cso",
 						SHADER_FOLDER + L"PSHologram.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 				{
@@ -523,7 +527,8 @@ namespace engn {
 						SHADER_FOLDER + L"GSVisNormal.cso",
 						SHADER_FOLDER + L"PSVisNormal.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 				{
@@ -538,7 +543,8 @@ namespace engn {
 						SHADER_FOLDER + L"GSVisWireframe.cso",
 						SHADER_FOLDER + L"PSVisWireframe.cso",
 						D3D11_RASTERIZER_DESC{},
-						D3D11_DEPTH_STENCIL_DESC{}
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
 					}
 				},
 			};

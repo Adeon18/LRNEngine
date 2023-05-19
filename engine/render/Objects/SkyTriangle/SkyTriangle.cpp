@@ -17,6 +17,16 @@ namespace engn {
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
+			D3D11_RENDER_TARGET_BLEND_DESC blendDesc;
+			blendDesc.BlendEnable = false;
+			blendDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+			blendDesc.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+			blendDesc.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+			blendDesc.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+			blendDesc.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+			blendDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+			blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
 			// Init Pipeline
 			const std::wstring exeDirW = util::getExeDirW();
 			PipelineData skyPipelineData{
@@ -27,7 +37,8 @@ namespace engn {
 				L"", L"", L"",
 				exeDirW + PS_NAME,
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 			initPipeline(m_skyPipeline, skyPipelineData);
 			// Init constant buffers

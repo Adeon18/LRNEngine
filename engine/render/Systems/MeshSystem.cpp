@@ -216,6 +216,29 @@ namespace engn {
 				data.depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 				data.depthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
 
+				if (type == DISSOLUTION_RENDER) {
+					data.blendDesc.BlendEnable = false;
+					data.blendDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+					data.blendDesc.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+					data.blendDesc.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+					data.blendDesc.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+					data.blendDesc.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+					data.blendDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+					data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+					// TODO: ADD stuff here
+					//data.blendDesc.SrcBlend = D3D11_BLEND
+				}
+				else {
+					data.blendDesc.BlendEnable = false;
+					data.blendDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+					data.blendDesc.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+					data.blendDesc.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+					data.blendDesc.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+					data.blendDesc.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+					data.blendDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+					data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+				}
+
 				initPipeline(m_pipelines[type], data);
 			}
 		}

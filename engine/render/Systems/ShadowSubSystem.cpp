@@ -177,6 +177,8 @@ namespace engn {
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 			//rasterizerDesc.DepthBias = -1;
 
+			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{ false };
+
 			PipelineData shadow2DPipelineData{
 				MeshSystem::getInstance().getDefaultLayoutPtr(),
 				MeshSystem::getInstance().getDefaultLayoutArraySize(),
@@ -184,7 +186,8 @@ namespace engn {
 				util::getExeDirW() + L"VS2DShadow.cso",
 				L"", L"", L"", L"",
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 
 			initPipeline(m_shadow2DPipeline, shadow2DPipelineData);
@@ -200,7 +203,8 @@ namespace engn {
 				util::getExeDirW() + L"GSCubemapShadow.cso",
 				L"",
 				rasterizerDesc,
-				depthStencilStateDesc
+				depthStencilStateDesc,
+				blendDesc
 			};
 
 			initPipeline(m_shadowCubemapPipeline, shadowCubemapPipelineData);
