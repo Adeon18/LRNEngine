@@ -18,6 +18,7 @@ namespace engn {
 			m_initBuffers();
 			m_initSamplers();
 			m_initializeSky();
+			m_initializeNoise();
 			m_initPostProcess();
 #if BAKE_CUBEMAPS == 1
 			std::vector<std::string> cubemapsToBake{
@@ -56,6 +57,7 @@ namespace engn {
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
 
+			d3d::s_devcon->PSSetShaderResources(5, 1, m_mainDissolutionNoise->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(6, 1, m_diffuseIrradianceMap->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(7, 1, m_preFilteredSpecularMap->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(8, 1, m_BRDFIntegrationTex->textureView.GetAddressOf());
@@ -127,6 +129,10 @@ namespace engn {
 			m_BRDFIntegrationTex = tex::TextureManager::getInstance().getTexture(TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\" + ReflectionCapture::BRDFI_TEXTURE_NAME);
 
 			m_skyTriangle.init(skyBoxTexturePath);
+		}
+		void Renderer::m_initializeNoise()
+		{
+			m_mainDissolutionNoise = tex::TextureManager::getInstance().getTexture(TEX_REL_PATH_PREF + "assets\\Textures\\Noise\\FireNoise1.dds");
 		}
 		void Renderer::m_initPostProcess()
 		{

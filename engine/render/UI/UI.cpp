@@ -80,7 +80,7 @@ namespace engn {
 		{
 			ImGui::Combo("Model", &m_spawnData.modelToSpawnIdx, MODELS, ARRAYSIZE(MODELS));
 			ImGui::SliderFloat("Distance", &m_spawnData.spawnDistance, 2.0f, 10.0f);
-			ImGui::SliderFloat("Spawn TIme", &m_spawnData.modelSpawnTime, 2.0f, 7.0f);
+			ImGui::SliderFloat("Spawn TIme", &m_spawnData.modelSpawnTime, 0.2f, 5.0f);
 		}
 	}
 } // engn

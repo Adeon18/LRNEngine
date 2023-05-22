@@ -29,6 +29,8 @@ Texture2D g_textureNormalMap : TEXTURE : register(t1);
 Texture2D g_textureRoughness : TEXTURE : register(t2);
 Texture2D g_textureMetallic : TEXTURE : register(t3);
 
+Texture2D g_noiseDissolution : TEXTURE : register(t5);
+
 TextureCube g_diffuseIrradiance : register(t6);
 TextureCube g_preFilteredSpecular : register(t7);
 Texture2D g_BRDFIntegration : TEXTURE : register(t8);
@@ -53,8 +55,23 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 
 static const int PFS_SAMPLE_COUNT = 16384;
 
+static const float DISSOLUTION_BORDER_WIDTH = 0.15f;
+
+static const float3 DISSOLUTION_COLOR = float3(1.0f, 0.5f, 0.0f);
+
 float4 main(PS_INPUT inp) : SV_TARGET
 {
+    //! Calculate the dissolution effect and discard pixels with no opacity
+    float noise = g_noiseDissolution.Sample(g_linearWrap, inp.outTexCoord).x;
+    float timeNormalized = (iTime - inp.outTime.x) / inp.outTime.z;
+    float a = noise - 1 + timeNormalized + DISSOLUTION_BORDER_WIDTH;
+    float finalA = (a < 0) ? 0 : 1;
+    float dissolutionIntensity = max(0, DISSOLUTION_BORDER_WIDTH - abs(a)) / DISSOLUTION_BORDER_WIDTH;
+    if (finalA == 0)
+    {
+        discard;
+    }
+
 #if MODE == 0
     float3 albedo = g_texture0.Sample(g_pointWrap, inp.outTexCoord).xyz;
     float metallic = (isMetallicBound) ? g_textureMetallic.Sample(g_pointWrap, inp.outTexCoord).x : DEFAULT_METALLIC;
@@ -111,5 +128,5 @@ float4 main(PS_INPUT inp) : SV_TARGET
     }
     
     
-    return float4(outL0, 0.5f);
+    return float4(outL0 + DISSOLUTION_COLOR * dissolutionIntensity , finalA);
 }

@@ -60,6 +60,8 @@ namespace engn {
 			void m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData);
 			//! Initialize the skyTriangle
 			void m_initializeSky();
+			//! Initialize noise textures for spawning animation
+			void m_initializeNoise();
 			//! Initialize the postprocess class
 			void m_initPostProcess();
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
@@ -73,6 +75,8 @@ namespace engn {
 			std::shared_ptr<tex::Texture> m_diffuseIrradianceMap;
 			std::shared_ptr<tex::Texture> m_preFilteredSpecularMap;
 			std::shared_ptr<tex::Texture> m_BRDFIntegrationTex;
+
+			std::shared_ptr<tex::Texture> m_mainDissolutionNoise;
 
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;

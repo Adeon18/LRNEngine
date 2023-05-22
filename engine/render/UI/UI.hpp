@@ -47,7 +47,7 @@ namespace engn {
 			struct SpawnWidgetData {
 				int modelToSpawnIdx = 0;
 				float spawnDistance = 5.0f;
-				float modelSpawnTime = 5.0f;
+				float modelSpawnTime = 1.0f;
 			};
 		public:
 			static UI& instance() {
