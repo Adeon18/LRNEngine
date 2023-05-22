@@ -50,6 +50,9 @@ namespace engn {
 			m_reflectionCapture.generateBRDFIntegrationTexture();
 			return false;
 #endif
+			// Render the sky before everything(so that the transparency works)
+			m_skyTriangle.render(camPtr);
+
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
 
@@ -59,8 +62,7 @@ namespace engn {
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
-			// Render the sky after we are done
-			m_skyTriangle.render(camPtr);
+
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
