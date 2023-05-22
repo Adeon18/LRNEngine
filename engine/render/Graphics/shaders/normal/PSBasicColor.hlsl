@@ -111,5 +111,5 @@ float4 main(PS_INPUT inp) : SV_TARGET
     }
     
     
-    return float4(outL0, 1.0f);
+    return float4(outL0, 0.5f);
 }

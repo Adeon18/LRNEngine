@@ -84,7 +84,10 @@ namespace engn {
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
 
-			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{ false };
+			//! Blend State Desc: MAYBE TODO: Move to some DEFAULT::DISABLED constant or something
+			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{};
+			blendDesc.BlendEnable = false;
+			blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
 			// Init Pipelines
 			const std::wstring exeDirW = util::getExeDirW();
