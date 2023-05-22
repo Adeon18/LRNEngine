@@ -2,7 +2,7 @@
 #include "../lighting_cook_torrance.hlsli"
 #include "../shadow_mapping.hlsli"
 
-#include "BasicColorStructs.hlsli"
+#include "DissolutionStructs.hlsli"
 
 cbuffer perFrame : register(b0)
 {
@@ -111,5 +111,5 @@ float4 main(PS_INPUT inp) : SV_TARGET
     }
     
     
-    return float4(outL0, 1.0f);
+    return float4(outL0, 0.5f);
 }

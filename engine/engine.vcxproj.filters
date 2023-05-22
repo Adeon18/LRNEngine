@@ -472,6 +472,8 @@
     <FxCompile Include="render\Graphics\shaders\shadow_compute\VS2DShadow.hlsl" />
     <FxCompile Include="render\Graphics\shaders\shadow_compute\VSCubemapShadow.hlsl" />
     <FxCompile Include="render\Graphics\shaders\shadow_compute\GSCubemapShadow.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\dissolution\VSDissolution.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\dissolution\PSDissolution.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
@@ -505,5 +507,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="render\Graphics\shaders\shadow_mapping.hlsli" />
+    <None Include="render\Graphics\shaders\dissolution\DissolutionStructs.hlsli" />
   </ItemGroup>
 </Project>

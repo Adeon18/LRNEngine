@@ -15,6 +15,13 @@ namespace engn {
 			XMVECTOR color;
 		};
 
+		struct InstanceDissolution {
+			XMMATRIX modelToWorld;
+			XMMATRIX modelToWorldInv;
+			//! XY store spawn time, ZW store spawn duration
+			XMVECTOR time;
+		};
+
 		struct Material {
 			std::shared_ptr<tex::Texture> ambientTex = nullptr;
 			std::shared_ptr<tex::Texture> normalMap = nullptr;

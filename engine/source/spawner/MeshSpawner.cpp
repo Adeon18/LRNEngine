@@ -19,7 +19,7 @@ namespace engn {
 				rend::MeshSystem::getInstance().addDissolutionInstance(
 					mptr,
 					{},
-					{ XMMatrixTranslationFromVector(translationVec), {}, {} }
+					{ XMMatrixTranslationFromVector(translationVec), {}, {currentTime, currentTime, spawnWidget.modelSpawnTime, spawnWidget.modelSpawnTime} }
 				).second,
 				mptr,
 				translationVec

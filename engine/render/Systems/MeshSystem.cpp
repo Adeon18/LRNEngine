@@ -134,7 +134,7 @@ namespace engn {
 			return m_normalGroup.addModel(mod, mtrl, inc);
 		}
 
-		std::pair<uint32_t, InstanceProperties> MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceDissolution& inc)
 		{
 			return m_dissolutionGroup.addModel(mod, mtrl, inc);
 		}

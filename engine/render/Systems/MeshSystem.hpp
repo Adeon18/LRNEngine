@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <type_traits>
 
 #include "RenderStructs.hpp"
 
@@ -40,14 +41,21 @@ namespace engn {
 			uint32_t instanceIdx;
 		};
 
-		//! The instance data struct that is in each group, stores color and index
-		struct GroupInstance {
+		//! The instance data struct that is in respective groups, stores color and index
+		struct GroupInstanceDefault {
 			XMVECTOR color;
+			uint32_t matrixIndex;
+		};
+
+		//! The instance data struct that is in respective groups, stores spawn times and matrix index
+		struct GroupInstanceDissolution {
+			XMVECTOR time;
 			uint32_t matrixIndex;
 		};
 
 		template<typename I, typename M>
 		class RenderGroup {
+			using GroupInstance = std::conditional_t<std::is_same_v<I, Instance>, GroupInstanceDefault, std::conditional_t<std::is_same_v<I, InstanceDissolution>, GroupInstanceDissolution, void>>;
 		public:
 			struct PerMaterial {
 				M material;
@@ -188,7 +196,12 @@ namespace engn {
 									properties.second.model = mod;
 									properties.second.materialIdx = matIdx;
 									properties.second.instanceIdx = perMaterial.instances.size();
-									perMaterial.instances.push_back({ inc.color, properties.first });
+									if constexpr (std::is_same_v<I, InstanceDissolution>) {
+										perMaterial.instances.push_back({ inc.time, properties.first });
+									}
+									else if constexpr (std::is_same_v <I, Instance>) {
+										perMaterial.instances.push_back({ inc.color, properties.first });
+									}
 									modelIsAdded.addedAsInstance = true;
 								}
 								++matIdx;
@@ -200,7 +213,12 @@ namespace engn {
 
 								PerMaterial perMat;
 								perMat.material = mtrl;
-								perMat.instances.push_back({ inc.color, properties.first });
+								if constexpr (std::is_same_v<I, InstanceDissolution>) {
+									perMat.instances.push_back({ inc.time, properties.first });
+								}
+								else if constexpr (std::is_same_v <I, Instance>) {
+									perMat.instances.push_back({ inc.color, properties.first });
+								}
 								perMesh.push_back(perMat);
 								modelIsAdded.addedAsMaterial = true;
 							}
@@ -231,14 +249,24 @@ namespace engn {
 							(!mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)].empty()) ? tex::TextureManager::getInstance().getTexture(mesh.texturePaths[aiTextureTypeToString(aiTextureType_METALNESS)]) : nullptr,
 						};
 
-						perMat.instances.push_back({ inc.color, properties.first });
+						if constexpr (std::is_same_v<I, InstanceDissolution>) {
+							perMat.instances.push_back({ inc.time, properties.first });
+						}
+						else if constexpr (std::is_same_v <I, Instance>) {
+							perMat.instances.push_back({ inc.color, properties.first });
+						}
 						perMesh.push_back(perMat);
 					}
 					else {
 
 						PerMaterial perMat;
 						perMat.material = mtrl;
-						perMat.instances.push_back({inc.color, properties.first });
+						if constexpr (std::is_same_v<I, InstanceDissolution>) {
+							perMat.instances.push_back({ inc.time, properties.first });
+						}
+						else if constexpr (std::is_same_v <I, Instance>) {
+							perMat.instances.push_back({ inc.color, properties.first });
+						}
 						perMesh.push_back(perMat);
 					}
 					newModel.perMesh.push_back(perMesh);
@@ -274,7 +302,7 @@ namespace engn {
 				if (!m_instanceBuffer.map()) {
 					return;
 				}
-				I* dst = static_cast<Instance*>(m_instanceBuffer.getMappedBuffer().pData);
+				I* dst = static_cast<I*>(m_instanceBuffer.getMappedBuffer().pData);
 
 				// Fill mapped buffer
 				uint32_t copiedNum = 0;
@@ -296,7 +324,12 @@ namespace engn {
 								ins.modelToWorld = TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex);
 								// TODO: VERY MUSH UNOPTIMIZED - can try to save the matrix with the help of Id+1, etc.
 								ins.modelToWorldInv = XMMatrixInverse(nullptr, TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex));
-								ins.color = material.instances[index].color;
+								if constexpr (std::is_same_v<I, InstanceDissolution>) {
+									ins.time = material.instances[index].time;
+								}
+								else if constexpr (std::is_same_v <I, Instance>) {
+									ins.color = material.instances[index].color;
+								}
 								dst[copiedNum++] = ins;
 							}
 						}
@@ -391,7 +424,7 @@ namespace engn {
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
-			std::pair<uint32_t, InstanceProperties> addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			std::pair<uint32_t, InstanceProperties> addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceDissolution& inc);
 			void removeDissolutionInstance(const InstanceProperties& instanceData);
 			std::pair<uint32_t, InstanceProperties> addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			std::pair<uint32_t, InstanceProperties> addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
@@ -422,7 +455,7 @@ namespace engn {
 
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
-			RenderGroup<Instance, Material> m_dissolutionGroup;
+			RenderGroup<InstanceDissolution, Material> m_dissolutionGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
 			RenderGroup<Instance, Material> m_emissionOnlyGroup;
 
@@ -443,6 +476,23 @@ namespace engn {
 				{"MODEL2WORLDINV", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			};
+
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_DISSOLUTION[14] = {
+				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			};
 
 			D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{};
@@ -470,14 +520,14 @@ namespace engn {
 				{
 					PipelineTypes::DISSOLUTION_RENDER,
 					PipelineData{
-						DEFAULT_LAYOUT,
-						ARRAYSIZE(DEFAULT_LAYOUT),
+						DEFAULT_LAYOUT_DISSOLUTION,
+						ARRAYSIZE(DEFAULT_LAYOUT_DISSOLUTION),
 						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-						SHADER_FOLDER + L"VSBasicColor.cso",
+						SHADER_FOLDER + L"VSDissolution.cso",
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSBasicColor.cso",
+						SHADER_FOLDER + L"PSDissolution.cso",
 						D3D11_RASTERIZER_DESC{},
 						D3D11_DEPTH_STENCIL_DESC{},
 						D3D11_RENDER_TARGET_BLEND_DESC{}
