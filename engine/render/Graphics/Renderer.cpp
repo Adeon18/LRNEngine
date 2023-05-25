@@ -6,6 +6,8 @@
 
 #include "render/Systems/MeshSystem.hpp"
 #include "render/Systems/LightSystem.hpp"
+#include "render/Systems/ParticleSystem.hpp"
+
 
 #include "include/utility/utility.hpp"
 
@@ -64,6 +66,7 @@ namespace engn {
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
+			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt);
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);

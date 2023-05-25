@@ -94,6 +94,14 @@ namespace engn {
 		{
 			return std::wstring(str.begin(), str.end());
 		}
+		int util::getRandomIntInRange(int begin, int end)
+		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<int> distribution(begin, end);
+
+			return distribution(gen);
+		}
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec) {

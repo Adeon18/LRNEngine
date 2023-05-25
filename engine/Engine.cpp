@@ -144,6 +144,7 @@ namespace engn {
 		handleDragging();
 
 		handleSpawning();
+		handleParticleSpawning();
 
 		fillRenderModeFlagsFromInput();
 	}
@@ -156,6 +157,21 @@ namespace engn {
 		}
 
 		m_spawner.updateInstances(m_renderData.iTime);
+	}
+
+	void Engine::handleParticleSpawning()
+	{
+		auto& keyboard = inp::Keyboard::getInstance();
+		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_H)) {
+			rend::ParticleSystem::getInstance().addSmokeEmitter(
+				m_camera->getCamPosition() + 5.0f * m_camera->getCamForward(),
+				XMVECTOR{1.0f, 0.0f, 0.0f, 1.0f},
+				"",
+				1.0f,
+				100.0f,
+				2.0f
+			);
+		}
 	}
 
 	void Engine::handleCameraMovement() {

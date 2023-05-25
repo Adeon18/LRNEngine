@@ -112,5 +112,10 @@ namespace engn {
 			XMMATRIX viewMatrices[6];
 		};
 
+		//! Dat aused for particle generation
+		struct CB_VS_ParticleData {
+			XMVECTOR cameraPosition;
+		};
+
 	} // rend
 } // engn

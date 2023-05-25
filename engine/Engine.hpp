@@ -9,6 +9,7 @@
 
 #include "render/Systems/MeshSystem.hpp"
 #include "render/Systems/LightSystem.hpp"
+#include "render/Systems/ParticleSystem.hpp"
 
 #include "render/Graphics/HelperStructs.hpp"
 
@@ -49,6 +50,7 @@ namespace engn {
 			rend::D3D::getInstance().init();
 			rend::MeshSystem::getInstance().init();
 			rend::LightSystem::getInstance().init();
+			rend::ParticleSystem::getInstance().init();
 		}
 
 		static void deinit()
@@ -76,6 +78,8 @@ namespace engn {
 
 		//! Handle object spawning with updating animation
 		void handleSpawning();
+		//! Handle the spawning of particles on mouse press
+		void handleParticleSpawning();
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement();
 		//! check for camera rotation and update if there was

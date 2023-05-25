@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <iomanip>
+#include <random>
 
 #include <string>
 #include <string.h>
@@ -44,6 +45,8 @@ namespace engn {
 		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo);
 		//! Convert string to wstring
 		std::wstring stringToWstring(const std::string& str);
+		//! Get random number in specified range
+		int getRandomIntInRange(int begin, int end);
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec);
