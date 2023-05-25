@@ -40,5 +40,9 @@ namespace engn {
 			const std::chrono::duration<float, std::ratio<1>> t = std::chrono::duration_cast<std::chrono::milliseconds>(sys_clock::now() - m_progStart);
 			return t.count();
 		}
+		float FPSTimer::getDt() const
+		{
+			return static_cast<float>(m_dt.count()) / 1'000'000'000.0f;
+		}
 	} // util
 } //engn

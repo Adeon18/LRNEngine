@@ -53,6 +53,7 @@
     <ClInclude Include="render\Systems\LightStructs.hpp" />
     <ClInclude Include="render\Systems\LightSystem.hpp" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
+    <ClInclude Include="render\Systems\ParticleSystem.hpp" />
     <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
     <ClInclude Include="render\Systems\ShadowSubSystem.hpp" />
@@ -104,6 +105,7 @@
     <ClCompile Include="render\Graphics\Renderer.cpp" />
     <ClCompile Include="render\Systems\LightSystem.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
+    <ClCompile Include="render\Systems\ParticleSystem.cpp" />
     <ClCompile Include="render\Systems\ShadowSubSystem.cpp" />
     <ClCompile Include="render\Systems\TransformSystem.cpp" />
     <ClCompile Include="render\UI\imgui\imgui.cpp" />

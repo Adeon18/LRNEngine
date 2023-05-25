@@ -12,8 +12,8 @@ namespace engn {
         class EngineCamera {
         public:
             struct CameraSettings {
-                static constexpr float CAMERA_SPEED = 0.02f;
-                static constexpr float ROTATION_SPEED = 0.03f;
+                static constexpr float CAMERA_SPEED = 5.0f;
+                static constexpr float ROTATION_SPEED = 2.0f;
                 inline static const std::array<int, 6> MOVE_KEYS{
                                 inp::Keyboard::Keys::KEY_A,
                                 inp::Keyboard::Keys::KEY_D,

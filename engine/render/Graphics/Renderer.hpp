@@ -29,6 +29,7 @@ namespace engn {
 	namespace rend {
 		struct RenderData {
 			float iTime;
+			float iDt;
 			float iResolutionX;
 			float iResolutionY;
 			float invResolutionX;

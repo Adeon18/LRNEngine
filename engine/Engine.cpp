@@ -19,6 +19,7 @@ namespace engn {
 	void Engine::setEngineData(const rend::RenderData& data)
 	{
 		m_renderData.iTime = data.iTime;
+		m_renderData.iDt = data.iDt;
 		m_renderData.iResolutionX = m_window->getWidth();
 		m_renderData.iResolutionY = m_window->getHeight();
 		m_renderData.invResolutionX = 1.0f / m_window->getWidth();
@@ -169,7 +170,7 @@ namespace engn {
 		}
 		if (cameraMoved) {
 			position = XMVector3Normalize(position);
-			m_camera->addRelativeOffset(position * rend::EngineCamera::CameraSettings::CAMERA_SPEED);
+			m_camera->addRelativeOffset(position * rend::EngineCamera::CameraSettings::CAMERA_SPEED * m_renderData.iDt);
 		}
 	}
 
@@ -189,7 +190,7 @@ namespace engn {
 
 		if (cameraRotated) {
 			rotation = XMVector3Normalize(rotation);
-			m_camera->addWorldRotationMat(rotation * rend::EngineCamera::CameraSettings::ROTATION_SPEED);
+			m_camera->addWorldRotationMat(rotation * rend::EngineCamera::CameraSettings::ROTATION_SPEED * m_renderData.iDt);
 		}
 	}
 

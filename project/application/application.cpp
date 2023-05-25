@@ -52,7 +52,7 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 
 void Application::m_handleRender() {
 	// Get fill the needed data for the engine
-	m_engine->setEngineData({ m_timer->getSecondsSinceStart() });
+	m_engine->setEngineData({ m_timer->getSecondsSinceStart(), m_timer->getDt() });
 	// Run the engine
 	if (!m_engine->run()) { m_isRunning = false; }
 }
