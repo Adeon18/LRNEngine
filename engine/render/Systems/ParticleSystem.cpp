@@ -20,40 +20,32 @@ namespace engn {
 		{
 			for (uint32_t i = 0; i < PARTICLES_PER_FRAME; ++i) {
 				if (m_particles.size() >= m_maxParticleCount) { return; }
-				XMFLOAT3 particlePos{
-					XMVectorGetX(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-					XMVectorGetY(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-					XMVectorGetZ(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-				};
-				Particle p;
-				p.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 1.0f};
-				p.centerPosition = particlePos;
-				p.velocity = { 0.0f, 1.0f, 0.0f };
-				p.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
-				p.axisRotation = static_cast<float>(rand() % 3600) / 10.0f;
-				p.lifeTime = PARTICLE_LIFETIME;
-
-				std::cout << p.centerPosition.x << p.centerPosition.y << p.centerPosition.z << std::endl;
-
-				m_particles.emplace_back(std::move(p));
+			
+				auto& particle = m_particles.emplace_back();
+				respawnParticle(particle);
 			}
 		}
 		void Emitter::updateParticleData(float dt)
 		{
-			return;
 			for (auto& particle : m_particles) {
 				particle.lifeTime -= dt;
 				if (particle.lifeTime > 0.0f)
 				{	// particle is alive, thus update
-					particle.centerPosition = {particle.velocity.x * dt, particle.velocity.y * dt, particle.velocity.z * dt};
+					particle.centerPosition = {
+						particle.centerPosition.x + particle.velocity.x * dt,
+						particle.centerPosition.y + particle.velocity.y * dt,
+						particle.centerPosition.z + particle.velocity.z * dt
+					};
 					particle.size.x += dt * 0.1f;
 					particle.size.y += dt * 0.1f;
 					if (particle.lifeTime > PARTICLE_LIFETIME / 2.0f) {
-						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * PARTICLE_LIFETIME / 2.0f);
+						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * 2.5f);
 					}
 					else {
 						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 2.0f);
 					}
+				} else {
+					respawnParticle(particle);
 				}
 			}
 		}
@@ -67,6 +59,21 @@ namespace engn {
 				if (m_particles[i].lifeTime < 0.0f) { return i; }
 			}
 			return -1;
+		}
+
+		void Emitter::respawnParticle(Particle& particle)
+		{
+			XMFLOAT3 particlePos{
+					XMVectorGetX(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+					XMVectorGetY(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+					XMVectorGetZ(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+			};
+			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
+			particle.centerPosition = particlePos;
+			particle.velocity = { 0.0f, 1.0f, 0.0f };
+			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
+			particle.axisRotation = static_cast<float>(rand() % 3600) / 10.0f;
+			particle.lifeTime = PARTICLE_LIFETIME;
 		}
 
 		void ParticleSystem::init()

@@ -40,6 +40,8 @@ namespace engn {
 		private:
 			//! Get the index of the first dead particle
 			int getFirstDeadParticle();
+			//! Fill the given particle with appropriate data
+			void respawnParticle(Particle& particle);
 
 			XMVECTOR m_position;
 			XMVECTOR m_particleColor;

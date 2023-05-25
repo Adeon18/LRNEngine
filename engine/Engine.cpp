@@ -168,7 +168,7 @@ namespace engn {
 				XMVECTOR{1.0f, 0.0f, 0.0f, 1.0f},
 				"",
 				1.0f,
-				100.0f,
+				200.0f,
 				2.0f
 			);
 		}
