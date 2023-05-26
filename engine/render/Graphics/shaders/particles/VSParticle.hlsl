@@ -48,27 +48,40 @@ struct VS_OUTPUT
 {
     float4 clipPos : SV_POSITION;
     float4 color : COLOR;
+    float2 uv : TEXCOORD;
 };
 
-float3 getWorldPosFromID(uint vertexId, float2 size, float3 particlePos, float3 up, float3 right)
+struct QuadVertex
 {
+    float3 pos;
+    float2 uv;
+};
+
+QuadVertex getQuadVertexFromID(uint vertexId, float2 size, float3 particlePos, float3 up, float3 right)
+{
+    QuadVertex output;
+    
     if (vertexId == 0)
     {
-        return particlePos - size.x / 2.0f * right - size.y / 2.0f * up;
+        output.pos = particlePos -size.x / 2.0f * right - size.y / 2.0f * up;
+        output.uv = float2(0, 1);
     }
     else if (vertexId == 1)
     {
-        return particlePos + size.x / 2.0f * right - size.y / 2.0f * up;
+        output.pos = particlePos + size.x / 2.0f * right - size.y / 2.0f * up;
+        output.uv = float2(1, 1);
     }
     else if (vertexId == 2)
     {
-        return particlePos - size.x / 2.0f * right + size.y / 2.0f * up;
+        output.pos = particlePos - size.x / 2.0f * right + size.y / 2.0f * up;
+        output.uv = float2(0, 0);
     }
     else if (vertexId == 3)
     {
-        return particlePos + size.x / 2.0f * right + size.y / 2.0f * up;
+        output.pos = particlePos + size.x / 2.0f * right + size.y / 2.0f * up;
+        output.uv = float2(1, 0);
     }
-    return float3(0, 0, 0);
+    return output;
 }
 
 VS_OUTPUT main(VS_IN input)
@@ -80,12 +93,13 @@ VS_OUTPUT main(VS_IN input)
     float3 rightVector = normalize(cross(planeNormal, upVector));
     upVector = normalize(cross(rightVector, planeNormal));
     
-    float3 worldPosFixed = getWorldPosFromID(input.vertexId, input.size, input.centerPosition, upVector, rightVector);
+    QuadVertex v = getQuadVertexFromID(input.vertexId, input.size, input.centerPosition, upVector, rightVector);
     
-    float4 worldPos = float4(worldPosFixed, 1.0f);
+    float4 worldPos = float4(v.pos, 1.0f);
     
     output.clipPos = mul(worldPos, worldToClip);
     output.color = input.colorAndAlpha;
+    output.uv = v.uv;
     // Fill each vertex separately depending on vertex ID => CLOCKVISE
     
     return output;

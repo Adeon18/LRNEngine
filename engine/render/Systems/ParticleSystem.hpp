@@ -25,7 +25,6 @@ namespace engn {
 			Emitter(
 				const XMVECTOR& pos,
 				const XMVECTOR& col,
-				const std::string& texturePath,
 				uint32_t spawnRate,
 				uint32_t maxCount,
 				float spawnCircleRadius
@@ -50,7 +49,7 @@ namespace engn {
 			uint32_t m_maxParticleCount;
 			float m_spawnCircleRadius;
 
-			std::shared_ptr<tex::Texture> m_particleAtlas;
+			std::shared_ptr<tex::Texture> m_particleAtlasDBF;
 
 			std::vector<Particle> m_particles;
 
@@ -61,6 +60,16 @@ namespace engn {
 
 		class ParticleSystem {
 		public:
+			enum class EMITTER_TYPES {
+				SMOKE
+			};
+
+			struct PatricleTextureData {
+				std::shared_ptr<tex::Texture> m_particleAtlasDBF;
+				std::shared_ptr<tex::Texture> m_particleAtlasMVEA;
+				std::shared_ptr<tex::Texture> m_particleAtlasRLU;
+			};
+
 			ParticleSystem(const ParticleSystem&) = delete;
 			ParticleSystem& operator=(const ParticleSystem&) = delete;
 
@@ -71,7 +80,7 @@ namespace engn {
 
 			template<typename ... Args>
 			void addSmokeEmitter(Args&& ... args) {
-				m_emitters.emplace_back(std::forward<Args>(args)...);
+				m_emitters[EMITTER_TYPES::SMOKE].emplace_back(std::forward<Args>(args)...);
 			}
 
 			//! Init all internal data
@@ -80,19 +89,24 @@ namespace engn {
 		private:
 			void initBuffers();
 			void initPipelines();
+			void initTextures();
 
 			//! Update the logic of all the particles
 			void updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt);
 			//! Bind the particle relevant buffer data
 			void bindBuffers(std::unique_ptr<EngineCamera>& camPtr);
-			//! Fill the instance buffer, should be called before render
-			void fillInstanceBuffer();
-			//! Render the particles
-			void renderInternal();
+
+			//! Bind patricleTextures for a specific emitterType
+			void bindTextures(EMITTER_TYPES type);
+			//! Fill the instance buffer for certain emitter type, should be called before render
+			void fillInstanceBuffer(EMITTER_TYPES type);
+			//! Render the particles of a certain emitter type
+			void renderInternal(EMITTER_TYPES type);
 
 			ParticleSystem() {}
 
-			std::vector<Emitter> m_emitters;
+			std::unordered_map<EMITTER_TYPES, std::vector<Emitter>> m_emitters;
+			std::unordered_map<EMITTER_TYPES, PatricleTextureData> m_emitterTextures;
 
 			InstanceBuffer<Particle> m_instanceBuffer;
 			ConstantBuffer<CB_VS_ParticleData> m_particleData;

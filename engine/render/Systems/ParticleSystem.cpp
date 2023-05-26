@@ -15,13 +15,11 @@ namespace engn {
 		Emitter::Emitter(
 			const XMVECTOR& pos,
 			const XMVECTOR& col,
-			const std::string& texturePath,
 			uint32_t spawnRate,
 			uint32_t maxCount,
 			float spawnCircleRadius
 		) : m_particleColor{ col }, m_spawnRatePerSecond{ spawnRate }, m_maxParticleCount{ maxCount }, m_spawnCircleRadius{ spawnCircleRadius }
 		{
-			m_particleAtlas = tex::TextureManager::getInstance().getTexture(texturePath);
 			m_particles.reserve(maxCount);
 			m_positionMatrixIdx = MeshSystem::getInstance().addEmissionInstance(
 				mdl::ModelManager::getInstance().getModel(util::getExeDir() + SPHERE_MODEL_PATH),
@@ -113,6 +111,7 @@ namespace engn {
 		{
 			initPipelines();
 			initBuffers();
+			initTextures();
 		}
 		void ParticleSystem::handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt)
 		{
@@ -122,9 +121,9 @@ namespace engn {
 
 			bindPipeline(m_pipeline);
 
-			fillInstanceBuffer();
-
-			renderInternal();
+			bindTextures(EMITTER_TYPES::SMOKE);
+			fillInstanceBuffer(EMITTER_TYPES::SMOKE);
+			renderInternal(EMITTER_TYPES::SMOKE);
 		}
 		void ParticleSystem::initBuffers()
 		{
@@ -179,16 +178,35 @@ namespace engn {
 
 			initPipeline(m_pipeline, pipelineData);
 		}
+		void ParticleSystem::initTextures()
+		{
+#ifdef _WIN64 
+			const std::string SMOKE_DBF = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_DBF.dds";
+			const std::string SMOKE_MVEA = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_MVEA.dds";
+			const std::string SMOKE_RLU = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_RLU.dds";
+#else
+			const std::string SMOKE_DBF = "..\\assets\\Textures\\Atlases\\Particles\\smoke_DBF.dds";
+			const std::string SMOKE_MVEA = "..\\assets\\Textures\\Atlases\\Particles\\smoke_MVEA.dds";
+			const std::string SMOKE_RLU = "..\\assets\\Textures\\Atlases\\Particles\\smoke_RLU.dds";
+#endif // !_WIN64
+
+			std::string exeDir = util::getExeDir();
+			auto& smoke = m_emitterTextures[EMITTER_TYPES::SMOKE];
+			smoke.m_particleAtlasDBF = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_DBF);
+			smoke.m_particleAtlasMVEA = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_MVEA);
+			smoke.m_particleAtlasRLU = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_RLU);
+		}
 		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt)
 		{
-			for (auto& emitter : m_emitters) {
+			// TODO WARNING: WORKS ONLY WOR SMOKE
+			for (auto& emitter : m_emitters[EMITTER_TYPES::SMOKE]) {
 				emitter.spawnParticles();
 				emitter.updateParticleData(camPtr, dt);
 			}
 
 			auto& camPos = camPtr->getCamPosition();
 
-			std::sort(m_emitters.begin(), m_emitters.end(),
+			std::sort(m_emitters[EMITTER_TYPES::SMOKE].begin(), m_emitters[EMITTER_TYPES::SMOKE].end(),
 				[&camPos](const Emitter& e1, const Emitter& e2) {
 
 				XMVECTOR p1DistLen = XMVector3Length(camPos - e1.getPosition());
@@ -204,12 +222,20 @@ namespace engn {
 			m_particleData.fill();
 			d3d::s_devcon->VSSetConstantBuffers(1, 1, m_particleData.getBufferAddress());
 		}
-		void ParticleSystem::fillInstanceBuffer()
+		void ParticleSystem::bindTextures(EMITTER_TYPES type)
+		{
+			d3d::s_devcon->PSSetShaderResources(0, 1, m_emitterTextures[type].m_particleAtlasDBF->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(1, 1, m_emitterTextures[type].m_particleAtlasMVEA->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(2, 1, m_emitterTextures[type].m_particleAtlasRLU->textureView.GetAddressOf());
+		}
+		void ParticleSystem::fillInstanceBuffer(EMITTER_TYPES type)
 		{
 			// Count total instances
 			uint32_t totalInstances = 0;
-			for (auto& emitter : m_emitters) {
-				totalInstances += uint32_t(emitter.getParticles().size());
+			for (auto& emitterType : m_emitters) {
+				for (auto& emitter : emitterType.second) {
+					totalInstances += uint32_t(emitter.getParticles().size());
+				}
 			}
 
 			if (totalInstances == 0)
@@ -226,7 +252,7 @@ namespace engn {
 
 			// Fill mapped buffer
 			uint32_t copiedNum = 0;
-			for (auto& emitter: m_emitters)
+			for (auto& emitter: m_emitters[type])
 			{
 				for (auto& particle: emitter.getParticles())
 				{
@@ -236,7 +262,7 @@ namespace engn {
 
 			m_instanceBuffer.unmap();
 		}
-		void ParticleSystem::renderInternal()
+		void ParticleSystem::renderInternal(EMITTER_TYPES type)
 		{
 			// TODO: DON'T BIND SJADERS IF EMPTY
 			if (m_instanceBuffer.getSize() == 0)
@@ -245,7 +271,7 @@ namespace engn {
 			m_instanceBuffer.bind();
 
 			uint32_t renderedInstances = 0;
-			for (auto& emitter : m_emitters)
+			for (auto& emitter : m_emitters[type])
 			{
 				auto& particles = emitter.getParticles();
 				uint32_t numInstances = particles.size();

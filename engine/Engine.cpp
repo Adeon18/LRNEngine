@@ -166,7 +166,6 @@ namespace engn {
 			rend::ParticleSystem::getInstance().addSmokeEmitter(
 				m_camera->getCamPosition() + 5.0f * m_camera->getCamForward(),
 				XMVECTOR{1.0f, 0.0f, 0.0f, 1.0f},
-				"",
 				1.0f,
 				200.0f,
 				2.0f
