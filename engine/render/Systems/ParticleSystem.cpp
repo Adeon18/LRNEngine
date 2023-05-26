@@ -18,14 +18,14 @@ namespace engn {
 		}
 		void Emitter::spawnParticles()
 		{
-			for (uint32_t i = 0; i < PARTICLES_PER_FRAME; ++i) {
-				if (m_particles.size() >= m_maxParticleCount) { return; }
-			
+			if (m_particles.size() >= m_maxParticleCount) { return; }
+
+			for (uint32_t i = 0; i < PARTICLES_PER_FRAME; ++i) {			
 				auto& particle = m_particles.emplace_back();
-				respawnParticle(particle);
+				respawnParticle(particle, true);
 			}
 		}
-		void Emitter::updateParticleData(float dt)
+		void Emitter::updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt)
 		{
 			for (auto& particle : m_particles) {
 				particle.lifeTime -= dt;
@@ -45,13 +45,30 @@ namespace engn {
 						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 2.0f);
 					}
 				} else {
-					respawnParticle(particle);
+					respawnParticle(particle, false);
 				}
 			}
+
+			auto& camPos = camPtr->getCamPosition();
+			// Sort after each update: TODO: THINK HOW TO OPTIMIZE
+			std::sort(m_particles.begin(), m_particles.end(),
+				[&camPos](const Particle& p1, const Particle& p2) {
+					XMVECTOR p1Pos = XMLoadFloat3(&p1.centerPosition);
+					XMVECTOR p2Pos = XMLoadFloat3(&p2.centerPosition);
+
+					XMVECTOR p1DistLen = XMVector3Length(camPos - p1Pos);
+					XMVECTOR p2DistLen = XMVector3Length(camPos - p2Pos);
+					return (XMVectorGetX(p1DistLen) > XMVectorGetX(p2DistLen));
+				}
+			);
 		}
 		std::vector<Particle>& Emitter::getParticles()
 		{
 			return m_particles;
+		}
+		const XMVECTOR& Emitter::getPosition() const
+		{
+			return m_position;
 		}
 		int Emitter::getFirstDeadParticle()
 		{
@@ -61,15 +78,15 @@ namespace engn {
 			return -1;
 		}
 
-		void Emitter::respawnParticle(Particle& particle)
+		void Emitter::respawnParticle(Particle& particle, bool firstSpawn)
 		{
 			XMFLOAT3 particlePos{
-					XMVectorGetX(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-					XMVectorGetY(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-					XMVectorGetZ(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetX(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetY(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetZ(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
 			};
-			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
 			particle.centerPosition = particlePos;
+			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
 			particle.velocity = { 0.0f, 1.0f, 0.0f };
 			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
 			particle.axisRotation = static_cast<float>(rand() % 3600) / 10.0f;
@@ -83,7 +100,7 @@ namespace engn {
 		}
 		void ParticleSystem::handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt)
 		{
-			updateParticleLogic(dt);
+			updateParticleLogic(camPtr, dt);
 
 			bindBuffers(camPtr);
 
@@ -146,12 +163,23 @@ namespace engn {
 
 			initPipeline(m_pipeline, pipelineData);
 		}
-		void ParticleSystem::updateParticleLogic(float dt)
+		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt)
 		{
 			for (auto& emitter : m_emitters) {
 				emitter.spawnParticles();
-				emitter.updateParticleData(dt);
+				emitter.updateParticleData(camPtr, dt);
 			}
+
+			auto& camPos = camPtr->getCamPosition();
+
+			std::sort(m_emitters.begin(), m_emitters.end(),
+				[&camPos](const Emitter& e1, const Emitter& e2) {
+
+				XMVECTOR p1DistLen = XMVector3Length(camPos - e1.getPosition());
+				XMVECTOR p2DistLen = XMVector3Length(camPos - e2.getPosition());
+				return (XMVectorGetX(p1DistLen) > XMVectorGetX(p2DistLen));
+				}
+			);
 		}
 		void ParticleSystem::bindBuffers(std::unique_ptr<EngineCamera>& camPtr)
 		{

@@ -34,14 +34,15 @@ namespace engn {
 			//! Spawn a few particles per frame
 			void spawnParticles();
 			//! Update the data of the particles
-			void updateParticleData(float dt);
+			void updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt);
 			//! Get the particle vector reference
 			[[nodiscard]] std::vector<Particle>& getParticles();
+			[[nodiscard]] const XMVECTOR& getPosition() const;
 		private:
 			//! Get the index of the first dead particle
 			int getFirstDeadParticle();
 			//! Fill the given particle with appropriate data
-			void respawnParticle(Particle& particle);
+			void respawnParticle(Particle& particle, bool firstSpawn=false);
 
 			XMVECTOR m_position;
 			XMVECTOR m_particleColor;
@@ -80,7 +81,7 @@ namespace engn {
 			void initPipelines();
 
 			//! Update the logic of all the particles
-			void updateParticleLogic(float dt);
+			void updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt);
 			//! Bind the particle relevant buffer data
 			void bindBuffers(std::unique_ptr<EngineCamera>& camPtr);
 			//! Fill the instance buffer, should be called before render
