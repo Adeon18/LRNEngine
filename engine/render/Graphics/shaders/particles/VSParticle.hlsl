@@ -38,10 +38,9 @@ struct VS_IN
     uint vertexId : SV_VertexID;
     float4 colorAndAlpha : COLOR;
     float3 centerPosition : POSITION;
-    float3 velocity: VELOCITY;
     float2 size: SIZE;
     float axisRotation : ROTATION;
-    float lifeTime: LIFE;
+    float spawnTime : SPAWNTIME;
 };
 
 struct VS_OUTPUT
@@ -49,6 +48,7 @@ struct VS_OUTPUT
     float4 clipPos : SV_POSITION;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float spawnTime : SPAWNTIME;
 };
 
 struct QuadVertex
@@ -100,6 +100,7 @@ VS_OUTPUT main(VS_IN input)
     output.clipPos = mul(worldPos, worldToClip);
     output.color = input.colorAndAlpha;
     output.uv = v.uv;
+    output.spawnTime = input.spawnTime;
     // Fill each vertex separately depending on vertex ID => CLOCKVISE
     
     return output;

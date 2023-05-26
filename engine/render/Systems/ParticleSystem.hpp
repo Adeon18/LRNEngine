@@ -17,6 +17,7 @@ namespace engn {
 			XMFLOAT3 velocity;
 			XMFLOAT2 size;
 			float axisRotation;
+			float spawnAtTime;
 			float lifeTime;
 		};
 
@@ -31,9 +32,9 @@ namespace engn {
 			);
 
 			//! Spawn a few particles per frame
-			void spawnParticles();
+			void spawnParticles(float iTime);
 			//! Update the data of the particles
-			void updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt);
+			void updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
 			//! Get the particle vector reference
 			[[nodiscard]] std::vector<Particle>& getParticles();
 			[[nodiscard]] const XMVECTOR& getPosition() const;
@@ -41,7 +42,7 @@ namespace engn {
 			//! Get the index of the first dead particle
 			int getFirstDeadParticle();
 			//! Fill the given particle with appropriate data
-			void respawnParticle(Particle& particle, bool firstSpawn=false);
+			void respawnParticle(Particle& particle, bool firstSpawn, float iTime);
 
 			XMVECTOR m_particleColor;
 			uint32_t m_positionMatrixIdx;
@@ -55,7 +56,7 @@ namespace engn {
 
 			static constexpr uint32_t PARTICLES_PER_FRAME = 1;
 			static constexpr float PARTICLE_MIN_SIZE = 0.2f;
-			static constexpr float PARTICLE_LIFETIME = 2.0f;
+			static constexpr float PARTICLE_LIFETIME = 4.0f;
 		};
 
 		class ParticleSystem {
@@ -68,6 +69,16 @@ namespace engn {
 				std::shared_ptr<tex::Texture> m_particleAtlasDBF;
 				std::shared_ptr<tex::Texture> m_particleAtlasMVEA;
 				std::shared_ptr<tex::Texture> m_particleAtlasRLU;
+				int32_t frameCountH;
+				int32_t frameCountV;
+			};
+
+			struct ParticleInstance {
+				XMFLOAT4 colorAndAlpha;
+				XMFLOAT3 centerPosition;
+				XMFLOAT2 size;
+				float axisRotation;
+				float spawnTime;
 			};
 
 			ParticleSystem(const ParticleSystem&) = delete;
@@ -85,16 +96,16 @@ namespace engn {
 
 			//! Init all internal data
 			void init();
-			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt);
+			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
 		private:
 			void initBuffers();
 			void initPipelines();
 			void initTextures();
 
 			//! Update the logic of all the particles
-			void updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt);
+			void updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
 			//! Bind the particle relevant buffer data
-			void bindBuffers(std::unique_ptr<EngineCamera>& camPtr);
+			void bindBuffers(std::unique_ptr<EngineCamera>& camPtr, EMITTER_TYPES type);
 
 			//! Bind patricleTextures for a specific emitterType
 			void bindTextures(EMITTER_TYPES type);
@@ -108,8 +119,9 @@ namespace engn {
 			std::unordered_map<EMITTER_TYPES, std::vector<Emitter>> m_emitters;
 			std::unordered_map<EMITTER_TYPES, PatricleTextureData> m_emitterTextures;
 
-			InstanceBuffer<Particle> m_instanceBuffer;
-			ConstantBuffer<CB_VS_ParticleData> m_particleData;
+			InstanceBuffer<ParticleInstance> m_instanceBuffer;
+			ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
+			ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
 
 			Pipeline m_pipeline;
 		};

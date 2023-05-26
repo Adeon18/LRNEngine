@@ -66,7 +66,7 @@ namespace engn {
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
-			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt);
+			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);

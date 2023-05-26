@@ -117,5 +117,11 @@ namespace engn {
 			XMVECTOR cameraPosition;
 		};
 
+		struct CB_PS_ParticleData {
+			// xy store V, zw store H
+			XMINT4 atlasFrameCount;
+			XMINT4 animationSpeedFPS;
+		};
+
 	} // rend
 } // engn

@@ -27,16 +27,16 @@ namespace engn {
 				{ XMMatrixScaling(m_spawnCircleRadius / 5.0f, m_spawnCircleRadius / 5.0f, m_spawnCircleRadius / 5.0f) * XMMatrixTranslationFromVector(pos), {}, {1.0f, 1.0f, 1.0f, 1.0f} }
 			).first;
 		}
-		void Emitter::spawnParticles()
+		void Emitter::spawnParticles(float iTime)
 		{
 			if (m_particles.size() >= m_maxParticleCount) { return; }
 
 			for (uint32_t i = 0; i < PARTICLES_PER_FRAME; ++i) {			
 				auto& particle = m_particles.emplace_back();
-				respawnParticle(particle, true);
+				respawnParticle(particle, true, iTime);
 			}
 		}
-		void Emitter::updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt)
+		void Emitter::updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
 			for (auto& particle : m_particles) {
 				particle.lifeTime -= dt;
@@ -50,13 +50,13 @@ namespace engn {
 					particle.size.x += dt * 0.5f;
 					particle.size.y += dt * 0.5f;
 					if (particle.lifeTime > PARTICLE_LIFETIME / 2.0f) {
-						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * 2.5f);
+						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * 10.0f);
 					}
 					else {
-						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 1.5f);
+						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 1.2f);
 					}
 				} else {
-					respawnParticle(particle, false);
+					respawnParticle(particle, false, iTime);
 				}
 			}
 
@@ -91,7 +91,7 @@ namespace engn {
 			return -1;
 		}
 
-		void Emitter::respawnParticle(Particle& particle, bool firstSpawn)
+		void Emitter::respawnParticle(Particle& particle, bool firstSpawn, float iTime)
 		{
 			auto pos = getPosition();
 			XMFLOAT3 particlePos{
@@ -104,6 +104,7 @@ namespace engn {
 			particle.velocity = { 0.0f, 0.1f, 0.0f };
 			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
 			particle.axisRotation = XMConvertToRadians(static_cast<float>(rand() % 3600) / 10.0f);
+			particle.spawnAtTime = iTime;
 			particle.lifeTime = PARTICLE_LIFETIME;
 		}
 
@@ -113,31 +114,30 @@ namespace engn {
 			initBuffers();
 			initTextures();
 		}
-		void ParticleSystem::handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt)
+		void ParticleSystem::handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
-			updateParticleLogic(camPtr, dt);
-
-			bindBuffers(camPtr);
+			updateParticleLogic(camPtr, dt, iTime);
 
 			bindPipeline(m_pipeline);
 
+			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
 			bindTextures(EMITTER_TYPES::SMOKE);
 			fillInstanceBuffer(EMITTER_TYPES::SMOKE);
 			renderInternal(EMITTER_TYPES::SMOKE);
 		}
 		void ParticleSystem::initBuffers()
 		{
-			m_particleData.init();
+			m_particleDataVS.init();
+			m_particleDataPS.init();
 		}
 		void ParticleSystem::initPipelines()
 		{
-			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_PARTICLES[6] = {
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_PARTICLES[5] = {
 				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"VELOCITY", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 1, 28, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"SIZE", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 1, 40, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"ROTATION", 0, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"LIFE", 0, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT, 1, 52, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+				{"SIZE", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 1, 28, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"ROTATION", 0, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT, 1, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"SPAWNTIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT, 1, 40, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
 			};
 
 			auto shaderFolder = util::getExeDirW();
@@ -195,13 +195,15 @@ namespace engn {
 			smoke.m_particleAtlasDBF = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_DBF);
 			smoke.m_particleAtlasMVEA = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_MVEA);
 			smoke.m_particleAtlasRLU = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_RLU);
+			smoke.frameCountH = 8;
+			smoke.frameCountV = 8;
 		}
-		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt)
+		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
 			// TODO WARNING: WORKS ONLY WOR SMOKE
 			for (auto& emitter : m_emitters[EMITTER_TYPES::SMOKE]) {
-				emitter.spawnParticles();
-				emitter.updateParticleData(camPtr, dt);
+				emitter.spawnParticles(iTime);
+				emitter.updateParticleData(camPtr, dt, iTime);
 			}
 
 			auto& camPos = camPtr->getCamPosition();
@@ -215,12 +217,21 @@ namespace engn {
 				}
 			);
 		}
-		void ParticleSystem::bindBuffers(std::unique_ptr<EngineCamera>& camPtr)
+		void ParticleSystem::bindBuffers(std::unique_ptr<EngineCamera>& camPtr, EMITTER_TYPES type)
 		{
-			auto& pData = m_particleData.getData();
+			auto& pData = m_particleDataVS.getData();
 			pData.cameraPosition = camPtr->getCamPosition();
-			m_particleData.fill();
-			d3d::s_devcon->VSSetConstantBuffers(1, 1, m_particleData.getBufferAddress());
+			m_particleDataVS.fill();
+			d3d::s_devcon->VSSetConstantBuffers(1, 1, m_particleDataVS.getBufferAddress());
+
+
+			auto& particleWidget = UI::instance().getParticleWidgetData();
+			auto& pDataPS = m_particleDataPS.getData();
+			auto& pTexData = m_emitterTextures[type];
+			pDataPS.atlasFrameCount = { pTexData.frameCountH, pTexData.frameCountH, pTexData.frameCountV, pTexData.frameCountV };
+			pDataPS.animationSpeedFPS = { particleWidget.animationFPS, particleWidget.animationFPS, particleWidget.animationFPS, particleWidget.animationFPS };
+			m_particleDataPS.fill();
+			d3d::s_devcon->PSSetConstantBuffers(1, 1, m_particleDataPS.getBufferAddress());
 		}
 		void ParticleSystem::bindTextures(EMITTER_TYPES type)
 		{
@@ -248,7 +259,7 @@ namespace engn {
 			if (!m_instanceBuffer.map()) {
 				return;
 			}
-			Particle* dst = static_cast<Particle*>(m_instanceBuffer.getMappedBuffer().pData);
+			ParticleInstance* dst = static_cast<ParticleInstance*>(m_instanceBuffer.getMappedBuffer().pData);
 
 			// Fill mapped buffer
 			uint32_t copiedNum = 0;
@@ -256,7 +267,13 @@ namespace engn {
 			{
 				for (auto& particle: emitter.getParticles())
 				{
-					dst[copiedNum++] = particle;
+					ParticleInstance p;
+					p.colorAndAlpha = particle.colorAndAlpha;
+					p.centerPosition = particle.centerPosition;
+					p.axisRotation = particle.axisRotation;
+					p.size = particle.size;
+					p.spawnTime = particle.spawnAtTime;
+					dst[copiedNum++] = p;
 				}
 			}
 

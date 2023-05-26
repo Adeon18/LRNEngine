@@ -49,6 +49,10 @@ namespace engn {
 				float spawnDistance = 5.0f;
 				float modelSpawnTime = 1.0f;
 			};
+
+			struct ParticleWidgetData {
+				int animationFPS = 16;
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -73,6 +77,7 @@ namespace engn {
 			[[nodiscard]] const LightingWidgetData& getLightWidgetData() const { return m_lightingData; }
 			[[nodiscard]] const ShadowWidgetData& getShadowWidgetData() const { return m_shadowData; }
 			[[nodiscard]] const SpawnWidgetData& getSpawnWidgetData() const { return m_spawnData; }
+			[[nodiscard]] const ParticleWidgetData& getParticleWidgetData() const { return m_particleData; }
 
 			[[nodiscard]] std::string getModelNameFromWidgetIdx(int idx) const { return MODELS[idx]; }
 		private:
@@ -84,12 +89,14 @@ namespace engn {
 			void manageLighting();
 			void manageShadows();
 			void manageSpawn();
+			void manageParticles();
 
 			GeometryWidgetData m_geometryData;
 			MaterialWidgetData m_materialData;
 			LightingWidgetData m_lightingData;
 			ShadowWidgetData m_shadowData;
 			SpawnWidgetData m_spawnData;
+			ParticleWidgetData m_particleData;
 
 			static constexpr const char* MODELS[] = { "HORSE", "SAMURAI", "TOWER" };
 		};
