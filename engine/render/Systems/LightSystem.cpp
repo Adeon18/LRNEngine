@@ -40,7 +40,6 @@ namespace engn {
 				MeshSystem::getInstance().addEmissionInstance(
 					mdl::ModelManager::getInstance().getModel(EXE_DIR + SPHERE_MODEL_PATH),
 					{},
-					// We decrease the sphere 2 times to visualize pointlight
 					{ XMMatrixScaling(lightRadius, lightRadius, lightRadius) * modelToWorld, {}, pLight.radiance }
 				).first
 			);
@@ -55,18 +54,6 @@ namespace engn {
 		}
 		void LightSystem::bindLighting(std::unique_ptr<EngineCamera>& camPtr, const RenderModeFlags& flags)
 		{
-			// TODO: Remove, THIS IS FOR FLICKERING DEBUG
-			/*static float offset = -5.0f;
-			static bool isRev = false;
-			if (offset > 5.0f) {
-				isRev = true;
-			}
-			if (offset < -5.0f) {
-				isRev = false;
-			}
-
-			offset += (!isRev) ? 1.0f : -1.0f;*/
-
 			int32_t dirLightCount = m_directionalLights.size();
 			m_lightBuffer.getData().dirLightCount = { dirLightCount , dirLightCount , dirLightCount , dirLightCount };
 			for (int i = 0; i < m_directionalLights.size(); ++i) {

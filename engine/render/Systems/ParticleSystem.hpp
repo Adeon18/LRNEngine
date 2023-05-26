@@ -44,8 +44,8 @@ namespace engn {
 			//! Fill the given particle with appropriate data
 			void respawnParticle(Particle& particle, bool firstSpawn=false);
 
-			XMVECTOR m_position;
 			XMVECTOR m_particleColor;
+			uint32_t m_positionMatrixIdx;
 			uint32_t m_spawnRatePerSecond;
 			uint32_t m_maxParticleCount;
 			float m_spawnCircleRadius;
@@ -73,6 +73,7 @@ namespace engn {
 			void addSmokeEmitter(Args&& ... args) {
 				m_emitters.emplace_back(std::forward<Args>(args)...);
 			}
+
 			//! Init all internal data
 			void init();
 			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt);

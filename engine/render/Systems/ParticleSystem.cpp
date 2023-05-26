@@ -1,9 +1,17 @@
 #include "ParticleSystem.hpp"
 
+#include "MeshSystem.hpp"
+
 #include "include/utility/utility.hpp"
 
 namespace engn {
 	namespace rend {
+#ifdef _WIN64 
+		const std::string SPHERE_MODEL_PATH = "..\\..\\assets\\Models\\Sphere\\sphere.fbx";
+#else
+		const std::string SPHERE_MODEL_PATH = "..\\assets\\Models\\Sphere\\sphere.fbx";
+#endif // !_WIN64
+
 		Emitter::Emitter(
 			const XMVECTOR& pos,
 			const XMVECTOR& col,
@@ -11,10 +19,15 @@ namespace engn {
 			uint32_t spawnRate,
 			uint32_t maxCount,
 			float spawnCircleRadius
-		) : m_position{ pos }, m_particleColor{ col }, m_spawnRatePerSecond{ spawnRate }, m_maxParticleCount{ maxCount }, m_spawnCircleRadius{ spawnCircleRadius }
+		) : m_particleColor{ col }, m_spawnRatePerSecond{ spawnRate }, m_maxParticleCount{ maxCount }, m_spawnCircleRadius{ spawnCircleRadius }
 		{
 			m_particleAtlas = tex::TextureManager::getInstance().getTexture(texturePath);
 			m_particles.reserve(maxCount);
+			m_positionMatrixIdx = MeshSystem::getInstance().addEmissionInstance(
+				mdl::ModelManager::getInstance().getModel(util::getExeDir() + SPHERE_MODEL_PATH),
+				{},
+				{ XMMatrixScaling(m_spawnCircleRadius / 5.0f, m_spawnCircleRadius / 5.0f, m_spawnCircleRadius / 5.0f) * XMMatrixTranslationFromVector(pos), {}, {1.0f, 1.0f, 1.0f, 1.0f} }
+			).first;
 		}
 		void Emitter::spawnParticles()
 		{
@@ -68,7 +81,9 @@ namespace engn {
 		}
 		const XMVECTOR& Emitter::getPosition() const
 		{
-			return m_position;
+			// TODO: Kinda stupid
+			XMMATRIX modelToWorld = TransformSystem::getInstance().getMatrixById(m_positionMatrixIdx);
+			return XMVector3Transform({0.0f, 0.0f, 0.0f}, modelToWorld);
 		}
 		int Emitter::getFirstDeadParticle()
 		{
@@ -80,10 +95,11 @@ namespace engn {
 
 		void Emitter::respawnParticle(Particle& particle, bool firstSpawn)
 		{
+			auto pos = getPosition();
 			XMFLOAT3 particlePos{
-				XMVectorGetX(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-				XMVectorGetY(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
-				XMVectorGetZ(m_position) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetX(pos) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetY(pos) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
+				XMVectorGetZ(pos) + static_cast<float>(util::getRandomIntInRange(-100, 100) % 100) / 100.0f * m_spawnCircleRadius,
 			};
 			particle.centerPosition = particlePos;
 			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
