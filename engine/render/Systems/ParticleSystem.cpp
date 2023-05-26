@@ -36,13 +36,13 @@ namespace engn {
 						particle.centerPosition.y + particle.velocity.y * dt,
 						particle.centerPosition.z + particle.velocity.z * dt
 					};
-					particle.size.x += dt * 0.1f;
-					particle.size.y += dt * 0.1f;
+					particle.size.x += dt * 0.5f;
+					particle.size.y += dt * 0.5f;
 					if (particle.lifeTime > PARTICLE_LIFETIME / 2.0f) {
 						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * 2.5f);
 					}
 					else {
-						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 2.0f);
+						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 1.5f);
 					}
 				} else {
 					respawnParticle(particle, false);
@@ -87,9 +87,9 @@ namespace engn {
 			};
 			particle.centerPosition = particlePos;
 			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
-			particle.velocity = { 0.0f, 1.0f, 0.0f };
+			particle.velocity = { 0.0f, 0.1f, 0.0f };
 			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
-			particle.axisRotation = static_cast<float>(rand() % 3600) / 10.0f;
+			particle.axisRotation = XMConvertToRadians(static_cast<float>(rand() % 3600) / 10.0f);
 			particle.lifeTime = PARTICLE_LIFETIME;
 		}
 

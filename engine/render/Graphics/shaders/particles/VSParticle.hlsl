@@ -75,7 +75,7 @@ VS_OUTPUT main(VS_IN input)
 {
     VS_OUTPUT output;
     
-    float3 upVector = float3(0.0f, 1.0f, 0.0f);
+    float3 upVector = float3(cos(input.axisRotation), sin(input.axisRotation), 0.0f);
     float3 planeNormal = normalize(input.centerPosition - cameraPosition.xyz);
     float3 rightVector = normalize(cross(planeNormal, upVector));
     upVector = normalize(cross(rightVector, planeNormal));
