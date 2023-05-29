@@ -38,25 +38,29 @@ namespace engn {
 		}
 		void Emitter::updateParticleData(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
+			int particlesPerFrame = m_spawnRatePerSecond;
 			for (auto& particle : m_particles) {
 				particle.lifeTime -= dt;
 				if (particle.lifeTime > 0.0f)
 				{	// particle is alive, thus update
 					particle.centerPosition = {
-						particle.centerPosition.x + particle.velocity.x * dt,
-						particle.centerPosition.y + particle.velocity.y * dt,
-						particle.centerPosition.z + particle.velocity.z * dt
+						particle.centerPosition.x + particle.velocity.x * dt * 0.5f,
+						particle.centerPosition.y + particle.velocity.y * dt * 0.5f,
+						particle.centerPosition.z + particle.velocity.z * dt * 0.5f
 					};
 					particle.size.x += dt * 0.5f;
 					particle.size.y += dt * 0.5f;
 					if (particle.lifeTime > PARTICLE_LIFETIME / 2.0f) {
-						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * 10.0f);
+						particle.colorAndAlpha.w = (std::min)(1.0f, particle.colorAndAlpha.w + dt * PARTICLE_LIFETIME / 2.0f);
 					}
 					else {
-						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 1.2f);
+						particle.colorAndAlpha.w = (std::max)(0.0f, particle.colorAndAlpha.w - dt * PARTICLE_LIFETIME / 2.0f);
 					}
 				} else {
-					respawnParticle(particle, false, iTime);
+					if (particlesPerFrame > 0) {
+						respawnParticle(particle, false, iTime);
+						--particlesPerFrame;
+					}
 				}
 			}
 
@@ -101,7 +105,11 @@ namespace engn {
 			};
 			particle.centerPosition = particlePos;
 			particle.colorAndAlpha = { XMVectorGetX(m_particleColor), XMVectorGetY(m_particleColor), XMVectorGetZ(m_particleColor), 0.0f };
-			particle.velocity = { 0.0f, 0.1f, 0.0f };
+			particle.velocity = {
+				0.0f,
+				static_cast<float>(util::getRandomIntInRange(5, 10)) / 10.0f,
+				0.0f,
+			};
 			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
 			particle.axisRotation = XMConvertToRadians(static_cast<float>(rand() % 3600) / 10.0f);
 			particle.spawnAtTime = iTime;

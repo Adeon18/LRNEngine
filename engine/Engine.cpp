@@ -167,7 +167,7 @@ namespace engn {
 				m_camera->getCamPosition() + 5.0f * m_camera->getCamForward(),
 				XMVECTOR{0.9f, 0.9f, 0.9f, 1.0f},
 				1.0f,
-				100.0,
+				1000.0,
 				1.2f
 			);
 		}
