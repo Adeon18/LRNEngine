@@ -165,9 +165,9 @@ namespace engn {
 		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_H)) {
 			rend::ParticleSystem::getInstance().addSmokeEmitter(
 				m_camera->getCamPosition() + 5.0f * m_camera->getCamForward(),
-				XMVECTOR{0.8f, 0.8f, 0.8f, 1.0f},
+				XMVECTOR{0.9f, 0.9f, 0.9f, 1.0f},
 				1.0f,
-				1000.0f,
+				100.0,
 				1.2f
 			);
 		}

@@ -46,6 +46,8 @@ struct VS_IN
 struct VS_OUTPUT
 {
     float4 clipPos : SV_POSITION;
+    float4 worldPos : WORLD_POS;
+    float3 norm : NORM;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
     float spawnTime : SPAWNTIME;
@@ -88,7 +90,8 @@ VS_OUTPUT main(VS_IN input)
 {
     VS_OUTPUT output;
     
-    float3 upVector = float3(cos(input.axisRotation), sin(input.axisRotation), 0.0f);
+    //float3 upVector = float3(cos(input.axisRotation), sin(input.axisRotation), 0.0f);
+    float3 upVector = float3(0.0f, 1.0f, 0.0f);
     float3 planeNormal = normalize(input.centerPosition - cameraPosition.xyz);
     float3 rightVector = normalize(cross(planeNormal, upVector));
     upVector = normalize(cross(rightVector, planeNormal));
@@ -98,6 +101,8 @@ VS_OUTPUT main(VS_IN input)
     float4 worldPos = float4(v.pos, 1.0f);
     
     output.clipPos = mul(worldPos, worldToClip);
+    output.worldPos = worldPos;
+    output.norm = planeNormal;
     output.color = input.colorAndAlpha;
     output.uv = v.uv;
     output.spawnTime = input.spawnTime;
