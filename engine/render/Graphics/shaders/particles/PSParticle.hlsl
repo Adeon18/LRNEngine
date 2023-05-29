@@ -55,20 +55,68 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
 {
     float atlasTexWidth = 1.0f / atlasFrameCount.x;
     float atlasTexHeight = 1.0f / atlasFrameCount.z;
-        
+    
+    float oneFrameTime = 1.0f / animationSpeedFPS.x;
+    float totalLifetime = atlasFrameCount.x * atlasFrameCount.z / animationSpeedFPS.x;
     float lived = iTime - inp.spawnTime;
     
-    int textureIdx = lived * animationSpeedFPS.x;
+    int textureIdx = floor(lived * animationSpeedFPS.x);
+    float actualTime = textureIdx * oneFrameTime;
     
-    float2 uvOffset = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, int(textureIdx / atlasFrameCount.x) * atlasTexHeight);
+    float timeFraction = (lived - actualTime) / oneFrameTime;
     
-    float2 finalUV = uvOffset + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth);
+    float2 uvOffsetThis = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, int(textureIdx / atlasFrameCount.x) * atlasTexHeight);
+    ++textureIdx;
+    float2 uvOffsetNext = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, int(textureIdx / atlasFrameCount.x) * atlasTexHeight);
     
-    float4 texCol = g_textureMVEA.Sample(g_linearWrap, finalUV);
-    float3 lightMapRLU = g_textureRLU.Sample(g_linearWrap, finalUV);
-    float3 lightMapDBF = g_textureDBF.Sample(g_linearWrap, finalUV);
+    float2 finalUVThis = uvOffsetThis + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth);
+    float2 finalUVNext = uvOffsetNext + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth);
+    
+    // ----------- sample motion-vectors -----------
+
+    float2 mv0 = 2.0 * g_textureMVEA.Sample(g_pointWrap, finalUVNext).rg - 1.0; // current frame motion-vector
+    float2 mv1 = 2.0 * g_textureMVEA.Sample(g_pointWrap, finalUVNext).rg - 1.0; // next frame motion-vector
+
+    // need to flip motion-vector Y specifically for the smoke textures:
+    mv0.y = -mv0.y;
+    mv1.y = -mv1.y;
+
+    // ----------- UV flowing along motion-vectors -----------
+
+    static const float MV_SCALE = 0.0015; // adjusted for the smoke textures
+    float time = timeFraction; // goes from 0.0 to 1.0 between two sequential frames
+
+    float2 uv0 = finalUVThis; // texture sample uv for the current frame
+    uv0 -= mv0 * MV_SCALE * time; // if MV points in some direction, then UV flows in opposite
+
+    float2 uv1 = finalUVNext; // texture sample uv for the next frame
+    uv1 -= mv1 * MV_SCALE * (time - 1.f); // if MV points in some direction, then UV flows in opposite
+
+    // ----------- sample textures -----------
+
+    float2 emissionAlpha0 = g_textureMVEA.Sample(g_pointWrap, uv0).ba;
+    float2 emissionAlpha1 = g_textureMVEA.Sample(g_pointWrap, uv1).ba;
+
+    // .x - right, .y - left, .z - up
+    float3 lightmapRLU0 = g_textureRLU.Sample(g_pointWrap, uv0).rgb;
+    float3 lightmapRLU1 = g_textureRLU.Sample(g_pointWrap, uv1).rgb;
+
+    // .x - down, .y - back, .z - front
+    float3 lightmapDBF0 = g_textureDBF.Sample(g_pointWrap, uv0).rgb;
+    float3 lightmapDBF1 = g_textureDBF.Sample(g_pointWrap, uv1).rgb;
+
+    // ----------- lerp values -----------
+
+    float2 emissionAlpha = lerp(emissionAlpha0, emissionAlpha1, time);
+    float3 lightMapRLU = lerp(lightmapRLU0, lightmapRLU1, time);
+    float3 lightMapDBF = lerp(lightmapDBF0, lightmapDBF1, time);
+
+    
+    //float4 texCol = g_textureMVEA.Sample(g_linearWrap, finalUV);
+    //float3 lightMapRLU = g_textureRLU.Sample(g_linearWrap, finalUV);
+    //float3 lightMapDBF = g_textureDBF.Sample(g_linearWrap, finalUV);
    
-    float3 outRad = texCol.z * inp.color.rgb * 0.05f;
+    float3 outRad = emissionAlpha.x * inp.color.rgb * 0.05f;
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
@@ -99,5 +147,5 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         }
     }
     
-    return float4(inp.color.rgb * outRad.rgb, inp.color.a * texCol.a);
+    return float4(inp.color.rgb * outRad.rgb, inp.color.a * emissionAlpha.y);
 }
