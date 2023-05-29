@@ -105,7 +105,9 @@ namespace engn {
 			particle.size = { PARTICLE_MIN_SIZE, PARTICLE_MIN_SIZE };
 			particle.axisRotation = XMConvertToRadians(static_cast<float>(rand() % 3600) / 10.0f);
 			particle.spawnAtTime = iTime;
-			particle.lifeTime = PARTICLE_LIFETIME;
+			//! TODO: Since we have only one particle type for not it is ok, but, this needs to be computed differently later
+			float particleLifetimeSmoke = 64.0f / UI::instance().getParticleWidgetData().animationFPS;
+			particle.lifeTime = particleLifetimeSmoke;
 		}
 
 		void ParticleSystem::init()
