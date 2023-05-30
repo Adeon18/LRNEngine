@@ -58,24 +58,25 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     
     float oneFrameTime = 1.0f / animationSpeedFPS.x;
     float totalLifetime = atlasFrameCount.x * atlasFrameCount.z / animationSpeedFPS.x;
-    float lived = iTime - inp.spawnTime;
+    
+    float lived = min(iTime - inp.spawnTime, 4.0f);
     
     int textureIdx = floor(lived * animationSpeedFPS.x);
     float actualTime = textureIdx * oneFrameTime;
     
     float timeFraction = (lived - actualTime) / oneFrameTime;
     
-    float2 uvOffsetThis = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, int(textureIdx / atlasFrameCount.x) * atlasTexHeight);
+    float2 uvOffsetThis = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, floor(textureIdx / atlasFrameCount.x) * atlasTexHeight);
     ++textureIdx;
-    float2 uvOffsetNext = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, int(textureIdx / atlasFrameCount.x) * atlasTexHeight);
+    float2 uvOffsetNext = float2(int(textureIdx % atlasFrameCount.x) * atlasTexWidth, floor(textureIdx / atlasFrameCount.x) * atlasTexHeight);
     
-    float2 finalUVThis = uvOffsetThis + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth);
-    float2 finalUVNext = uvOffsetNext + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth);
+    float2 finalUVThis = clamp(uvOffsetThis + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth), 0.0f, 1.0f);
+    float2 finalUVNext = clamp(uvOffsetNext + float2(inp.uv.x * atlasTexWidth, inp.uv.y * atlasTexWidth), 0.0f, 1.0f);
     
     // ----------- sample motion-vectors -----------
 
-    float2 mv0 = 2.0 * g_textureMVEA.Sample(g_pointWrap, finalUVNext).rg - 1.0; // current frame motion-vector
-    float2 mv1 = 2.0 * g_textureMVEA.Sample(g_pointWrap, finalUVNext).rg - 1.0; // next frame motion-vector
+    float2 mv0 = 2.0 * g_textureMVEA.Sample(g_linearWrap, finalUVNext).rg - 1.0; // current frame motion-vector
+    float2 mv1 = 2.0 * g_textureMVEA.Sample(g_linearWrap, finalUVNext).rg - 1.0; // next frame motion-vector
 
     // need to flip motion-vector Y specifically for the smoke textures:
     mv0.y = -mv0.y;
@@ -94,16 +95,16 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
 
     // ----------- sample textures -----------
 
-    float2 emissionAlpha0 = g_textureMVEA.Sample(g_pointWrap, uv0).ba;
-    float2 emissionAlpha1 = g_textureMVEA.Sample(g_pointWrap, uv1).ba;
+    float2 emissionAlpha0 = g_textureMVEA.Sample(g_linearWrap, uv0).ba;
+    float2 emissionAlpha1 = g_textureMVEA.Sample(g_linearWrap, uv1).ba;
 
     // .x - right, .y - left, .z - up
-    float3 lightmapRLU0 = g_textureRLU.Sample(g_pointWrap, uv0).rgb;
-    float3 lightmapRLU1 = g_textureRLU.Sample(g_pointWrap, uv1).rgb;
+    float3 lightmapRLU0 = g_textureRLU.Sample(g_linearWrap, uv0).rgb;
+    float3 lightmapRLU1 = g_textureRLU.Sample(g_linearWrap, uv1).rgb;
 
     // .x - down, .y - back, .z - front
-    float3 lightmapDBF0 = g_textureDBF.Sample(g_pointWrap, uv0).rgb;
-    float3 lightmapDBF1 = g_textureDBF.Sample(g_pointWrap, uv1).rgb;
+    float3 lightmapDBF0 = g_textureDBF.Sample(g_linearWrap, uv0).rgb;
+    float3 lightmapDBF1 = g_textureDBF.Sample(g_linearWrap, uv1).rgb;
 
     // ----------- lerp values -----------
 
@@ -146,6 +147,8 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
             outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[i], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
         }
     }
+   
+    float finalAlpha = inp.color.a * emissionAlpha.y;
     
-    return float4(inp.color.rgb * outRad.rgb, inp.color.a * emissionAlpha.y);
+    return float4(inp.color.rgb * outRad.rgb, finalAlpha );
 }
