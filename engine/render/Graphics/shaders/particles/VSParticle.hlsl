@@ -50,6 +50,7 @@ struct VS_OUTPUT
     float3 norm : NORM;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float2 screenUV : TEXCOORD2;
     float spawnTime : SPAWNTIME;
 };
 
@@ -105,6 +106,10 @@ VS_OUTPUT main(VS_IN input)
     output.norm = planeNormal;
     output.color = input.colorAndAlpha;
     output.uv = v.uv;
+    output.screenUV = float2(
+        (output.clipPos.x / output.clipPos.w) * 0.5f + 0.5f,
+        (output.clipPos.y / output.clipPos.w) * -0.5f + 0.5f
+    );
     output.spawnTime = input.spawnTime;
     // Fill each vertex separately depending on vertex ID => CLOCKVISE
     

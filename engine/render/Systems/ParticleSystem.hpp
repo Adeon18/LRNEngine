@@ -55,7 +55,7 @@ namespace engn {
 			std::vector<Particle> m_particles;
 
 			static constexpr uint32_t PARTICLES_PER_FRAME = 1;
-			static constexpr float PARTICLE_MIN_SIZE = 0.2f;
+			static constexpr float PARTICLE_MIN_SIZE = 0.4f;
 			static constexpr float PARTICLE_LIFETIME = 4.0f;
 		};
 
@@ -97,6 +97,10 @@ namespace engn {
 			//! Init all internal data
 			void init();
 			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
+
+			//! These getters are here to get filled in rendered by the respective Window class fucntion(which copies the current depth texture)
+			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Texture2D>& getDepthTextureRef() { return m_currentDepthTexture; }
+			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& getDepthTextureSRVRef() { return m_currentDepthSRV; }
 		private:
 			void initBuffers();
 			void initPipelines();
@@ -124,6 +128,10 @@ namespace engn {
 			ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
 
 			Pipeline m_pipeline;
+
+			//! Current depth textures before the particle render to avoid smooth clipping
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_currentDepthTexture;
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_currentDepthSRV;
 		};
 	} // rend
 } // engn

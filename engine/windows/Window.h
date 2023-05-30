@@ -255,6 +255,35 @@ namespace engn {
 				m_swapChain->Present(0, NULL);
 			}
 
+			//! Make a copy of a depthbuffer in case you want to bind it somewhere
+			void makeDepthTextureCopy(Microsoft::WRL::ComPtr<ID3D11Texture2D>& destTexturePtr, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& destSRV) {
+				D3D11_TEXTURE2D_DESC depthTextureDesc{};
+				m_depthStensilBuffer->GetDesc(&depthTextureDesc);
+
+				D3D11_TEXTURE2D_DESC destinationTextureDesc = depthTextureDesc;
+				destinationTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+				destinationTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+				HRESULT hr = d3d::s_device->CreateTexture2D(&destinationTextureDesc, nullptr, destTexturePtr.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("Window::makeDepthTextureCopy: Failed Copying main depthBuffer texture");
+					return;
+				}
+
+				d3d::s_devcon->CopyResource(destTexturePtr.Get(), m_depthStensilBuffer.Get());
+
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+				srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels = 1;
+
+				hr = d3d::s_device->CreateShaderResourceView(destTexturePtr.Get(), &srvDesc, destSRV.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("Window::makeDepthTextureCopy: Failed creating srv for the copied texture");
+					return;
+				}
+			}
+
 			[[nodiscard]] HWND getHandler() const { return m_windowClassData.handleWnd; }
 
 			// TODO: Copy of struct

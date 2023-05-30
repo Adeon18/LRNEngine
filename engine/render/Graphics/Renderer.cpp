@@ -66,6 +66,9 @@ namespace engn {
 
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
+
+			winPtr->makeDepthTextureCopy(ParticleSystem::getInstance().getDepthTextureRef(), ParticleSystem::getInstance().getDepthTextureSRVRef());
+
 			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 
 			// ---- Post Process ----

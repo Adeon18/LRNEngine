@@ -248,6 +248,7 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(0, 1, m_emitterTextures[type].m_particleAtlasDBF->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(1, 1, m_emitterTextures[type].m_particleAtlasMVEA->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(2, 1, m_emitterTextures[type].m_particleAtlasRLU->textureView.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(3, 1, m_currentDepthSRV.GetAddressOf());
 		}
 		void ParticleSystem::fillInstanceBuffer(EMITTER_TYPES type)
 		{

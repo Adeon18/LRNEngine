@@ -8,6 +8,7 @@ struct VS_OUTPUT
     float3 norm : NORM;
     float4 color : COLOR;
     float2 uv : TEXCOORD;
+    float2 screenUV : TEXCOORD2;
     float spawnTime : SPAWNTIME;
 };
 
@@ -28,6 +29,7 @@ cbuffer perFrame2 : register(b1)
 Texture2D g_textureDBF : TEXTURE : register(t0);
 Texture2D g_textureMVEA : TEXTURE : register(t1);
 Texture2D g_textureRLU : TEXTURE : register(t2);
+Texture2D g_depthTexture : TEXTURE : register(t3);
 
 float computeLightMapFactor(float3 lightDir, float3 lightMapRLU, float3 lightMapDBF)
 {
@@ -38,8 +40,6 @@ float computeLightMapFactor(float3 lightDir, float3 lightMapRLU, float3 lightMap
     return lightMap;
 }
 
-//float getLightFactorFromBasis(float3 vec)
-
 static const float3 DIRECTIONS[6] =
 {
     float3(1.0f, 0.0f, 0.0f),
@@ -49,6 +49,8 @@ static const float3 DIRECTIONS[6] =
     float3(0.0f, 0.0f, 1.0f),
     float3(0.0f, 0.0f, -1.0f),
 };
+
+static const float THICKNESS = 1.0f;
 
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
@@ -147,8 +149,19 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
             outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[i], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
         }
     }
+    
+    
+    float closestDepth = g_depthTexture.Sample(g_pointWrap, inp.screenUV).r;
+    float particleDepth = inp.clipPos.z;
+    
+    float depthDiff = 1.0f / closestDepth - 1.0f / particleDepth;
    
     float finalAlpha = inp.color.a * emissionAlpha.y;
     
-    return float4(inp.color.rgb * outRad.rgb, finalAlpha );
+    if (depthDiff < THICKNESS)
+    {
+        finalAlpha = max(finalAlpha - (1.0f - depthDiff / THICKNESS), 0.0f);
+    }
+    
+    return float4(inp.color.rgb * outRad.rgb, finalAlpha);
 }
