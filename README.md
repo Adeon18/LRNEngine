@@ -97,3 +97,8 @@ The `BAKE_CUBEMAPS` mode also prints the sum over the hemisphere into a `logs/en
 - Used comparison samplers
 - Experimented with rasterizer depthbias
 - Configured bias to have **less shadow flickering** instead of more precise shadows.
+
+## HW11: Blending and Particles
+- Added a model spawn effect on key `N`. In Imgui you can choose the model and animation speed.
+- Added a smoke emitter, works on key `H`.
+- Particles have animation and some velocity, ti add animation I used Motion Vectors
