@@ -67,7 +67,8 @@ namespace engn {
 			LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
 
-			winPtr->makeDepthTextureCopy(ParticleSystem::getInstance().getDepthTextureRef(), ParticleSystem::getInstance().getDepthTextureSRVRef());
+			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
+			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 
 			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 

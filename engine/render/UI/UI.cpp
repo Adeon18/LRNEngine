@@ -87,7 +87,7 @@ namespace engn {
 		}
 		void UI::manageParticles()
 		{
-			ImGui::SliderInt("Animation FPS", &m_particleData.animationFPS, 4, 64);
+			ImGui::SliderInt("Animation FPS", &m_particleData.animationFPS, 4, 10);
 		}
 	}
 } // engn

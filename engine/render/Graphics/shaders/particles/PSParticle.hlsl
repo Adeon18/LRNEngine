@@ -50,7 +50,7 @@ static const float3 DIRECTIONS[6] =
     float3(0.0f, 0.0f, -1.0f),
 };
 
-static const float THICKNESS = 1.0f;
+static const float THICKNESS = 40.0f;
 
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
@@ -126,7 +126,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         float3 toLight = -directLights[i].direction;
         for (int j = 0; j < 6; ++j)
         {
-            outRad += directLights[i].radiance * directLights[i].solidAngle * computeLightMapFactor(DIRECTIONS[i], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
+            outRad += directLights[i].radiance * directLights[i].solidAngle * computeLightMapFactor(DIRECTIONS[j], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
         }
     }
 
@@ -136,7 +136,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         float solidAngle = getSolidAngle(inp.worldPos.xyz, pointLights[i].position.xyz, pointLights[i].radius.x);
         for (int j = 0; j < 6; ++j)
         {
-            outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[i], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
+            outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[j], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
         }
     }
     
@@ -146,7 +146,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         float solidAngle = getSolidAngle(inp.worldPos.xyz, spotLight.position.xyz, spotLight.radius.x);
         for (int j = 0; j < 6; ++j)
         {
-            outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[i], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
+            outRad += pointLights[i].radiance * solidAngle * computeLightMapFactor(DIRECTIONS[j], lightMapRLU, lightMapDBF) * max(0.0f, dot(toLight, DIRECTIONS[j]));
         }
     }
     
@@ -158,10 +158,10 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
    
     float finalAlpha = inp.color.a * emissionAlpha.y;
     
-    if (depthDiff < THICKNESS)
-    {
-        finalAlpha = max(finalAlpha - (1.0f - depthDiff / THICKNESS), 0.0f);
-    }
+    //if (abs(depthDiff < THICKNESS) && (finalAlpha > 0.01f))
+    //{
+        //finalAlpha = max(finalAlpha - min(((THICKNESS - depthDiff) / THICKNESS), finalAlpha - 0.1f), 0.0f);
+    //}
     
     return float4(inp.color.rgb * outRad.rgb, finalAlpha);
 }

@@ -152,7 +152,6 @@ namespace engn {
 
 			auto shaderFolder = util::getExeDirW();
 
-
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
@@ -248,7 +247,6 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(0, 1, m_emitterTextures[type].m_particleAtlasDBF->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(1, 1, m_emitterTextures[type].m_particleAtlasMVEA->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(2, 1, m_emitterTextures[type].m_particleAtlasRLU->textureView.GetAddressOf());
-			d3d::s_devcon->PSSetShaderResources(3, 1, m_currentDepthSRV.GetAddressOf());
 		}
 		void ParticleSystem::fillInstanceBuffer(EMITTER_TYPES type)
 		{
