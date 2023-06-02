@@ -216,13 +216,14 @@ namespace engn {
 			}
 
 			auto& camPos = camPtr->getCamPosition();
+			auto& camFwd = camPtr->getCamForward();
 
 			std::sort(m_emitters[EMITTER_TYPES::SMOKE].begin(), m_emitters[EMITTER_TYPES::SMOKE].end(),
-				[&camPos](const Emitter& e1, const Emitter& e2) {
+				[&camPos, &camFwd](const Emitter& e1, const Emitter& e2) {
 
-				XMVECTOR p1DistLen = XMVector3Length(camPos - e1.getPosition());
-				XMVECTOR p2DistLen = XMVector3Length(camPos - e2.getPosition());
-				return (XMVectorGetX(p1DistLen) > XMVectorGetX(p2DistLen));
+				XMVECTOR p1Dist = e1.getPosition() - camPos;
+				XMVECTOR p2Dist = e2.getPosition() - camPos;
+				return (XMVectorGetX(XMVector3Dot(p1Dist, camFwd)) > XMVectorGetX(XMVector3Dot(p2Dist, camFwd)));
 				}
 			);
 		}
