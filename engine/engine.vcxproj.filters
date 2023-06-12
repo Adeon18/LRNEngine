@@ -482,6 +482,7 @@
     <FxCompile Include="render\Graphics\shaders\dissolution\PSDissolution.hlsl" />
     <FxCompile Include="render\Graphics\shaders\particles\VSParticle.hlsl" />
     <FxCompile Include="render\Graphics\shaders\particles\PSParticle.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\normal\PSBasicColorDeferred.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

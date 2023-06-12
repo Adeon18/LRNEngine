@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <iostream>
+#include <array>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -40,6 +41,54 @@ namespace engn {
 
 		template<int W, int H>
 		class Window {
+			struct GBuffer {
+				rend::BindableRenderTarget albedo;
+				rend::BindableRenderTarget normals;
+				rend::BindableRenderTarget roughMet;
+				rend::BindableRenderTarget emission;
+				rend::BindableRenderTarget ids;
+
+				std::array<ID3D11RenderTargetView*, 5> rtvPtrs;
+
+				bool isValid = false;
+
+				void init(int screenWidth, int screenHeight) {
+					albedo.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+					normals.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_SNORM);
+					roughMet.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8_UNORM);
+					emission.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
+					ids.init(screenWidth, screenHeight, DXGI_FORMAT_R32_UINT);
+					isValid = true;
+
+					rtvPtrs[0] = albedo.getRTVPtr();
+					rtvPtrs[1] = normals.getRTVPtr();
+					rtvPtrs[2] = roughMet.getRTVPtr();
+					rtvPtrs[3] = emission.getRTVPtr();
+					rtvPtrs[4] = ids.getRTVPtr();
+				}
+
+				void bind(ID3D11DepthStencilView* depthStensilView) {
+					d3d::s_devcon->OMSetRenderTargets(5, rtvPtrs.data(), depthStensilView);
+				}
+
+				void clear(float* color) {
+					albedo.clear(color);
+					normals.clear(color);
+					roughMet.clear(color);
+					emission.clear(color);
+					ids.clear(color);
+				}
+				
+				void reset() {
+					albedo.releaseAll();
+					normals.releaseAll();
+					roughMet.releaseAll();
+					emission.releaseAll();
+					ids.releaseAll();
+
+					rtvPtrs.fill(nullptr);
+				}
+			};
 		public:
 			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
 			const wchar_t* WINDOW_TITLE = L"Engine";
@@ -141,6 +190,7 @@ namespace engn {
 			void initBackBuffer() {
 				m_renderTargetHDR.releaseAll();
 				m_renderTargetLDRFinal.releaseAll();
+				m_gBuffer.reset();
 
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
@@ -157,6 +207,7 @@ namespace engn {
 			{
 				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 				m_renderTargetLDRFinal.init();
+				m_gBuffer.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight);
 			}
 			//! Bind the initial HDR rtv
 			void bindInitialRTV() {
@@ -228,6 +279,19 @@ namespace engn {
 					wasResized = true;
 				}
 				return true;
+			}
+
+			//! Clears all the Gbuffer RTV parts
+			void bindAndClearGbuffer(float* color)
+			{
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				// We set the rendertargetview each frame
+				m_gBuffer.bind(m_depthStensilView.Get());
+				bindViewport();
+				m_gBuffer.clear(color);
+				// Depth is 0.0f because we utilize reversed depth matrix
+				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			}
 
 			//! Clears the RTV that we write to initially(HDR in out case), clear the DSV too
@@ -325,6 +389,8 @@ namespace engn {
 
 			rend::BindableRenderTarget m_renderTargetLDRFinal;
 			rend::BindableRenderTarget m_renderTargetHDR;
+
+			GBuffer m_gBuffer;
 
 			D3D11_VIEWPORT m_viewPort;
 

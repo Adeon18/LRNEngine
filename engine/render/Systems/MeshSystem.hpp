@@ -511,7 +511,7 @@ namespace engn {
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSBasicColor.cso",
+						SHADER_FOLDER + L"PSBasicColorDeferred.cso",
 						D3D11_RASTERIZER_DESC{},
 						D3D11_DEPTH_STENCIL_DESC{},
 						D3D11_RENDER_TARGET_BLEND_DESC{}

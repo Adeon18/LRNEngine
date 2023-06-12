@@ -40,7 +40,7 @@ namespace engn {
 				MeshSystem::getInstance().renderDepthCubemaps();
 			}
 			// ---- Clear the write buffer
-			winPtr->bindAndClearInitialRTV(BG_COLOR);
+			winPtr->bindAndClearGbuffer(BG_COLOR);
 
 			UI::instance().manageMenus();
 
@@ -54,7 +54,7 @@ namespace engn {
 			return false;
 #endif
 			// Render the sky before everything(so that the transparency works)
-			m_skyTriangle.render(camPtr);
+			//m_skyTriangle.render(camPtr);
 
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
@@ -64,13 +64,13 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(7, 1, m_preFilteredSpecularMap->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(8, 1, m_BRDFIntegrationTex->textureView.GetAddressOf());
 
-			LightSystem::getInstance().bindLighting(camPtr, flags);
+			//LightSystem::getInstance().bindLighting(camPtr, flags);
 			MeshSystem::getInstance().render(flags);
 
-			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
+			/*d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
 			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 
-			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
+			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);*/
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
