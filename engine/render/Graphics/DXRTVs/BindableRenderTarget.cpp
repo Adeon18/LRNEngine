@@ -24,14 +24,25 @@ namespace engn {
 				return;
 			}
 
-			hr = d3d::s_device->CreateRenderTargetView(m_texture.Get(), nullptr, m_renderTargetView.GetAddressOf());
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDesc{};
+			rtvDesc.Format = textureFormat;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			rtvDesc.Texture2D.MipSlice = 0;
+
+			hr = d3d::s_device->CreateRenderTargetView(m_texture.Get(), &rtvDesc, m_renderTargetView.GetAddressOf());
 
 			if (FAILED(hr)) {
 				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of RTV");
 				return;
 			}
 
-			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), nullptr, m_shaderResourceView.GetAddressOf());
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+			srvDesc.Format = textureFormat;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+
+			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), &srvDesc, m_shaderResourceView.GetAddressOf());
 
 			if (FAILED(hr)) {
 				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of SRV");

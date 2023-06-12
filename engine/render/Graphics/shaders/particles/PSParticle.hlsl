@@ -158,7 +158,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
    
     float finalAlpha = inp.color.a * emissionAlpha.y;
     
-    //if (abs(depthDiff < THICKNESS) && (finalAlpha > 0.01f))
+    //if (depthDiff < THICKNESS && (finalAlpha > 0.01f))
     //{
         //finalAlpha = max(finalAlpha - min(((THICKNESS - depthDiff) / THICKNESS), finalAlpha - 0.1f), 0.0f);
     //}
