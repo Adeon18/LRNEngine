@@ -273,6 +273,19 @@ namespace engn {
 				data.depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 				data.depthStencilDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
 
+				data.depthStencilDesc.StencilEnable = true;
+				data.depthStencilDesc.StencilWriteMask = 0xFF;
+				data.depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+				data.depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+				data.depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+				data.depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+				data.depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+				data.depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_REPLACE;
+				data.depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+				data.depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+
+				data.stencilRef = (type == DISSOLUTION_RENDER || type == NORMAL_RENDER) ? PBR_STENCIL_REF : EMISSION_STENCIL_REF;
+
 				if (type == DISSOLUTION_RENDER) {
 					data.blendDesc.BlendEnable = true;
 					data.blendDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;

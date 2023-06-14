@@ -28,6 +28,7 @@ namespace engn {
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState;
 			Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
+			uint32_t stencilRef = 0;
 		};
 		//! The data from which the pipeline is initialized
 		struct PipelineData {
@@ -42,6 +43,7 @@ namespace engn {
 			D3D11_RASTERIZER_DESC rasterizerDesc;
 			D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 			D3D11_RENDER_TARGET_BLEND_DESC blendDesc;
+			uint32_t stencilRef = 0;
 		};
 		//! Initialize the Pipeline struct from the pipeline data
 		inline void initPipeline(Pipeline& pipeline, const PipelineData& data) {
@@ -51,6 +53,8 @@ namespace engn {
 			pipeline.domainShader.init(data.DSpath);
 			pipeline.geometryShader.init(data.GSpath);
 			pipeline.pixelShader.init(data.PSpath);
+
+			pipeline.stencilRef = data.stencilRef;
 
 			HRESULT hr = d3d::s_device->CreateRasterizerState(&data.rasterizerDesc, pipeline.rasterizerState.GetAddressOf());
 			if (FAILED(hr)) {
@@ -77,7 +81,7 @@ namespace engn {
 		//! Bind the respective pipeline
 		inline void bindPipeline(const Pipeline& pipeline) {
 			d3d::s_devcon->RSSetState(pipeline.rasterizerState.Get());
-			d3d::s_devcon->OMSetDepthStencilState(pipeline.depthStensilState.Get(), 0);
+			d3d::s_devcon->OMSetDepthStencilState(pipeline.depthStensilState.Get(), pipeline.stencilRef);
 			d3d::s_devcon->OMSetBlendState(pipeline.blendState.Get(), NULL, 0xFFFFFFFF);
 			d3d::s_devcon->IASetInputLayout(pipeline.vertexShader.getInputLayout());
 			d3d::s_devcon->IASetPrimitiveTopology(pipeline.topology);

@@ -404,6 +404,9 @@ namespace engn {
 
 		class MeshSystem {
 		public:
+			static constexpr uint32_t PBR_STENCIL_REF = 1;
+			static constexpr uint32_t EMISSION_STENCIL_REF = 2;
+
 			static MeshSystem& getInstance() {
 				static MeshSystem system;
 				return system;
