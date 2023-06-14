@@ -55,9 +55,9 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     float3 outL0 = float3(0.0f, 0.0f, 0.0f);
     
     float3 albedo = g_albedoDef.Sample(g_pointWrap, inp.texCoords).xyz;
-    float2 metallicRoughness = g_roughMetDef.Sample(g_pointWrap, inp.texCoords).xy;
-    float metallic = metallicRoughness.x;
-    float roughness = metallicRoughness.y;
+    float2 roughnessMetallic = g_roughMetDef.Sample(g_pointWrap, inp.texCoords).xy;
+    float metallic = roughnessMetallic.y;
+    float roughness = roughnessMetallic.x;
     
     float4 normalsPacked = g_normDef.Sample(g_pointWrap, inp.texCoords);
     
