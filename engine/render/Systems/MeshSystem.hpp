@@ -415,7 +415,14 @@ namespace engn {
 			void init();
 
 			//! Do all the mesh rendering, called every frame on each group
-			void render(const RenderModeFlags& flags);
+			[[deprecated]] void render(const RenderModeFlags& flags);
+
+			//! Render all of the meshes that just emit some color
+			void renderEmission(const RenderModeFlags& flags);
+
+			//! Render all of the meshes that use PRB shading
+			void renderPBR(const RenderModeFlags& flags);
+
 			//! Precompute the Directional and SpotLight shadow maps into the respective textures
 			void renderDepth2D();
 
@@ -527,7 +534,7 @@ namespace engn {
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSDissolution.cso",
+						SHADER_FOLDER + L"PSDissolutionDeferred.cso",
 						D3D11_RASTERIZER_DESC{},
 						D3D11_DEPTH_STENCIL_DESC{},
 						D3D11_RENDER_TARGET_BLEND_DESC{}

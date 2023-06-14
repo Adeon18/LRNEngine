@@ -37,30 +37,30 @@ namespace engn {
 			auto& geomWidgetData = UI::instance().getGeomWidgetData();
 
 			//// Hologram group
-			//m_hologramGroup.fillInstanceBuffer();
-			//this->bindPipelineViaType((geomWidgetData.isDebugVisEnabled()) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
-			//m_hologramGroup.render();
-			//if (geomWidgetData.normalVisEnabled) {
-			//	this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
-			//	m_hologramGroup.render();
-			//}
-			//if (geomWidgetData.vireframeVisEnabled) {
-			//	this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
-			//	m_hologramGroup.render();
-			//}
+			m_hologramGroup.fillInstanceBuffer();
+			this->bindPipelineViaType((geomWidgetData.isDebugVisEnabled()) ? PipelineTypes::NORMAL_RENDER: PipelineTypes::HOLOGRAM_RENDER);
+			m_hologramGroup.render();
+			if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_hologramGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_hologramGroup.render();
+			}
 
-			//// Emission Only group
-			//m_emissionOnlyGroup.fillInstanceBuffer();
-			//this->bindPipelineViaType(PipelineTypes::EMISSION_ONLY_RENDER);
-			//m_emissionOnlyGroup.render();
-			//if (geomWidgetData.normalVisEnabled) {
-			//	this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
-			//	m_emissionOnlyGroup.render();
-			//}
-			//if (geomWidgetData.vireframeVisEnabled) {
-			//	this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
-			//	m_emissionOnlyGroup.render();
-			//}
+			// Emission Only group
+			m_emissionOnlyGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::EMISSION_ONLY_RENDER);
+			m_emissionOnlyGroup.render();
+			if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_emissionOnlyGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_emissionOnlyGroup.render();
+			}
 
 			m_shadowSubSystem.bindDataAndBuffers();
 
@@ -78,12 +78,69 @@ namespace engn {
 			}
 
 			// Dissolution group
-			/*m_dissolutionGroup.fillInstanceBuffer();
+			m_dissolutionGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::DISSOLUTION_RENDER);
-			m_dissolutionGroup.render();*/
+			m_dissolutionGroup.render();
 
 			m_shadowSubSystem.unbindDepthBuffers();
 
+		}
+
+		void MeshSystem::renderEmission(const RenderModeFlags& flags)
+		{
+			auto& geomWidgetData = UI::instance().getGeomWidgetData();
+
+			//// Hologram group
+			m_hologramGroup.fillInstanceBuffer();
+			this->bindPipelineViaType((geomWidgetData.isDebugVisEnabled()) ? PipelineTypes::NORMAL_RENDER : PipelineTypes::HOLOGRAM_RENDER);
+			m_hologramGroup.render();
+			// TODO: Disabled for now
+			/*if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_hologramGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_hologramGroup.render();
+			}*/
+
+			// Emission Only group
+			m_emissionOnlyGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::EMISSION_ONLY_RENDER);
+			m_emissionOnlyGroup.render();
+			// TODO: Disabled for now
+			/*if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_emissionOnlyGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_emissionOnlyGroup.render();
+			}*/
+		}
+
+		void MeshSystem::renderPBR(const RenderModeFlags& flags)
+		{
+			auto& geomWidgetData = UI::instance().getGeomWidgetData();
+
+			// Normal group 
+			m_normalGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::NORMAL_RENDER);
+			m_normalGroup.render();
+			// TODO: Disabled for now
+			/*if (geomWidgetData.normalVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::FACE_NORMAL_DEBUG);
+				m_normalGroup.render();
+			}
+			if (geomWidgetData.vireframeVisEnabled) {
+				this->bindPipelineViaType(PipelineTypes::WIREFRAME_DEBUG);
+				m_normalGroup.render();
+			}*/
+
+			// Dissolution group
+			m_dissolutionGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::DISSOLUTION_RENDER);
+			m_dissolutionGroup.render();
 		}
 
 		void MeshSystem::renderDepth2D()

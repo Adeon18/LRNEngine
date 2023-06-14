@@ -65,7 +65,7 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(8, 1, m_BRDFIntegrationTex->textureView.GetAddressOf());
 
 			//LightSystem::getInstance().bindLighting(camPtr, flags);
-			MeshSystem::getInstance().render(flags);
+			MeshSystem::getInstance().renderPBR(flags);
 
 			/*d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
 			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());

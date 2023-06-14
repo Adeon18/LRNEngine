@@ -25,3 +25,12 @@ struct PS_INPUT
     float4 outTime : TIME;
     float3x3 TBN : TBN;
 };
+
+struct PS_OUTPUT_DEFERRED
+{
+    float4 albedo : SV_Target0;
+    float4 normals : SV_Target1;
+    float2 roughMet : SV_Target2;
+    float4 emission : SV_Target3;
+    uint objectIDs : SV_Target4;
+};
