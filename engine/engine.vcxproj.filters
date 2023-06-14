@@ -258,6 +258,12 @@
     <ClInclude Include="render\Systems\ParticleSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DeferredShading\DeferredRessolver.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DeferredShading\GBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -392,6 +398,9 @@
     <ClCompile Include="render\Systems\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="render\Graphics\DeferredShading\DeferredRessolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\normal\VSBasicColor.hlsl">
@@ -484,6 +493,10 @@
     <FxCompile Include="render\Graphics\shaders\particles\PSParticle.hlsl" />
     <FxCompile Include="render\Graphics\shaders\normal\PSBasicColorDeferred.hlsl" />
     <FxCompile Include="render\Graphics\shaders\dissolution\PSDissolutionDeferred.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\emission_only\PSEmissionDeferred.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\deferred\VSDeferred.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\deferred\PSDeferredPBR.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\deferred\PSDeferredEmission.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

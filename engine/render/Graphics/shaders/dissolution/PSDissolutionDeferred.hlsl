@@ -3,8 +3,11 @@
 
 #include "DissolutionStructs.hlsli"
 
+
 cbuffer perFrame : register(b0)
 {
+    float4x4 worldToClip;
+    float4x4 worldToClipInv;
     float4 iResolution;
     float4 iCameraPosition;
     float4 iPFSCubemapResolution;

@@ -405,7 +405,7 @@ namespace engn {
 		class MeshSystem {
 		public:
 			static constexpr uint32_t PBR_STENCIL_REF = 1;
-			static constexpr uint32_t EMISSION_STENCIL_REF = 2;
+			static constexpr uint32_t EMISSION_STENCIL_REF = 200;
 
 			static MeshSystem& getInstance() {
 				static MeshSystem system;
@@ -553,7 +553,7 @@ namespace engn {
 						L"",
 						L"",
 						L"",
-						SHADER_FOLDER + L"PSEmission.cso",
+						SHADER_FOLDER + L"PSEmissionDeferred.cso",
 						D3D11_RASTERIZER_DESC{},
 						D3D11_DEPTH_STENCIL_DESC{},
 						D3D11_RENDER_TARGET_BLEND_DESC{}

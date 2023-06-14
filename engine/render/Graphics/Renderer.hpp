@@ -17,6 +17,7 @@
 #include "windows/Window.h"
 
 #include "render/Graphics/PostProcess/PostProcess.hpp"
+#include "render/Graphics/DeferredShading/DeferredRessolver.hpp"
 #include "render/Objects/SkyTriangle/SkyTriangle.hpp"
 #include "DXTextures/Sampler.hpp"
 
@@ -65,6 +66,8 @@ namespace engn {
 			void m_initializeNoise();
 			//! Initialize the postprocess class
 			void m_initPostProcess();
+			//! Initialize the deferred ressolver
+			void m_initDeferred();
 			//! Constant buffers that are applied to each vertex and pixel shader per frame
 			ConstantBuffer<CB_VS_RealTimeData> m_globalConstantBufferVS;
 			ConstantBuffer<CB_PS_RealTimeData> m_globalConstantBufferPS;
@@ -81,6 +84,7 @@ namespace engn {
 
 			SkyTriangle m_skyTriangle;
 			PostProcess m_postProcess;
+			DeferredRessolver m_deferredRessolver;
 #if BAKE_CUBEMAPS == 1
 			ReflectionCapture m_reflectionCapture;
 #endif

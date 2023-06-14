@@ -38,6 +38,8 @@ namespace engn {
 
 		// CB struct for the pixelshader realtime data, does not have worldToClip matrix
 		struct CB_PS_RealTimeData {
+			XMMATRIX worldToClip;
+			XMMATRIX worldToClipInv;
 			XMFLOAT4 gResolution;
 			XMFLOAT4 gCameraPosition;
 			XMFLOAT4 gPFSCubemapResolution;

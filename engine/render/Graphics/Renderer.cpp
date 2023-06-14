@@ -22,6 +22,7 @@ namespace engn {
 			m_initializeSky();
 			m_initializeNoise();
 			m_initPostProcess();
+			m_initDeferred();
 #if BAKE_CUBEMAPS == 1
 			std::vector<std::string> cubemapsToBake{
 				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds",
@@ -53,8 +54,7 @@ namespace engn {
 			m_reflectionCapture.generateBRDFIntegrationTexture();
 			return false;
 #endif
-			// Render the sky before everything(so that the transparency works)
-			//m_skyTriangle.render(camPtr);
+			
 
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
@@ -64,13 +64,21 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(7, 1, m_preFilteredSpecularMap->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(8, 1, m_BRDFIntegrationTex->textureView.GetAddressOf());
 
-			//LightSystem::getInstance().bindLighting(camPtr, flags);
+			MeshSystem::getInstance().renderEmission(flags);
 			MeshSystem::getInstance().renderPBR(flags);
 
-			/*d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
-			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
+			d3d::s_devcon->PSSetShaderResources(5, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 
-			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);*/
+			/*ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);*/
+
+			// ---- Ressolve Deferred Shading to HDR buffer
+			winPtr->bindAndClearInitialRTV(BG_COLOR);
+			// Render the sky before everything(so that the transparency works)
+			m_skyTriangle.render(camPtr);
+			m_fillPerFrameCBs(camPtr, renderData);
+			LightSystem::getInstance().bindLighting(camPtr, flags);
+			m_deferredRessolver.ressolve(winPtr->getGBuffer());
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
@@ -111,6 +119,8 @@ namespace engn {
 
 			//! Fill global constant PS CB
 			const float res = ReflectionCapture::PFS_TEXTURE_DIMENSION;
+			m_globalConstantBufferPS.getData().worldToClip = XMMatrixTranspose(camPtr->getViewMatrix() * camPtr->getProjMatrix());
+			m_globalConstantBufferPS.getData().worldToClipInv = XMMatrixTranspose(XMMatrixInverse(nullptr, camPtr->getViewMatrix() * camPtr->getProjMatrix()));
 			m_globalConstantBufferPS.getData().gResolution = gResolution;
 			m_globalConstantBufferPS.getData().gPFSCubemapResolution = { res, res, res, res };
 			XMStoreFloat4(&(m_globalConstantBufferPS.getData().gCameraPosition), camPtr->getCamPosition());
@@ -144,6 +154,10 @@ namespace engn {
 		void Renderer::m_initPostProcess()
 		{
 			m_postProcess.init();
+		}
+		void Renderer::m_initDeferred()
+		{
+			m_deferredRessolver.init();
 		}
 	} // rend
 } // engn

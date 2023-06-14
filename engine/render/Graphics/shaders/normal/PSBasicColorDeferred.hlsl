@@ -3,8 +3,11 @@
 
 #include "BasicColorStructs.hlsli"
 
+
 cbuffer perFrame : register(b0)
 {
+    float4x4 worldToClip;
+    float4x4 worldToClipInv;
     float4 iResolution;
     float4 iCameraPosition;
     float4 iPFSCubemapResolution;
@@ -62,7 +65,6 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
 #endif
     // Square the rouhnhdfhehess
     roughness = pow(roughness, 2);
-    float3 viewDir = normalize(iCameraPosition.xyz - inp.worldPos);
     float3 micNorm = (isNormalMapBound) ? getNormalFromTexture(inp.outTexCoord, inp.TBN) : inp.worldNorm;
     
     float2 macNormPacked = packOctahedron(inp.worldNorm);

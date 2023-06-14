@@ -13,6 +13,7 @@
 #include "render/D3D/d3d.hpp"
 
 #include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
+#include "render/Graphics/DeferredShading/GBuffer.hpp"
 
 #include "render/UI/UI.hpp"
 
@@ -41,54 +42,6 @@ namespace engn {
 
 		template<int W, int H>
 		class Window {
-			struct GBuffer {
-				rend::BindableRenderTarget albedo;
-				rend::BindableRenderTarget normals;
-				rend::BindableRenderTarget roughMet;
-				rend::BindableRenderTarget emission;
-				rend::BindableRenderTarget ids;
-
-				std::array<ID3D11RenderTargetView*, 5> rtvPtrs;
-
-				bool isValid = false;
-
-				void init(int screenWidth, int screenHeight) {
-					albedo.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
-					normals.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_SNORM);
-					roughMet.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8_UNORM);
-					emission.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
-					ids.init(screenWidth, screenHeight, DXGI_FORMAT_R32_UINT);
-					isValid = true;
-
-					rtvPtrs[0] = albedo.getRTVPtr();
-					rtvPtrs[1] = normals.getRTVPtr();
-					rtvPtrs[2] = roughMet.getRTVPtr();
-					rtvPtrs[3] = emission.getRTVPtr();
-					rtvPtrs[4] = ids.getRTVPtr();
-				}
-
-				void bind(ID3D11DepthStencilView* depthStensilView) {
-					d3d::s_devcon->OMSetRenderTargets(5, rtvPtrs.data(), depthStensilView);
-				}
-
-				void clear(float* color) {
-					albedo.clear(color);
-					normals.clear(color);
-					roughMet.clear(color);
-					emission.clear(color);
-					ids.clear(color);
-				}
-				
-				void reset() {
-					albedo.releaseAll();
-					normals.releaseAll();
-					roughMet.releaseAll();
-					emission.releaseAll();
-					ids.releaseAll();
-
-					rtvPtrs.fill(nullptr);
-				}
-			};
 		public:
 			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
 			const wchar_t* WINDOW_TITLE = L"Engine";
@@ -252,10 +205,10 @@ namespace engn {
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
 			void initViewPort() {
-				m_viewPort.TopLeftX = m_windowRect.left;
-				m_viewPort.TopLeftY = m_windowRect.top;
-				m_viewPort.Width = m_windowRect.right - m_windowRect.left;
-				m_viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+				m_viewPort.TopLeftX = 0.0f;
+				m_viewPort.TopLeftY = 0.0f;
+				m_viewPort.Width = m_windowRenderData.screenWidth;
+				m_viewPort.Height = m_windowRenderData.screenHeight;
 				// It is set this way, despite the reversed depth matrix
 				m_viewPort.MinDepth = 0.0f;
 				m_viewPort.MaxDepth = 1.0f;
@@ -295,16 +248,16 @@ namespace engn {
 			}
 
 			//! Clears the RTV that we write to initially(HDR in out case), clear the DSV too
+			//! WARNING: UNBINDS GBUFFER
 			void bindAndClearInitialRTV(float* color)
 			{
 				// So we don't crash at window minimize
 				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				m_gBuffer.unBind(m_depthStensilView.Get());
 				// We set the rendertargetview each frame
 				bindInitialRTV();
 				bindViewport();
 				m_renderTargetHDR.clear(color);
-				// Depth is 0.0f because we utilize reversed depth matrix
-				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
 			}
 
 			//! Clear the final LDR RTV and bind it
@@ -367,6 +320,8 @@ namespace engn {
 			[[nodiscard]] rend::BindableRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
 			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
 
+			[[nodiscard]] rend::GBuffer& getGBuffer() { return m_gBuffer; }
+
 			//! These getters are here to get filled in rendered by the respective Window class fucntion(which copies the current depth texture)
 			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Texture2D>& getCopiedDepthTextureRef() { return m_currentDepthTexture; }
 			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Texture2D>& getDepthTextureRef() { return m_depthStensilBuffer; }
@@ -390,7 +345,7 @@ namespace engn {
 			rend::BindableRenderTarget m_renderTargetLDRFinal;
 			rend::BindableRenderTarget m_renderTargetHDR;
 
-			GBuffer m_gBuffer;
+			rend::GBuffer m_gBuffer;
 
 			D3D11_VIEWPORT m_viewPort;
 
