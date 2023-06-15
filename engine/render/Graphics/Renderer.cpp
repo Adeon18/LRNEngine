@@ -70,8 +70,6 @@ namespace engn {
 			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
 			d3d::s_devcon->PSSetShaderResources(5, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 
-			/*ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);*/
-
 			// ---- Ressolve Deferred Shading to HDR buffer
 
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
@@ -82,6 +80,10 @@ namespace engn {
 			MeshSystem::getInstance().bindShadows();
 			m_deferredRessolver.ressolve(winPtr->getGBuffer());
 			MeshSystem::getInstance().unbindShadows();
+
+			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+
+			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
