@@ -306,6 +306,16 @@
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\post_process\PSFXAA.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="render\Graphics\shaders\post_process\PSPostProcess.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
@@ -651,6 +661,7 @@
     <None Include="render\Graphics\shaders\lighting_blinn_phong.hlsli" />
     <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />
+    <None Include="render\Graphics\shaders\post_process\NvidiaFXAA3_11.hlsli" />
     <None Include="render\Graphics\shaders\reflection_capture\sample_util.hlsli" />
     <None Include="render\Graphics\shaders\shadow_mapping.hlsli" />
     <None Include="render\Graphics\shaders\utility.hlsli" />

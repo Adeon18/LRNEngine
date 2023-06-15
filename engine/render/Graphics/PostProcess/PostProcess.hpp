@@ -13,16 +13,23 @@ namespace engn {
 
 			//! Ressolve the HDR buffer into the CURRENTLY BOUND buffer
 			void ressolve(const BindableRenderTarget& src);
+
+			//! Apply the FXAA effect
+			void applyFXAA(const BindableRenderTarget& src);
 		private:
-			const std::wstring VS_NAME = L"VSPostProcess.cso";
-			const std::wstring PS_NAME = L"PSPostProcess.cso";
+			const std::wstring VS_PP_NAME = L"VSPostProcess.cso";
+			const std::wstring PS_PP_NAME = L"PSPostProcess.cso";
+			const std::wstring PS_FXAA_NAME = L"PSFXAA.cso";
 			static constexpr float EV100_CHANGE_VALUE = 0.2f;
 
 			//! Handles input, which is kinda BAD, and is responsible for dynamically changing the EV100 value for the test
 			void handleEV100Adjustment();
 
-			Pipeline m_pipeline;
-			ConstantBuffer<CB_PS_HDR> m_cbuffer;
+			Pipeline m_pipelinePP;
+			ConstantBuffer<CB_PS_HDR> m_cbufferPP;
+
+			Pipeline m_pipelineFXAA;
+			ConstantBuffer<CB_PS_HDR> m_cbufferFXAA;
 
 			//! EV100 value that can be changed vie +/- keys by 0.5 value
 			float m_ev100Exposure = -1.0f;

@@ -64,6 +64,51 @@ namespace engn {
 				return;
 			}
 		}
+		void BindableRenderTarget::init(D3D11_TEXTURE2D_DESC pDesc)
+		{
+			D3D11_TEXTURE2D_DESC textureDesc{};
+			textureDesc.Width = pDesc.Width;
+			textureDesc.Height = pDesc.Height;
+			textureDesc.MipLevels = 1;
+			textureDesc.ArraySize = 1;
+			textureDesc.Format = pDesc.Format;
+			textureDesc.SampleDesc.Count = 1;
+			textureDesc.SampleDesc.Quality = 0;
+			textureDesc.Usage = D3D11_USAGE_DEFAULT;
+			textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+			HRESULT hr = d3d::s_device->CreateTexture2D(&textureDesc, nullptr, m_texture.GetAddressOf());
+
+			if (FAILED(hr)) {
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of RTV texture");
+				return;
+			}
+
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDesc{};
+			rtvDesc.Format = textureDesc.Format;
+			rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+			rtvDesc.Texture2D.MipSlice = 0;
+
+			hr = d3d::s_device->CreateRenderTargetView(m_texture.Get(), &rtvDesc, m_renderTargetView.GetAddressOf());
+
+			if (FAILED(hr)) {
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of RTV");
+				return;
+			}
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+			srvDesc.Format = textureDesc.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+
+			hr = d3d::s_device->CreateShaderResourceView(m_texture.Get(), &srvDesc, m_shaderResourceView.GetAddressOf());
+
+			if (FAILED(hr)) {
+				Logger::instance().logErr("BindableRenderTarget::init: Failed at creation of SRV");
+				return;
+			}
+		}
 		void BindableRenderTarget::OMSetCurrent(ID3D11DepthStencilView* depthStensilView)
 		{
 			d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), depthStensilView);
@@ -86,5 +131,10 @@ namespace engn {
 		ID3D11Texture2D** BindableRenderTarget::getTexturePtrAddress() { return m_texture.GetAddressOf(); }
 		ID3D11RenderTargetView* BindableRenderTarget::getRTVPtr() { return m_renderTargetView.Get(); }
 		ID3D11RenderTargetView** BindableRenderTarget::getRTVPtrAddress() { return m_renderTargetView.GetAddressOf(); }
+
+		void BindableRenderTarget::getTextureDesc(D3D11_TEXTURE2D_DESC* descToFill)
+		{
+			m_texture->GetDesc(descToFill);
+		}
 	} // rend
 } // engn

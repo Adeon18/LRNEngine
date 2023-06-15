@@ -81,13 +81,17 @@ namespace engn {
 			m_deferredRessolver.ressolve(winPtr->getGBuffer());
 			MeshSystem::getInstance().unbindShadows();
 
+			// Resolve particles as in ForwardRender
 			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
-
 			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 
 			// ---- Post Process ----
-			winPtr->bindAndClearBackbuffer(BG_COLOR);
+			winPtr->bindAndClearBufferBuforeAA(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
+
+			// ---- FXAA -----
+			winPtr->bindAndClearBackbuffer(BG_COLOR);
+			m_postProcess.applyFXAA(winPtr->getLDRRTVBeforeAARef());
 
 			UI::instance().endFrame();
 

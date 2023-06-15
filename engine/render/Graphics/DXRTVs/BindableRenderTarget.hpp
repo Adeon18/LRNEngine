@@ -17,6 +17,9 @@ namespace engn {
 			//! WARNING: Does not initialize SRV!
 			void init();
 
+			//! Init the texture => RTV => SRV from a provided textureDesc
+			void init(D3D11_TEXTURE2D_DESC pDesc);
+
 			//! Set the Output Merger RTV to the current one with the specified depth stensil view
 			void OMSetCurrent(ID3D11DepthStencilView* depthStensilView);
 
@@ -33,6 +36,7 @@ namespace engn {
 			[[nodiscard]] ID3D11Texture2D** getTexturePtrAddress();
 			[[nodiscard]] ID3D11RenderTargetView* getRTVPtr();
 			[[nodiscard]] ID3D11RenderTargetView** getRTVPtrAddress();
+			void getTextureDesc(D3D11_TEXTURE2D_DESC* descToFill);
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;

@@ -13,9 +13,8 @@ namespace engn {
 		{
 			//! Depth stencil state
 			D3D11_DEPTH_STENCIL_DESC depthStencilStateDesc{};
-			depthStencilStateDesc.DepthEnable = true;
-			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
-			depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_GREATER_EQUAL;
+			depthStencilStateDesc.DepthEnable = false;
+			depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
 			//! Rasterizer state
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
@@ -28,20 +27,33 @@ namespace engn {
 
 			// Init Pipeline
 			const std::wstring exeDirW = util::getExeDirW();
-			PipelineData pipelineData{
+			PipelineData pipelineDataPP{
 				nullptr,
 				0,
 				D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-				exeDirW + VS_NAME,
+				exeDirW + VS_PP_NAME,
 				L"", L"", L"",
-				exeDirW + PS_NAME,
+				exeDirW + PS_PP_NAME,
 				rasterizerDesc,
 				depthStencilStateDesc,
 				blendDesc
 			};
-			initPipeline(m_pipeline, pipelineData);
+			initPipeline(m_pipelinePP, pipelineDataPP);
+			m_cbufferPP.init();
 
-			m_cbuffer.init();
+			PipelineData pipelineDataAA{
+				nullptr,
+				0,
+				D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				exeDirW + VS_PP_NAME,
+				L"", L"", L"",
+				exeDirW + PS_FXAA_NAME,
+				rasterizerDesc,
+				depthStencilStateDesc,
+				blendDesc
+			};
+			initPipeline(m_pipelineFXAA, pipelineDataAA);
+			m_cbufferFXAA.init();
 
 			m_initialized = true;
 		}
@@ -59,12 +71,35 @@ namespace engn {
 
 			// Handle textures and buffers
 			src.bindSRV(0);
-			m_cbuffer.getData().EV100 = { m_ev100Exposure, m_ev100Exposure, m_ev100Exposure, m_ev100Exposure };
-			m_cbuffer.fill();
-			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_cbuffer.getBufferAddress());
+			m_cbufferPP.getData().EV100 = { m_ev100Exposure, m_ev100Exposure, m_ev100Exposure, m_ev100Exposure };
+			m_cbufferPP.fill();
+			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_cbufferPP.getBufferAddress());
 
 			// Bind the pipeline
-			bindPipeline(m_pipeline);
+			bindPipeline(m_pipelinePP);
+			// Draw call
+			d3d::s_devcon->Draw(3, 0);
+			// Clear the SRV to allow it to be bound next frame
+			ID3D11ShaderResourceView* nullSRV = nullptr;
+			d3d::s_devcon->PSSetShaderResources(0, 1, &nullSRV);
+		}
+		void PostProcess::applyFXAA(const BindableRenderTarget& src)
+		{
+			if (!m_initialized) {
+				Logger::instance().logWarn("SkyTriangle::The texture for a TextureCube is not bound");
+				return;
+			}
+
+			// Turn off IL
+			d3d::s_devcon->IASetInputLayout(NULL);
+
+			// Handle textures and buffers
+			src.bindSRV(0);
+			
+			d3d::s_devcon->PSSetConstantBuffers(2, 1, m_cbufferFXAA.getBufferAddress());
+
+			// Bind the pipeline
+			bindPipeline(m_pipelineFXAA);
 			// Draw call
 			d3d::s_devcon->Draw(3, 0);
 			// Clear the SRV to allow it to be bound next frame

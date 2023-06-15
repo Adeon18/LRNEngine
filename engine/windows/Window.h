@@ -143,6 +143,7 @@ namespace engn {
 			void initBackBuffer() {
 				m_renderTargetHDR.releaseAll();
 				m_renderTargetLDRFinal.releaseAll();
+				m_renderTargetLDRBeforeFXAA.releaseAll();
 				m_gBuffer.reset();
 
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
@@ -160,11 +161,20 @@ namespace engn {
 			{
 				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 				m_renderTargetLDRFinal.init();
+
+				D3D11_TEXTURE2D_DESC pDesc{};
+				m_renderTargetLDRFinal.getTextureDesc(&pDesc);
+				m_renderTargetLDRBeforeFXAA.init(pDesc);
+
 				m_gBuffer.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight);
 			}
 			//! Bind the initial HDR rtv
 			void bindInitialRTV() {
 				m_renderTargetHDR.OMSetCurrent(m_depthStensilView.Get());
+			}
+
+			void bindBufferBeforeAA() {
+				m_renderTargetLDRBeforeFXAA.OMSetCurrent(nullptr);
 			}
 
 			//! Bind the backBuffer
@@ -260,6 +270,14 @@ namespace engn {
 				m_renderTargetHDR.clear(color);
 			}
 
+			void bindAndClearBufferBuforeAA(float* color) {
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				bindBufferBeforeAA();
+				bindViewport();
+				m_renderTargetLDRBeforeFXAA.clear(color);
+			}
+
 			//! Clear the final LDR RTV and bind it
 			void bindAndClearBackbuffer(float* color) {
 				// So we don't crash at window minimize
@@ -319,6 +337,7 @@ namespace engn {
 
 			[[nodiscard]] rend::BindableRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
 			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
+			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVBeforeAARef() { return m_renderTargetLDRBeforeFXAA; }
 
 			[[nodiscard]] rend::GBuffer& getGBuffer() { return m_gBuffer; }
 
@@ -343,6 +362,7 @@ namespace engn {
 			inline static WindowClassData m_windowClassData;
 
 			rend::BindableRenderTarget m_renderTargetLDRFinal;
+			rend::BindableRenderTarget m_renderTargetLDRBeforeFXAA;
 			rend::BindableRenderTarget m_renderTargetHDR;
 
 			rend::GBuffer m_gBuffer;
