@@ -20,7 +20,7 @@ Texture2D<float4> g_image : register(t0); // .rgb = LDR sRGB color (after gamma-
 cbuffer cb_local : register(b2)
 {
     float4 g_imageSize; // .xy = image_size, .zw = 1.0 / image_size
-    float4 g_AAdata;
+    float4 g_AAdata; // x - g_qualitySubpix, y - g_qualityEdgeThreshold, z - g_qualityEdgeThresholdMin
 	
     //float g_qualitySubpix; //   FXAA_QUALITY__SUBPIX, range [0.0; 1.0], default 0.75
 										//   Choose the amount of sub-pixel aliasing removal. This can effect sharpness.

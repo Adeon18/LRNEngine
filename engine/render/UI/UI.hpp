@@ -53,6 +53,13 @@ namespace engn {
 			struct ParticleWidgetData {
 				int animationFPS = 16;
 			};
+
+			struct AAWidgetData {
+				float qualitySubpix = 0.5f;
+				float qualityEdgeThreshold = 0.166f;
+				float qualityEdgeThresholdMin = 0.0625f;
+				bool enabled = true;
+			};
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -78,6 +85,7 @@ namespace engn {
 			[[nodiscard]] const ShadowWidgetData& getShadowWidgetData() const { return m_shadowData; }
 			[[nodiscard]] const SpawnWidgetData& getSpawnWidgetData() const { return m_spawnData; }
 			[[nodiscard]] const ParticleWidgetData& getParticleWidgetData() const { return m_particleData; }
+			[[nodiscard]] const AAWidgetData& getAAWidgetData() const { return m_AAdata; }
 
 			[[nodiscard]] std::string getModelNameFromWidgetIdx(int idx) const { return MODELS[idx]; }
 		private:
@@ -90,6 +98,7 @@ namespace engn {
 			void manageShadows();
 			void manageSpawn();
 			void manageParticles();
+			void manageAA();
 
 			GeometryWidgetData m_geometryData;
 			MaterialWidgetData m_materialData;
@@ -97,6 +106,7 @@ namespace engn {
 			ShadowWidgetData m_shadowData;
 			SpawnWidgetData m_spawnData;
 			ParticleWidgetData m_particleData;
+			AAWidgetData m_AAdata;
 
 			static constexpr const char* MODELS[] = { "HORSE", "SAMURAI", "TOWER" };
 		};

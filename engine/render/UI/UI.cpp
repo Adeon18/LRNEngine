@@ -38,6 +38,9 @@ namespace engn {
 			if (ImGui::CollapsingHeader("Particles")) {
 				manageParticles();
 			}
+			if (ImGui::CollapsingHeader("Anti-Aliasing")) {
+				manageAA();
+			}
 		}
 		void UI::endFrame()
 		{
@@ -88,6 +91,13 @@ namespace engn {
 		void UI::manageParticles()
 		{
 			ImGui::SliderInt("Animation FPS", &m_particleData.animationFPS, 4, 10);
+		}
+		void UI::manageAA()
+		{
+			ImGui::Checkbox("Enable", &m_AAdata.enabled);
+			ImGui::SliderFloat("qualitySubpix", &m_AAdata.qualitySubpix, 0.0f, 1.0f);
+			ImGui::SliderFloat("qualityEdgeThreshold", &m_AAdata.qualityEdgeThreshold, 0.063f, 0.333f);
+			ImGui::SliderFloat("qualityEdgeThresholdMin", &m_AAdata.qualityEdgeThresholdMin, 0.0312f, 0.0833f, "%.4f");
 		}
 	}
 } // engn

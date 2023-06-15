@@ -6,6 +6,8 @@
 
 #include "input/Keyboard.hpp"
 
+#include "render/UI/UI.hpp"
+
 
 namespace engn {
 	namespace rend {
@@ -95,12 +97,14 @@ namespace engn {
 
 			// Handle textures and buffers
 			src.bindSRV(0);
+
+			auto aaWidgets = UI::instance().getAAWidgetData();
 			
 			m_cbufferFXAA.getData().imageSize = {
 				static_cast<float>(screenWidth), static_cast<float>(screenHeight),
 				1.0f / static_cast<float>(screenWidth), 1.0f / static_cast<float>(screenHeight),
 			};
-			m_cbufferFXAA.getData().AAData = { 0.5f, 0.166f, 0.0625f, 0.0f };
+			m_cbufferFXAA.getData().AAData = { aaWidgets.qualitySubpix, aaWidgets.qualityEdgeThreshold, aaWidgets.qualityEdgeThresholdMin, 0.0f };
 			m_cbufferFXAA.fill();
 			d3d::s_devcon->PSSetConstantBuffers(2, 1, m_cbufferFXAA.getBufferAddress());
 
