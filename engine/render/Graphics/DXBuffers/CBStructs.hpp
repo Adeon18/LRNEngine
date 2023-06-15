@@ -128,6 +128,7 @@ namespace engn {
 		struct CB_PS_FXAAData {
 			XMVECTOR imageSize;
 			XMVECTOR AAData;
+			int enabled;
 		};
 
 	} // rend

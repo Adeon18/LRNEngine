@@ -21,6 +21,7 @@ cbuffer cb_local : register(b2)
 {
     float4 g_imageSize; // .xy = image_size, .zw = 1.0 / image_size
     float4 g_AAdata; // x - g_qualitySubpix, y - g_qualityEdgeThreshold, z - g_qualityEdgeThresholdMin
+    bool enabled;
 	
     //float g_qualitySubpix; //   FXAA_QUALITY__SUBPIX, range [0.0; 1.0], default 0.75
 										//   Choose the amount of sub-pixel aliasing removal. This can effect sharpness.
@@ -58,7 +59,7 @@ float4 main(PSIn pin) : SV_TARGET
     TextureAndSampler.smpl = g_bilinearClamp;
     TextureAndSampler.UVMinMax = float4(0, 0, 1, 1); // fullscreen uv
 
-    return FxaaPixelShader(
+    return (enabled) ? FxaaPixelShader(
 		pin.clipPos.xy * g_imageSize.zw, // map pixel coordinate to [0; 1] range
 		0, // unused, for consoles
 		TextureAndSampler,
@@ -75,5 +76,5 @@ float4 main(PSIn pin) : SV_TARGET
 		0, // unused, for consoles
 		0, // unused, for consoles
 		0 // unused, for consoles
-	);
+	) : g_image.Sample(g_linearWrap, pin.texCoords);
 }

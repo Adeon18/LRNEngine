@@ -105,6 +105,7 @@ namespace engn {
 				1.0f / static_cast<float>(screenWidth), 1.0f / static_cast<float>(screenHeight),
 			};
 			m_cbufferFXAA.getData().AAData = { aaWidgets.qualitySubpix, aaWidgets.qualityEdgeThreshold, aaWidgets.qualityEdgeThresholdMin, 0.0f };
+			m_cbufferFXAA.getData().enabled = (aaWidgets.enabled) ? 1.0f : 0.0f;
 			m_cbufferFXAA.fill();
 			d3d::s_devcon->PSSetConstantBuffers(2, 1, m_cbufferFXAA.getBufferAddress());
 
