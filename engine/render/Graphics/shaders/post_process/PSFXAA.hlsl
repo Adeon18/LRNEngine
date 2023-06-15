@@ -21,8 +21,9 @@ SamplerState g_bilinearClamp : register(s3);
 cbuffer cb_local : register(b2)
 {
     float4 g_imageSize; // .xy = image_size, .zw = 1.0 / image_size
-
-    float g_qualitySubpix; //   FXAA_QUALITY__SUBPIX, range [0.0; 1.0], default 0.75
+    float4 g_AAdata;
+	
+    //float g_qualitySubpix; //   FXAA_QUALITY__SUBPIX, range [0.0; 1.0], default 0.75
 										//   Choose the amount of sub-pixel aliasing removal. This can effect sharpness.
 										//   1.00 - upper limit (softer)
 										//   0.75 - default amount of filtering
@@ -30,7 +31,7 @@ cbuffer cb_local : register(b2)
 										//   0.25 - almost off
 										//   0.00 - completely off
 
-    float g_qualityEdgeThreshold; //   FXAA_QUALITY__EDGE_THRESHOLD, range [0.063; 0.333], best quality 0.063
+    //float g_qualityEdgeThreshold; //   FXAA_QUALITY__EDGE_THRESHOLD, range [0.063; 0.333], best quality 0.063
 										//   The minimum amount of local contrast required to apply algorithm.
 										//   0.333 - too little (faster)
 										//   0.250 - low quality
@@ -38,7 +39,7 @@ cbuffer cb_local : register(b2)
 										//   0.125 - high quality 
 										//   0.063 - overkill (slower)
 
-    float g_qualityEdgeThresholdMin; //   FXAA_QUALITY__EDGE_THRESHOLD_MIN, range [0.0; 0.0833], best quality 0.0312
+   // float g_qualityEdgeThresholdMin; //   FXAA_QUALITY__EDGE_THRESHOLD_MIN, range [0.0; 0.0833], best quality 0.0312
 										//   Trims the algorithm from processing darks.
 										//   0.0833 - upper limit (default, the start of visible unfiltered edges)
 										//   0.0625 - high quality (faster)
@@ -53,8 +54,6 @@ struct PSIn
 
 float4 main(PSIn pin) : SV_TARGET
 {
-    return float4(1, 1, 0, 1);
-	
     FxaaTex TextureAndSampler;
     TextureAndSampler.tex = g_image;
     TextureAndSampler.smpl = g_linearWrap;
@@ -70,9 +69,9 @@ float4 main(PSIn pin) : SV_TARGET
 		0, // unused, for consoles
 		0, // unused, for consoles
 		0, // unused, for consoles
-		g_qualitySubpix,
-		g_qualityEdgeThreshold,
-		g_qualityEdgeThresholdMin,
+		g_AAdata.x,
+		g_AAdata.y,
+		g_AAdata.z,
 		0, // unused, for consoles
 		0, // unused, for consoles
 		0, // unused, for consoles

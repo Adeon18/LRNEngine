@@ -125,5 +125,10 @@ namespace engn {
 			XMINT4 animationSpeedFPS;
 		};
 
+		struct CB_PS_FXAAData {
+			XMVECTOR imageSize;
+			XMVECTOR AAData;
+		};
+
 	} // rend
 } // engn

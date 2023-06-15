@@ -91,7 +91,7 @@ namespace engn {
 
 			// ---- FXAA -----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);
-			m_postProcess.applyFXAA(winPtr->getLDRRTVBeforeAARef());
+			m_postProcess.applyFXAA(winPtr->getLDRRTVBeforeAARef(), winPtr->getWidth(), winPtr->getHeight());
 
 			UI::instance().endFrame();
 

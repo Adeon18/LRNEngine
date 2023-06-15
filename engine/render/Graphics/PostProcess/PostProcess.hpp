@@ -15,7 +15,7 @@ namespace engn {
 			void ressolve(const BindableRenderTarget& src);
 
 			//! Apply the FXAA effect
-			void applyFXAA(const BindableRenderTarget& src);
+			void applyFXAA(const BindableRenderTarget& src, int screenWidth, int screenHeight);
 		private:
 			const std::wstring VS_PP_NAME = L"VSPostProcess.cso";
 			const std::wstring PS_PP_NAME = L"PSPostProcess.cso";
@@ -29,7 +29,7 @@ namespace engn {
 			ConstantBuffer<CB_PS_HDR> m_cbufferPP;
 
 			Pipeline m_pipelineFXAA;
-			ConstantBuffer<CB_PS_HDR> m_cbufferFXAA;
+			ConstantBuffer<CB_PS_FXAAData> m_cbufferFXAA;
 
 			//! EV100 value that can be changed vie +/- keys by 0.5 value
 			float m_ev100Exposure = -1.0f;

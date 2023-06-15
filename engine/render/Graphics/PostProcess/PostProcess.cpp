@@ -83,7 +83,7 @@ namespace engn {
 			ID3D11ShaderResourceView* nullSRV = nullptr;
 			d3d::s_devcon->PSSetShaderResources(0, 1, &nullSRV);
 		}
-		void PostProcess::applyFXAA(const BindableRenderTarget& src)
+		void PostProcess::applyFXAA(const BindableRenderTarget& src, int screenWidth, int screenHeight)
 		{
 			if (!m_initialized) {
 				Logger::instance().logWarn("SkyTriangle::The texture for a TextureCube is not bound");
@@ -96,6 +96,12 @@ namespace engn {
 			// Handle textures and buffers
 			src.bindSRV(0);
 			
+			m_cbufferFXAA.getData().imageSize = {
+				static_cast<float>(screenWidth), static_cast<float>(screenHeight),
+				1.0f / static_cast<float>(screenWidth), 1.0f / static_cast<float>(screenHeight),
+			};
+			m_cbufferFXAA.getData().AAData = { 0.5f, 0.166f, 0.0625f, 0.0f };
+			m_cbufferFXAA.fill();
 			d3d::s_devcon->PSSetConstantBuffers(2, 1, m_cbufferFXAA.getBufferAddress());
 
 			// Bind the pipeline
