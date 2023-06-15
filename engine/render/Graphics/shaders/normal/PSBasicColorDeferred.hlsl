@@ -73,7 +73,7 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     output.albedo = float4(albedo, 1.0f);
     output.normals = float4(macNormPacked, micNormPacked);
     output.roughMet = float2(roughness, metallic);
-    output.emission = float4(1.0f, 1.0f, 1.0f, 1.0f);
+    output.emission = float4(0.0f, 0.0f, 0.0f, 0.0f);
     output.objectIDs = 0;
     
     return output;

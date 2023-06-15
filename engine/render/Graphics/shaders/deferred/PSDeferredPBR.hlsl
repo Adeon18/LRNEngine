@@ -1,5 +1,6 @@
 #include "../globals.hlsli"
 #include "../utility.hlsli"
+#include "../shadow_mapping.hlsli"
 #include "../lighting_cook_torrance.hlsli"
 
 struct VS_OUTPUT
@@ -31,6 +32,12 @@ TextureCube g_diffuseIrradiance : register(t6);
 TextureCube g_preFilteredSpecular : register(t7);
 Texture2D g_BRDFIntegration : TEXTURE : register(t8);
 
+Texture2D<float> g_spotLightShadowMap : TEXTURE : register(t10);
+
+//! Only 1 directional light but have possibility to support more
+Texture2D<float> g_directionalLightShadowMaps[MAX_DIRLIGHT_COUNT] : register(t11);
+TextureCube<float> g_pointLightShadowMaps[4] : register(t12);
+
 
 float3 PSPositionFromDepth(float2 vTexCoord)
 {
@@ -56,6 +63,7 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     
     float3 albedo = g_albedoDef.Sample(g_pointWrap, inp.texCoords).xyz;
     float2 roughnessMetallic = g_roughMetDef.Sample(g_pointWrap, inp.texCoords).xy;
+    float3 emission = g_emissionDef.Sample(g_pointWrap, inp.texCoords).xyz;
     float metallic = roughnessMetallic.y;
     float roughness = roughnessMetallic.x;
     
@@ -73,20 +81,20 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     
     for (int i = 0; i < dirLightCount.x; ++i)
     {
-        float shadow = 0; //checkIfInDirectionalShadow(inp.worldPos, dirLightViewProj[i], g_directionalLightShadowMaps[i], -directLights[i].direction.xyz, inp.worldNorm);
+        float shadow = checkIfInDirectionalShadow(worldPos, dirLightViewProj[i], g_directionalLightShadowMaps[i], -directLights[i].direction.xyz, macNorm);
         outL0 += (1 - shadow) * calculateDirectionalLight(directLights[i], micNorm, viewDir, albedo, F0, metallic, roughness);
     }
 
     for (int i = 0; i < pointLightCount.x; ++i)
     {
-        float shadow = 0; //checkIfInPointShadowViaTransform(inp.worldPos, pointLights[i].position.xyz, g_pointLightShadowMaps[i], inp.worldNorm, i);
+        float shadow = checkIfInPointShadowViaTransform(worldPos, pointLights[i].position.xyz, g_pointLightShadowMaps[i], macNorm, i);
         outL0 += (1 - shadow) * calculatePointLight(pointLights[i], micNorm, macNorm, worldPos, viewDir, albedo, F0, metallic, roughness);
     }
     
     //! Spotlight
     {
         float3 toLight = normalize(spotLight.position.xyz - worldPos);
-        float shadow = 0; //checkIfInSpotShadow(inp.worldPos, spotLightViewProj, g_spotLightShadowMap, toLight, inp.worldNorm);
+        float shadow = checkIfInSpotShadow(worldPos, spotLightViewProj, g_spotLightShadowMap, toLight, macNorm);
         outL0 += (1 - shadow) * calculateSpotLight(spotLight, micNorm, worldPos, viewDir, albedo, F0, metallic, roughness);
     }
 
@@ -104,6 +112,6 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     }
     
     
-    return float4(outL0, 1.0f);
+    return float4(outL0 + emission, 1.0f);
    
 }

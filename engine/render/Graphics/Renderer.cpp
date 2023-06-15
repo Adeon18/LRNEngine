@@ -73,12 +73,15 @@ namespace engn {
 			/*ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);*/
 
 			// ---- Ressolve Deferred Shading to HDR buffer
+
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
 			// Render the sky before everything(so that the transparency works)
 			m_skyTriangle.render(camPtr);
 			m_fillPerFrameCBs(camPtr, renderData);
 			LightSystem::getInstance().bindLighting(camPtr, flags);
+			MeshSystem::getInstance().bindShadows();
 			m_deferredRessolver.ressolve(winPtr->getGBuffer());
+			MeshSystem::getInstance().unbindShadows();
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBackbuffer(BG_COLOR);

@@ -431,6 +431,14 @@ namespace engn {
 
 			//! Precompute the cubemap depths for pointlights
 			void renderDepthCubemaps();
+
+
+			//! Bind shadow buffers so that we can render shadows
+			void bindShadows();
+
+			//! Unbind shadow buffers so that we can render to shadow depth buffers
+			void unbindShadows();
+
 			
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);

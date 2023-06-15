@@ -286,20 +286,8 @@ namespace engn {
 
 				data.stencilRef = (type == DISSOLUTION_RENDER || type == NORMAL_RENDER) ? PBR_STENCIL_REF : EMISSION_STENCIL_REF;
 
-				if (type == DISSOLUTION_RENDER) {
-					data.blendDesc.BlendEnable = true;
-					data.blendDesc.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
-					data.blendDesc.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
-					data.blendDesc.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-					data.blendDesc.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
-					data.blendDesc.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
-					data.blendDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
-					data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
-				}
-				else {
-					data.blendDesc.BlendEnable = false;
-					data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
-				}
+				data.blendDesc.BlendEnable = false;
+				data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
 				initPipeline(m_pipelines[type], data);
 			}
@@ -307,6 +295,14 @@ namespace engn {
 		void MeshSystem::bindPipelineViaType(PipelineTypes pipelineType)
 		{
 			bindPipeline(m_pipelines[pipelineType]);
+		}
+		void MeshSystem::bindShadows()
+		{
+			m_shadowSubSystem.bindDataAndBuffers();
+		}
+		void MeshSystem::unbindShadows()
+		{
+			m_shadowSubSystem.unbindDepthBuffers();
 		}
 	} // rend
 } // engn
