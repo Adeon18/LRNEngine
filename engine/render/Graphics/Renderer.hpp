@@ -75,6 +75,7 @@ namespace engn {
 			Sampler m_samplerPointWrap;
 			Sampler m_samplerLinearWrap;
 			Sampler m_samplerAnisotropicWrap;
+			Sampler m_samplerBilinearClamp;
 
 			std::shared_ptr<tex::Texture> m_diffuseIrradianceMap;
 			std::shared_ptr<tex::Texture> m_preFilteredSpecularMap;

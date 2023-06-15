@@ -108,12 +108,14 @@ namespace engn {
 			m_samplerPointWrap.init(D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP);
 			m_samplerLinearWrap.init(D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_WRAP);
 			m_samplerAnisotropicWrap.init(D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP);
+			m_samplerBilinearClamp.init(D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP);
 		}
 		void Renderer::m_bindSamplers()
 		{
 			m_samplerPointWrap.bind(0);
 			m_samplerLinearWrap.bind(1);
 			m_samplerAnisotropicWrap.bind(2);
+			m_samplerBilinearClamp.bind(4);
 		}
 		void Renderer::m_fillPerFrameCBs(std::unique_ptr<EngineCamera>& camPtr, const RenderData& renderData)
 		{

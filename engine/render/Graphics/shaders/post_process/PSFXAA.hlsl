@@ -16,7 +16,6 @@
 /*---------------------------------------------------------------------------*/
 
 Texture2D<float4> g_image : register(t0); // .rgb = LDR sRGB color (after gamma-correction), .a = color luma
-SamplerState g_bilinearClamp : register(s3);
 
 cbuffer cb_local : register(b2)
 {
@@ -56,7 +55,7 @@ float4 main(PSIn pin) : SV_TARGET
 {
     FxaaTex TextureAndSampler;
     TextureAndSampler.tex = g_image;
-    TextureAndSampler.smpl = g_linearWrap;
+    TextureAndSampler.smpl = g_bilinearClamp;
     TextureAndSampler.UVMinMax = float4(0, 0, 1, 1); // fullscreen uv
 
     return FxaaPixelShader(

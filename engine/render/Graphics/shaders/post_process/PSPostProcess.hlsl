@@ -56,5 +56,5 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     fragCol = acesHdr2Ldr(fragCol);
     fragCol = correctGamma(fragCol, GAMMA);
     
-    return float4(fragCol, 1.0f);
+    return float4(fragCol, dot(fragCol, float3(0.2126f, 0.7152f, 0.0722f)));
 }
