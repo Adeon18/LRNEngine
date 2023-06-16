@@ -36,7 +36,7 @@ namespace engn {
 		//! Struct that identifies the instance of the material of the model to be dragged
 		struct InstanceProperties {
 			GroupTypes group;
-			std::shared_ptr<mdl::Model> model;
+			uint32_t modelIdx;
 			uint32_t materialIdx;
 			uint32_t instanceIdx;
 		};
@@ -90,6 +90,7 @@ namespace engn {
 			// Find the closest instance that intersects with a ray and fill in the infor struct
 			bool checkRayIntersection(geom::Ray& ray, geom::MeshIntersection& nearest, InstanceProperties& i2d) {
 				bool hasIntersection = false;
+				uint32_t modIdx = 0;
 				for (auto& perModel : m_models) {
 					uint32_t meshIdx = 0;
 					for (auto& perMesh: perModel.perMesh) {
@@ -108,7 +109,7 @@ namespace engn {
 
 									nearest.pos = XMVector3Transform(nearest.pos, meshtoWorld);
 									i2d.group = m_type;
-									i2d.model = perModel.model;
+									i2d.modelIdx = modIdx;
 									i2d.materialIdx = matIdx;
 									i2d.instanceIdx = insIdx;
 
@@ -123,43 +124,26 @@ namespace engn {
 						}
 						++meshIdx;
 					}
+					++modIdx;
 				}
 				return hasIntersection;
 			}
 
 			//! Add offset to module by multiplying it by the transformation matrix
 			void addModelOffset(const InstanceProperties& insProps, const XMVECTOR& offset) {
-				for (auto& perModel : m_models) {
-					if (perModel.model->name == insProps.model->name) {
-						// Only move the first mesh instnace as the matrices are all shared
-						TransformSystem::getInstance().getMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixTranslationFromVector(offset);
-						return;
-					}
-				}
+				TransformSystem::getInstance().getMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixTranslationFromVector(offset);
 			}
 
 			//! Add offset to module by multiplying it by the transformation matrix
 			void addModelRotation(const InstanceProperties& insProps, const XMVECTOR& rotation) {
-				for (auto& perModel : m_models) {
-					if (perModel.model->name == insProps.model->name) {
-						// Only rotate the first mesh instnace as the matrices are all shared
-						TransformSystem::getInstance().getMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
-						return;
-					}
-				}
+				TransformSystem::getInstance().getMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
 			}
 
-			//! Remove the instance of the given model, TODO: TEST!!!
+			//! Remove the instance of the given model
 			void removeInstance(const InstanceProperties& insProps) {
-				for (auto& perModel : m_models) {
-					if (perModel.model->name == insProps.model->name) {
-						// Erase the instance matrix(only done once)
-						TransformSystem::getInstance().eraseMatrixById(perModel.perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex);
-						for (auto& mesh : perModel.perMesh) {
-							mesh[insProps.materialIdx].instances.erase(mesh[insProps.materialIdx].instances.begin() + insProps.instanceIdx);
-						}
-						return;
-					}
+				TransformSystem::getInstance().eraseMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex);
+				for (auto& mesh : m_models[insProps.modelIdx].perMesh) {
+					mesh[insProps.materialIdx].instances.erase(mesh[insProps.materialIdx].instances.begin() + insProps.instanceIdx);
 				}
 			}
 
@@ -186,6 +170,7 @@ namespace engn {
 				properties.first = TransformSystem::getInstance().addMatrixById(inc.modelToWorld);
 
 				bool isCached = false;
+				uint32_t modIdx = 0;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
 						for (auto& perMesh : perModel.perMesh) {
@@ -193,7 +178,7 @@ namespace engn {
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
 								if (perMaterial.material == mtrl || mtrl.empty()) {
-									properties.second.model = mod;
+									properties.second.modelIdx = modIdx;
 									properties.second.materialIdx = matIdx;
 									properties.second.instanceIdx = perMaterial.instances.size();
 									if constexpr (std::is_same_v<I, InstanceDissolution>) {
@@ -207,7 +192,7 @@ namespace engn {
 								++matIdx;
 							}
 							if (!modelIsAdded.addedAsInstance) {
-								properties.second.model = mod;
+								properties.second.modelIdx = modIdx;
 								properties.second.materialIdx = matIdx;
 								properties.second.instanceIdx = 0;
 
@@ -227,6 +212,7 @@ namespace engn {
 							return properties;
 						}
 					}
+					++modIdx;
 				}
 
 				Logger::instance().logInfo("Model " + mod->name + " created for the first time, creating PerModel struct...");
@@ -273,7 +259,7 @@ namespace engn {
 				}
 
 				// Fill the properties
-				properties.second.model = mod;
+				properties.second.modelIdx = m_models.size();
 				properties.second.materialIdx = 0;
 				properties.second.instanceIdx = 0;
 

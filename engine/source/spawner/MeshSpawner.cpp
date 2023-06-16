@@ -50,7 +50,7 @@ namespace engn {
 
 					//! Edit the indexes if the instance despawned, so other can too
 					for (auto& el : m_spawningInstances) {
-						if (el.instanceProperties.model->name == firstInstance.instanceProperties.model->name) {
+						if (el.instanceProperties.modelIdx == firstInstance.instanceProperties.modelIdx) {
 							if (el.instanceProperties.materialIdx == firstInstance.instanceProperties.materialIdx) {
 								if (el.instanceProperties.instanceIdx > firstInstance.instanceProperties.instanceIdx) {
 									--el.instanceProperties.instanceIdx;

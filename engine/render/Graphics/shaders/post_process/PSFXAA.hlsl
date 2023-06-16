@@ -4,7 +4,7 @@
 
 #define FXAA_PC 1 // PC platform
 #define FXAA_HLSL_5 1 // Shader Model 5
-#define FXAA_QUALITY__PRESET 39
+#define FXAA_QUALITY__PRESET 15
     // 10 to 15 - default medium dither (10=fastest, 15=highest quality)
     // 20 to 29 - less dither, more expensive (20=fastest, 29=highest quality)
     // 39       - no dither, very expensive 
