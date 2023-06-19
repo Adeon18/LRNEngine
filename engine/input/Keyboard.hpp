@@ -23,6 +23,7 @@ namespace engn {
 				static constexpr int KEY_F = 0x46;
 				static constexpr int KEY_N = 0x4E;
 				static constexpr int KEY_V = 0x56;
+				static constexpr int KEY_G = 0x47;
 				static constexpr int KEY_CTRL = VK_CONTROL;
 				static constexpr int KEY_SPACE = VK_SPACE;
 				static constexpr int KEY_PLUS = VK_OEM_PLUS;

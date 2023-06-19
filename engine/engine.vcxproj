@@ -52,6 +52,7 @@
     <ClInclude Include="render\Objects\SkyBox\SkyBox.hpp" />
     <ClInclude Include="render\Objects\SkyTriangle\SkyTriangle.hpp" />
     <ClInclude Include="render\Objects\Texture.hpp" />
+    <ClInclude Include="render\Systems\DecalSystem.hpp" />
     <ClInclude Include="render\Systems\LightStructs.hpp" />
     <ClInclude Include="render\Systems\LightSystem.hpp" />
     <ClInclude Include="render\Systems\MeshSystem.hpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="render\UI\imgui\imstb_textedit.h" />
     <ClInclude Include="render\UI\imgui\imstb_truetype.h" />
     <ClInclude Include="render\UI\UI.hpp" />
+    <ClInclude Include="source\caster\Caster.hpp" />
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
@@ -106,6 +108,7 @@
     <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp" />
     <ClCompile Include="render\Objects\SkyTriangle\SkyTriangle.cpp" />
     <ClCompile Include="render\Graphics\Renderer.cpp" />
+    <ClCompile Include="render\Systems\DecalSystem.cpp" />
     <ClCompile Include="render\Systems\LightSystem.cpp" />
     <ClCompile Include="render\Systems\MeshSystem.cpp" />
     <ClCompile Include="render\Systems\ParticleSystem.cpp" />
@@ -118,6 +121,7 @@
     <ClCompile Include="render\UI\imgui\imgui_tables.cpp" />
     <ClCompile Include="render\UI\imgui\imgui_widgets.cpp" />
     <ClCompile Include="render\UI\UI.cpp" />
+    <ClCompile Include="source\caster\Caster.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
     <ClCompile Include="source\spawner\MeshSpawner.cpp" />

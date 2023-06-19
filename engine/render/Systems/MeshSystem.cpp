@@ -304,5 +304,22 @@ namespace engn {
 		{
 			m_shadowSubSystem.unbindDepthBuffers();
 		}
+		uint32_t MeshSystem::getGroupMatrixIdx(const InstanceProperties& insProps)
+		{
+			switch (insProps.group) {
+			case GroupTypes::NORMAL:
+			{
+				return m_normalGroup.getMatrixIdx(insProps);
+			}
+			case GroupTypes::HOLOGRAM:
+			{
+				return m_hologramGroup.getMatrixIdx(insProps);
+			}
+			case GroupTypes::EMISSION_ONLY:
+			{
+				return m_emissionOnlyGroup.getMatrixIdx(insProps);
+			}
+			}
+		}
 	} // rend
 } // engn

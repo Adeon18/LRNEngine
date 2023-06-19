@@ -2,6 +2,7 @@
 
 #include "source/dragger/MeshDragger.hpp"
 #include "source/spawner/MeshSpawner.hpp"
+#include "source/caster/Caster.hpp"
 
 #include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
@@ -10,6 +11,7 @@
 #include "render/Systems/MeshSystem.hpp"
 #include "render/Systems/LightSystem.hpp"
 #include "render/Systems/ParticleSystem.hpp"
+#include "render/Systems/DecalSystem.hpp"
 
 #include "render/Graphics/HelperStructs.hpp"
 
@@ -51,6 +53,7 @@ namespace engn {
 			rend::MeshSystem::getInstance().init();
 			rend::LightSystem::getInstance().init();
 			rend::ParticleSystem::getInstance().init();
+			rend::DecalSystem::getInstance().init();
 		}
 
 		static void deinit()
@@ -66,6 +69,7 @@ namespace engn {
 		rend::Renderer m_graphics;
 		drag::MeshDragger m_dragger;
 		spwn::MeshSpawner m_spawner;
+		cast::Caster m_caster;
 
 		rend::RenderData m_renderData;
 		rend::RenderModeFlags m_renderFlags;
@@ -80,6 +84,8 @@ namespace engn {
 		void handleSpawning();
 		//! Handle the spawning of particles on mouse press
 		void handleParticleSpawning();
+		//! Handle the spawning of decals on G press
+		void handleDecalSpawning();
 		//! Check for camera movement and if it exists, update it
 		void handleCameraMovement();
 		//! check for camera rotation and update if there was

@@ -264,6 +264,12 @@
     <ClInclude Include="render\Graphics\DeferredShading\GBuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Systems\DecalSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\caster\Caster.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -399,6 +405,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="render\Graphics\DeferredShading\DeferredRessolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="render\Systems\DecalSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\caster\Caster.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

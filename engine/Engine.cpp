@@ -144,6 +144,7 @@ namespace engn {
 		handleDragging();
 
 		handleSpawning();
+		handleDecalSpawning();
 		handleParticleSpawning();
 
 		fillRenderModeFlagsFromInput();
@@ -170,6 +171,17 @@ namespace engn {
 				1000.0f,
 				2.0f
 			);
+		}
+	}
+
+	void Engine::handleDecalSpawning()
+	{
+		auto& keyboard = inp::Keyboard::getInstance();
+		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_G)) {
+			auto res = m_caster.castRayAtMouse(m_camera);
+			if (res.hit) {
+				rend::DecalSystem::getInstance().addDecal(res.insProps, res.insHit, m_camera);
+			}
 		}
 	}
 
