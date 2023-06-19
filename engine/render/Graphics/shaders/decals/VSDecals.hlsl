@@ -19,6 +19,7 @@ PS_INPUT main(VS_INPUT input)
     float4 worldPos = mul(float4(input.inPos, 1.0f), decalToWorld);
 
     output.outPos = mul(worldPos, worldToClip);
+    output.worldToDecal = decalToWorldInv;
 
     return output;
 }

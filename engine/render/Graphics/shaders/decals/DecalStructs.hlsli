@@ -18,6 +18,7 @@ struct VS_INPUT
 struct PS_INPUT
 {
     float4 outPos : SV_POSITION;
+    float4x4 worldToDecal : MAT1;
 };
 
 struct PS_OUTPUT_DEFERRED
