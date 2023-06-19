@@ -45,6 +45,7 @@ namespace engn {
 			void initBuffers();
 			void initPipelines();
 			void initTextures();
+			void initModels();
 
 			void fillInstanceBuffers();
 
@@ -55,6 +56,8 @@ namespace engn {
 			InstanceBuffer<DecalInstance> m_instanceBuffer;
 
 			Pipeline m_pipeline;
+
+			std::shared_ptr<mdl::Model> m_cubeModel;
 			//ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
 			//ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
 		};

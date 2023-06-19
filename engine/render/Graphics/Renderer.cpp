@@ -7,6 +7,7 @@
 #include "render/Systems/MeshSystem.hpp"
 #include "render/Systems/LightSystem.hpp"
 #include "render/Systems/ParticleSystem.hpp"
+#include "render/Systems/DecalSystem.hpp"
 
 
 #include "include/utility/utility.hpp"
@@ -69,6 +70,8 @@ namespace engn {
 
 			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
 			d3d::s_devcon->PSSetShaderResources(5, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+
+			DecalSystem::getInstance().handleDecals();
 
 			// ---- Ressolve Deferred Shading to HDR buffer
 

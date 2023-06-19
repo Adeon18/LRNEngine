@@ -510,6 +510,8 @@
     <FxCompile Include="render\Graphics\shaders\deferred\PSDeferredPBR.hlsl" />
     <FxCompile Include="render\Graphics\shaders\deferred\PSDeferredEmission.hlsl" />
     <FxCompile Include="render\Graphics\shaders\post_process\PSFXAA.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\decals\VSDecals.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\decals\PSDecals.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
@@ -545,5 +547,6 @@
     <None Include="render\Graphics\shaders\shadow_mapping.hlsli" />
     <None Include="render\Graphics\shaders\dissolution\DissolutionStructs.hlsli" />
     <None Include="render\Graphics\shaders\post_process\NvidiaFXAA3_11.hlsli" />
+    <None Include="render\Graphics\shaders\decals\DecalStructs.hlsli" />
   </ItemGroup>
 </Project>
