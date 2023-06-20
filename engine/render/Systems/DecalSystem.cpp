@@ -18,7 +18,8 @@ namespace engn {
 			XMVECTOR offset = XMVector3Transform(insHit.pos, worldToModel);
 			//std::cout << "Offset: " << offset << std::endl;
 
-			static constexpr XMVECTOR UP{ 0.0f, 1.0f, 0.0f };
+			float angle = XMConvertToRadians(util::getRandomIntInRange(0, 360));
+			XMVECTOR UP{ XMScalarCos(angle), XMScalarSin(angle), 0.0f};
 			XMVECTOR zWorld = XMVector3Normalize(camPtr->getCamPosition() - insHit.pos);
 			XMVECTOR xWorld = XMVector3Normalize(XMVector3Cross(UP, zWorld));
 			XMVECTOR yWorld = XMVector3Normalize(XMVector3Cross(zWorld, xWorld));
@@ -33,7 +34,7 @@ namespace engn {
 			worldDecalBasis.r[3] = XMVECTOR{0, 0, 0, 1};
 
 			auto& decalData = m_decals.emplace_back();
-			decalData.decalToModel = worldDecalBasis * worldToModel;
+			decalData.decalToModel = XMMatrixScaling(0.5f, 0.5f, 0.5f) * worldDecalBasis * worldToModel;
 			for (uint16_t i = 0; i < 3; ++i) {
 				decalData.decalToModel.r[i] = XMVector3Normalize(decalData.decalToModel.r[i]);
 			}
@@ -147,7 +148,7 @@ namespace engn {
 			{
 				// Dangerous! TODO SFINAE
 				DecalInstance ins;
-				ins.decalToWorld = XMMatrixScaling(0.3f, 0.3f, 0.3f) * decal.decalToModel * TransformSystem::getInstance().getMatrixById(decal.modelInstanceID);
+				ins.decalToWorld = decal.decalToModel * TransformSystem::getInstance().getMatrixById(decal.modelInstanceID);
 				// TODO: UNOPTIMIZED.
 				ins.worldToDecal = XMMatrixInverse(nullptr, ins.decalToWorld);
 				ins.objectID = decal.objectID;
