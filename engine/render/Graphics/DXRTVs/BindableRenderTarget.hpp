@@ -36,6 +36,7 @@ namespace engn {
 			[[nodiscard]] ID3D11Texture2D** getTexturePtrAddress();
 			[[nodiscard]] ID3D11RenderTargetView* getRTVPtr();
 			[[nodiscard]] ID3D11RenderTargetView** getRTVPtrAddress();
+			[[nodiscard]] ID3D11ShaderResourceView** getSRVPtrAddress();
 			void getTextureDesc(D3D11_TEXTURE2D_DESC* descToFill);
 		private:
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;

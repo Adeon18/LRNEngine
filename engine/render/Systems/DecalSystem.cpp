@@ -46,6 +46,8 @@ namespace engn {
 		void DecalSystem::handleDecals()
 		{
 			bindPipeline(m_pipeline);
+			d3d::s_devcon->PSSetShaderResources(1, 1, m_splatterNormalMap->textureView.GetAddressOf());
+
 			fillInstanceBuffers();
 			renderInternal();
 		}
@@ -74,7 +76,7 @@ namespace engn {
 
 			D3D11_RASTERIZER_DESC rasterizerDesc{};
 			rasterizerDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
+			rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
 
 			D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 			depthStencilDesc.DepthEnable = false;
@@ -102,6 +104,12 @@ namespace engn {
 		}
 		void DecalSystem::initTextures()
 		{
+#ifdef _WIN64
+			const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\..\\";
+#else
+			const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\";
+#endif
+			m_splatterNormalMap = tex::TextureManager::getInstance().getTexture(TEX_REL_PATH_PREF + "assets/Textures/Decals/splatter-norm.dds");
 		}
 		void DecalSystem::initModels()
 		{

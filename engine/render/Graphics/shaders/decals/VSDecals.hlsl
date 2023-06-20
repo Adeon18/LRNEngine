@@ -20,6 +20,8 @@ PS_INPUT main(VS_INPUT input)
 
     output.outPos = mul(worldPos, worldToClip);
     output.worldToDecal = decalToWorldInv;
+    output.decalToWorld = decalToWorld;
+    output.uv = input.inTC;
 
     return output;
 }

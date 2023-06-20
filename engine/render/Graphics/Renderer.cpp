@@ -68,7 +68,11 @@ namespace engn {
 			MeshSystem::getInstance().renderEmission(flags);
 			MeshSystem::getInstance().renderPBR(flags);
 
+			auto& gBuffer = winPtr->getGBuffer();
+			gBuffer.copyNormalsTexture();
 			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
+
+			d3d::s_devcon->PSSetShaderResources(4, 1, gBuffer.normalsCopy.getSRVPtrAddress());
 			d3d::s_devcon->PSSetShaderResources(5, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 
 			DecalSystem::getInstance().handleDecals();

@@ -58,6 +58,8 @@ namespace engn {
 			Pipeline m_pipeline;
 
 			std::shared_ptr<mdl::Model> m_cubeModel;
+
+			std::shared_ptr<tex::Texture> m_splatterNormalMap;
 			//ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
 			//ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
 		};

@@ -132,6 +132,11 @@ namespace engn {
 		ID3D11RenderTargetView* BindableRenderTarget::getRTVPtr() { return m_renderTargetView.Get(); }
 		ID3D11RenderTargetView** BindableRenderTarget::getRTVPtrAddress() { return m_renderTargetView.GetAddressOf(); }
 
+		ID3D11ShaderResourceView** BindableRenderTarget::getSRVPtrAddress()
+		{
+			return m_shaderResourceView.GetAddressOf();
+		}
+
 		void BindableRenderTarget::getTextureDesc(D3D11_TEXTURE2D_DESC* descToFill)
 		{
 			m_texture->GetDesc(descToFill);

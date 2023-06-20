@@ -11,6 +11,8 @@ namespace engn {
 		struct GBuffer {
 			rend::BindableRenderTarget albedo;
 			rend::BindableRenderTarget normals;
+			// Used for decals
+			rend::BindableRenderTarget normalsCopy;
 			rend::BindableRenderTarget roughMet;
 			rend::BindableRenderTarget emission;
 			rend::BindableRenderTarget ids;
@@ -22,6 +24,7 @@ namespace engn {
 			void init(int screenWidth, int screenHeight) {
 				albedo.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 				normals.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_SNORM);
+				normalsCopy.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_SNORM);
 				roughMet.init(screenWidth, screenHeight, DXGI_FORMAT_R8G8_UNORM);
 				emission.init(screenWidth, screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
 				ids.init(screenWidth, screenHeight, DXGI_FORMAT_R32_UINT);
@@ -38,6 +41,10 @@ namespace engn {
 				d3d::s_devcon->OMSetRenderTargets(5, rtvPtrs.data(), depthStensilView);
 			}
 
+			void copyNormalsTexture() {
+				d3d::s_devcon->CopyResource(normalsCopy.getTexturePtr(), normals.getTexturePtr());
+			}
+
 			void unBind(ID3D11DepthStencilView* depthStensilView) {
 				ID3D11RenderTargetView* rTargets[5] = { NULL, NULL, NULL, NULL, NULL };
 				d3d::s_devcon->OMSetRenderTargets(5, rTargets, depthStensilView);
@@ -46,6 +53,7 @@ namespace engn {
 			void clear(float* color) {
 				albedo.clear(color);
 				normals.clear(color);
+				normalsCopy.clear(color);
 				roughMet.clear(color);
 				emission.clear(color);
 				ids.clear(color);
@@ -54,6 +62,7 @@ namespace engn {
 			void reset() {
 				albedo.releaseAll();
 				normals.releaseAll();
+				normalsCopy.releaseAll();
 				roughMet.releaseAll();
 				emission.releaseAll();
 				ids.releaseAll();
