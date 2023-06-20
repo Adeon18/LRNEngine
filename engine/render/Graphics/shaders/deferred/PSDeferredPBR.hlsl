@@ -111,6 +111,13 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
         outL0 += albedo * (1 - metallic) * g_diffuseIrradiance.Sample(g_linearWrap, micNorm).rgb + E_spec * (K_spec.r * F0 + K_spec.g);
     }
     
+    // Yeah, so I have black pixels in a lot of cases for some reason, this fixes it
+    if (IsNaN(outL0.x))
+        outL0.x = albedo.x;
+    if (IsNaN(outL0.y))
+        outL0.y = albedo.y;
+    if (IsNaN(outL0.z))
+        outL0.z = albedo.z;
     
     return float4(outL0 + emission, 1.0f);
    

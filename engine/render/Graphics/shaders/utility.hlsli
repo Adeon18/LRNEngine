@@ -25,5 +25,9 @@ float3 unpackOctahedron(float2 oct)
     return normalize(v);
 }
 
+bool IsNaN(float x)
+{
+    return (asuint(x) & 0x7fffffff) > 0x7f800000;
+}
 
 #endif // UTILITY_HLSLI

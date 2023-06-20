@@ -68,6 +68,11 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     
     // TODO: Excess operations
     float3 currentNorm = unpackOctahedron(g_normalsBuffer.Sample(g_pointWrap, sampleCoords).rg);
+    if (dot(currentNorm, inp.decalToWorld[2].xyz) < 0.0001f)
+    {
+        discard;
+    }
+    
     float4 norm = g_splatterNorm.Sample(g_pointWrap, normSampleCoords);
     if (norm.a == 0)
         discard;
@@ -79,9 +84,10 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     float3x3 TBN = float3x3(T, B, N);
     float3 decalMicNorm = getNormalFromTexture(normSampleCoords, TBN);
     
-    output.albedo = float4(1.0f, 0.0f, 1.0f, 1.0f);
+    float3 col = float3(1.0f, 0.0f, 1.0f);
+    output.albedo = float4(col, 1.0f);
     output.normals = float4(packOctahedron(currentNorm), packOctahedron(decalMicNorm));
-    output.roughMet = float2(0, 0);
+    output.roughMet = float2(0.1, 0.1);
     output.emission = float4(0.0f, 0.0f, 0.0f, 0.0f);
     output.objectIDs = 0;
     

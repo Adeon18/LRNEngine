@@ -80,10 +80,10 @@ namespace engn {
 
 			D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 			depthStencilDesc.DepthEnable = false;
-			depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ZERO;
+			depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
 
 			D3D11_RENDER_TARGET_BLEND_DESC blendDesc{};
-			blendDesc.BlendEnable = false;
+			blendDesc.BlendEnable = true;
 			blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
 			PipelineData pipelineData{
@@ -145,7 +145,7 @@ namespace engn {
 			{
 				// Dangerous! TODO SFINAE
 				DecalInstance ins;
-				ins.decalToWorld = decal.decalToModel * TransformSystem::getInstance().getMatrixById(decal.modelInstanceID);
+				ins.decalToWorld = XMMatrixScaling(0.3f, 0.3f, 0.3f) * decal.decalToModel * TransformSystem::getInstance().getMatrixById(decal.modelInstanceID);
 				// TODO: UNOPTIMIZED.
 				ins.worldToDecal = XMMatrixInverse(nullptr, ins.decalToWorld);
 
