@@ -44,6 +44,9 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
     return normFromTex;
 }
 
+static const float DECAL_ROUGHNESS = 0.3f;
+static const float DECAL_METALLIC = 0.1f;
+
 PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
 {
     PS_OUTPUT_DEFERRED output;
@@ -90,12 +93,10 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     float3x3 TBN = float3x3(T, B, N);
     float3 decalMicNorm = getNormalFromTexture(normSampleCoords, TBN);
     
-    float3 col = float3(1.0f, 0.0f, 1.0f);
-    output.albedo = float4(col, 1.0f);
+    output.albedo = float4(inp.color.xyz, 1.0f);
     output.normals = float4(packOctahedron(currentNorm), packOctahedron(decalMicNorm));
-    output.roughMet = float2(0.1, 0.1);
+    output.roughMet = float2(DECAL_ROUGHNESS, DECAL_METALLIC);
     output.emission = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    //output.objectIDs = 0;
     
     return output;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "Pipeline.hpp"
 
 #include "render/Graphics/EngineCamera.hpp"
@@ -16,6 +18,7 @@ namespace engn {
 			struct DecalData {
 				XMMATRIX decalToModel;
 				XMMATRIX modelToDecal;
+				XMVECTOR color;
 				uint32_t modelInstanceID;
 				uint32_t objectID;
 			};
@@ -23,6 +26,7 @@ namespace engn {
 			struct DecalInstance {
 				XMMATRIX decalToWorld;
 				XMMATRIX worldToDecal;
+				XMVECTOR color;
 				uint32_t objectID;
 			};
 
@@ -62,8 +66,19 @@ namespace engn {
 			std::shared_ptr<mdl::Model> m_cubeModel;
 
 			std::shared_ptr<tex::Texture> m_splatterNormalMap;
-			//ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
-			//ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
+			
+			static constexpr std::array<XMVECTOR, 10> DECAL_COLORS{
+				XMVECTOR{1.0f, 0.0f, 0.0f, 1.0f},
+				XMVECTOR{0.0f, 1.0f, 0.0f, 1.0f},
+				XMVECTOR{1.0f, 1.0f, 0.0f, 1.0f},
+				XMVECTOR{0.0f, 0.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 0.0f, 1.0f, 1.0f},
+				XMVECTOR{0.0f, 1.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 1.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 0.5f, 0.5f, 1.0f},
+				XMVECTOR{1.0f, 0.0f, 0.5f, 1.0f},
+				XMVECTOR{1.0f, 0.5f, 0.0f, 1.0f}
+			};
 		};
 	} // rend
 } // engn

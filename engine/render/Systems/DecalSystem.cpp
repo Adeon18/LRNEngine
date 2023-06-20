@@ -42,6 +42,7 @@ namespace engn {
 			decalData.modelToDecal = XMMatrixInverse(nullptr, decalData.decalToModel);
 			decalData.modelInstanceID = matIdx;
 			decalData.objectID = insProps.group + insProps.instanceIdx + insProps.materialIdx + insProps.modelIdx;
+			decalData.color = DECAL_COLORS[util::getRandomIntInRange(0, DECAL_COLORS.size() - 1)];
 
 			//std::cout << "Decal To Model: \n" << decalData.decalToModel << std::endl;
 		}
@@ -58,7 +59,7 @@ namespace engn {
 		}
 		void DecalSystem::initPipelines()
 		{
-			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_DECALS[14] = {
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_DECALS[15] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -72,7 +73,8 @@ namespace engn {
 				{"DECAL2WORLDINV", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"DECAL2WORLDINV", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"DECAL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 144, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
 			};
 
 			auto shaderFolder = util::getExeDirW();
@@ -152,6 +154,7 @@ namespace engn {
 				// TODO: UNOPTIMIZED.
 				ins.worldToDecal = XMMatrixInverse(nullptr, ins.decalToWorld);
 				ins.objectID = decal.objectID;
+				ins.color = decal.color;
 
 				dst[copiedNum++] = ins;
 			}
