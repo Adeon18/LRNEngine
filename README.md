@@ -102,3 +102,9 @@ The `BAKE_CUBEMAPS` mode also prints the sum over the hemisphere into a `logs/en
 - Added a model spawn effect on key `N`. In Imgui you can choose the model and animation speed.
 - Added a smoke emitter, works on key `H`.
 - Particles have animation and some velocity, ti add animation I used Motion Vectors
+
+## HW12: Deferred render and Decals and FXAA
+- Rewrote my renderer to deferred renderer. Particles are rendered afterwards via forward render
+- Added Nvidia FXAA 3.11 with ability to tweak parameters in IMGUI
+- Added a decal system. On `G` key pressed a decal is spawned **WHERE THE CURSOR IS**. A decal has a random rotation and a random color from
+a 10-color-pool. Normal maps for decals are supported.
