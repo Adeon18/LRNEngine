@@ -270,6 +270,10 @@ namespace engn {
 				m_renderTargetHDR.clear(color);
 			}
 
+			void unbindGBufferIDs() {
+				m_gBuffer.unbindIds(m_depthStensilView.Get());
+			}
+
 			void bindAndClearBufferBuforeAA(float* color) {
 				// So we don't crash at window minimize
 				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }

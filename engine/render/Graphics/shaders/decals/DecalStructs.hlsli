@@ -13,6 +13,7 @@ struct VS_INPUT
     float4 decalToWorldInv1 : DECAL2WORLDINV1;
     float4 decalToWorldInv2 : DECAL2WORLDINV2;
     float4 decalToWorldInv3 : DECAL2WORLDINV3;
+    uint parentObjectID : OBJECTID;
 };
 
 struct PS_INPUT
@@ -21,6 +22,7 @@ struct PS_INPUT
     float2 uv : TEXCOORD;
     float4x4 worldToDecal : W2D;
     float4x4 decalToWorld : D2W;
+    uint parentObjectID : OBJECTID;
 };
 
 struct PS_OUTPUT_DEFERRED
@@ -29,5 +31,4 @@ struct PS_OUTPUT_DEFERRED
     float4 normals : SV_Target1;
     float2 roughMet : SV_Target2;
     float4 emission : SV_Target3;
-    uint objectIDs : SV_Target4;
 };

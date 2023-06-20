@@ -296,17 +296,19 @@ namespace engn {
 
 				// Fill mapped buffer
 				uint32_t copiedNum = 0;
+				uint32_t modIdx = 0;
 				for (const auto& model : m_models)
 				{
 					for (uint32_t meshIndex = 0; meshIndex < model.perMesh.size(); ++meshIndex)
 					{
 						const mdl::Mesh& mesh = model.model->getMeshes()[meshIndex];
-
+						uint32_t matIdx = 0;
 						for (const auto& material : model.perMesh[meshIndex])
 						{
 							auto& instances = material.instances;
 
 							uint32_t numModelInstances = instances.size();
+							uint32_t insIdx = 0;
 							for (uint32_t index = 0; index < numModelInstances; ++index)
 							{
 								// Dangerous! TODO SFINAE
@@ -319,11 +321,15 @@ namespace engn {
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
 									ins.color = material.instances[index].color;
+									ins.objectId = insIdx + matIdx + modIdx + m_type;
 								}
 								dst[copiedNum++] = ins;
+								++insIdx;
 							}
+							++matIdx;
 						}
 					}
+					++modIdx;
 				}
 
 				m_instanceBuffer.unmap();
@@ -469,7 +475,7 @@ namespace engn {
 
 			std::unordered_map<PipelineTypes, Pipeline> m_pipelines;
 
-			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT[14] = {
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT[15] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -484,6 +490,7 @@ namespace engn {
 				{"MODEL2WORLDINV", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 144, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
 			};
 
 			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_DISSOLUTION[14] = {

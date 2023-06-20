@@ -71,7 +71,9 @@ namespace engn {
 			auto& gBuffer = winPtr->getGBuffer();
 			gBuffer.copyNormalsTexture();
 			d3d::s_devcon->CopyResource(winPtr->getCopiedDepthTextureRef().Get(), winPtr->getDepthTextureRef().Get());
+			winPtr->unbindGBufferIDs();
 
+			d3d::s_devcon->PSSetShaderResources(3, 1, gBuffer.ids.getSRVPtrAddress());
 			d3d::s_devcon->PSSetShaderResources(4, 1, gBuffer.normalsCopy.getSRVPtrAddress());
 			d3d::s_devcon->PSSetShaderResources(5, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 

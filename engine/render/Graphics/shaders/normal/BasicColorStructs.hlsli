@@ -14,6 +14,7 @@ struct VS_INPUT
     float4 modelToWorldInv2 : MODEL2WORLDINV2;
     float4 modelToWorldInv3 : MODEL2WORLDINV3;
     float4 color : COLOR;
+    uint objectID : OBJECTID;
 };
 
 struct PS_INPUT
@@ -24,6 +25,7 @@ struct PS_INPUT
     float2 outTexCoord : TEXCOORD;
     float4 outCol : COLOR;
     float3x3 TBN : TBN;
+    uint objectID: OBJECTID;
 };
 
 struct PS_OUTPUT_DEFERRED

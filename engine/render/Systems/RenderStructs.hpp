@@ -13,6 +13,7 @@ namespace engn {
 			XMMATRIX modelToWorld;
 			XMMATRIX modelToWorldInv;
 			XMVECTOR color;
+			uint32_t objectId;
 		};
 
 		struct InstanceDissolution {

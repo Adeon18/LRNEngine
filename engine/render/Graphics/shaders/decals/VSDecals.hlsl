@@ -22,6 +22,7 @@ PS_INPUT main(VS_INPUT input)
     output.worldToDecal = decalToWorldInv;
     output.decalToWorld = decalToWorld;
     output.uv = input.inTC;
+    output.parentObjectID = input.parentObjectID;
 
     return output;
 }

@@ -74,7 +74,7 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     output.normals = float4(macNormPacked, micNormPacked);
     output.roughMet = float2(roughness, metallic);
     output.emission = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    output.objectIDs = 0;
+    output.objectIDs = inp.objectID;
     
     return output;
 }

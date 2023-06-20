@@ -40,5 +40,6 @@ PS_INPUT main(VS_INPUT input)
     output.worldNorm = worldNorm;
     output.outTexCoord = input.inTC;
     output.TBN = float3x3(worldTan, worldBiTan, worldNorm);
+    output.objectID = input.objectID;
 	return output;
 }

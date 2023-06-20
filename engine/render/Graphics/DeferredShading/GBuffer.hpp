@@ -45,6 +45,11 @@ namespace engn {
 				d3d::s_devcon->CopyResource(normalsCopy.getTexturePtr(), normals.getTexturePtr());
 			}
 
+			void unbindIds(ID3D11DepthStencilView* depthStensilView) {
+				ID3D11RenderTargetView* rTargets[5] = { albedo.getRTVPtr(), normals.getRTVPtr(), roughMet.getRTVPtr(), emission.getRTVPtr(), NULL };
+				d3d::s_devcon->OMSetRenderTargets(5, rTargets, depthStensilView);
+			}
+
 			void unBind(ID3D11DepthStencilView* depthStensilView) {
 				ID3D11RenderTargetView* rTargets[5] = { NULL, NULL, NULL, NULL, NULL };
 				d3d::s_devcon->OMSetRenderTargets(5, rTargets, depthStensilView);

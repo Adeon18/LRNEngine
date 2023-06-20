@@ -17,6 +17,7 @@ cbuffer perFrame : register(b0)
 
 
 Texture2D g_splatterNorm : TEXTURE : register(t1);
+Texture2D<uint> g_objectIds : TEXTURE : register(t3);
 Texture2D g_normalsBuffer : TEXTURE : register(t4);
 Texture2D g_depthBuffer : TEXTURE : register(t5);
 
@@ -66,13 +67,18 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     normSampleCoords.x = decalPos.x * 0.5 + 0.5;
     normSampleCoords.y = decalPos.y * -0.5 + 0.5;
     
-    // TODO: Excess operations
+    uint id = g_objectIds.Load(int3(inp.outPos.xy, 0));
+    if (id != inp.parentObjectID)
+        discard;
+    
+    // Discard bakc faces
     float3 currentNorm = unpackOctahedron(g_normalsBuffer.Sample(g_pointWrap, sampleCoords).rg);
     if (dot(currentNorm, inp.decalToWorld[2].xyz) < 0.0001f)
     {
         discard;
     }
     
+    // TODO: Excess operations
     float4 norm = g_splatterNorm.Sample(g_pointWrap, normSampleCoords);
     if (norm.a == 0)
         discard;
@@ -89,7 +95,7 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     output.normals = float4(packOctahedron(currentNorm), packOctahedron(decalMicNorm));
     output.roughMet = float2(0.1, 0.1);
     output.emission = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    output.objectIDs = 0;
+    //output.objectIDs = 0;
     
     return output;
 }

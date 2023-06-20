@@ -17,11 +17,13 @@ namespace engn {
 				XMMATRIX decalToModel;
 				XMMATRIX modelToDecal;
 				uint32_t modelInstanceID;
+				uint32_t objectID;
 			};
 
 			struct DecalInstance {
 				XMMATRIX decalToWorld;
 				XMMATRIX worldToDecal;
+				uint32_t objectID;
 			};
 
 			static DecalSystem& getInstance() {
