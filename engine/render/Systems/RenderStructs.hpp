@@ -23,6 +23,16 @@ namespace engn {
 			XMVECTOR time;
 		};
 
+		struct InstanceIncineration {
+			XMMATRIX modelToWorld;
+			XMMATRIX modelToWorldInv;
+			// Stores incineration HitPoint in world space in .xyz and max model incineration radius in .a
+			XMVECTOR rayHitPointAndMaxRadius;
+			//! XY store spawn time, ZW store spawn duration
+			XMVECTOR time;
+			uint32_t objectId;
+		};
+
 		struct Material {
 			std::shared_ptr<tex::Texture> ambientTex = nullptr;
 			std::shared_ptr<tex::Texture> normalMap = nullptr;

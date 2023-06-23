@@ -46,7 +46,7 @@ namespace engn {
 		);
 
 		std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(MODELS["TOWER"]);
-		rend::MeshSystem::getInstance().addNormalInstance(
+		rend::MeshSystem::getInstance().addIncinerationInstance(
 			mptr,
 			{ },
 			{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {},  {1.0f, 0.0f, 0.0f, 1.0f} }

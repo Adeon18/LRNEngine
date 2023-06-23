@@ -6,6 +6,7 @@ namespace engn {
 			initPipelines();
 			initNormalGroup();
 			initDissolutionGroup();
+			initIncinerationGroup();
 			initHologramGroup();
 			initEmissionGroup();
 		}
@@ -19,6 +20,11 @@ namespace engn {
 		{
 			m_dissolutionGroup.setType(GroupTypes::DISSOLUTION);
 			m_dissolutionGroup.init();
+		}
+		void MeshSystem::initIncinerationGroup()
+		{
+			m_incinerationGroup.setType(GroupTypes::INCINERATION);
+			m_incinerationGroup.init();
 		}
 		void MeshSystem::initHologramGroup()
 		{
@@ -141,6 +147,11 @@ namespace engn {
 			m_dissolutionGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::DISSOLUTION_RENDER);
 			m_dissolutionGroup.render();
+
+			// Dissolution group
+			m_incinerationGroup.fillInstanceBuffer();
+			this->bindPipelineViaType(PipelineTypes::INCINERATION_RENDER);
+			m_incinerationGroup.render();
 		}
 
 		void MeshSystem::renderDepth2D()
@@ -158,6 +169,8 @@ namespace engn {
 				m_normalGroup.render();
 				m_dissolutionGroup.fillInstanceBuffer();
 				m_dissolutionGroup.render();
+				m_incinerationGroup.fillInstanceBuffer();
+				m_incinerationGroup.render();
 			}
 
 			m_shadowSubSystem.captureSpotShadow();
@@ -165,6 +178,8 @@ namespace engn {
 			m_normalGroup.render();
 			m_dissolutionGroup.fillInstanceBuffer();
 			m_dissolutionGroup.render();
+			m_incinerationGroup.fillInstanceBuffer();
+			m_incinerationGroup.render();
 		}
 
 		void MeshSystem::renderDepthCubemaps()
@@ -183,6 +198,8 @@ namespace engn {
 				m_normalGroup.render();
 				m_dissolutionGroup.fillInstanceBuffer();
 				m_dissolutionGroup.render();
+				m_incinerationGroup.fillInstanceBuffer();
+				m_incinerationGroup.render();
 			}
 		}
 
@@ -199,6 +216,16 @@ namespace engn {
 		void MeshSystem::removeDissolutionInstance(const InstanceProperties& instanceData)
 		{
 			m_dissolutionGroup.removeInstance(instanceData);
+		}
+
+		std::pair<uint32_t, InstanceProperties> MeshSystem::addIncinerationInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceIncineration& inc)
+		{
+			return m_incinerationGroup.addModel(mod, mtrl, inc);
+		}
+
+		void MeshSystem::removeIncinerationInstance(const InstanceProperties& instanceData)
+		{
+			m_incinerationGroup.removeInstance(instanceData);
 		}
 
 		std::pair<uint32_t, InstanceProperties> MeshSystem::addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc)
@@ -284,7 +311,7 @@ namespace engn {
 				data.depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 				data.depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
 
-				data.stencilRef = (type == DISSOLUTION_RENDER || type == NORMAL_RENDER) ? PBR_STENCIL_REF : EMISSION_STENCIL_REF;
+				data.stencilRef = (type == DISSOLUTION_RENDER || type == NORMAL_RENDER || type == INCINERATION_RENDER) ? PBR_STENCIL_REF : EMISSION_STENCIL_REF;
 
 				data.blendDesc.BlendEnable = false;
 				data.blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;

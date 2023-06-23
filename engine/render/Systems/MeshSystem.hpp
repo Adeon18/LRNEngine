@@ -29,6 +29,7 @@ namespace engn {
 		enum GroupTypes {
 			NORMAL,
 			DISSOLUTION,
+			INCINERATION,
 			HOLOGRAM,
 			EMISSION_ONLY
 		};
@@ -53,9 +54,20 @@ namespace engn {
 			uint32_t matrixIndex;
 		};
 
+		//! The instance data struct that is in respective groups, stores rayHitPoint in xyz and max radius in .a, spawn times and matrix index
+		struct GroupInstanceIncineration {
+			XMVECTOR rayHitPointAndMaxRadius;
+			XMVECTOR time;
+			uint32_t matrixIndex;
+		};
+
 		template<typename I, typename M>
 		class RenderGroup {
-			using GroupInstance = std::conditional_t<std::is_same_v<I, Instance>, GroupInstanceDefault, std::conditional_t<std::is_same_v<I, InstanceDissolution>, GroupInstanceDissolution, void>>;
+			using GroupInstance =
+				std::conditional_t<std::is_same_v<I, Instance>, GroupInstanceDefault,
+				std::conditional_t<std::is_same_v<I, InstanceDissolution>, GroupInstanceDissolution,
+				std::conditional_t<std::is_same_v<I, InstanceIncineration>, GroupInstanceIncineration,
+				void>>>;
 		public:
 			struct PerMaterial {
 				M material;
@@ -187,10 +199,12 @@ namespace engn {
 									properties.second.instanceIdx = perMaterial.instances.size();
 									if constexpr (std::is_same_v<I, InstanceDissolution>) {
 										perMaterial.instances.push_back({ inc.time, properties.first });
-									}
-									else if constexpr (std::is_same_v <I, Instance>) {
+									} else if constexpr (std::is_same_v<I, InstanceIncineration>) {
+										perMaterial.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+									} else if constexpr (std::is_same_v <I, Instance>) {
 										perMaterial.instances.push_back({ inc.color, properties.first });
 									}
+
 									modelIsAdded.addedAsInstance = true;
 								}
 								++matIdx;
@@ -204,6 +218,9 @@ namespace engn {
 								perMat.material = mtrl;
 								if constexpr (std::is_same_v<I, InstanceDissolution>) {
 									perMat.instances.push_back({ inc.time, properties.first });
+								}
+								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
+									perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
 									perMat.instances.push_back({ inc.color, properties.first });
@@ -242,6 +259,9 @@ namespace engn {
 						if constexpr (std::is_same_v<I, InstanceDissolution>) {
 							perMat.instances.push_back({ inc.time, properties.first });
 						}
+						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
 						}
@@ -253,6 +273,9 @@ namespace engn {
 						perMat.material = mtrl;
 						if constexpr (std::is_same_v<I, InstanceDissolution>) {
 							perMat.instances.push_back({ inc.time, properties.first });
+						}
+						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
 						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
@@ -311,13 +334,17 @@ namespace engn {
 							uint32_t insIdx = 0;
 							for (uint32_t index = 0; index < numModelInstances; ++index)
 							{
-								// Dangerous! TODO SFINAE
 								I ins;
 								ins.modelToWorld = TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex);
 								// TODO: VERY MUSH UNOPTIMIZED - can try to save the matrix with the help of Id+1, etc.
 								ins.modelToWorldInv = XMMatrixInverse(nullptr, TransformSystem::getInstance().getMatrixById(material.instances[index].matrixIndex));
 								if constexpr (std::is_same_v<I, InstanceDissolution>) {
 									ins.time = material.instances[index].time;
+								}
+								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
+									ins.rayHitPointAndMaxRadius = material.instances[index].rayHitPointAndMaxRadius;
+									ins.time = material.instances[index].time;
+									ins.objectId = insIdx + matIdx + modIdx + m_type;
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
 									ins.color = material.instances[index].color;
@@ -440,6 +467,8 @@ namespace engn {
 			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			std::pair<uint32_t, InstanceProperties> addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceDissolution& inc);
 			void removeDissolutionInstance(const InstanceProperties& instanceData);
+			std::pair<uint32_t, InstanceProperties> addIncinerationInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceIncineration& inc);
+			void removeIncinerationInstance(const InstanceProperties& instanceData);
 			std::pair<uint32_t, InstanceProperties> addHologramInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			std::pair<uint32_t, InstanceProperties> addEmissionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			//! Add offset to a specified instance, used for dragging
@@ -456,6 +485,7 @@ namespace engn {
 			//! Init render groups and set respective parameters
 			void initNormalGroup();
 			void initDissolutionGroup();
+			void initIncinerationGroup();
 			void initHologramGroup();
 			void initEmissionGroup();
 			//! Initialize all the pipelines
@@ -470,6 +500,7 @@ namespace engn {
 			// These can have different instances and materials, hence cannot wrap in vector:(
 			RenderGroup<Instance, Material> m_normalGroup;
 			RenderGroup<InstanceDissolution, Material> m_dissolutionGroup;
+			RenderGroup<InstanceIncineration, Material> m_incinerationGroup;
 			RenderGroup<Instance, Material> m_hologramGroup;
 			RenderGroup<Instance, Material> m_emissionOnlyGroup;
 
@@ -510,6 +541,25 @@ namespace engn {
 				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			};
 
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_INCINERATION[16] = {
+				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BITANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"MODEL2WORLD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLD", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 1, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 80, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 2, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 96, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"POSANDRADIUS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 160, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+			};
+
 			D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{};
 			D3D11_DEPTH_STENCIL_DESC DEFAULT_DEPTH_STENSIL_STATE_DESC{};
 
@@ -543,6 +593,22 @@ namespace engn {
 						L"",
 						L"",
 						SHADER_FOLDER + L"PSDissolutionDeferred.cso",
+						D3D11_RASTERIZER_DESC{},
+						D3D11_DEPTH_STENCIL_DESC{},
+						D3D11_RENDER_TARGET_BLEND_DESC{}
+					}
+				},
+				{
+					PipelineTypes::INCINERATION_RENDER,
+					PipelineData{
+						DEFAULT_LAYOUT_INCINERATION,
+						ARRAYSIZE(DEFAULT_LAYOUT_INCINERATION),
+						D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+						SHADER_FOLDER + L"VSIncineration.cso",
+						L"",
+						L"",
+						L"",
+						SHADER_FOLDER + L"PSIncinerationDeferred.cso",
 						D3D11_RASTERIZER_DESC{},
 						D3D11_DEPTH_STENCIL_DESC{},
 						D3D11_RENDER_TARGET_BLEND_DESC{}

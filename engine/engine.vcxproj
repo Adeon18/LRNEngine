@@ -75,6 +75,7 @@
     <ClInclude Include="source\dragger\MeshDragger.hpp" />
     <ClInclude Include="source\math\Ray.hpp" />
     <ClInclude Include="source\mesh\Mesh.hpp" />
+    <ClInclude Include="source\remover\MeshRemover.hpp" />
     <ClInclude Include="source\spawner\MeshSpawner.hpp" />
     <ClInclude Include="utils\Logger\Logger.hpp" />
     <ClInclude Include="utils\ModelManager\ModelManager.hpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="source\caster\Caster.cpp" />
     <ClCompile Include="source\dragger\MeshDragger.cpp" />
     <ClCompile Include="source\math\Ray.cpp" />
+    <ClCompile Include="source\remover\MeshRemover.cpp" />
     <ClCompile Include="source\spawner\MeshSpawner.cpp" />
     <ClCompile Include="source\utility\utility.cpp" />
     <ClCompile Include="utils\Logger\Logger.cpp" />
@@ -301,6 +303,26 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\render\Graphics\shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\render\Graphics\shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\render\Graphics\shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\incineration\PSIncinerationDeferred.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\incineration\VSIncineration.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\normal\PSBasicColorDeferred.hlsl">
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
@@ -685,6 +707,7 @@
     <None Include="render\Graphics\shaders\globals.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
+    <None Include="render\Graphics\shaders\incineration\IncinerationStructs.hlsli" />
     <None Include="render\Graphics\shaders\lighting_blinn_phong.hlsli" />
     <None Include="render\Graphics\shaders\lighting_cook_torrance.hlsli" />
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli" />

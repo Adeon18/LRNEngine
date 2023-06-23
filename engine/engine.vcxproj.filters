@@ -273,6 +273,9 @@
     <ClInclude Include="render\Graphics\DXShaders\ComputeShader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\remover\MeshRemover.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">
@@ -419,6 +422,9 @@
     <ClCompile Include="render\Graphics\DXShaders\ComputeShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\remover\MeshRemover.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="render\Graphics\shaders\normal\VSBasicColor.hlsl">
@@ -518,6 +524,8 @@
     <FxCompile Include="render\Graphics\shaders\post_process\PSFXAA.hlsl" />
     <FxCompile Include="render\Graphics\shaders\decals\VSDecals.hlsl" />
     <FxCompile Include="render\Graphics\shaders\decals\PSDecals.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\incineration\PSIncinerationDeferred.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\incineration\VSIncineration.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
@@ -554,5 +562,6 @@
     <None Include="render\Graphics\shaders\dissolution\DissolutionStructs.hlsli" />
     <None Include="render\Graphics\shaders\post_process\NvidiaFXAA3_11.hlsli" />
     <None Include="render\Graphics\shaders\decals\DecalStructs.hlsli" />
+    <None Include="render\Graphics\shaders\incineration\IncinerationStructs.hlsli" />
   </ItemGroup>
 </Project>
