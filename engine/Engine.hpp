@@ -3,6 +3,7 @@
 #include "source/dragger/MeshDragger.hpp"
 #include "source/spawner/MeshSpawner.hpp"
 #include "source/caster/Caster.hpp"
+#include "source/remover/MeshRemover.hpp"
 
 #include "input/Mouse.hpp"
 #include "input/Keyboard.hpp"
@@ -70,6 +71,7 @@ namespace engn {
 		drag::MeshDragger m_dragger;
 		spwn::MeshSpawner m_spawner;
 		cast::Caster m_caster;
+		rm::MeshRemover m_remover;
 
 		rend::RenderData m_renderData;
 		rend::RenderModeFlags m_renderFlags;
@@ -82,6 +84,8 @@ namespace engn {
 
 		//! Handle object spawning with updating animation
 		void handleSpawning();
+		//! Handle object removal
+		void handleRemoving();
 		//! Handle the spawning of particles on mouse press
 		void handleParticleSpawning();
 		//! Handle the spawning of decals on G press

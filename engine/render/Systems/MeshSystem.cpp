@@ -208,6 +208,11 @@ namespace engn {
 			return m_normalGroup.addModel(mod, mtrl, inc);
 		}
 
+		void MeshSystem::removeNormalInstance(const InstanceProperties& instanceData)
+		{
+			m_normalGroup.removeInstance(instanceData);
+		}
+
 		std::pair<uint32_t, InstanceProperties> MeshSystem::addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceDissolution& inc)
 		{
 			return m_dissolutionGroup.addModel(mod, mtrl, inc);
@@ -345,6 +350,31 @@ namespace engn {
 			case GroupTypes::EMISSION_ONLY:
 			{
 				return m_emissionOnlyGroup.getMatrixIdx(insProps);
+			}
+			case GroupTypes::INCINERATION:
+			{
+				return m_incinerationGroup.getMatrixIdx(insProps);
+			}
+			}
+		}
+		std::shared_ptr<mdl::Model> MeshSystem::getModelByInsProps(const InstanceProperties& insProps)
+		{
+			switch (insProps.group) {
+			case GroupTypes::NORMAL:
+			{
+				return m_normalGroup.getModelByInsProps(insProps);
+			}
+			case GroupTypes::HOLOGRAM:
+			{
+				return m_hologramGroup.getModelByInsProps(insProps);
+			}
+			case GroupTypes::EMISSION_ONLY:
+			{
+				return m_emissionOnlyGroup.getModelByInsProps(insProps);
+			}
+			case GroupTypes::INCINERATION:
+			{
+				return m_incinerationGroup.getModelByInsProps(insProps);
 			}
 			}
 		}

@@ -19,6 +19,7 @@ namespace engn {
 			}
 			//! Get the REFERENCE to a matrix in transformsystem by ID
 			XMMATRIX& getMatrixById(uint32_t Id);
+			XMMATRIX getMatrixByIdCopy(uint32_t Id);
 			//! Insert a new transform matrix by index
 			uint32_t addMatrixById(const XMMATRIX& mat);
 			//! Erase matrix given the ID

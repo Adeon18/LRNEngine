@@ -6,6 +6,10 @@ namespace engn {
 		{
 			return m_transformMatrices[Id];
 		}
+		XMMATRIX TransformSystem::getMatrixByIdCopy(uint32_t Id)
+		{
+			return m_transformMatrices[Id];
+		}
 		uint32_t TransformSystem::addMatrixById(const XMMATRIX& mat)
 		{
 			return m_transformMatrices.insert(mat);

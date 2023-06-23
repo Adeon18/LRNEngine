@@ -46,7 +46,7 @@ namespace engn {
 		);
 
 		std::shared_ptr<mdl::Model> mptr = mdl::ModelManager::getInstance().getModel(MODELS["TOWER"]);
-		rend::MeshSystem::getInstance().addIncinerationInstance(
+		rend::MeshSystem::getInstance().addNormalInstance(
 			mptr,
 			{ },
 			{ XMMatrixTranslation(0.0f, 0.0f, 10.0f), {},  {1.0f, 0.0f, 0.0f, 1.0f} }
@@ -144,6 +144,7 @@ namespace engn {
 		handleDragging();
 
 		handleSpawning();
+		handleRemoving();
 		handleDecalSpawning();
 		handleParticleSpawning();
 
@@ -158,6 +159,19 @@ namespace engn {
 		}
 
 		m_spawner.updateInstances(m_renderData.iTime);
+	}
+
+	void Engine::handleRemoving()
+	{
+		auto& keyboard = inp::Keyboard::getInstance();
+		if (!ImGui::IsWindowFocused() && keyboard.isKeyJustPressed(inp::Keyboard::Keys::KEY_DEL)) {
+			auto res = m_caster.castRayAtMouse(m_camera);
+			if (res.hit) {
+				m_remover.removeInstance(res, m_renderData.iTime);
+			}
+		}
+
+		m_remover.updateInstances(m_renderData.iTime);
 	}
 
 	void Engine::handleParticleSpawning()

@@ -150,6 +150,10 @@ namespace engn {
 				return m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex;
 			}
 
+			[[nodiscard]] std::shared_ptr<mdl::Model> getModelByInsProps(const InstanceProperties& insProps) {
+				return m_models[insProps.modelIdx].model;
+			}
+
 			//! Add offset to module by multiplying it by the transformation matrix
 			void addModelRotation(const InstanceProperties& insProps, const XMVECTOR& rotation) {
 				TransformSystem::getInstance().getMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
@@ -463,8 +467,10 @@ namespace engn {
 			void unbindShadows();
 
 			[[nodiscard]] uint32_t getGroupMatrixIdx(const InstanceProperties& insProps);
+			[[nodiscard]] std::shared_ptr<mdl::Model> getModelByInsProps(const InstanceProperties& insProps);
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
+			void removeNormalInstance(const InstanceProperties& instanceData);
 			std::pair<uint32_t, InstanceProperties> addDissolutionInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceDissolution& inc);
 			void removeDissolutionInstance(const InstanceProperties& instanceData);
 			std::pair<uint32_t, InstanceProperties> addIncinerationInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const InstanceIncineration& inc);
