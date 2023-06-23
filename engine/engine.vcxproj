@@ -29,6 +29,7 @@
     <ClInclude Include="render\Graphics\DXRTVs\BindableDepthBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp" />
+    <ClInclude Include="render\Graphics\DXShaders\ComputeShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\DomainShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\GeometryShader.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\HullShader.hpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="render\Graphics\DXRTVs\BindableDepthBuffer.cpp" />
     <ClCompile Include="render\Graphics\DXRTVs\BindableRenderTarget.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\BaseShader.cpp" />
+    <ClCompile Include="render\Graphics\DXShaders\ComputeShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\DomainShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\GeometryShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\HullShader.cpp" />
