@@ -154,6 +154,11 @@ namespace engn {
 				return m_models[insProps.modelIdx].model;
 			}
 
+			// TODO, here should be SFINAE too
+			[[nodiscard]] M getMaterialByInsProps(const InstanceProperties& insProps) {
+				return m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].material;
+			}
+
 			//! Add offset to module by multiplying it by the transformation matrix
 			void addModelRotation(const InstanceProperties& insProps, const XMVECTOR& rotation) {
 				TransformSystem::getInstance().getMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex) *= XMMatrixRotationRollPitchYaw(XMVectorGetX(rotation), XMVectorGetY(rotation), XMVectorGetZ(rotation));
@@ -468,6 +473,7 @@ namespace engn {
 
 			[[nodiscard]] uint32_t getGroupMatrixIdx(const InstanceProperties& insProps);
 			[[nodiscard]] std::shared_ptr<mdl::Model> getModelByInsProps(const InstanceProperties& insProps);
+			[[nodiscard]] Material getMaterialByInsProps(const InstanceProperties& insProps);
 			//! Add a new instance to groups, by filling the respective rendergroup structs
 			std::pair<uint32_t, InstanceProperties> addNormalInstance(std::shared_ptr<mdl::Model> mod, const Material& mtrl, const Instance& inc);
 			void removeNormalInstance(const InstanceProperties& instanceData);

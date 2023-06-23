@@ -378,5 +378,26 @@ namespace engn {
 			}
 			}
 		}
+		Material MeshSystem::getMaterialByInsProps(const InstanceProperties& insProps)
+		{
+			switch (insProps.group) {
+			case GroupTypes::NORMAL:
+			{
+				return m_normalGroup.getMaterialByInsProps(insProps);
+			}
+			case GroupTypes::HOLOGRAM:
+			{
+				return m_hologramGroup.getMaterialByInsProps(insProps);
+			}
+			case GroupTypes::EMISSION_ONLY:
+			{
+				return m_emissionOnlyGroup.getMaterialByInsProps(insProps);
+			}
+			case GroupTypes::INCINERATION:
+			{
+				return m_incinerationGroup.getMaterialByInsProps(insProps);
+			}
+			}
+		}
 	} // rend
 } // engn

@@ -4,8 +4,12 @@ namespace engn {
 	namespace rm {
 		void MeshRemover::removeInstance(const cast::Caster::CollectedData& hitPointData, float currentTime)
 		{
+			// DO NOT DELETE LIGHTS LOL
+			if (hitPointData.insProps.group == rend::GroupTypes::EMISSION_ONLY) { return; }
+
 			auto& meshSystem = rend::MeshSystem::getInstance();
 			std::shared_ptr<mdl::Model> mod = meshSystem.getModelByInsProps(hitPointData.insProps);
+			rend::Material mt = meshSystem.getMaterialByInsProps(hitPointData.insProps);
 			XMMATRIX mat = rend::TransformSystem::getInstance().getMatrixByIdCopy(meshSystem.getGroupMatrixIdx(hitPointData.insProps));
 			XMVECTOR hitPosAndRadius = hitPointData.insHit.pos;
 			hitPosAndRadius = XMVectorSetW(hitPosAndRadius, 1);
