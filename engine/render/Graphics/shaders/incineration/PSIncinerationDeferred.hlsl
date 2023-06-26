@@ -47,20 +47,25 @@ float3 getNormalFromTexture(float2 texCoords, float3x3 TBN)
 #define MODE 1
 
 static const float DISSOLUTION_BORDER_WIDTH = 0.15f;
+static const float BORDER_THICKNESS = 0.05f;
 
 static const float3 DISSOLUTION_COLOR = float3(1.0f, 0.5f, 0.0f);
 
 PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
 {
+    float dissolutionIntensity = 0;
     //! Calculate the dissolution effect and discard pixels with no opacity
-    float noise = g_noiseDissolution.Sample(g_linearWrap, inp.outTexCoord).x;
-    float timeNormalized = (iTime - inp.outTime.x) / inp.outTime.z;
-    float a = noise - 1 + timeNormalized + DISSOLUTION_BORDER_WIDTH;
-    float finalA = (a < 0) ? 1 : 0;
-    float dissolutionIntensity = max(0, DISSOLUTION_BORDER_WIDTH - abs(a)) / DISSOLUTION_BORDER_WIDTH;
-    if (finalA == 0)
+    if (length(inp.worldPos - inp.hitPosAndMaxRad.xyz) < inp.currentRad)
     {
-        discard;
+        float noise = g_noiseDissolution.Sample(g_linearWrap, inp.outTexCoord).x;
+        float timeNormalized = (iTime - inp.outTime.x) / inp.outTime.z;
+        float a = noise - 1 + timeNormalized + BORDER_THICKNESS;
+        float finalA = (a < 0) ? 1 : 0;
+        dissolutionIntensity = max(0, BORDER_THICKNESS - abs(a)) / BORDER_THICKNESS;
+        if (finalA == 0)
+        {
+            discard;
+        }
     }
     
     PS_OUTPUT_DEFERRED output;

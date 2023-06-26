@@ -27,6 +27,7 @@ struct PS_INPUT
     float2 outTexCoord : TEXCOORD;
     float4 outTime : TIME;
     float3x3 TBN : TBN;
+    float4 hitPosAndMaxRad : HPAMR;
     float currentRad : RAD;
 };
 
