@@ -40,7 +40,7 @@ namespace engn {
 		
 		void MeshSystem::render(const RenderModeFlags& flags)
 		{
-			auto& geomWidgetData = UI::instance().getGeomWidgetData();
+			/*auto& geomWidgetData = UI::instance().getGeomWidgetData();
 
 			//// Hologram group
 			m_hologramGroup.fillInstanceBuffer();
@@ -88,7 +88,7 @@ namespace engn {
 			this->bindPipelineViaType(PipelineTypes::DISSOLUTION_RENDER);
 			m_dissolutionGroup.render();
 
-			m_shadowSubSystem.unbindDepthBuffers();
+			m_shadowSubSystem.unbindDepthBuffers();*/
 
 		}
 
@@ -152,6 +152,11 @@ namespace engn {
 			m_incinerationGroup.fillInstanceBuffer();
 			this->bindPipelineViaType(PipelineTypes::INCINERATION_RENDER);
 			m_incinerationGroup.render();
+		}
+
+		void MeshSystem::updateInstanceData(float iTime)
+		{
+			m_incinerationGroup.updateInstanceData(iTime);
 		}
 
 		void MeshSystem::renderDepth2D()

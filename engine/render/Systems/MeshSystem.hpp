@@ -58,6 +58,7 @@ namespace engn {
 		struct GroupInstanceIncineration {
 			XMVECTOR rayHitPointAndMaxRadius;
 			XMVECTOR time;
+			XMFLOAT2 prevCurRad;
 			uint32_t matrixIndex;
 		};
 
@@ -210,7 +211,7 @@ namespace engn {
 									if constexpr (std::is_same_v<I, InstanceDissolution>) {
 										perMaterial.instances.push_back({ inc.time, properties.first });
 									} else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-										perMaterial.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+										perMaterial.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0} , properties.first });
 									} else if constexpr (std::is_same_v <I, Instance>) {
 										perMaterial.instances.push_back({ inc.color, properties.first });
 									}
@@ -230,7 +231,7 @@ namespace engn {
 									perMat.instances.push_back({ inc.time, properties.first });
 								}
 								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-									perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+									perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
 									perMat.instances.push_back({ inc.color, properties.first });
@@ -270,7 +271,7 @@ namespace engn {
 							perMat.instances.push_back({ inc.time, properties.first });
 						}
 						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
 						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
@@ -285,7 +286,7 @@ namespace engn {
 							perMat.instances.push_back({ inc.time, properties.first });
 						}
 						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, properties.first });
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
 						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
@@ -303,6 +304,29 @@ namespace engn {
 				m_models.push_back(newModel);
 
 				return properties;
+			}
+
+			//! Update instance data per frame if needed
+			void updateInstanceData(float iTime) {
+				for (auto& model : m_models)
+				{
+					for (uint32_t meshIndex = 0; meshIndex < model.perMesh.size(); ++meshIndex)
+					{
+						for (auto& material : model.perMesh[meshIndex])
+						{
+							auto& instances = material.instances;
+							uint32_t numModelInstances = instances.size();
+							for (uint32_t index = 0; index < numModelInstances; ++index)
+							{
+								// For now, only radiuses need updating
+								if constexpr (std::is_same_v<I, InstanceIncineration>) {
+									material.instances[index].prevCurRad.x = material.instances[index].prevCurRad.y;
+									material.instances[index].prevCurRad.y = XMVectorGetW(material.instances[index].rayHitPointAndMaxRadius) * (iTime - XMVectorGetX(material.instances[index].time)) / XMVectorGetZ(material.instances[index].time);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			//! Fill the data to be passed by instance
@@ -330,13 +354,13 @@ namespace engn {
 				// Fill mapped buffer
 				uint32_t copiedNum = 0;
 				uint32_t modIdx = 0;
-				for (const auto& model : m_models)
+				for (auto& model : m_models)
 				{
 					for (uint32_t meshIndex = 0; meshIndex < model.perMesh.size(); ++meshIndex)
 					{
 						const mdl::Mesh& mesh = model.model->getMeshes()[meshIndex];
 						uint32_t matIdx = 0;
-						for (const auto& material : model.perMesh[meshIndex])
+						for (auto& material : model.perMesh[meshIndex])
 						{
 							auto& instances = material.instances;
 
@@ -354,6 +378,8 @@ namespace engn {
 								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
 									ins.rayHitPointAndMaxRadius = material.instances[index].rayHitPointAndMaxRadius;
 									ins.time = material.instances[index].time;
+									ins.prevCurRad.x = material.instances[index].prevCurRad.x;
+									ins.prevCurRad.y = material.instances[index].prevCurRad.y;
 									ins.objectId = insIdx + matIdx + modIdx + m_type;
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
@@ -459,6 +485,9 @@ namespace engn {
 			//! Render all of the meshes that use PRB shading
 			void renderPBR(const RenderModeFlags& flags);
 
+			//! Update instance data of all groups, FOR NOW ONLY INCINERATION
+			void updateInstanceData(float iTime);
+
 			//! Precompute the Directional and SpotLight shadow maps into the respective textures
 			void renderDepth2D();
 
@@ -554,7 +583,7 @@ namespace engn {
 				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			};
 
-			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_INCINERATION[16] = {
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_INCINERATION[17] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -570,7 +599,8 @@ namespace engn {
 				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"POSANDRADIUS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 160, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+				{"PREVCURRAD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 1, 160, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 168, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
 			};
 
 			D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{};

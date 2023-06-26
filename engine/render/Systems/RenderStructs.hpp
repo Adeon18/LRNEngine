@@ -30,6 +30,8 @@ namespace engn {
 			XMVECTOR rayHitPointAndMaxRadius;
 			//! XY store spawn time, ZW store spawn duration
 			XMVECTOR time;
+			// Prev frame radius and current frame radius
+			XMFLOAT2 prevCurRad;
 			uint32_t objectId;
 		};
 

@@ -15,6 +15,7 @@ struct VS_INPUT
     float4 modelToWorldInv3 : MODEL2WORLDINV3;
     float4 hitPosAndMaxRadius : POSANDRADIUS;
     float4 time : TIME;
+    float2 prevCurRad : PREVCURRAD;
     uint objectID : OBJECTID;
 };
 
@@ -26,6 +27,7 @@ struct PS_INPUT
     float2 outTexCoord : TEXCOORD;
     float4 outTime : TIME;
     float3x3 TBN : TBN;
+    float currentRad : RAD;
 };
 
 struct PS_OUTPUT_DEFERRED

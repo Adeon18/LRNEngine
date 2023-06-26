@@ -53,15 +53,15 @@ static const float3 DISSOLUTION_COLOR = float3(1.0f, 0.5f, 0.0f);
 PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
 {
     //! Calculate the dissolution effect and discard pixels with no opacity
-    /*float noise = g_noiseDissolution.Sample(g_linearWrap, inp.outTexCoord).x;
+    float noise = g_noiseDissolution.Sample(g_linearWrap, inp.outTexCoord).x;
     float timeNormalized = (iTime - inp.outTime.x) / inp.outTime.z;
     float a = noise - 1 + timeNormalized + DISSOLUTION_BORDER_WIDTH;
-    float finalA = (a < 0) ? 0 : 1;
+    float finalA = (a < 0) ? 1 : 0;
     float dissolutionIntensity = max(0, DISSOLUTION_BORDER_WIDTH - abs(a)) / DISSOLUTION_BORDER_WIDTH;
     if (finalA == 0)
     {
         discard;
-    }*/
+    }
     
     PS_OUTPUT_DEFERRED output;
 
@@ -89,7 +89,7 @@ PS_OUTPUT_DEFERRED main(PS_INPUT inp) : SV_TARGET
     output.albedo = float4(albedo, 1.0f);
     output.normals = float4(macNormPacked, micNormPacked);
     output.roughMet = float2(roughness, metallic);
-    output.emission = float4(0, 0, 0, 0);
+    output.emission = float4(dissolutionIntensity * DISSOLUTION_COLOR, 0);
     output.objectIDs = 0;
     
     return output;

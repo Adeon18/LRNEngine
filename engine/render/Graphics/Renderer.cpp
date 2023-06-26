@@ -59,6 +59,7 @@ namespace engn {
 
 			// ---- Render ----
 			m_fillPerFrameCBs(camPtr, renderData);
+			MeshSystem::getInstance().updateInstanceData(renderData.iTime);
 
 			d3d::s_devcon->PSSetShaderResources(5, 1, m_mainDissolutionNoise->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(6, 1, m_diffuseIrradianceMap->textureView.GetAddressOf());
