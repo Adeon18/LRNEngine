@@ -25,6 +25,7 @@ namespace engn {
 			rend::IndexBuffer& getIndices() { return m_indices; }
 
 			std::string name;
+			geom::BoundingBox box = geom::BoundingBox::empty();
 
 			void fillBuffersFromMeshes();
 		protected:

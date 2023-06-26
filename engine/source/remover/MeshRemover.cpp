@@ -15,7 +15,7 @@ namespace engn {
 			uint32_t matIdx = meshSystem.getGroupMatrixIdx(hitPointData.insProps);
 			XMMATRIX mat = rend::TransformSystem::getInstance().getMatrixByIdCopy(matIdx);
 			XMVECTOR hitPosAndRadius = hitPointData.insHit.pos;
-			hitPosAndRadius = XMVectorSetW(hitPosAndRadius, 2);
+			hitPosAndRadius = XMVectorSetW(hitPosAndRadius, XMVectorGetX(XMVector3Length(mod->box.getMax() - mod->box.getMin())));
 
 			meshSystem.removeNormalInstance(hitPointData.insProps);
 			rend::DecalSystem::getInstance().clearDecalsByInstanceIdx(matIdx);

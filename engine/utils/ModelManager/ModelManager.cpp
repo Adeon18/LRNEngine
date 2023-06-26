@@ -278,6 +278,17 @@ namespace engn {
 			//model.box = {};
 			modelPtr->getMeshes().resize(numMeshes);
 			modelPtr->getMeshOcTrees().resize(numMeshes);
+			
+			XMFLOAT3 xyzBoxMax = {
+				assimpScene->mMeshes[0]->mAABB.mMax.x,
+				assimpScene->mMeshes[0]->mAABB.mMax.y,
+				assimpScene->mMeshes[0]->mAABB.mMax.z,
+			};
+			XMFLOAT3 xyzBoxMin = {
+				assimpScene->mMeshes[0]->mAABB.mMin.x,
+				assimpScene->mMeshes[0]->mAABB.mMin.y,
+				assimpScene->mMeshes[0]->mAABB.mMin.z,
+			};
 
 			// Load all meshes t
 			for (uint32_t i = 0; i < numMeshes; ++i) {
@@ -285,8 +296,20 @@ namespace engn {
 				auto& modelMesh = modelPtr->getMeshes()[i];
 
 				modelMesh.name = assimpMesh->mName.C_Str();
-				modelMesh.box.setMin(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMin));
-				modelMesh.box.setMax(util::aiVector3DtoXMVECTOR(assimpMesh->mAABB.mMax));
+
+				auto maxVec = assimpMesh->mAABB.mMax;
+				auto minVec = assimpMesh->mAABB.mMin;
+
+				if (minVec.x < xyzBoxMin.x) xyzBoxMin.x = minVec.x;
+				if (minVec.y < xyzBoxMin.y) xyzBoxMin.y = minVec.y;
+				if (minVec.z < xyzBoxMin.z) xyzBoxMin.z = minVec.z;
+
+				if (maxVec.x > xyzBoxMax.x) xyzBoxMax.x = maxVec.x;
+				if (maxVec.y > xyzBoxMax.y) xyzBoxMax.y = maxVec.y;
+				if (maxVec.z > xyzBoxMax.z) xyzBoxMax.z = maxVec.z;
+
+				modelMesh.box.setMin(util::aiVector3DtoXMVECTOR(minVec));
+				modelMesh.box.setMax(util::aiVector3DtoXMVECTOR(maxVec));
 
 				modelMesh.vertices.resize(assimpMesh->mNumVertices);
 				modelMesh.triangles.resize(assimpMesh->mNumFaces);
@@ -317,6 +340,10 @@ namespace engn {
 				// Initialize ocTree
 				modelPtr->getMeshOcTrees()[i].initialize(modelPtr->getMeshes()[i]);
 			}
+
+			modelPtr->box.setMin(xyzBoxMin);
+			modelPtr->box.setMax(xyzBoxMax);
+			
 
 			// Load the textures
 			loadTextures(assimpScene, modelPtr, aiTextureType_DIFFUSE, filename);
