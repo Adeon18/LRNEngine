@@ -45,6 +45,9 @@ namespace engn {
 
 			//! Handle the Decal Render(render and filling instance buffers)
 			void handleDecals();
+
+			//! Removes decals bound to a certain instance by the transform matrix instance id(needs to be done at deletion of instance)
+			void clearDecalsByInstanceIdx(uint32_t insIdx);
 		private:
 			DecalSystem() {}
 

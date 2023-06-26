@@ -166,7 +166,8 @@ namespace engn {
 
 			//! Remove the instance of the given model
 			void removeInstance(const InstanceProperties& insProps) {
-				TransformSystem::getInstance().eraseMatrixById(m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex);
+				uint32_t insIdx = m_models[insProps.modelIdx].perMesh[0][insProps.materialIdx].instances[insProps.instanceIdx].matrixIndex;
+				TransformSystem::getInstance().eraseMatrixById(insIdx);
 				for (auto& mesh : m_models[insProps.modelIdx].perMesh) {
 					mesh[insProps.materialIdx].instances.erase(mesh[insProps.materialIdx].instances.begin() + insProps.instanceIdx);
 				}

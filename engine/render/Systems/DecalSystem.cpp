@@ -54,6 +54,18 @@ namespace engn {
 			fillInstanceBuffers();
 			renderInternal();
 		}
+		void DecalSystem::clearDecalsByInstanceIdx(uint32_t insIdx)
+		{
+			auto it = m_decals.begin();
+			while (it != m_decals.end()) {
+				if (it->modelInstanceID == insIdx) {
+					it = m_decals.erase(it);
+				}
+				else {
+					++it;
+				}
+			}
+		}
 		void DecalSystem::initBuffers()
 		{
 		}
