@@ -200,11 +200,12 @@ namespace engn {
 				uint32_t modIdx = 0;
 				for (auto& perModel : m_models) {
 					if (perModel.model->name == mod->name) {
+						uint32_t meshIdx = 0;
 						for (auto& perMesh : perModel.perMesh) {
 							uint32_t matIdx = 0;
 							for (auto& perMaterial : perMesh) {
 								// Push new instance to old material if it is the same
-								if (perMaterial.material == mtrl || mtrl.empty()) {
+								if (perMaterial.material == mtrl || mtrl.empty() || perModel.model->getMeshes()[meshIdx].texturePaths.size() > 0) {
 									properties.second.modelIdx = modIdx;
 									properties.second.materialIdx = matIdx;
 									properties.second.instanceIdx = perMaterial.instances.size();
@@ -221,6 +222,7 @@ namespace engn {
 								++matIdx;
 							}
 							if (!modelIsAdded.addedAsInstance) {
+
 								properties.second.modelIdx = modIdx;
 								properties.second.materialIdx = matIdx;
 								properties.second.instanceIdx = 0;
@@ -239,6 +241,7 @@ namespace engn {
 								perMesh.push_back(perMat);
 								modelIsAdded.addedAsMaterial = true;
 							}
+							++meshIdx;
 						}
 						if (modelIsAdded.wasAdded()) {
 							return properties;
@@ -257,6 +260,7 @@ namespace engn {
 
 					//! If we have textures in model and texture is not explicitly specified, use model textures
 					if (mesh.texturePaths.size() > 0) {
+
 						// TODO: Has a bug that puts only last texture as acrive in case of multiple textures per mesh
 						PerMaterial perMat;
 						perMat.material = {

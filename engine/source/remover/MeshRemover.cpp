@@ -12,6 +12,7 @@ namespace engn {
 			auto& meshSystem = rend::MeshSystem::getInstance();
 			std::shared_ptr<mdl::Model> mod = meshSystem.getModelByInsProps(hitPointData.insProps);
 			rend::Material mt = meshSystem.getMaterialByInsProps(hitPointData.insProps);
+
 			uint32_t matIdx = meshSystem.getGroupMatrixIdx(hitPointData.insProps);
 			XMMATRIX mat = rend::TransformSystem::getInstance().getMatrixByIdCopy(matIdx);
 			XMVECTOR hitPosAndRadius = hitPointData.insHit.pos;
@@ -23,7 +24,7 @@ namespace engn {
 			DespawnEntry dEntry{
 				meshSystem.addIncinerationInstance(
 					mod,
-					{},
+					mt,
 					{
 						mat,
 						{},
