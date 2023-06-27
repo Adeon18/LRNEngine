@@ -5,6 +5,7 @@
 #include "render/Graphics/DXShaders/DomainShader.hpp"
 #include "render/Graphics/DXShaders/GeometryShader.hpp"
 #include "render/Graphics/DXShaders/PixelShader.hpp"
+#include "render/Graphics/DXShaders/ComputeShader.hpp"
 
 namespace engn {
 	namespace rend {

@@ -535,6 +535,7 @@
     <FxCompile Include="render\Graphics\shaders\decals\PSDecals.hlsl" />
     <FxCompile Include="render\Graphics\shaders\incineration\PSIncinerationDeferred.hlsl" />
     <FxCompile Include="render\Graphics\shaders\incineration\VSIncineration.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticlePhysics.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
@@ -572,5 +573,6 @@
     <None Include="render\Graphics\shaders\post_process\NvidiaFXAA3_11.hlsli" />
     <None Include="render\Graphics\shaders\decals\DecalStructs.hlsli" />
     <None Include="render\Graphics\shaders\incineration\IncinerationStructs.hlsli" />
+    <None Include="render\Graphics\shaders\gpuparticles\GPUParticleStructs.hlsli" />
   </ItemGroup>
 </Project>

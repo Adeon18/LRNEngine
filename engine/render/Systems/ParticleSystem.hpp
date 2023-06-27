@@ -108,11 +108,14 @@ namespace engn {
 			void init();
 			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
 
+			void handleGPUParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
+
 			void bindUAVs();
 		private:
 			void initBuffers();
 			void initPipelines();
 			void initTextures();
+			void initShaders();
 
 			//! Update the logic of all the particles
 			void updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
@@ -137,6 +140,9 @@ namespace engn {
 			Pipeline m_pipeline;
 
 			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
+			ComputeShader m_particlePhysicsCS;
+
+			const std::wstring SHADER_FOLDER = util::getExeDirW();
 		};
 	} // rend
 } // engn

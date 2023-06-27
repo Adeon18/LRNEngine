@@ -81,6 +81,8 @@ namespace engn {
 
 			DecalSystem::getInstance().handleDecals();
 
+			ParticleSystem::getInstance().handleGPUParticles(camPtr, renderData.iDt, renderData.iTime);
+
 			// ---- Ressolve Deferred Shading to HDR buffer
 
 			winPtr->bindAndClearInitialRTV(BG_COLOR);

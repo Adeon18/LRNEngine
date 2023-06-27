@@ -123,6 +123,7 @@ namespace engn {
 			initPipelines();
 			initBuffers();
 			initTextures();
+			initShaders();
 		}
 		void ParticleSystem::handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
@@ -135,9 +136,18 @@ namespace engn {
 			fillInstanceBuffer(EMITTER_TYPES::SMOKE);
 			renderInternal(EMITTER_TYPES::SMOKE);
 		}
+		void ParticleSystem::handleGPUParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
+		{
+			m_ringBuffer.clearFromPipeline();
+			m_ringBuffer.bindToCS();
+			m_particlePhysicsCS.bind();
+
+			d3d::s_devcon->Dispatch(512, 1, 1);
+		}
 		void ParticleSystem::bindUAVs()
 		{
-			m_ringBuffer.bind();
+			m_ringBuffer.clearFromCS();
+			m_ringBuffer.bindToPipeline();
 		}
 		void ParticleSystem::initBuffers()
 		{
@@ -211,6 +221,10 @@ namespace engn {
 			smoke.m_particleAtlasRLU = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_RLU);
 			smoke.frameCountH = 8;
 			smoke.frameCountV = 8;
+		}
+		void ParticleSystem::initShaders()
+		{
+			m_particlePhysicsCS.init(SHADER_FOLDER + L"CSParticlePhysics.cso");
 		}
 		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{

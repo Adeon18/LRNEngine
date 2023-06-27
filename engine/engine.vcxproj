@@ -253,6 +253,16 @@
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticlePhysics.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="render\Graphics\shaders\hologram\DSHologram.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Domain</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -712,6 +722,7 @@
     <None Include="render\Graphics\shaders\decals\DecalStructs.hlsli" />
     <None Include="render\Graphics\shaders\dissolution\DissolutionStructs.hlsli" />
     <None Include="render\Graphics\shaders\globals.hlsli" />
+    <None Include="render\Graphics\shaders\gpuparticles\GPUParticleStructs.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramInclude.hlsli" />
     <None Include="render\Graphics\shaders\hologram\HologramStructs.hlsli" />
     <None Include="render\Graphics\shaders\incineration\IncinerationStructs.hlsli" />
