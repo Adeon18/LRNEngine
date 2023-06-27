@@ -23,6 +23,13 @@ namespace engn {
 				desc.MiscFlags = (isBufferIndirect) ? D3D11_RESOURCE_MISC_DRAWINDIRECT_ARGS: 0;
 				desc.ByteWidth = m_byteSize;
 
+				std::array<T, N> test;
+				test.fill(0);
+				D3D11_SUBRESOURCE_DATA sResData;
+				sResData.pSysMem = (void*)test.data();
+				sResData.SysMemPitch = 0;
+				sResData.SysMemSlicePitch = 0;
+
 				HRESULT hr = d3d::s_device->CreateBuffer(&desc, nullptr, m_buffer.ReleaseAndGetAddressOf());
 				if (FAILED(hr)) {
 					Logger::instance().logErr("SimpleBuffer::init::CreateBuffer fail: " + std::system_category().message(hr));

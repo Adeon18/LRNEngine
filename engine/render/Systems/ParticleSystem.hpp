@@ -141,6 +141,7 @@ namespace engn {
 
 			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
 			ComputeShader m_particlePhysicsCS;
+			ComputeShader m_indirectDrawCS;
 
 			const std::wstring SHADER_FOLDER = util::getExeDirW();
 		};

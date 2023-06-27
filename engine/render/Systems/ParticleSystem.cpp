@@ -138,15 +138,17 @@ namespace engn {
 		}
 		void ParticleSystem::handleGPUParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{
-			m_ringBuffer.clearFromPipeline();
+
 			m_ringBuffer.bindToCS();
 			m_particlePhysicsCS.bind();
 
 			d3d::s_devcon->Dispatch(512, 1, 1);
+
+			m_indirectDrawCS.bind();
+			d3d::s_devcon->Dispatch(1, 1, 1);
 		}
 		void ParticleSystem::bindUAVs()
 		{
-			m_ringBuffer.clearFromCS();
 			m_ringBuffer.bindToPipeline();
 		}
 		void ParticleSystem::initBuffers()
@@ -225,6 +227,7 @@ namespace engn {
 		void ParticleSystem::initShaders()
 		{
 			m_particlePhysicsCS.init(SHADER_FOLDER + L"CSParticlePhysics.cso");
+			m_indirectDrawCS.init(SHADER_FOLDER + L"CSParticleIndirectDrawUpdate.cso");
 		}
 		void ParticleSystem::updateParticleLogic(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime)
 		{

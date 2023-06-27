@@ -536,6 +536,7 @@
     <FxCompile Include="render\Graphics\shaders\incineration\PSIncinerationDeferred.hlsl" />
     <FxCompile Include="render\Graphics\shaders\incineration\VSIncineration.hlsl" />
     <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticlePhysics.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticleIndirectDrawUpdate.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

@@ -14,6 +14,8 @@ namespace engn {
 			}
 			// Bind UAVs of buffers to some constant slots
 			void bindToPipeline() {
+				clearFromCS();
+
 				ID3D11UnorderedAccessView* uavArr[2] = {
 					m_particleData.getUAVPtr(),
 					m_rangeBuffer.getUAVPtr()
@@ -28,18 +30,17 @@ namespace engn {
 					uavArr,
 					0
 				);
-
-				//
 			}
 
 			void bindToCS() {
+				clearFromPipeline();
 				ID3D11UnorderedAccessView* uavArr[2] = {
 					m_particleData.getUAVPtr(),
 					m_rangeBuffer.getUAVPtr()
 				};
 				d3d::s_devcon->CSSetUnorderedAccessViews(1, 2, uavArr, 0);
 			}
-
+		private:
 			void clearFromPipeline() {
 				ID3D11UnorderedAccessView* uavArr[2] = {
 					nullptr,
@@ -64,7 +65,7 @@ namespace engn {
 				};
 				d3d::s_devcon->CSSetUnorderedAccessViews(1, 2, uavArr, 0);
 			}
-		private:
+
 			StructuredBuffer<SBT, SBN> m_particleData;
 			SimpleBuffer<int32_t, 8> m_rangeBuffer;
 		};
