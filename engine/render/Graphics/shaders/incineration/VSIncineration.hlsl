@@ -15,6 +15,9 @@ cbuffer perMesh : register(b1)
     float4x4 meshToModelInv;
 };
 
+RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
+RWBuffer<int> g_rangeBuffer : register(u6);
+
 
 PS_INPUT main(VS_INPUT input)
 {
@@ -29,6 +32,18 @@ PS_INPUT main(VS_INPUT input)
     float4 modelPos = mul(float4(input.inPos, 1.0f), meshToModel);
     
     float4 worldPos = mul(modelPos, modelToWorld);
+    
+    int a;
+    GPUStructuredParticle b;
+    b.colorAndAlpha = float4(1, 1, 0, 0);
+    b.centerPosition = float3(1, 1, 1);
+    b.velocity = float3(0, 1, 0);
+    b.size = float2(1, 0.5);
+    b.spawnAtTime = iTime;
+    b.lifeTime = 2;
+    InterlockedExchange(g_rangeBuffer[0], 1, a);
+    g_particleBuffer[0] = b;
+    
     // The world inv is transposed at entering the shader
     float3 worldNorm = normalize(mul(float4(modelNorm, 0.0f), modelToWorldInv)).xyz;
     float3 worldTan = normalize(mul(float4(modelTan, 0.0f), modelToWorldInv)).xyz;

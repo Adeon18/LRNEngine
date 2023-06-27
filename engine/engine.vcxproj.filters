@@ -276,6 +276,15 @@
     <ClInclude Include="source\remover\MeshRemover.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\Graphics\DXBuffers\StructuredBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Systems\RingBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\Graphics\DXBuffers\SimpleBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\D3D\d3d.cpp">

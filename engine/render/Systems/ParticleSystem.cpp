@@ -135,10 +135,15 @@ namespace engn {
 			fillInstanceBuffer(EMITTER_TYPES::SMOKE);
 			renderInternal(EMITTER_TYPES::SMOKE);
 		}
+		void ParticleSystem::bindUAVs()
+		{
+			m_ringBuffer.bind();
+		}
 		void ParticleSystem::initBuffers()
 		{
 			m_particleDataVS.init();
 			m_particleDataPS.init();
+			m_ringBuffer.init();
 		}
 		void ParticleSystem::initPipelines()
 		{

@@ -44,7 +44,7 @@ namespace engn {
 			}
 
 			// Init D3D Device & Context
-			const D3D_FEATURE_LEVEL featureLevelRequested = D3D_FEATURE_LEVEL_11_0;
+			const D3D_FEATURE_LEVEL featureLevelRequested = D3D_FEATURE_LEVEL_11_1;
 			D3D_FEATURE_LEVEL featureLevelInitialized = D3D_FEATURE_LEVEL_11_0; 
 			hr = D3D11CreateDevice(
 				nullptr, // Adapter ptr

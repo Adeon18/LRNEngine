@@ -39,3 +39,13 @@ struct PS_OUTPUT_DEFERRED
     float4 emission : SV_Target3;
     uint objectIDs : SV_Target4;
 };
+
+struct GPUStructuredParticle
+{
+    float4 colorAndAlpha;
+    float3 centerPosition;
+    float3 velocity;
+    float2 size;
+    float spawnAtTime;
+    float lifeTime;
+};

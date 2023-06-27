@@ -26,6 +26,8 @@
     <ClInclude Include="input\Mouse.hpp" />
     <ClInclude Include="render\Graphics\DeferredShading\DeferredRessolver.hpp" />
     <ClInclude Include="render\Graphics\DeferredShading\GBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\SimpleBuffer.hpp" />
+    <ClInclude Include="render\Graphics\DXBuffers\StructuredBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXRTVs\BindableDepthBuffer.hpp" />
     <ClInclude Include="render\Graphics\DXRTVs\BindableRenderTarget.hpp" />
     <ClInclude Include="render\Graphics\DXShaders\BaseShader.hpp" />
@@ -60,6 +62,7 @@
     <ClInclude Include="render\Systems\ParticleSystem.hpp" />
     <ClInclude Include="render\Systems\Pipeline.hpp" />
     <ClInclude Include="render\Systems\RenderStructs.hpp" />
+    <ClInclude Include="render\Systems\RingBuffer.hpp" />
     <ClInclude Include="render\Systems\ShadowSubSystem.hpp" />
     <ClInclude Include="render\Systems\TransformSystem.hpp" />
     <ClInclude Include="render\UI\imgui\imconfig.h" />
@@ -323,6 +326,10 @@
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
       <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="render\Graphics\shaders\normal\PSBasicColorDeferred.hlsl">
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>

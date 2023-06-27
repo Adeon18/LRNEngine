@@ -58,6 +58,7 @@ namespace engn {
 			
 
 			// ---- Render ----
+			ParticleSystem::getInstance().bindUAVs();
 			m_fillPerFrameCBs(camPtr, renderData);
 			MeshSystem::getInstance().updateInstanceData(renderData.iTime);
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Pipeline.hpp"
+#include "RingBuffer.hpp"
 
 #include "render/Graphics/EngineCamera.hpp"
 
@@ -20,6 +21,16 @@ namespace engn {
 			float spawnAtTime;
 			float lifeTime;
 		};
+
+		struct GPUStructuredParticle {
+			XMFLOAT4 colorAndAlpha;
+			XMFLOAT3 centerPosition;
+			XMFLOAT3 velocity;
+			XMFLOAT2 size;
+			float spawnAtTime;
+			float lifeTime;
+		};
+
 
 		class Emitter {
 		public:
@@ -51,7 +62,6 @@ namespace engn {
 			float m_spawnCircleRadius;
 
 			std::shared_ptr<tex::Texture> m_particleAtlasDBF;
-
 			std::vector<Particle> m_particles;
 
 			static constexpr uint32_t PARTICLES_PER_FRAME = 1;
@@ -97,6 +107,8 @@ namespace engn {
 			//! Init all internal data
 			void init();
 			void handleParticles(std::unique_ptr<EngineCamera>& camPtr, float dt, float iTime);
+
+			void bindUAVs();
 		private:
 			void initBuffers();
 			void initPipelines();
@@ -122,8 +134,9 @@ namespace engn {
 			InstanceBuffer<ParticleInstance> m_instanceBuffer;
 			ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
 			ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
-
 			Pipeline m_pipeline;
+
+			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
 		};
 	} // rend
 } // engn
