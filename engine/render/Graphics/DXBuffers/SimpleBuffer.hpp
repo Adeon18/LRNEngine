@@ -61,6 +61,7 @@ namespace engn {
 				}
 			}
 
+			[[nodiscard]] ID3D11Buffer* getBufferPtr() { return m_buffer.Get(); }
 			[[nodiscard]] ID3D11ShaderResourceView** getSRVPtrAddress() { return m_bufferSRV.GetAddressOf(); };
 			[[nodiscard]] ID3D11UnorderedAccessView** getUAVPtrAddress() { return m_bufferUAV.GetAddressOf(); };
 			[[nodiscard]] ID3D11UnorderedAccessView* getUAVPtr() { return m_bufferUAV.Get(); };

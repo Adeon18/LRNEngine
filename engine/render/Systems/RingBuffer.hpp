@@ -38,8 +38,11 @@ namespace engn {
 					m_particleData.getUAVPtr(),
 					m_rangeBuffer.getUAVPtr()
 				};
-				d3d::s_devcon->CSSetUnorderedAccessViews(1, 2, uavArr, 0);
+				d3d::s_devcon->CSSetUnorderedAccessViews(5, 2, uavArr, 0);
 			}
+
+			SimpleBuffer<int32_t, 8>& getRangeBuffer() { return m_rangeBuffer; }
+			ID3D11Buffer* getIndirectBufferPtr() { return m_rangeBuffer.getBufferPtr(); }
 		private:
 			void clearFromPipeline() {
 				ID3D11UnorderedAccessView* uavArr[2] = {
@@ -63,7 +66,7 @@ namespace engn {
 					nullptr,
 					nullptr
 				};
-				d3d::s_devcon->CSSetUnorderedAccessViews(1, 2, uavArr, 0);
+				d3d::s_devcon->CSSetUnorderedAccessViews(5, 2, uavArr, 0);
 			}
 
 			StructuredBuffer<SBT, SBN> m_particleData;

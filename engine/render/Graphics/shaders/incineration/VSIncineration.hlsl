@@ -49,11 +49,15 @@ PS_INPUT main(VS_INPUT input)
         b.size = float2(0.1, 0.1);
         b.spawnAtTime = iTime;
         b.lifeTime = PARTICLE_LIFETIME;
-        if (g_rangeBuffer[0] < 500)
+        int curNum;
+        InterlockedAdd(g_rangeBuffer[0], 0, curNum);
+        if (curNum < 512)
         {
             int prevVal;
+            int prevOffset;
             InterlockedAdd(g_rangeBuffer[0], 1, prevVal);
-            g_particleBuffer[prevVal] = b;
+            InterlockedAdd(g_rangeBuffer[1], 0, prevOffset);
+            g_particleBuffer[prevOffset + prevVal] = b;
         }
     }
     

@@ -2,8 +2,8 @@
 
 
 
-RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u1);
-RWBuffer<int> g_rangeBuffer : register(u2);
+RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
+RWBuffer<int> g_rangeBuffer : register(u6);
 
 static const int MAX_PARTICLES = 512;
 

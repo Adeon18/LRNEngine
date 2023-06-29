@@ -137,11 +137,12 @@ namespace engn {
 			InstanceBuffer<ParticleInstance> m_instanceBuffer;
 			ConstantBuffer<CB_VS_ParticleData> m_particleDataVS;
 			ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
-			Pipeline m_pipeline;
+			Pipeline m_pipelineCPU;
 
 			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
 			ComputeShader m_particlePhysicsCS;
 			ComputeShader m_indirectDrawCS;
+			Pipeline m_pipelineGPU;
 
 			const std::wstring SHADER_FOLDER = util::getExeDirW();
 		};

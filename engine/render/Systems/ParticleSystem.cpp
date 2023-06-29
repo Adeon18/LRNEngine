@@ -129,7 +129,7 @@ namespace engn {
 		{
 			updateParticleLogic(camPtr, dt, iTime);
 
-			bindPipeline(m_pipeline);
+			bindPipeline(m_pipelineCPU);
 
 			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
 			bindTextures(EMITTER_TYPES::SMOKE);
@@ -146,6 +146,12 @@ namespace engn {
 
 			m_indirectDrawCS.bind();
 			d3d::s_devcon->Dispatch(1, 1, 1);
+
+			m_ringBuffer.bindToPipeline();
+			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
+			bindPipeline(m_pipelineGPU);
+
+			d3d::s_devcon->DrawIndexedInstancedIndirect(m_ringBuffer.getIndirectBufferPtr(), 12);
 		}
 		void ParticleSystem::bindUAVs()
 		{
@@ -188,7 +194,7 @@ namespace engn {
 			blendDesc.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
 			blendDesc.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
 
-			PipelineData pipelineData{
+			PipelineData pipelineDataCPU{
 				DEFAULT_LAYOUT_PARTICLES,
 				ARRAYSIZE(DEFAULT_LAYOUT_PARTICLES),
 				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
@@ -202,7 +208,23 @@ namespace engn {
 				blendDesc
 			};
 
-			initPipeline(m_pipeline, pipelineData);
+			initPipeline(m_pipelineCPU, pipelineDataCPU);
+
+			PipelineData pipelineDataGPU{
+				nullptr,
+				0,
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+				shaderFolder + L"VSGPUParticles.cso",
+				L"",
+				L"",
+				L"",
+				shaderFolder + L"PSGPUParticles.cso",
+				rasterizerDesc,
+				depthStencilDesc,
+				blendDesc
+			};
+
+			initPipeline(m_pipelineGPU, pipelineDataGPU);
 		}
 		void ParticleSystem::initTextures()
 		{

@@ -537,6 +537,8 @@
     <FxCompile Include="render\Graphics\shaders\incineration\VSIncineration.hlsl" />
     <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticlePhysics.hlsl" />
     <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticleIndirectDrawUpdate.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\VSGPUParticles.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\PSGPUParticles.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">
