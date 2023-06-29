@@ -19,7 +19,7 @@ cbuffer perMesh : register(b1)
 RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
 RWBuffer<int> g_rangeBuffer : register(u6);
 
-static const float PARTICLE_INITIAL_SPEED = 2.0f;
+static const float PARTICLE_INITIAL_SPEED = 10.0f;
 static const float PARTICLE_LIFETIME = 2.0f;
 
 

@@ -81,8 +81,6 @@ namespace engn {
 
 			DecalSystem::getInstance().handleDecals();
 
-			ParticleSystem::getInstance().handleGPUParticles(camPtr, renderData.iDt, renderData.iTime);
-
 			// ---- Ressolve Deferred Shading to HDR buffer
 
 			winPtr->bindAndClearInitialRTV(BG_COLOR);
@@ -97,6 +95,8 @@ namespace engn {
 			// Resolve particles as in ForwardRender
 			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
+			ParticleSystem::getInstance().handleGPUParticles(camPtr, renderData.iDt, renderData.iTime);
+
 
 			// ---- Post Process ----
 			winPtr->bindAndClearBufferBuforeAA(BG_COLOR);
