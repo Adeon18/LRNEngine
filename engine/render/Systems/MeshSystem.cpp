@@ -172,17 +172,18 @@ namespace engn {
 
 				m_normalGroup.fillInstanceBuffer();
 				m_normalGroup.render();
-				m_dissolutionGroup.fillInstanceBuffer();
-				m_dissolutionGroup.render();
+				//m_dissolutionGroup.fillInstanceBuffer();
+				//m_dissolutionGroup.render();
 				m_incinerationGroup.fillInstanceBuffer();
 				m_incinerationGroup.render();
 			}
 
+			// TODO: FIX SHADOWS LATEEER
 			m_shadowSubSystem.captureSpotShadow();
 			m_normalGroup.fillInstanceBuffer();
 			m_normalGroup.render();
-			m_dissolutionGroup.fillInstanceBuffer();
-			m_dissolutionGroup.render();
+			//m_dissolutionGroup.fillInstanceBuffer();
+			//m_dissolutionGroup.render();
 			m_incinerationGroup.fillInstanceBuffer();
 			m_incinerationGroup.render();
 		}
@@ -201,8 +202,8 @@ namespace engn {
 
 				m_normalGroup.fillInstanceBuffer();
 				m_normalGroup.render();
-				m_dissolutionGroup.fillInstanceBuffer();
-				m_dissolutionGroup.render();
+				//m_dissolutionGroup.fillInstanceBuffer();
+				//m_dissolutionGroup.render();
 				m_incinerationGroup.fillInstanceBuffer();
 				m_incinerationGroup.render();
 			}

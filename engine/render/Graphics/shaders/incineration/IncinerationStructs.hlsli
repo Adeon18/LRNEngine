@@ -1,5 +1,6 @@
 struct VS_INPUT
 {
+    uint vertexId : SV_VertexID;
     float3 inPos : POSITION;
     float3 inNorm : NORMAL;
     float3 inTangent : TANGENT;
@@ -38,14 +39,4 @@ struct PS_OUTPUT_DEFERRED
     float2 roughMet : SV_Target2;
     float4 emission : SV_Target3;
     uint objectIDs : SV_Target4;
-};
-
-struct GPUStructuredParticle
-{
-    float4 colorAndAlpha;
-    float3 centerPosition;
-    float3 velocity;
-    float2 size;
-    float spawnAtTime;
-    float lifeTime;
 };

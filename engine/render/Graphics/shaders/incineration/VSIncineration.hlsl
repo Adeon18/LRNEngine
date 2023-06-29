@@ -1,4 +1,5 @@
 #include "IncinerationStructs.hlsli"
+#include "../gpuparticles/GPUParticleStructs.hlsli"
 
 cbuffer perFrame : register(b0)
 {
@@ -40,24 +41,26 @@ PS_INPUT main(VS_INPUT input)
     float3 worldTan = normalize(mul(float4(modelTan, 0.0f), modelToWorldInv)).xyz;
     float3 worldBiTan = normalize(mul(float4(modelBiTan, 0.0f), modelToWorldInv)).xyz;
     
-    if (length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.y && !((length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.x)))
+    if (input.vertexId % 100 == 0)
     {
-        GPUStructuredParticle b;
-        b.colorAndAlpha = float4(1, 1, 0, 1);
-        b.centerPosition = worldPos.xyz;
-        b.velocity = worldNorm * PARTICLE_INITIAL_SPEED;
-        b.size = float2(0.1, 0.1);
-        b.spawnAtTime = iTime;
-        b.lifeTime = PARTICLE_LIFETIME;
-        int curNum;
-        InterlockedAdd(g_rangeBuffer[0], 0, curNum);
-        if (curNum < 512)
+        if (length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.y && !((length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.x)))
         {
-            int prevVal;
-            int prevOffset;
-            InterlockedAdd(g_rangeBuffer[0], 1, prevVal);
-            InterlockedAdd(g_rangeBuffer[1], 0, prevOffset);
-            g_particleBuffer[prevOffset + prevVal] = b;
+            GPUStructuredParticle b;
+            b.colorAndAlpha = float4(1, 1, 0, 1);
+            b.centerPosition = worldPos.xyz;
+            b.velocity = worldNorm * PARTICLE_INITIAL_SPEED;
+            b.size = float2(0.1, 0.1);
+            b.spawnAtTime = iTime;
+            b.lifeTime = PARTICLE_LIFETIME;
+
+            if (g_rangeBuffer[0] < MAX_PARTICLES)
+            {
+                int prevVal;
+                int prevOffset;
+                InterlockedAdd(g_rangeBuffer[0], 1, prevVal);
+                InterlockedAdd(g_rangeBuffer[1], 0, prevOffset);
+                g_particleBuffer[(prevOffset + prevVal) % MAX_PARTICLES] = b;
+            }
         }
     }
     

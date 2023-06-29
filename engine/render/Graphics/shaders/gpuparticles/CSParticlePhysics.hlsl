@@ -6,9 +6,6 @@ RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
 RWBuffer<int> g_rangeBuffer : register(u6);
 
 
-static const int MAX_PARTICLES = 512;
-
-
 [numthreads(64, 1, 1)]
 void main(uint3 dispatchThreadId : SV_DispatchThreadID)
 {

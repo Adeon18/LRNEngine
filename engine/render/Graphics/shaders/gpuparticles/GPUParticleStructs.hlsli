@@ -7,3 +7,5 @@ struct GPUStructuredParticle
     float spawnAtTime;
     float lifeTime;
 };
+
+static const int MAX_PARTICLES = 4096;

@@ -5,8 +5,6 @@
 RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
 RWBuffer<int> g_rangeBuffer : register(u6);
 
-static const int MAX_PARTICLES = 512;
-
 [numthreads(1, 1, 1)]
 void main(uint3 dispatchThreadId : SV_DispatchThreadID)
 {
@@ -14,8 +12,9 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
     if (particleIndex > 0)
         return;
 
-    g_rangeBuffer[1] = (g_rangeBuffer[1] + g_rangeBuffer[2]) % MAX_PARTICLES;
-    g_rangeBuffer[0] = g_rangeBuffer[0] - g_rangeBuffer[2];
+    int a;
+    InterlockedExchange(g_rangeBuffer[1], (g_rangeBuffer[1] + g_rangeBuffer[2]) % MAX_PARTICLES, a);
+    InterlockedAdd(g_rangeBuffer[0], -g_rangeBuffer[2]);
     g_rangeBuffer[2] = 0;
 
     g_rangeBuffer[3] = 6;   // IndexCountPerInstance

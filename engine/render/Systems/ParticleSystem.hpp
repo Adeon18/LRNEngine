@@ -140,7 +140,7 @@ namespace engn {
 			ConstantBuffer<CB_PS_ParticleData> m_particleDataPS;
 			Pipeline m_pipelineCPU;
 
-			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
+			RingBuffer<GPUStructuredParticle, 4096> m_ringBuffer;
 			ComputeShader m_particlePhysicsCS;
 			ComputeShader m_indirectDrawCS;
 			IndexBuffer m_particleGPUIB;

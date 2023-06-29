@@ -142,7 +142,7 @@ namespace engn {
 			m_ringBuffer.bindToCS();
 			m_particlePhysicsCS.bind();
 
-			d3d::s_devcon->Dispatch(512, 1, 1);
+			d3d::s_devcon->Dispatch(2048, 1, 1);
 
 			m_indirectDrawCS.bind();
 			d3d::s_devcon->Dispatch(1, 1, 1);
