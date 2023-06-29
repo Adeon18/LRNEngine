@@ -148,6 +148,7 @@ namespace engn {
 			d3d::s_devcon->Dispatch(1, 1, 1);
 
 			m_ringBuffer.bindToPipeline();
+			m_particleGPUIB.bind();
 			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
 			bindPipeline(m_pipelineGPU);
 
@@ -162,6 +163,12 @@ namespace engn {
 			m_particleDataVS.init();
 			m_particleDataPS.init();
 			m_ringBuffer.init();
+
+			std::vector<DWORD> indices{
+				0, 1, 2, 3, 2, 1
+			};
+
+			m_particleGPUIB.init(indices);
 		}
 		void ParticleSystem::initPipelines()
 		{
@@ -213,7 +220,7 @@ namespace engn {
 			PipelineData pipelineDataGPU{
 				nullptr,
 				0,
-				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 				shaderFolder + L"VSGPUParticles.cso",
 				L"",
 				L"",

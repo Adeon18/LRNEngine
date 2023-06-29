@@ -7,6 +7,7 @@
 
 #include "render/Graphics/DXBuffers/ConstantBuffer.hpp"
 #include "render/Graphics/DXBuffers/InstanceBuffer.hpp"
+#include "render/Graphics/DXBuffers/IndexBuffer.hpp"
 
 #include "utils/TextureManager/TextureManager.hpp"
 
@@ -142,6 +143,7 @@ namespace engn {
 			RingBuffer<GPUStructuredParticle, 512> m_ringBuffer;
 			ComputeShader m_particlePhysicsCS;
 			ComputeShader m_indirectDrawCS;
+			IndexBuffer m_particleGPUIB;
 			Pipeline m_pipelineGPU;
 
 			const std::wstring SHADER_FOLDER = util::getExeDirW();

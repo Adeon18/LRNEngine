@@ -30,7 +30,5 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
 
     // Assign the updated particle back to the output buffer
     g_particleBuffer[particleIndex] = particle;
-    
-    AllMemoryBarrier();
 
 }

@@ -18,7 +18,7 @@ void main(uint3 dispatchThreadId : SV_DispatchThreadID)
     g_rangeBuffer[0] = g_rangeBuffer[0] - g_rangeBuffer[2];
     g_rangeBuffer[2] = 0;
 
-    g_rangeBuffer[3] = 4;   // IndexCountPerInstance
+    g_rangeBuffer[3] = 6;   // IndexCountPerInstance
     g_rangeBuffer[4] = g_rangeBuffer[0];   // InstanceCount
     g_rangeBuffer[5] = 0;   // StartIndexLocation
     g_rangeBuffer[6] = 0;   // BaseVertexLocation
