@@ -35,6 +35,8 @@ Texture2D g_depthTexture : TEXTURE : register(t3);
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
 {
+    float4 color = g_particleTex.Sample(g_linearWrap, inp.uv);
     
-    return g_particleTex.Sample(g_linearWrap, inp.uv);
+    
+    return float4(color.rgb, color.a * inp.color.a);
 }

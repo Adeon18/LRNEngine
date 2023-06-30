@@ -56,7 +56,11 @@ namespace engn {
 			return false;
 #endif
 			
-
+			XMVECTOR pos{ 0, -1, 5, 1 };
+			pos = XMVector3Transform(pos, camPtr->getViewMatrix() * camPtr->getProjMatrix());
+			std::cout << "Pos: " << pos << std::endl;
+			float w = XMVectorGetW(pos);
+			std::cout << "Pos Div W: " << XMVectorDivide(pos, { w, w, w, w }) << std::endl;
 			// ---- Render ----
 			ParticleSystem::getInstance().bindUAVs();
 			m_fillPerFrameCBs(camPtr, renderData);
@@ -94,6 +98,8 @@ namespace engn {
 
 			// Resolve particles as in ForwardRender
 			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+			d3d::s_devcon->CSSetShaderResources(0, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+			d3d::s_devcon->CSSetShaderResources(1, 1, gBuffer.normalsCopy.getSRVPtrAddress());
 			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 			ParticleSystem::getInstance().handleGPUParticles(camPtr, renderData.iDt, renderData.iTime);
 
@@ -115,6 +121,7 @@ namespace engn {
 		{
 			m_globalConstantBufferVS.init();
 			m_globalConstantBufferPS.init();
+			m_globalConstantBufferCS.init();
 		}
 		void Renderer::m_initSamplers()
 		{
@@ -140,6 +147,12 @@ namespace engn {
 			m_globalConstantBufferVS.getData().gResolution = gResolution;
 			XMStoreFloat4(&(m_globalConstantBufferVS.getData().gCameraPosition), camPtr->getCamPosition());
 			m_globalConstantBufferVS.getData().gTime = renderData.iTime;
+			
+			// CS
+			m_globalConstantBufferCS.getData().worldToClip = XMMatrixTranspose(camPtr->getViewMatrix() * camPtr->getProjMatrix());
+			m_globalConstantBufferCS.getData().gResolution = gResolution;
+			XMStoreFloat4(&(m_globalConstantBufferCS.getData().gCameraPosition), camPtr->getCamPosition());
+			m_globalConstantBufferCS.getData().gTime = { renderData.iTime , renderData.iTime, renderData.iDt, renderData.iDt};
 
 			//! Fill global constant PS CB
 			const float res = ReflectionCapture::PFS_TEXTURE_DIMENSION;
@@ -152,9 +165,11 @@ namespace engn {
 			
 			m_globalConstantBufferVS.fill();
 			m_globalConstantBufferPS.fill();
+			m_globalConstantBufferCS.fill();
 			d3d::s_devcon->VSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
 			// For now it is like this
 			d3d::s_devcon->GSSetConstantBuffers(0, 1, m_globalConstantBufferVS.getBufferAddress());
+			d3d::s_devcon->CSSetConstantBuffers(0, 1, m_globalConstantBufferCS.getBufferAddress());
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_globalConstantBufferPS.getBufferAddress());
 		}
 		void Renderer::m_initializeSky()

@@ -31,6 +31,7 @@ namespace engn {
 				return;
 			}
 			d3d::s_devcon->PSSetSamplers(slot, 1, m_samplerState.GetAddressOf());
+			d3d::s_devcon->CSSetSamplers(slot, 1, m_samplerState.GetAddressOf());
 		}
 	} // rend
 } // engn

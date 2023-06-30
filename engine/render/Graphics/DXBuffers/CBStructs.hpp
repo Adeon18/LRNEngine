@@ -23,6 +23,15 @@ namespace engn {
 			XMFLOAT4 gCameraPosition;
 			float gTime;
 		};
+
+		struct CB_CS_RealTimeData {
+			XMMATRIX worldToClip;
+			XMMATRIX worldToClipInv;
+			XMFLOAT4 gResolution;
+			XMFLOAT4 gCameraPosition;
+			XMFLOAT4 gTime; // xy store time, zw store dt
+		};
+
 		//! Skybox data
 		struct CB_VS_SkyBoxData {
 			XMMATRIX worldToView;

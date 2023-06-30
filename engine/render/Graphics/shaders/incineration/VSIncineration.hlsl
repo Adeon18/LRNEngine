@@ -19,7 +19,7 @@ cbuffer perMesh : register(b1)
 RWStructuredBuffer<GPUStructuredParticle> g_particleBuffer : register(u5);
 RWBuffer<int> g_rangeBuffer : register(u6);
 
-static const float PARTICLE_INITIAL_SPEED = 10.0f;
+static const float PARTICLE_INITIAL_SPEED = 3.0f;
 static const float PARTICLE_LIFETIME = 2.0f;
 
 
@@ -41,13 +41,13 @@ PS_INPUT main(VS_INPUT input)
     float3 worldTan = normalize(mul(float4(modelTan, 0.0f), modelToWorldInv)).xyz;
     float3 worldBiTan = normalize(mul(float4(modelBiTan, 0.0f), modelToWorldInv)).xyz;
     
-    if (input.vertexId % 100 == 0)
+    if (1)
     {
         if (length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.y && !((length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.x)))
         {
             GPUStructuredParticle b;
             b.colorAndAlpha = float4(1, 1, 0, 1);
-            b.centerPosition = worldPos.xyz;
+            b.centerPosition = worldPos.xyz + 0.5f * worldNorm;
             b.velocity = worldNorm * PARTICLE_INITIAL_SPEED;
             b.size = float2(0.25, 0.25);
             b.spawnAtTime = iTime;
