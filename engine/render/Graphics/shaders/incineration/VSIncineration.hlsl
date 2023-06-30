@@ -49,7 +49,7 @@ PS_INPUT main(VS_INPUT input)
             b.colorAndAlpha = float4(1, 1, 0, 1);
             b.centerPosition = worldPos.xyz;
             b.velocity = worldNorm * PARTICLE_INITIAL_SPEED;
-            b.size = float2(0.1, 0.1);
+            b.size = float2(0.25, 0.25);
             b.spawnAtTime = iTime;
             b.lifeTime = PARTICLE_LIFETIME;
 

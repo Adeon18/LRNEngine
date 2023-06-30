@@ -150,6 +150,7 @@ namespace engn {
 			m_ringBuffer.bindToPipeline();
 			m_particleGPUIB.bind();
 			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
+			bindTexturesGPU();
 			bindPipeline(m_pipelineGPU);
 
 			d3d::s_devcon->DrawIndexedInstancedIndirect(m_ringBuffer.getIndirectBufferPtr(), 12);
@@ -239,10 +240,12 @@ namespace engn {
 			const std::string SMOKE_DBF = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_DBF.dds";
 			const std::string SMOKE_MVEA = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_MVEA.dds";
 			const std::string SMOKE_RLU = "..\\..\\assets\\Textures\\Atlases\\Particles\\smoke_RLU.dds";
+			const std::string SPARK_TEX = "..\\..\\assets\\Textures\\Particles\\explosion.dds";
 #else
 			const std::string SMOKE_DBF = "..\\assets\\Textures\\Atlases\\Particles\\smoke_DBF.dds";
 			const std::string SMOKE_MVEA = "..\\assets\\Textures\\Atlases\\Particles\\smoke_MVEA.dds";
 			const std::string SMOKE_RLU = "..\\assets\\Textures\\Atlases\\Particles\\smoke_RLU.dds";
+			const std::string SPARK_TEX = "..\\assets\\Textures\\Particles\\explosion.dds";
 #endif // !_WIN64
 
 			std::string exeDir = util::getExeDir();
@@ -252,6 +255,8 @@ namespace engn {
 			smoke.m_particleAtlasRLU = tex::TextureManager::getInstance().getTexture(exeDir + SMOKE_RLU);
 			smoke.frameCountH = 8;
 			smoke.frameCountV = 8;
+
+			m_sparkTexture = tex::TextureManager::getInstance().getTexture(exeDir + SPARK_TEX);
 		}
 		void ParticleSystem::initShaders()
 		{
@@ -299,6 +304,10 @@ namespace engn {
 			d3d::s_devcon->PSSetShaderResources(0, 1, m_emitterTextures[type].m_particleAtlasDBF->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(1, 1, m_emitterTextures[type].m_particleAtlasMVEA->textureView.GetAddressOf());
 			d3d::s_devcon->PSSetShaderResources(2, 1, m_emitterTextures[type].m_particleAtlasRLU->textureView.GetAddressOf());
+		}
+		void ParticleSystem::bindTexturesGPU()
+		{
+			d3d::s_devcon->PSSetShaderResources(0, 1, m_sparkTexture->textureView.GetAddressOf());
 		}
 		void ParticleSystem::fillInstanceBuffer(EMITTER_TYPES type)
 		{

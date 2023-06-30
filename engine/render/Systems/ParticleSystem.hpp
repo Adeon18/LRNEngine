@@ -125,6 +125,8 @@ namespace engn {
 
 			//! Bind patricleTextures for a specific emitterType
 			void bindTextures(EMITTER_TYPES type);
+			//! Bind textures for GPU particles
+			void bindTexturesGPU();
 			//! Fill the instance buffer for certain emitter type, should be called before render
 			void fillInstanceBuffer(EMITTER_TYPES type);
 			//! Render the particles of a certain emitter type
@@ -145,6 +147,7 @@ namespace engn {
 			ComputeShader m_indirectDrawCS;
 			IndexBuffer m_particleGPUIB;
 			Pipeline m_pipelineGPU;
+			std::shared_ptr<tex::Texture> m_sparkTexture;
 
 			const std::wstring SHADER_FOLDER = util::getExeDirW();
 		};
