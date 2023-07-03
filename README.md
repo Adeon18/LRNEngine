@@ -108,3 +108,10 @@ The `BAKE_CUBEMAPS` mode also prints the sum over the hemisphere into a `logs/en
 - Added Nvidia FXAA 3.11 with ability to tweak parameters in IMGUI
 - Added a decal system. On `G` key pressed a decal is spawned **WHERE THE CURSOR IS**. A decal has a random rotation and a random color from
 a 10-color-pool. Normal maps for decals are supported.
+
+## HW13: GPU Particles
+- Added a possibility to remove meshes by clicking `Del` while having a cursor on a mesh.
+- Added GPU particles with depthbuffer collision and random color for particle.
+- Rendering via `DrawIndexedInstancedIndirect`.
+- Particles use ringBuffer to successfully respawn.
+- Particles have diffuse only reflections.
