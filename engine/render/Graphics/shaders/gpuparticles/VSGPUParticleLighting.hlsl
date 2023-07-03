@@ -103,7 +103,7 @@ VS_OUTPUT main(VS_IN input)
     float4 worldPos = float4(v.pos, 1.0f);
     
     output.clipPos = mul(worldPos, worldToClip);
-    output.worldPos = worldPos;
+    output.worldPos = float4(particle.centerPosition, 1.0f);
     output.uv = v.uv;
     output.color = particle.colorAndAlpha;
     output.spawnTime = particle.spawnAtTime;

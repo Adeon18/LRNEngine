@@ -37,6 +37,5 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
 {
     float4 color = g_particleTex.Sample(g_linearWrap, inp.uv);
     
-    
-    return float4(color.rgb, color.a * inp.color.a);
+    return float4(color.rgb * inp.color.rgb, color.a * inp.color.a);
 }
