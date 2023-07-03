@@ -539,6 +539,8 @@
     <FxCompile Include="render\Graphics\shaders\gpuparticles\CSParticleIndirectDrawUpdate.hlsl" />
     <FxCompile Include="render\Graphics\shaders\gpuparticles\VSGPUParticles.hlsl" />
     <FxCompile Include="render\Graphics\shaders\gpuparticles\PSGPUParticles.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\VSGPUParticleLighting.hlsl" />
+    <FxCompile Include="render\Graphics\shaders\gpuparticles\PSGPUParticleLighting.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="render\Graphics\shaders\normal\BasicColorStructs.hlsli">

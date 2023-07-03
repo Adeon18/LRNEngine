@@ -56,11 +56,6 @@ namespace engn {
 			return false;
 #endif
 			
-			XMVECTOR pos{ 0, -1, 5, 1 };
-			pos = XMVector3Transform(pos, camPtr->getViewMatrix() * camPtr->getProjMatrix());
-			std::cout << "Pos: " << pos << std::endl;
-			float w = XMVectorGetW(pos);
-			std::cout << "Pos Div W: " << XMVectorDivide(pos, { w, w, w, w }) << std::endl;
 			// ---- Render ----
 			ParticleSystem::getInstance().bindUAVs();
 			m_fillPerFrameCBs(camPtr, renderData);
@@ -97,10 +92,13 @@ namespace engn {
 			MeshSystem::getInstance().unbindShadows();
 
 			// Resolve particles as in ForwardRender
-			d3d::s_devcon->PSSetShaderResources(3, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
+			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
+			d3d::s_devcon->PSSetShaderResources(1, 1, gBuffer.albedo.getSRVPtrAddress());
+			d3d::s_devcon->PSSetShaderResources(2, 1, gBuffer.normals.getSRVPtrAddress());
+			d3d::s_devcon->PSSetShaderResources(3, 1, gBuffer.roughMet.getSRVPtrAddress());
+			d3d::s_devcon->PSSetShaderResources(4, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 			d3d::s_devcon->CSSetShaderResources(0, 1, winPtr->getCopiedDepthTextureSRVRef().GetAddressOf());
 			d3d::s_devcon->CSSetShaderResources(1, 1, gBuffer.normalsCopy.getSRVPtrAddress());
-			ParticleSystem::getInstance().handleParticles(camPtr, renderData.iDt, renderData.iTime);
 			ParticleSystem::getInstance().handleGPUParticles(camPtr, renderData.iDt, renderData.iTime);
 
 

@@ -30,7 +30,7 @@ cbuffer perFrame2 : register(b1)
 
 Texture2D g_particleTex : TEXTURE : register(t0);
 
-Texture2D g_depthTexture : TEXTURE : register(t3);
+Texture2D g_depthTexture : TEXTURE : register(t4);
 
 
 float4 main(VS_OUTPUT inp) : SV_TARGET

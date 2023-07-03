@@ -149,10 +149,12 @@ namespace engn {
 
 			m_ringBuffer.bindToPipeline();
 			m_particleGPUIB.bind();
-			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
 			bindTexturesGPU();
-			bindPipeline(m_pipelineGPU);
+			bindBuffers(camPtr, EMITTER_TYPES::SMOKE);
+			bindPipeline(m_pipelineGPULighting);
+			d3d::s_devcon->DrawIndexedInstancedIndirect(m_ringBuffer.getIndirectBufferPtr(), 12);
 
+			bindPipeline(m_pipelineGPU);
 			d3d::s_devcon->DrawIndexedInstancedIndirect(m_ringBuffer.getIndirectBufferPtr(), 12);
 		}
 		void ParticleSystem::bindUAVs()
@@ -233,6 +235,32 @@ namespace engn {
 			};
 
 			initPipeline(m_pipelineGPU, pipelineDataGPU);
+
+			D3D11_RENDER_TARGET_BLEND_DESC blendDescAdditive{};
+			blendDescAdditive.BlendEnable = true;
+			blendDescAdditive.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+			blendDescAdditive.DestBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+			blendDescAdditive.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+			blendDescAdditive.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+			blendDescAdditive.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+			blendDescAdditive.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+			blendDescAdditive.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+
+			PipelineData pipelineDataGPULighting{
+				nullptr,
+				0,
+				D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+				shaderFolder + L"VSGPUParticleLighting.cso",
+				L"",
+				L"",
+				L"",
+				shaderFolder + L"PSGPUParticleLighting.cso",
+				rasterizerDesc,
+				depthStencilDesc,
+				blendDescAdditive
+			};
+
+			initPipeline(m_pipelineGPULighting, pipelineDataGPULighting);
 		}
 		void ParticleSystem::initTextures()
 		{

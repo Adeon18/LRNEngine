@@ -147,6 +147,7 @@ namespace engn {
 			ComputeShader m_indirectDrawCS;
 			IndexBuffer m_particleGPUIB;
 			Pipeline m_pipelineGPU;
+			Pipeline m_pipelineGPULighting;
 			std::shared_ptr<tex::Texture> m_sparkTexture;
 
 			const std::wstring SHADER_FOLDER = util::getExeDirW();
