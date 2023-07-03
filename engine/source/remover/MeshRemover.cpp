@@ -29,7 +29,8 @@ namespace engn {
 						mat,
 						{},
 						hitPosAndRadius,
-						{currentTime, currentTime, DESPAWN_TIME, DESPAWN_TIME}
+						{currentTime, currentTime, DESPAWN_TIME, DESPAWN_TIME},
+						PARTICLE_COLORS[util::getRandomIntInRange(0, PARTICLE_COLORS.size() - 1)]
 					}
 				).second,
 				currentTime

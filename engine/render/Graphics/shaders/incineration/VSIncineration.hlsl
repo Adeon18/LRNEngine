@@ -47,7 +47,7 @@ PS_INPUT main(VS_INPUT input)
         if (length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.y && !((length(worldPos.xyz - input.hitPosAndMaxRadius.xyz) < input.prevCurRad.x)))
         {
             GPUStructuredParticle b;
-            b.colorAndAlpha = float4(1, 0, 0, 1);
+            b.colorAndAlpha = input.color;
             b.centerPosition = worldPos.xyz + 0.05f * worldNorm;
             b.velocity = worldNorm * PARTICLE_INITIAL_SPEED;
             b.size = float2(0.25, 0.25);

@@ -78,5 +78,5 @@ float4 main(VS_OUTPUT inp) : SV_TARGET
     float3 L0 = getLambertDiffuse(albedo, micNorm, normalize(inp.worldPos.xyz - worldPos), F0, metallic, 10.0f);
     
     // Interpolate lighting
-    return float4(L0 * inp.color.rgb, 1.0f * inp.color.a);
+    return float4(L0 * inp.color.rgb, 1.0f);
 }

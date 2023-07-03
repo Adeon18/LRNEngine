@@ -58,6 +58,7 @@ namespace engn {
 		struct GroupInstanceIncineration {
 			XMVECTOR rayHitPointAndMaxRadius;
 			XMVECTOR time;
+			XMVECTOR color;
 			XMFLOAT2 prevCurRad;
 			uint32_t matrixIndex;
 		};
@@ -212,7 +213,7 @@ namespace engn {
 									if constexpr (std::is_same_v<I, InstanceDissolution>) {
 										perMaterial.instances.push_back({ inc.time, properties.first });
 									} else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-										perMaterial.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0} , properties.first });
+										perMaterial.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, inc.color, {0, 0} , properties.first });
 									} else if constexpr (std::is_same_v <I, Instance>) {
 										perMaterial.instances.push_back({ inc.color, properties.first });
 									}
@@ -233,7 +234,7 @@ namespace engn {
 									perMat.instances.push_back({ inc.time, properties.first });
 								}
 								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-									perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
+									perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, inc.color, {0, 0}, properties.first });
 								}
 								else if constexpr (std::is_same_v <I, Instance>) {
 									perMat.instances.push_back({ inc.color, properties.first });
@@ -275,7 +276,7 @@ namespace engn {
 							perMat.instances.push_back({ inc.time, properties.first });
 						}
 						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, inc.color, {0, 0}, properties.first });
 						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
@@ -290,7 +291,7 @@ namespace engn {
 							perMat.instances.push_back({ inc.time, properties.first });
 						}
 						else if constexpr (std::is_same_v<I, InstanceIncineration>) {
-							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, {0, 0}, properties.first });
+							perMat.instances.push_back({ inc.rayHitPointAndMaxRadius, inc.time, inc.color, {0, 0}, properties.first });
 						}
 						else if constexpr (std::is_same_v <I, Instance>) {
 							perMat.instances.push_back({ inc.color, properties.first });
@@ -382,6 +383,7 @@ namespace engn {
 								else if constexpr (std::is_same_v<I, InstanceIncineration>) {
 									ins.rayHitPointAndMaxRadius = material.instances[index].rayHitPointAndMaxRadius;
 									ins.time = material.instances[index].time;
+									ins.color = material.instances[index].color;
 									ins.prevCurRad.x = material.instances[index].prevCurRad.x;
 									ins.prevCurRad.y = material.instances[index].prevCurRad.y;
 									ins.objectId = insIdx + matIdx + modIdx + m_type;
@@ -587,7 +589,7 @@ namespace engn {
 				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			};
 
-			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_INCINERATION[17] = {
+			D3D11_INPUT_ELEMENT_DESC DEFAULT_LAYOUT_INCINERATION[18] = {
 				{"POSITION", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"NORMAL", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TANGENT", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -603,8 +605,9 @@ namespace engn {
 				{"MODEL2WORLDINV", 3, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 112, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"POSANDRADIUS", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 128, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
 				{"TIME", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 144, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"PREVCURRAD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 1, 160, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
-				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 168, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
+				{"COLOR", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 160, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"PREVCURRAD", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32_FLOAT, 1, 176, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1},
+				{"OBJECTID", 0, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 1, 184, D3D11_INPUT_CLASSIFICATION::D3D11_INPUT_PER_INSTANCE_DATA, 1}
 			};
 
 			D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{};

@@ -16,6 +16,7 @@ struct VS_INPUT
     float4 modelToWorldInv3 : MODEL2WORLDINV3;
     float4 hitPosAndMaxRadius : POSANDRADIUS;
     float4 time : TIME;
+    float4 color : COLOR;
     float2 prevCurRad : PREVCURRAD;
     uint objectID : OBJECTID;
 };

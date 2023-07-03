@@ -26,6 +26,19 @@ namespace engn {
 			void updateInstances(float currentTime);
 		private:
 			std::deque<DespawnEntry> m_despawningInstances;
+
+			static constexpr std::array<XMVECTOR, 10> PARTICLE_COLORS{
+				XMVECTOR{1.0f, 0.0f, 0.0f, 1.0f},
+				XMVECTOR{0.0f, 1.0f, 0.0f, 1.0f},
+				XMVECTOR{1.0f, 1.0f, 0.0f, 1.0f},
+				XMVECTOR{0.0f, 0.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 0.0f, 1.0f, 1.0f},
+				XMVECTOR{0.0f, 1.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 1.0f, 1.0f, 1.0f},
+				XMVECTOR{1.0f, 0.5f, 0.5f, 1.0f},
+				XMVECTOR{1.0f, 0.0f, 0.5f, 1.0f},
+				XMVECTOR{1.0f, 0.5f, 0.0f, 1.0f}
+			};
 		};
 	} // rm
 } // engn
