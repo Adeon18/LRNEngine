@@ -115,3 +115,8 @@ a 10-color-pool. Normal maps for decals are supported.
 - Rendering via `DrawIndexedInstancedIndirect`.
 - Particles use ringBuffer to successfully respawn.
 - Particles have diffuse only reflections.
+
+### HW14: UE Fog of War
+- Added a wandering sphere with destroy and respawn logic and decal spawn logic
+- Added fog of war effect
+- Pushed only ThirdPerson folder where I created all BPs and Materials, did not push started content
