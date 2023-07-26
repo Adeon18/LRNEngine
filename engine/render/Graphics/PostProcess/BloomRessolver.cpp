@@ -94,6 +94,22 @@ namespace engn {
 			}
 		}
 
+		void BloomRessolver::bindBloomTextureToSlot(uint32_t slot)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+			srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = 1;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+
+			HRESULT hr = d3d::s_device->CreateShaderResourceView(m_bluredTextureStorage.Get(), &srvDesc, m_bluredTextureSRV.ReleaseAndGetAddressOf());
+			if (FAILED(hr)) {
+				Logger::instance().logErr("BloomRessolver::downSampleAndBlur: Failed at SRV creation");
+				return;
+			}
+			d3d::s_devcon->PSSetShaderResources(slot, 1, m_bluredTextureSRV.GetAddressOf());
+		}
+
 		void BloomRessolver::initAndBindViewPort(uint32_t dimensionX, uint32_t dimensionY)
 		{
 			D3D11_VIEWPORT viewPort;

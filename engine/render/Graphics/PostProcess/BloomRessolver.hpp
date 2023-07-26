@@ -23,6 +23,8 @@ namespace engn {
 			//! MUST BE CALLED AFTER downSampleAndBlur, upsamples the downSampled texture and basically stores the final result of the blur
 			void upSampleAndBlur();
 
+			void bindBloomTextureToSlot(uint32_t slot);
+
 			const std::wstring VS_BLOOM = L"VSBloom.cso";
 			const std::wstring PS_UPSAMPLE = L"PSBloomUP.cso";
 			const std::wstring PS_DOWNSAMPLE = L"PSBloomDOWN.cso";

@@ -45,12 +45,16 @@ struct VS_OUTPUT
 };
 
 Texture2D g_texture0 : TEXTURE : register(t0);
+Texture2D g_bloomTexture : TEXTURE : register(t1);
 
 static const float GAMMA = 2.2f;
 
 float4 main(VS_OUTPUT inp) : SV_TARGET
 {
     float3 fragCol = g_texture0.Sample(g_pointWrap, inp.texCoords);
+    float3 bloomCol = g_bloomTexture.Sample(g_pointWrap, inp.texCoords);
+    
+    fragCol = lerp(fragCol, bloomCol, 0.04f);
     
     fragCol = adjustExposure(fragCol, ev100.x);
     fragCol = acesHdr2Ldr(fragCol);
