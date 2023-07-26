@@ -31,11 +31,14 @@ namespace engn {
 
 			void initPipelines();
 			void initTextures();
+			void initBuffers();
 
 			//! This texture has mips that are progressively downsampled and upsampled from during blur ressolve
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_bluredTextureStorage;
 			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_bluredTextureRTV;
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluredTextureSRV;
 
+			ConstantBuffer<CB_PS_BloomSampleData> m_bloomCBPS;
 
 			Pipeline m_downsamplePipeline;
 			Pipeline m_upsamplePipeline;

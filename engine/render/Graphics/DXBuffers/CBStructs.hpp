@@ -140,5 +140,9 @@ namespace engn {
 			int enabled;
 		};
 
+		struct CB_PS_BloomSampleData {
+			int sampleLvl;
+		};
+
 	} // rend
 } // engn

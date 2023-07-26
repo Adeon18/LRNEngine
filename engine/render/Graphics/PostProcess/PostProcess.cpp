@@ -65,6 +65,7 @@ namespace engn {
 		void PostProcess::ressolveBloom(const BindableRenderTarget& src)
 		{
 			m_bloomRessolver.downSampleAndBlur(src);
+			m_bloomRessolver.upSampleAndBlur();
 		}
 
 		void PostProcess::ressolve(const BindableRenderTarget& src)
