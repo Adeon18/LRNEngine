@@ -58,7 +58,15 @@ namespace engn {
 			m_cbufferFXAA.init();
 
 			m_initialized = true;
+
+			m_bloomRessolver.init();
 		}
+
+		void PostProcess::ressolveBloom(const BindableRenderTarget& src)
+		{
+			m_bloomRessolver.downSampleAndBlur(src);
+		}
+
 		void PostProcess::ressolve(const BindableRenderTarget& src)
 		{
 			if (!m_initialized) {

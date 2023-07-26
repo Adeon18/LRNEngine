@@ -103,6 +103,8 @@ namespace engn {
 
 
 			// ---- Post Process ----
+			m_postProcess.ressolveBloom(winPtr->getHDRRTVRef());
+
 			winPtr->bindAndClearBufferBuforeAA(BG_COLOR);
 			m_postProcess.ressolve(winPtr->getHDRRTVRef());
 

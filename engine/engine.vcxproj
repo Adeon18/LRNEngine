@@ -40,6 +40,7 @@
     <ClInclude Include="render\Graphics\DXBuffers\CBStructs.hpp" />
     <ClInclude Include="render\Graphics\DXBuffers\ConstantBuffer.hpp" />
     <ClInclude Include="render\Graphics\HelperStructs.hpp" />
+    <ClInclude Include="render\Graphics\PostProcess\BloomRessolver.hpp" />
     <ClInclude Include="render\Graphics\PostProcess\PostProcess.hpp" />
     <ClInclude Include="render\Graphics\Renderer.hpp" />
     <ClInclude Include="include\win_def.hpp" />
@@ -109,6 +110,7 @@
     <ClCompile Include="render\Graphics\DXShaders\PixelShader.cpp" />
     <ClCompile Include="render\Graphics\DXShaders\VertexShader.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="render\Graphics\PostProcess\BloomRessolver.cpp" />
     <ClCompile Include="render\Graphics\PostProcess\PostProcess.cpp" />
     <ClCompile Include="render\Objects\Model.cpp" />
     <ClCompile Include="render\Objects\SkyBox\SkyBox.cpp" />
@@ -143,6 +145,36 @@
     <ClCompile Include="utils\Timer\FPSTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="render\Graphics\shaders\bloom\PSBloomDOWN.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\bloom\PSBloomUP.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="render\Graphics\shaders\bloom\VSBloom.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DisableOptimizations>
+      <EnableDebuggingInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</EnableDebuggingInformation>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
     <FxCompile Include="render\Graphics\shaders\decals\PSDecals.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <DisableOptimizations Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DisableOptimizations>
