@@ -7,7 +7,7 @@ namespace engn {
 		m_camera{ new rend::EngineCamera{60.0f, WIN_WIDTH_DEF, WIN_HEIGHT_DEF, {0.0f, 0.0f, -2.0f}} },
 		m_window{ new win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>() }
 	{
-		m_graphics.init();
+		m_graphics.init(WIN_WIDTH_DEF, WIN_HEIGHT_DEF);
 		// ImGui
 		rend::UI::instance().init(m_window->getHandler());
 	}
@@ -129,6 +129,7 @@ namespace engn {
 	bool Engine::render() {
 		if (m_window->pollResize()) {
 			setWindowSize(m_window->getWidth(), m_window->getHeight());
+			m_graphics.refreshScreenSize(m_window->getWidth(), m_window->getHeight());
 		}
 		if (!m_graphics.renderFrame(m_camera, m_window, m_renderData, m_renderFlags)) {
 			return false;

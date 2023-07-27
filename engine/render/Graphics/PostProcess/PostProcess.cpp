@@ -68,6 +68,11 @@ namespace engn {
 			m_bloomRessolver.upSampleAndBlur();
 		}
 
+		void PostProcess::setScreenSize(uint32_t width, uint32_t height)
+		{
+			m_bloomRessolver.setScreenSize(width, height);
+		}
+
 		void PostProcess::ressolve(const BindableRenderTarget& src)
 		{
 			if (!m_initialized) {

@@ -23,6 +23,9 @@ namespace engn {
 			//! MUST BE CALLED AFTER downSampleAndBlur, upsamples the downSampled texture and basically stores the final result of the blur
 			void upSampleAndBlur();
 
+			//! Set and save the screen size
+			void setScreenSize(uint32_t width, uint32_t height);
+
 			void bindBloomTextureToSlot(uint32_t slot);
 
 			const std::wstring VS_BLOOM = L"VSBloom.cso";
@@ -46,6 +49,9 @@ namespace engn {
 
 			Pipeline m_downsamplePipeline;
 			Pipeline m_upsamplePipeline;
+
+			uint32_t m_screenWidth;
+			uint32_t m_screenHeight;
 		};
 	} // rend
 } // engn

@@ -15,6 +15,9 @@ namespace engn {
 			//! Use BloomRessolver member to resolve and store bloom data that would be later used in main postprocess ressolve
 			void ressolveBloom(const BindableRenderTarget& src);
 
+			//! Update the current screen size, needed for bloom ressover
+			void setScreenSize(uint32_t width, uint32_t height);
+
 			//! Ressolve the HDR buffer into the CURRENTLY BOUND buffer
 			void ressolve(const BindableRenderTarget& src);
 

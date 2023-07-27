@@ -17,13 +17,16 @@
 
 namespace engn {
 	namespace rend {
-		void Renderer::init() {
+		void Renderer::init(uint32_t width, uint32_t height) {
 			m_initBuffers();
 			m_initSamplers();
 			m_initializeSky();
 			m_initializeNoise();
 			m_initPostProcess();
 			m_initDeferred();
+
+			m_screenWidth = width;
+			m_screenHeight = height;
 #if BAKE_CUBEMAPS == 1
 			std::vector<std::string> cubemapsToBake{
 				TEX_REL_PATH_PREF + "assets\\Textures\\SkyBoxes\\grass_field.dds",
@@ -115,6 +118,13 @@ namespace engn {
 			UI::instance().endFrame();
 
 			return true;
+		}
+
+		void Renderer::refreshScreenSize(uint32_t width, uint32_t height)
+		{
+			m_screenWidth = width;
+			m_screenHeight = height;
+			m_postProcess.setScreenSize(width, height);
 		}
 
 		void Renderer::m_initBuffers()

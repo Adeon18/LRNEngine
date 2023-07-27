@@ -15,7 +15,7 @@ namespace engn {
 		{
 			for (int mipLevel = 0; mipLevel < SAMPLE_COUNT; ++mipLevel) {
 				// Handle viewports for different sizes of mips
-				initAndBindViewPort(WIN_WIDTH_DEF >> mipLevel, WIN_HEIGHT_DEF >> mipLevel);
+				initAndBindViewPort(m_screenWidth >> mipLevel, m_screenHeight >> mipLevel);
 
 				// ----- Set RTV ------
 				d3d::s_devcon->OMSetRenderTargets(1, m_blurredTextureMipRTVs[mipLevel].GetAddressOf(), nullptr);
@@ -40,7 +40,7 @@ namespace engn {
 			for (int mipLevel = SAMPLE_COUNT - 2; mipLevel >= 0; --mipLevel) {
 				
 				// Handle viewports for different sizes of mips
-				initAndBindViewPort(WIN_WIDTH_DEF >> mipLevel, WIN_HEIGHT_DEF >> mipLevel);
+				initAndBindViewPort(m_screenWidth >> mipLevel, m_screenHeight >> mipLevel);
 
 				// ----- Set RTV ------
 				d3d::s_devcon->OMSetRenderTargets(1, m_blurredTextureMipRTVs[mipLevel].GetAddressOf(), nullptr);
@@ -53,6 +53,14 @@ namespace engn {
 				bindPipeline(m_upsamplePipeline);
 				d3d::s_devcon->Draw(3, 0);
 			}
+		}
+
+		void BloomRessolver::setScreenSize(uint32_t width, uint32_t height)
+		{
+			m_screenWidth = width;
+			m_screenHeight = height;
+
+			initTextures();
 		}
 
 		void BloomRessolver::bindBloomTextureToSlot(uint32_t slot)
@@ -121,8 +129,8 @@ namespace engn {
 		void BloomRessolver::initTextures()
 		{
 			D3D11_TEXTURE2D_DESC textureDesc{};
-			textureDesc.Width = WIN_WIDTH_DEF;
-			textureDesc.Height = WIN_HEIGHT_DEF;
+			textureDesc.Width = m_screenWidth;
+			textureDesc.Height = m_screenHeight;
 			textureDesc.MipLevels = SAMPLE_COUNT;
 			textureDesc.ArraySize = 1;
 			textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;

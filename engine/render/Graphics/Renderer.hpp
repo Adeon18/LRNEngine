@@ -48,9 +48,11 @@ namespace engn {
 			const std::string TEX_REL_PATH_PREF = util::getExeDir() + "..\\";
 #endif
 		public:
-			void init();
+			void init(uint32_t width, uint32_t height);
 			//! Render entire frame, return false at error or cubamap baking to entirely shut down the engine and free the resources
 			bool renderFrame(std::unique_ptr<EngineCamera>& camPtr, std::unique_ptr<win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF>>& winPtr, const RenderData& renderData, const RenderModeFlags& flags);
+			//! Refresh the current screen size
+			void refreshScreenSize(uint32_t width, uint32_t height);
 		private:
 			//! Initialize all the per Frame constant buffers
 			void m_initBuffers();
@@ -92,6 +94,9 @@ namespace engn {
 #endif
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilState> m_depthStensilState;
 			Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
+
+			uint16_t m_screenWidth;
+			uint16_t m_screenHeight;
 		};
 	} // render
 } // engn
