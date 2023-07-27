@@ -60,6 +60,11 @@ namespace engn {
 				float qualityEdgeThresholdMin = 0.0625f;
 				bool enabled = true;
 			};
+
+			struct BloomWidgetData {
+				bool enabled = true;
+			};
+
 		public:
 			static UI& instance() {
 				static UI ui;
@@ -86,6 +91,7 @@ namespace engn {
 			[[nodiscard]] const SpawnWidgetData& getSpawnWidgetData() const { return m_spawnData; }
 			[[nodiscard]] const ParticleWidgetData& getParticleWidgetData() const { return m_particleData; }
 			[[nodiscard]] const AAWidgetData& getAAWidgetData() const { return m_AAdata; }
+			[[nodiscard]] const BloomWidgetData& getBloomWidgetData() const { return m_bloomData; }
 
 			[[nodiscard]] std::string getModelNameFromWidgetIdx(int idx) const { return MODELS[idx]; }
 		private:
@@ -99,6 +105,7 @@ namespace engn {
 			void manageSpawn();
 			void manageParticles();
 			void manageAA();
+			void manageBloom();
 
 			GeometryWidgetData m_geometryData;
 			MaterialWidgetData m_materialData;
@@ -107,6 +114,7 @@ namespace engn {
 			SpawnWidgetData m_spawnData;
 			ParticleWidgetData m_particleData;
 			AAWidgetData m_AAdata;
+			BloomWidgetData m_bloomData;
 
 			static constexpr const char* MODELS[] = { "HORSE", "SAMURAI", "TOWER" };
 		};

@@ -89,6 +89,7 @@ namespace engn {
 			src.bindSRV(0);
 			m_bloomRessolver.bindBloomTextureToSlot(1);
 			m_cbufferPP.getData().EV100 = { m_ev100Exposure, m_ev100Exposure, m_ev100Exposure, m_ev100Exposure };
+			m_cbufferPP.getData().bloomEnabled = static_cast<int>(UI::instance().getBloomWidgetData().enabled);
 			m_cbufferPP.fill();
 			d3d::s_devcon->PSSetConstantBuffers(0, 1, m_cbufferPP.getBufferAddress());
 

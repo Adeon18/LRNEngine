@@ -45,8 +45,6 @@ namespace engn {
 			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, SAMPLE_COUNT> m_blurredTextureMipRTVs;
 			std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, SAMPLE_COUNT> m_blurredTextureMipSRVs;
 
-			ConstantBuffer<CB_PS_BloomSampleData> m_bloomCBPS;
-
 			Pipeline m_downsamplePipeline;
 			Pipeline m_upsamplePipeline;
 

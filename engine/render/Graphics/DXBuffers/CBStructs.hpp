@@ -90,6 +90,7 @@ namespace engn {
 		// Cb Struct for the postProcess effect
 		struct CB_PS_HDR {
 			XMFLOAT4 EV100;
+			int bloomEnabled;
 		};
 
 		//! CB Struct to tell whether a patricular material has respective textures, ints are used as booleans
@@ -138,10 +139,6 @@ namespace engn {
 			XMVECTOR imageSize;
 			XMVECTOR AAData;
 			int enabled;
-		};
-
-		struct CB_PS_BloomSampleData {
-			int sampleLvl;
 		};
 
 	} // rend

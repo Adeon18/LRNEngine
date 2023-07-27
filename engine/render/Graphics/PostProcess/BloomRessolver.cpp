@@ -3,6 +3,8 @@
 // Temporary, ubtil I add window resize support
 #include "include/config.hpp"
 
+#include "render/UI/UI.hpp"
+
 namespace engn {
 	namespace rend {
 		void BloomRessolver::init()
@@ -13,6 +15,7 @@ namespace engn {
 		}
 		void BloomRessolver::downSampleAndBlur(const BindableRenderTarget& src)
 		{
+			if (!UI::instance().getBloomWidgetData().enabled) { return; }
 			for (int mipLevel = 0; mipLevel < SAMPLE_COUNT; ++mipLevel) {
 				// Handle viewports for different sizes of mips
 				initAndBindViewPort(m_screenWidth >> mipLevel, m_screenHeight >> mipLevel);
@@ -37,6 +40,7 @@ namespace engn {
 		}
 		void BloomRessolver::upSampleAndBlur()
 		{
+			if (!UI::instance().getBloomWidgetData().enabled) { return; }
 			for (int mipLevel = SAMPLE_COUNT - 2; mipLevel >= 0; --mipLevel) {
 				
 				// Handle viewports for different sizes of mips
@@ -65,6 +69,7 @@ namespace engn {
 
 		void BloomRessolver::bindBloomTextureToSlot(uint32_t slot)
 		{
+			if (!UI::instance().getBloomWidgetData().enabled) { return; }
 			d3d::s_devcon->PSSetShaderResources(slot, 1, m_blurredTextureMipSRVs[0].GetAddressOf());
 		}
 
