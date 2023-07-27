@@ -13,37 +13,17 @@ namespace engn {
 		}
 		void BloomRessolver::downSampleAndBlur(const BindableRenderTarget& src)
 		{
-			for (int mipLevel = 0; mipLevel < 5; ++mipLevel) {
-				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-				rtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-				rtvDesc.Texture2D.MipSlice = mipLevel;
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_bluredTextureStorage.Get(), &rtvDesc, m_bluredTextureRTV.ReleaseAndGetAddressOf());
-				if (FAILED(hr)) {
-					Logger::instance().logErr("BloomRessolver::downSampleAndBlur: Failed at RTV creation");
-				}
-
+			for (int mipLevel = 0; mipLevel < SAMPLE_COUNT; ++mipLevel) {
 				// Handle viewports for different sizes of mips
 				initAndBindViewPort(WIN_WIDTH_DEF >> mipLevel, WIN_HEIGHT_DEF >> mipLevel);
 
 				// ----- Set RTV ------
-				d3d::s_devcon->OMSetRenderTargets(1, m_bluredTextureRTV.GetAddressOf(), nullptr);
+				d3d::s_devcon->OMSetRenderTargets(1, m_blurredTextureMipRTVs[mipLevel].GetAddressOf(), nullptr);
 				float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				d3d::s_devcon->ClearRenderTargetView(m_bluredTextureRTV.Get(), clearColor);
+				d3d::s_devcon->ClearRenderTargetView(m_blurredTextureMipRTVs[mipLevel].Get(), clearColor);
 
 				if (mipLevel > 0) {
-					D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-					srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-					srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-					srvDesc.Texture2D.MipLevels = 1;
-					srvDesc.Texture2D.MostDetailedMip = mipLevel - 1;
-
-					hr = d3d::s_device->CreateShaderResourceView(m_bluredTextureStorage.Get(), &srvDesc, m_bluredTextureSRV.ReleaseAndGetAddressOf());
-					if (FAILED(hr)) {
-						Logger::instance().logErr("BloomRessolver::downSampleAndBlur: Failed at SRV creation");
-						return;
-					}
-					d3d::s_devcon->PSSetShaderResources(0, 1, m_bluredTextureSRV.GetAddressOf());
+					d3d::s_devcon->PSSetShaderResources(0, 1, m_blurredTextureMipSRVs[mipLevel - 1].GetAddressOf());
 				} else {
 					src.bindSRV(0);
 				}
@@ -57,36 +37,17 @@ namespace engn {
 		}
 		void BloomRessolver::upSampleAndBlur()
 		{
-			for (int mipLevel = 3; mipLevel >= 0; --mipLevel) {
-				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-				rtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-				rtvDesc.Texture2D.MipSlice = mipLevel;
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_bluredTextureStorage.Get(), &rtvDesc, m_bluredTextureRTV.ReleaseAndGetAddressOf());
-				if (FAILED(hr)) {
-					Logger::instance().logErr("BloomRessolver::upSampleAndBlur: Failed at RTV creation");
-				}
-
+			for (int mipLevel = SAMPLE_COUNT - 2; mipLevel >= 0; --mipLevel) {
+				
 				// Handle viewports for different sizes of mips
 				initAndBindViewPort(WIN_WIDTH_DEF >> mipLevel, WIN_HEIGHT_DEF >> mipLevel);
 
 				// ----- Set RTV ------
-				d3d::s_devcon->OMSetRenderTargets(1, m_bluredTextureRTV.GetAddressOf(), nullptr);
+				d3d::s_devcon->OMSetRenderTargets(1, m_blurredTextureMipRTVs[mipLevel].GetAddressOf(), nullptr);
 				float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-				d3d::s_devcon->ClearRenderTargetView(m_bluredTextureRTV.Get(), clearColor);
-
-				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-				srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-				srvDesc.Texture2D.MipLevels = 1;
-				srvDesc.Texture2D.MostDetailedMip = mipLevel + 1;
-
-				hr = d3d::s_device->CreateShaderResourceView(m_bluredTextureStorage.Get(), &srvDesc, m_bluredTextureSRV.ReleaseAndGetAddressOf());
-				if (FAILED(hr)) {
-					Logger::instance().logErr("BloomRessolver::downSampleAndBlur: Failed at SRV creation");
-					return;
-				}
-				d3d::s_devcon->PSSetShaderResources(0, 1, m_bluredTextureSRV.GetAddressOf());
+				d3d::s_devcon->ClearRenderTargetView(m_blurredTextureMipRTVs[mipLevel].Get(), clearColor);
+				
+				d3d::s_devcon->PSSetShaderResources(0, 1, m_blurredTextureMipSRVs[mipLevel + 1].GetAddressOf());
 
 				// ----- Render -----
 				bindPipeline(m_upsamplePipeline);
@@ -96,18 +57,7 @@ namespace engn {
 
 		void BloomRessolver::bindBloomTextureToSlot(uint32_t slot)
 		{
-			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-			srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-			srvDesc.Texture2D.MipLevels = 1;
-			srvDesc.Texture2D.MostDetailedMip = 0;
-
-			HRESULT hr = d3d::s_device->CreateShaderResourceView(m_bluredTextureStorage.Get(), &srvDesc, m_bluredTextureSRV.ReleaseAndGetAddressOf());
-			if (FAILED(hr)) {
-				Logger::instance().logErr("BloomRessolver::downSampleAndBlur: Failed at SRV creation");
-				return;
-			}
-			d3d::s_devcon->PSSetShaderResources(slot, 1, m_bluredTextureSRV.GetAddressOf());
+			d3d::s_devcon->PSSetShaderResources(slot, 1, m_blurredTextureMipSRVs[0].GetAddressOf());
 		}
 
 		void BloomRessolver::initAndBindViewPort(uint32_t dimensionX, uint32_t dimensionY)
@@ -173,7 +123,7 @@ namespace engn {
 			D3D11_TEXTURE2D_DESC textureDesc{};
 			textureDesc.Width = WIN_WIDTH_DEF;
 			textureDesc.Height = WIN_HEIGHT_DEF;
-			textureDesc.MipLevels = 5;
+			textureDesc.MipLevels = SAMPLE_COUNT;
 			textureDesc.ArraySize = 1;
 			textureDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 			textureDesc.SampleDesc.Count = 1;
@@ -186,6 +136,29 @@ namespace engn {
 			if (FAILED(hr)) {
 				Logger::instance().logErr("BloomRessolver::initTextures: Failed at texture creation");
 				return;
+			}
+
+			for (uint32_t i = 0; i < SAMPLE_COUNT; ++i) {
+				D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+				rtvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+				rtvDesc.Texture2D.MipSlice = i;
+				hr = d3d::s_device->CreateRenderTargetView(m_bluredTextureStorage.Get(), &rtvDesc, m_blurredTextureMipRTVs[i].ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("BloomRessolver::initTextures: Failed at RTV creation");
+				}
+
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+				srvDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels = 1;
+				srvDesc.Texture2D.MostDetailedMip = i;
+
+				hr = d3d::s_device->CreateShaderResourceView(m_bluredTextureStorage.Get(), &srvDesc, m_blurredTextureMipSRVs[i].ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("BloomRessolver::initTextures: Failed at SRV creation");
+					return;
+				}
 			}
 		}
 		void BloomRessolver::initBuffers()

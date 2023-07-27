@@ -28,6 +28,8 @@ namespace engn {
 			const std::wstring VS_BLOOM = L"VSBloom.cso";
 			const std::wstring PS_UPSAMPLE = L"PSBloomUP.cso";
 			const std::wstring PS_DOWNSAMPLE = L"PSBloomDOWN.cso";
+
+			static constexpr uint16_t SAMPLE_COUNT = 4;
 		private:
 			void initAndBindViewPort(uint32_t dimensionX, uint32_t dimensionY);
 
@@ -37,8 +39,8 @@ namespace engn {
 
 			//! This texture has mips that are progressively downsampled and upsampled from during blur ressolve
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_bluredTextureStorage;
-			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_bluredTextureRTV;
-			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_bluredTextureSRV;
+			std::array<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>, SAMPLE_COUNT> m_blurredTextureMipRTVs;
+			std::array<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>, SAMPLE_COUNT> m_blurredTextureMipSRVs;
 
 			ConstantBuffer<CB_PS_BloomSampleData> m_bloomCBPS;
 

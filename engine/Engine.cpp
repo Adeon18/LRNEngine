@@ -35,7 +35,7 @@ namespace engn {
 			XMMatrixTranslation(5.0f, 5.0f, 7.0f), light::WHITE, 2.0f
 		);
 		rend::LightSystem::getInstance().addPointLight(
-			XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 5.0f, 0.39f, 0.39f }, 0.8f
+			XMMatrixTranslation(-3.0f, 7.0f, 9.0f), { 10.0f, 0.39f, 0.39f }, 0.8f
 		);
 		rend::LightSystem::getInstance().addPointLight(
 			XMMatrixTranslation(0.0f, 0.0f, 8.0f), light::LIGHTGREEN, 0.8f
