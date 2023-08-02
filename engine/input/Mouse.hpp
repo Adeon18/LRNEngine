@@ -52,6 +52,8 @@ namespace engn {
 			// Move
 			void onMove(MSG* m);
 
+			void unpressAllKeys();
+
 			// For now only 2 buttons and movement
 		private:
 			Mouse(){}

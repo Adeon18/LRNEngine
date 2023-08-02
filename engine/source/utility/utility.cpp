@@ -3,8 +3,9 @@
 #pragma comment(lib, "Shlwapi.lib")
 #include <Shlwapi.h>
 
-#include "include/utility/utility.hpp"
+#include <filesystem>
 
+#include "include/utility/utility.hpp"
 
 namespace engn {
 	namespace util {
@@ -40,6 +41,26 @@ namespace engn {
 			return dir;
 		}
 
+		std::string getDirectoryFromPath(const std::string& path)
+		{
+			return std::filesystem::path{ path }.parent_path().string() + "\\";
+		}
+		
+		std::string changeFileExt(const std::string& path, const std::string& ext)
+		{
+			return path.substr(0, path.find_last_of('.')) + ext;
+		}
+
+		std::string removeFileExt(const std::string& path)
+		{
+			return path.substr(0, path.find_last_of('.'));
+		}
+
+		std::string getFileDir(const std::string& filepath)
+		{
+			return filepath.substr(0, filepath.find_last_of('\\') + 1);
+		}
+
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec)
 		{
 			return { vec.x, vec.y, vec.z };
@@ -57,9 +78,29 @@ namespace engn {
 		{
 			return { vec.x, vec.y, vec.z };
 		}
+		bool isXMVectorEmpty(const XMVECTOR& vec)
+		{
+			return XMVectorGetX(vec) == 0.0f && XMVectorGetY(vec) == 0.0f && XMVectorGetZ(vec) == 0.0f && XMVectorGetW(vec) == 0.0f;
+		}
+		bool isXMVectorEmpty(const XMFLOAT4& vec)
+		{
+			return vec.x == 0.0f && vec.y == 0.0f && vec.z == 0.0f && vec.w == 0.0f;
+		}
 		uint32_t util::alignUp(uint32_t typeSize, uint32_t alignTo)
 		{
 			return (typeSize + 16) - (typeSize % 16);
+		}
+		std::wstring util::stringToWstring(const std::string& str)
+		{
+			return std::wstring(str.begin(), str.end());
+		}
+		int util::getRandomIntInRange(int begin, int end)
+		{
+			std::random_device rd;
+			std::mt19937 gen(rd());
+			std::uniform_int_distribution<int> distribution(begin, end);
+
+			return distribution(gen);
 		}
 	} // util
 

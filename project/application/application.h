@@ -13,10 +13,6 @@
 
 class Application
 {
-	static constexpr int WIN_WIDTH_DEF = 960;
-	static constexpr int WIN_HEIGHT_DEF = 540;
-	static constexpr int BUFF_DECREASE_TIMES = 2;
-	inline static float BG_COLOR[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 	//! FPS which the timer tries to tick at
 	static constexpr float TIMER_FPS = 300.0f;
 public:
@@ -33,13 +29,10 @@ private:
 	void m_captureInput(MSG* mptr);
 
 private:
-	int m_screenWidth;
-	int m_screenHeight;
 
 	bool m_isRunning;
 
 	// Application building blocks
 	std::unique_ptr<engn::util::FPSTimer> m_timer;
-	std::unique_ptr<engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>> m_window;
 	std::unique_ptr<engn::Engine> m_engine;
 };

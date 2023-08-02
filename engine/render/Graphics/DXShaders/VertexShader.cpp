@@ -37,6 +37,9 @@ namespace engn {
 
 		bool VertexShader::createInputLayout(D3D11_INPUT_ELEMENT_DESC* layoutDesc, UINT numElem)
 		{
+			if (!layoutDesc) {
+				return true;
+			}
 			HRESULT hr = d3d::s_device->CreateInputLayout(
 				layoutDesc,
 				numElem,

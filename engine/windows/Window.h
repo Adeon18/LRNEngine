@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <iostream>
+#include <array>
 
 #include <windows.h>
 #include <windowsx.h>
@@ -10,8 +11,13 @@
 #include "utils/Logger/Logger.hpp"
 
 #include "render/D3D/d3d.hpp"
-#include "utils/paralell_executor/parallel_executor.h"
 
+#include "render/Graphics/DXRTVs/BindableRenderTarget.hpp"
+#include "render/Graphics/DeferredShading/GBuffer.hpp"
+
+#include "render/UI/UI.hpp"
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 namespace engn {
 	namespace win {
@@ -32,11 +38,9 @@ namespace engn {
 			void* screenBuffer = nullptr;
 			int screenWidth{};
 			int screenHeight{};
-			int bufferWidth{};
-			int bufferHeight{};
 		};
 
-		template<int W, int H, int BDS>
+		template<int W, int H>
 		class Window {
 		public:
 			inline static const wchar_t* WINDOW_NAME = L"EngineClass";
@@ -62,11 +66,12 @@ namespace engn {
 
 				// Initialize DX stuff for render
 				initSwapchain();
-
 				initBackBuffer();
-				initRenderTargetView();
+				initRenderTargetViews();
 				initDepthStensilBuffer();
+				initDepthTextureCopy();
 				initViewPort();
+				bindViewport();
 			}
 
 
@@ -79,6 +84,9 @@ namespace engn {
 			//! Callback message handler
 			static LRESULT CALLBACK handleMessages(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
+				if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+					return true;
+
 				switch (message) {
 				case WM_DESTROY:
 				{
@@ -131,39 +139,49 @@ namespace engn {
 				}
 			}
 
-			//! Called at resize. Free the backBuffer and resize it to a new one
+			//! Called at resize. Free the LDR backbuffer and HDR RTV and resize it to a new one
 			void initBackBuffer() {
-				// Release the RTV before resizing
-				m_renderTargetView.Reset();
-				// Release the backBuffer before resize
-				m_backBuffer.Reset();
+				m_renderTargetHDR.releaseAll();
+				m_renderTargetLDRFinal.releaseAll();
+				m_renderTargetLDRBeforeFXAA.releaseAll();
+				m_gBuffer.reset();
+
 				m_swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 
-				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_backBuffer.GetAddressOf()));
+				HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(m_renderTargetLDRFinal.getTexturePtrAddress()));
 				if (FAILED(hr)) {
 					m_logger.logErr("Window GetBuffer on BackBuffer fail: " + std::system_category().message(hr));
 					return;
 				}
-
-				ID3D11Texture2D* pTextureInterface = 0;
-				m_backBuffer->QueryInterface<ID3D11Texture2D>(&pTextureInterface);
-				pTextureInterface->GetDesc(&m_backBufferDesc);
-				pTextureInterface->Release();
 			}
 
-			//! Called at resize AFTER initBackBuffer. Initialize the renderTargetView and set it as a Render target to device context
-			void initRenderTargetView()
+			//! Called at resize AFTER initBackBuffer.
+			//! Initialize the renderTargetViews(HDR and LDR)
+			void initRenderTargetViews()
 			{
-				HRESULT hr = d3d::s_device->CreateRenderTargetView(m_backBuffer.Get(), nullptr, m_renderTargetView.GetAddressOf());
-				if (FAILED(hr)) {
-					m_logger.logErr("Window CreateRenderTargetView fail: " + std::system_category().message(hr));
-					return;
-				}
+				m_renderTargetHDR.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
+				m_renderTargetLDRFinal.init();
+
+				D3D11_TEXTURE2D_DESC pDesc{};
+				m_renderTargetLDRFinal.getTextureDesc(&pDesc);
+				m_renderTargetLDRBeforeFXAA.init(pDesc);
+
+				m_gBuffer.init(m_windowRenderData.screenWidth, m_windowRenderData.screenHeight);
+			}
+			//! Bind the initial HDR rtv
+			void bindInitialRTV() {
+				m_renderTargetHDR.OMSetCurrent(m_depthStensilView.Get());
 			}
 
-			void setRenderTargetView() {
-				d3d::s_devcon->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStensilView.Get());
+			void bindBufferBeforeAA() {
+				m_renderTargetLDRBeforeFXAA.OMSetCurrent(nullptr);
 			}
+
+			//! Bind the backBuffer
+			void bindBackBuffer() {
+				m_renderTargetLDRFinal.OMSetCurrent(nullptr);
+			}
+
 			//! Initialize the Depth Stencil Buffer and View, buffers are freed at every resize
 			void initDepthStensilBuffer() {
 				m_depthStensilView.Reset();
@@ -197,85 +215,112 @@ namespace engn {
 
 			//! Called at resize AFTER initRenderTargetView. Initialized the viewport with new screen parameters
 			void initViewPort() {
-				D3D11_VIEWPORT viewPort;
-				memset(&viewPort, 0, sizeof(D3D11_VIEWPORT));
-					
-				viewPort.TopLeftX = m_windowRect.left;
-				viewPort.TopLeftY = m_windowRect.top;
-				viewPort.Width = m_windowRect.right - m_windowRect.left;
-				viewPort.Height = m_windowRect.bottom - m_windowRect.top;
+				m_viewPort.TopLeftX = 0.0f;
+				m_viewPort.TopLeftY = 0.0f;
+				m_viewPort.Width = m_windowRenderData.screenWidth;
+				m_viewPort.Height = m_windowRenderData.screenHeight;
 				// It is set this way, despite the reversed depth matrix
-				viewPort.MinDepth = 0.0f;
-				viewPort.MaxDepth = 1.0f;
-
-				d3d::s_devcon->RSSetViewports(1, &viewPort);
+				m_viewPort.MinDepth = 0.0f;
+				m_viewPort.MaxDepth = 1.0f;
 			}
 
+			//! Bind the viwport to the rasterizer
+			void bindViewport() { d3d::s_devcon->RSSetViewports(1, &m_viewPort); }
 
-			//! Set the RTV and clear the window with the specified color
-			bool clear(float* color)
-			{
+			//! Poll window for resize, MUST BE CALLED at the start of every frame to support resizing
+			bool pollResize() {
 				bool wasResized = false;
 				// Resize if there was a call
 				if (m_toBeResized)
 				{
 					initBackBuffer();
-					initRenderTargetView();
+					initRenderTargetViews();
 					initDepthStensilBuffer();
+					initDepthTextureCopy();
 					initViewPort();
 					m_toBeResized = false;
 					wasResized = true;
 				}
+				return true;
+			}
+
+			//! Clears all the Gbuffer RTV parts
+			void bindAndClearGbuffer(float* color)
+			{
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
 				// We set the rendertargetview each frame
-				setRenderTargetView();
-				d3d::s_devcon->ClearRenderTargetView(m_renderTargetView.Get(), color);
+				m_gBuffer.bind(m_depthStensilView.Get());
+				bindViewport();
+				m_gBuffer.clear(color);
 				// Depth is 0.0f because we utilize reversed depth matrix
 				d3d::s_devcon->ClearDepthStencilView(m_depthStensilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
-			
-				return wasResized;
 			}
+
+			//! Clears the RTV that we write to initially(HDR in out case), clear the DSV too
+			//! WARNING: UNBINDS GBUFFER
+			void bindAndClearInitialRTV(float* color)
+			{
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				m_gBuffer.unBind(m_depthStensilView.Get());
+				// We set the rendertargetview each frame
+				bindInitialRTV();
+				bindViewport();
+				m_renderTargetHDR.clear(color);
+			}
+
+			void unbindGBufferIDs() {
+				m_gBuffer.unbindIds(m_depthStensilView.Get());
+			}
+
+			void bindAndClearBufferBuforeAA(float* color) {
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				bindBufferBeforeAA();
+				bindViewport();
+				m_renderTargetLDRBeforeFXAA.clear(color);
+			}
+
+			//! Clear the final LDR RTV and bind it
+			void bindAndClearBackbuffer(float* color) {
+				// So we don't crash at window minimize
+				if (m_windowRenderData.screenWidth == 0 || m_windowRenderData.screenHeight == 0) { return; }
+				bindBackBuffer();
+				bindViewport();
+				m_renderTargetLDRFinal.clear(color);
+			}
+
 			//! Present the swapchain. Called after clear and Engine::render
 			void present() {
 				m_swapChain->Present(0, NULL);
 			}
 
-			//! Allocate memory for the bitmap that gets drawn on screen, availible via getBitmapBuffer, return true if allocation happened
-			bool allocateBitmapBuffer()
-			{
-				// Free old memory if screen was resized
-				if (m_windowRenderData.screenBuffer && m_toBeResized)
-				{
-					VirtualFree(m_windowRenderData.screenBuffer, 0, MEM_RELEASE);
-					m_windowRenderData.screenBuffer = nullptr;
+			//! Make a copy of a depthbuffer in case you want to bind it somewhere
+			void initDepthTextureCopy() {
+				D3D11_TEXTURE2D_DESC depthTextureDesc{};
+				m_depthStensilBuffer->GetDesc(&depthTextureDesc);
+
+				D3D11_TEXTURE2D_DESC destinationTextureDesc = depthTextureDesc;
+				destinationTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+				destinationTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+				HRESULT hr = d3d::s_device->CreateTexture2D(&destinationTextureDesc, nullptr, m_currentDepthTexture.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("Window::makeDepthTextureCopy: Failed Copying main depthBuffer texture");
+					return;
 				}
 
-				// Allocate memory for bits - reallocate if screnn was resized
-				if (!m_windowRenderData.screenBuffer && m_toBeResized)
-				{
-					const size_t bitmapMemorySize = m_windowRenderData.bufferWidth * m_windowRenderData.bufferHeight * 4;
-					m_fillBitmapInfo();
+				D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+				srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+				srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+				srvDesc.Texture2D.MipLevels = 1;
 
-					m_windowRenderData.screenBuffer = VirtualAlloc(nullptr, bitmapMemorySize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
-					m_toBeResized = false;
-					return true;
+				hr = d3d::s_device->CreateShaderResourceView(m_currentDepthTexture.Get(), &srvDesc, m_currentDepthSRV.ReleaseAndGetAddressOf());
+				if (FAILED(hr)) {
+					Logger::instance().logErr("Window::makeDepthTextureCopy: Failed creating srv for the copied texture");
+					return;
 				}
-				return false;
-			}
-
-			//! Calls stretchDIBits which in turn copies all data from the bitmap buffer to screen
-			void flush() const
-			{
-				StretchDIBits(
-					m_windowClassData.handleDC,
-					0, 0,
-					m_windowRenderData.screenWidth, m_windowRenderData.screenHeight,
-					0, 0,
-					m_windowRenderData.bufferWidth, m_windowRenderData.bufferHeight,
-					m_windowRenderData.screenBuffer,
-					&m_bitmapInfo,
-					DIB_RGB_COLORS,		// The color are RGB, can also be a pallet of you need to have limited colors
-					SRCCOPY				// We just want to copy to buffer and not do any operations to it
-				);
 			}
 
 			[[nodiscard]] HWND getHandler() const { return m_windowClassData.handleWnd; }
@@ -294,6 +339,16 @@ namespace engn {
 			[[nodiscard]] int getBIWidth() const { return m_windowRenderData.bufferWidth; }
 			[[nodiscard]] int getBIHeight() const { return m_windowRenderData.bufferHeight; }
 
+			[[nodiscard]] rend::BindableRenderTarget& getHDRRTVRef() { return m_renderTargetHDR; }
+			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVRef() { return m_renderTargetLDRFinal; }
+			[[nodiscard]] rend::BindableRenderTarget& getLDRRTVBeforeAARef() { return m_renderTargetLDRBeforeFXAA; }
+
+			[[nodiscard]] rend::GBuffer& getGBuffer() { return m_gBuffer; }
+
+			//! These getters are here to get filled in rendered by the respective Window class fucntion(which copies the current depth texture)
+			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Texture2D>& getCopiedDepthTextureRef() { return m_currentDepthTexture; }
+			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11Texture2D>& getDepthTextureRef() { return m_depthStensilBuffer; }
+			[[nodiscard]] Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>& getCopiedDepthTextureSRVRef() { return m_currentDepthSRV; }
 
 		private:
 			Logger& m_logger = Logger::instance();
@@ -302,7 +357,6 @@ namespace engn {
 			inline static WindowRenderData m_windowRenderData{
 				nullptr,
 				W, H,
-				W / BDS, H / BDS
 			};
 
 			inline static RECT m_windowRect{ 0, 0, W, H };
@@ -311,12 +365,20 @@ namespace engn {
 
 			inline static WindowClassData m_windowClassData;
 
+			rend::BindableRenderTarget m_renderTargetLDRFinal;
+			rend::BindableRenderTarget m_renderTargetLDRBeforeFXAA;
+			rend::BindableRenderTarget m_renderTargetHDR;
+
+			rend::GBuffer m_gBuffer;
+
+			D3D11_VIEWPORT m_viewPort;
+
 			Microsoft::WRL::ComPtr<IDXGISwapChain1> m_swapChain;
-			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_backBuffer;
-			Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 			Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_depthStensilView;
 			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_depthStensilBuffer;
-			D3D11_TEXTURE2D_DESC m_backBufferDesc;
+			//! Current depth textures before the particle render to avoid smooth clipping
+			Microsoft::WRL::ComPtr<ID3D11Texture2D> m_currentDepthTexture;
+			Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_currentDepthSRV;
 
 			// Bitmap information struct
 			BITMAPINFO m_bitmapInfo;
@@ -383,28 +445,10 @@ namespace engn {
 				m_windowRenderData.screenWidth = newClientRect.right - newClientRect.left;
 				m_windowRenderData.screenHeight = newClientRect.bottom - newClientRect.top;
 
-				m_windowRenderData.bufferWidth = m_windowRenderData.screenWidth / BDS;
-				m_windowRenderData.bufferHeight = m_windowRenderData.screenHeight / BDS;
-
 				m_windowRect = newClientRect;
 				AdjustWindowRect(&m_windowRect, WS_OVERLAPPEDWINDOW, FALSE);
 
 				m_toBeResized = true;
-			}
-
-			//! Fill in the bitmapinfo at screen buffer allocation
-			void m_fillBitmapInfo() {
-				m_bitmapInfo.bmiHeader.biSize = sizeof(m_bitmapInfo.bmiHeader);	// Why?....
-				m_bitmapInfo.bmiHeader.biWidth = m_windowRenderData.bufferWidth;
-				m_bitmapInfo.bmiHeader.biHeight = m_windowRenderData.bufferHeight;	// Top down render
-				m_bitmapInfo.bmiHeader.biPlanes = 1;							// Legacy
-				m_bitmapInfo.bmiHeader.biBitCount = sizeof(COLORREF) * 8;		// We allocate for COLORREF
-				m_bitmapInfo.bmiHeader.biCompression = BI_RGB;					// If you need compression, we don't because RGB
-				m_bitmapInfo.bmiHeader.biSizeImage = 0;							// Unused if no compression
-				m_bitmapInfo.bmiHeader.biXPelsPerMeter = 0;						// We don't need to know about pixels per meter
-				m_bitmapInfo.bmiHeader.biYPelsPerMeter = 0;
-				m_bitmapInfo.bmiHeader.biClrUsed = 0;							// Last 2 are for pallets
-				m_bitmapInfo.bmiHeader.biClrImportant = 0;
 			}
 		};
 	} // win

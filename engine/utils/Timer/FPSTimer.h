@@ -31,6 +31,8 @@ namespace engn {
 			float getFPSCurrent() const;
 			//! Get the amount of seconds since the program start
 			float getSecondsSinceStart() const;
+			//! Get the delta time
+			float getDt() const;
 
 		private:
 			// Time point to calculate seconds since the program start from shader

@@ -46,6 +46,9 @@ namespace engn {
 
 	void Logger::logWarn(const std::string& s)
 	{
+		if (m_defaultLoggerName != "C") {
+			spdlog::get("C")->warn(s);
+		}
 		spdlog::get(m_defaultLoggerName)->warn(s);
 	}
 	void Logger::logWarn(const std::wstring& s)

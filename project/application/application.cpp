@@ -6,15 +6,15 @@
 
 Application::Application() :
 	m_isRunning{ true },
-	m_screenWidth{ WIN_WIDTH_DEF },
-	m_screenHeight{ WIN_HEIGHT_DEF },
 	m_timer{ new engn::util::FPSTimer{TIMER_FPS} },
-	m_window{ new engn::win::Window<WIN_WIDTH_DEF, WIN_HEIGHT_DEF, BUFF_DECREASE_TIMES>() },
-	m_engine{ new engn::Engine{WIN_WIDTH_DEF, WIN_HEIGHT_DEF} }
-{}
+	m_engine{ new engn::Engine{} }
+{
+}
 
 
 int Application::run() {
+
+	m_engine->initScene();
 
 	MSG msg = { 0 };
 	while (m_isRunning) {
@@ -51,21 +51,10 @@ void Application::m_processWIN32Queue(MSG* mptr) {
 
 
 void Application::m_handleRender() {
-	// Get the render data for the shader
-	engn::rend::RenderData renderData{
-		m_timer->getSecondsSinceStart(),
-		m_window->getWidth(),
-		m_window->getHeight(),
-		1.0f / m_window->getWidth(),
-		1.0f / m_window->getHeight(),
-	};
-	// Render fucntions
-	if (m_window->clear(BG_COLOR)) {
-		m_engine->setWindowSize(m_window->getWidth(), m_window->getHeight());
-	}
-	m_engine->handlePhysics(renderData);
-	m_engine->render(renderData);
-	m_window->present();
+	// Get fill the needed data for the engine
+	m_engine->setEngineData({ m_timer->getSecondsSinceStart(), m_timer->getDt() });
+	// Run the engine
+	if (!m_engine->run()) { m_isRunning = false; }
 }
 
 

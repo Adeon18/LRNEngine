@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <iomanip>
+#include <random>
 
 #include <string>
 #include <string.h>
@@ -21,14 +22,31 @@ namespace engn {
 		std::string getExeDir();
 		//! Get the absolute path to the directory that contains the executable(wstring). PATH ends with "\"
 		std::wstring getExeDirW();
+		//! Get the directory from the specified path to file. PATH ends with "\"
+		std::string getDirectoryFromPath(const std::string& path);
+		//! Change the file extension from current to the specified in the second argument and return
+		//! Extension should be specified as .ext
+		std::string changeFileExt(const std::string& path, const std::string& ext);
+		//! Remove the file extension from the string path
+		std::string removeFileExt(const std::string& path);
+		//! Get the directory of the file specified, WORKS ONLY ON BACKSLASHES - FOR WIN
+		std::string getFileDir(const std::string& filepath);
 		//! Convert the assimp library vector3 type to XMVECTOR
 		XMVECTOR aiVector3DtoXMVECTOR(const aiVector3D& vec);
 		//! Convert the assimp library aiMatrix4x4 type to XMMATRIX
 		XMMATRIX aiMatrix4x4toXMMATRIX(const aiMatrix4x4& mat);
 		//! Convert the assimp library vector3 type to XMFLOAT3
 		XMFLOAT3 aiVector3DtoXMFLOAT3(const aiVector3D& vec);
+		//! Test if all components of an XMVector are 0.0f - WARNING: is VERY SLOW!
+		bool isXMVectorEmpty(const XMVECTOR& vec);
+		//! Empty test for XMFloat4
+		bool isXMVectorEmpty(const XMFLOAT4& vec);
 		//! Align type to a specified size, return the aligned size value
 		uint32_t alignUp(uint32_t typeSize, uint32_t alignTo);
+		//! Convert string to wstring
+		std::wstring stringToWstring(const std::string& str);
+		//! Get random number in specified range
+		int getRandomIntInRange(int begin, int end);
 	} // util
 
 	void XMVECTORtoStringArray(std::array<std::string, 4>& arr, const XMVECTOR& vec);

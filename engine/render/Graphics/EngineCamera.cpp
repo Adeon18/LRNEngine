@@ -79,6 +79,7 @@ namespace engn {
             m_upVec = XMVector3Transform(DEF_UP_VECTOR, rotMatrix);
 
             m_view = XMMatrixLookAtLH(m_positionVec, forwardVec, m_upVec);
+
             m_viewT = XMMatrixTranspose(m_view);
         }
 
@@ -106,6 +107,16 @@ namespace engn {
             XMVECTOR rayDir = XMVector3Normalize(rayTo - rayPos);
 
             return geom::Ray{ rayPos, rayDir };
+        }
+        void EngineCamera::getCamFarPlaneDirForFullScreenTriangle(std::vector<XMVECTOR>& outDirs)
+        {
+            XMMATRIX viewProjInv = XMMatrixInverse(nullptr, m_view * m_projection);
+            for (uint32_t i = 0; i < 4; ++i) {
+                m_viewingFrustumFarPlaneWorldSpaceX2[i] = XMVector4Transform(m_viewingFrustumFarPlaneX2[i], viewProjInv);
+                m_viewingFrustumFarPlaneWorldSpaceX2[i] /= XMVectorGetW(m_viewingFrustumFarPlaneWorldSpaceX2[i]);
+
+                outDirs.push_back(m_viewingFrustumFarPlaneWorldSpaceX2[i] - m_positionVec);
+            }
         }
     } // rend
 } // engn

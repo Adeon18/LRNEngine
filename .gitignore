@@ -3,6 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# UE4 Project directories to ignore
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -39,6 +45,7 @@ bld/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
+Compiled/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

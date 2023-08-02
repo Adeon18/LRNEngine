@@ -18,12 +18,19 @@ struct VS_INPUT
     float4 modelToWorld1 : MODEL2WORLD1;
     float4 modelToWorld2 : MODEL2WORLD2;
     float4 modelToWorld3 : MODEL2WORLD3;
+    float4 modelToWorldInv0 : MODEL2WORLDINV0;
+    float4 modelToWorldInv1 : MODEL2WORLDINV1;
+    float4 modelToWorldInv2 : MODEL2WORLDINV2;
+    float4 modelToWorldInv3 : MODEL2WORLDINV3;
     float4 color : COLOR;
 };
 
 struct VS_OUTPUT
 {
     float3 worldPos : POS;
+    float3 worldNorm : NORM;
+    float3 worldTan : TANGENT;
+    float3 worldBiTan : BITANGENT;
 };
 
 struct GS_OUTPUT

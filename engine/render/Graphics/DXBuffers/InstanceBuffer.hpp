@@ -16,7 +16,7 @@ namespace engn {
 			InstanceBuffer() : m_size{}, m_byteSize{} {}
 
 			void init(uint32_t size) {
-				if (m_size > 0) {
+				if (m_size == size) {
 					return;
 				}
 				m_size = size;

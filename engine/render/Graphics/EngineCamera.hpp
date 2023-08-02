@@ -12,8 +12,8 @@ namespace engn {
         class EngineCamera {
         public:
             struct CameraSettings {
-                static constexpr float CAMERA_SPEED = 0.02f;
-                static constexpr float ROTATION_SPEED = 0.03f;
+                static constexpr float CAMERA_SPEED = 5.0f;
+                static constexpr float ROTATION_SPEED = 2.0f;
                 inline static const std::array<int, 6> MOVE_KEYS{
                                 inp::Keyboard::Keys::KEY_A,
                                 inp::Keyboard::Keys::KEY_D,
@@ -57,6 +57,10 @@ namespace engn {
             //! Cast ray in the mouse direction from camera position
             geom::Ray castRay(float x, float y);
 
+            //! Fill a vertor with UNNORMALIZED far plane corner directions in world space. Called in sky triangle for render
+            //! TODO: is called every frame which may hit performance
+            void getCamFarPlaneDirForFullScreenTriangle(std::vector<XMVECTOR>& outDirs);
+
             //! Getters
             const XMMATRIX& getViewMatrix() { return m_view; }
             const XMMATRIX& getProjMatrix() { return m_projection; }
@@ -77,7 +81,16 @@ namespace engn {
                 { 1.0f,  1.0f, 1.0f, 1.0f},
                 { 1.0f, -1.0f, 1.0f, 1.0f},
             };
+            // This frustum is 2x bigger, due to using it for sky rendering as a fullscreen triangle
+            const XMVECTOR m_viewingFrustumFarPlaneX2[4] =
+            {
+                {-1.0f, -1.0f, 1.0f, 1.0f},
+                {-1.0f,  3.0f, 1.0f, 1.0f},
+                { 3.0f,  3.0f, 1.0f, 1.0f},
+                { 3.0f, -1.0f, 1.0f, 1.0f},
+            };
             XMVECTOR m_viewingFrustumNearPlaneWorldSpace[4];
+            XMVECTOR m_viewingFrustumFarPlaneWorldSpaceX2[4];
 
             int m_screenWidth;
             int m_screenHeight;

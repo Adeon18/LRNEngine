@@ -3,8 +3,12 @@
 #include <DirectXMath.h>
 
 namespace engn {
+	struct EmptyVertex {
+
+	};
+
 	struct Vertex {
-		Vertex() {}
+		Vertex() : pos{}, normal{}, tangent{}, bitangent{}, tc{} {}
 		Vertex(
 			const DirectX::XMFLOAT3& ps,
 			const DirectX::XMFLOAT3& norm,
@@ -15,7 +19,7 @@ namespace engn {
 			normal{ norm },
 			tangent{ tnt },
 			bitangent{ btnt },
-			tc{tcods}
+			tc{ tcods }
 		{}
 
 		DirectX::XMFLOAT3 pos;
@@ -23,5 +27,10 @@ namespace engn {
 		DirectX::XMFLOAT3 tangent;
 		DirectX::XMFLOAT3 bitangent;
 		DirectX::XMFLOAT2 tc;
+	};
+	//! A vertex only with float3 position
+	struct VertexPos {
+		VertexPos(const DirectX::XMFLOAT3& ps) : pos{ps} {}
+		DirectX::XMFLOAT3 pos;
 	};
 } // engn
