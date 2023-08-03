@@ -1,4 +1,4 @@
-# Ostap Trush
+# LRNEngine
 
 ### Description
 _This is my **LRNEngine**(LeaRNEngine) that I created in order to learn Compute Graphics and Rendering techniques as a part of my Dragons Lake Render Internship. The engine uses the `DirectX11` graphics API._
