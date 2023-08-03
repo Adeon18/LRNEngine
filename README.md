@@ -49,9 +49,13 @@ The engine implements the following rendering techniques:
 https://github.com/Adeon18/LRNEngine/assets/56467999/291b64a6-4893-4b73-8003-ff1bcb304908
 
 
-![1](./img/v2.mp4)
 
-![1](./img/v3.mp4)
+https://github.com/Adeon18/LRNEngine/assets/56467999/fbd78b9d-e04e-4e33-a8a8-fb4be5fc1ef8
+
+
+https://github.com/Adeon18/LRNEngine/assets/56467999/c333c54a-0040-4310-bec1-42a4e0496ef3
+
+
 
 ![1](./img/Screenshot_1.png)
 
